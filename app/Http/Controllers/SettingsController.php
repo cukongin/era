@@ -1052,21 +1052,30 @@ class SettingsController extends Controller
         $output = [];
         $returnVar = 0;
         
-        // Command: git pull
-        // 2>&1 redirects stderr to stdout so we capture errors too
-        exec('git pull origin master 2>&1', $output, $returnVar);
-        
-        // Clear Cache
-        \Illuminate\Support\Facades\Artisan::call('optimize:clear');
-        \Illuminate\Support\Facades\Artisan::call('view:clear');
-        \Illuminate\Support\Facades\Artisan::call('config:clear');
-        
-        $log = implode("\n", $output);
-        
-        if ($returnVar === 0) {
-            return back()->with('success', "Update Berhasil! Sistem sudah versi terbaru.\nLog:\n" . $log);
-        } else {
-            return back()->with('error', "Update Gagal via Git.\nLog:\n" . $log);
+        // Cek apakah fungsi exec aktif?
+        if (!function_exists('exec')) {
+            return back()->with('error', "Gagal: Fungsi 'exec' dinonaktifkan oleh server. Silakan update manual via Terminal/Git.");
+        }
+
+        try {
+            // Command: git pull (pakai backslash \exec untuk global namespace)
+            // 2>&1 redirects stderr to stdout so we capture errors too
+            \exec('git pull origin master 2>&1', $output, $returnVar);
+            
+            // Clear Cache
+            \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+            \Illuminate\Support\Facades\Artisan::call('view:clear');
+            \Illuminate\Support\Facades\Artisan::call('config:clear');
+            
+            $log = implode("\n", $output);
+            
+            if ($returnVar === 0) {
+                return back()->with('success', "Update Berhasil! Sistem sudah versi terbaru.\nLog:\n" . $log);
+            } else {
+                return back()->with('error', "Update Gagal via Git.\nLog:\n" . $log);
+            }
+        } catch (\Throwable $e) {
+             return back()->with('error', "Terjadi Error Sistem: " . $e->getMessage());
         }
     }
 }
