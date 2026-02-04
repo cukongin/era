@@ -262,6 +262,23 @@
                                             <option value="C" {{ ($gradingSettings['promotion_min_attitude'] ?? '') == 'C' ? 'selected' : '' }}>C</option>
                                         </select>
                                     </div>
+                                    
+                                    <div class="col-span-2">
+                                        <label class="flex items-start gap-3 p-3 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-200 transition-colors">
+                                            <input type="hidden" name="promotion_requires_all_periods" value="0">
+                                            <input type="checkbox" name="promotion_requires_all_periods" value="1" 
+                                                {{ ($gradingSettings['promotion_requires_all_periods'] ?? 1) ? 'checked' : '' }} 
+                                                {{ $isLocked ? 'disabled' : '' }} 
+                                                class="w-5 h-5 mt-0.5 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
+                                            <div>
+                                                <span class="font-bold text-slate-700 dark:text-slate-300 text-sm block">Wajib Mengikuti SEMUA Periode Ujian</span>
+                                                <span class="text-[10px] text-slate-500 block leading-tight">
+                                                    Siswa <b>WAJIB</b> memiliki nilai di semua periode (Ganjil & Genap) dalam satu tahun ajaran. 
+                                                    Jika tidak, akan otomatis bertanda <b class="text-amber-500">Perlu Ditinjau</b>.
+                                                </span>
+                                            </div>
+                                        </label>
+                                    </div>
                                 </div>
                              </div>
 

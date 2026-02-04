@@ -377,7 +377,7 @@ class SettingsController extends Controller
         // 3. Save Global Settings
         $settingsToSave = [
             'kkm_default', 'rounding_enable', 'promotion_max_kkm_failure', 
-            'promotion_min_attendance', 'promotion_min_attitude', 'total_effective_days', 'scale_type',
+            'promotion_min_attendance', 'promotion_min_attitude', 'total_effective_days', 'scale_type', 'promotion_requires_all_periods',
             'titimangsa_mi', 'titimangsa_mts',
             'titimangsa_tempat_mi', 'titimangsa_tempat_mts'
         ];
@@ -741,6 +741,11 @@ class SettingsController extends Controller
                         $table->integer('effective_days_year')->default(200);
                     });
                 }
+                if (!Schema::hasColumn('grading_settings', 'promotion_requires_all_periods')) {
+                    Schema::table('grading_settings', function (Blueprint $table) {
+                        $table->boolean('promotion_requires_all_periods')->default(true);
+                    });
+                }
             } else {
                 // Create Table if missing (Panic Mode)
                 Schema::create('grading_settings', function (Blueprint $table) {
@@ -753,6 +758,7 @@ class SettingsController extends Controller
                     $table->integer('promotion_min_attendance')->default(85);
                     $table->integer('effective_days_year')->default(200);
                     $table->string('promotion_min_attitude')->default('B');
+                    $table->boolean('promotion_requires_all_periods')->default(true);
                     $table->timestamps();
                 });
                 // Seed
@@ -815,6 +821,7 @@ class SettingsController extends Controller
         $cleanSettings['promotion_max_kkm_failure'] = intval($dbSettings ? ($dbSettings->promotion_max_kkm_failure ?? \App\Models\GlobalSetting::val('promotion_max_kkm_failure', 3)) : \App\Models\GlobalSetting::val('promotion_max_kkm_failure', 3));
         $cleanSettings['promotion_min_attendance'] = intval($dbSettings ? ($dbSettings->promotion_min_attendance ?? \App\Models\GlobalSetting::val('promotion_min_attendance', 85)) : \App\Models\GlobalSetting::val('promotion_min_attendance', 85));
         $cleanSettings['promotion_min_attitude'] = $dbSettings ? ($dbSettings->promotion_min_attitude ?? \App\Models\GlobalSetting::val('promotion_min_attitude', 'B')) : \App\Models\GlobalSetting::val('promotion_min_attitude', 'B');
+        $cleanSettings['promotion_requires_all_periods'] = (bool)($dbSettings ? ($dbSettings->promotion_requires_all_periods ?? \App\Models\GlobalSetting::val('promotion_requires_all_periods', 1)) : \App\Models\GlobalSetting::val('promotion_requires_all_periods', 1));
         
         // Effective Days (The Trouble Maker)
         // MUST map effective_days_year (DB) -> to -> total_effective_days (JSON)
@@ -878,7 +885,9 @@ class SettingsController extends Controller
                 // Promotion Rules
                 if (isset($s['promotion_max_kkm_failure'])) $updateData['promotion_max_kkm_failure'] = $s['promotion_max_kkm_failure'];
                 if (isset($s['promotion_min_attendance'])) $updateData['promotion_min_attendance'] = $s['promotion_min_attendance'];
+                if (isset($s['promotion_min_attendance'])) $updateData['promotion_min_attendance'] = $s['promotion_min_attendance'];
                 if (isset($s['promotion_min_attitude'])) $updateData['promotion_min_attitude'] = $s['promotion_min_attitude'];
+                if (isset($s['promotion_requires_all_periods'])) $updateData['promotion_requires_all_periods'] = $s['promotion_requires_all_periods'];
                 
                 // Effective Days (Recently added column)
                 if (isset($s['total_effective_days'])) {

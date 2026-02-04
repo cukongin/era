@@ -1001,17 +1001,21 @@ class WaliKelasController extends Controller
 
             $failConditions = [];
 
-            // CHECK: Must participate in ALL Periods
-            // We check if student has at least one grade entry in each period
-            $attendedPeriodIds = $sGrades->pluck('id_periode')->unique();
-            $missingPeriods = $periods->filter(function($p) use ($attendedPeriodIds) {
-                return !$attendedPeriodIds->contains($p->id);
-            });
+            // CHECK: Must participate in ALL Periods (If Enabled in Settings)
+            $requiresAllPeriods = isset($gradingSettings->promotion_requires_all_periods) ? (bool)$gradingSettings->promotion_requires_all_periods : true;
+            
+            if ($requiresAllPeriods) {
+                // We check if student has at least one grade entry in each period
+                $attendedPeriodIds = $sGrades->pluck('id_periode')->unique();
+                $missingPeriods = $periods->filter(function($p) use ($attendedPeriodIds) {
+                    return !$attendedPeriodIds->contains($p->id);
+                });
 
-            if ($missingPeriods->count() > 0) {
-                // Formatting: "Ganjil, Genap"
-                $periodNames = $missingPeriods->pluck('nama_periode')->join(', ');
-                $failConditions[] = "Tidak mengikuti ujian periode: $periodNames";
+                if ($missingPeriods->count() > 0) {
+                    // Formatting: "Ganjil, Genap"
+                    $periodNames = $missingPeriods->pluck('nama_periode')->join(', ');
+                    $failConditions[] = "Tidak mengikuti ujian periode: $periodNames";
+                }
             }
             
             if ($underKkmCount > $maxKkmFailure) $failConditions[] = "Mapel < KKM ($underKkmCount > $maxKkmFailure)";
