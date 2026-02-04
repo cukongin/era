@@ -28,7 +28,7 @@ class MasterTeacherController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'foto' => 'nullable|image|mimetypes:image/jpeg,image/png,image/gif|max:2048|dimensions:min_width=100,min_height=100',
         ]);
 
         $user = User::create([
@@ -41,7 +41,8 @@ class MasterTeacherController extends Controller
         $fotoPath = null;
         if ($request->hasFile('foto')) {
             $file = $request->file('foto');
-            $filename = 'teacher_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $safeName = preg_replace('/[^a-zA-Z0-9_.]/', '', $file->getClientOriginalName()); 
+            $filename = 'teacher_' . $user->id . '_' . time() . '_' . $safeName;
             $file->move(public_path('storage/teachers'), $filename);
             $fotoPath = 'storage/teachers/' . $filename;
         }

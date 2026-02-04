@@ -178,7 +178,7 @@ class GradeImportController extends Controller
     public function preview(Request $request, $kelasId)
     {
         $request->validate([
-            'file' => 'required|file|mimes:csv,txt,xlsx,xls'
+            'file' => 'required|file|mimetypes:application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv,text/plain,application/csv,text/comma-separated-values|max:5120'
         ]);
 
         $kelas = $this->checkAccess($kelasId);
@@ -691,7 +691,7 @@ class GradeImportController extends Controller
 
     public function previewGlobal(Request $request, $jenjang)
     {
-        $request->validate(['file' => 'required|file|mimes:csv,txt,xlsx,xls']);
+        $request->validate(['file' => 'required|file|mimetypes:application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv,text/plain,application/csv,text/comma-separated-values|max:5120']);
         $jenjang = strtoupper($jenjang);
         $activeYear = TahunAjaran::where('status', 'aktif')->firstOrFail();
         

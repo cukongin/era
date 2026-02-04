@@ -29,6 +29,11 @@
             </div>
             @endif
             
+            <!-- Backup Button -->
+            <a href="{{ route('backup.download') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-bold shadow-lg transition-all flex items-center gap-2 text-sm">
+                <span class="material-symbols-outlined text-[18px]">cloud_download</span> Backup DB
+            </a>
+            
             <button onclick="document.getElementById('yearModal').classList.remove('hidden')" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg font-bold shadow-lg transition-all flex items-center gap-2 text-sm">
                 <span class="material-symbols-outlined text-[18px]">edit_calendar</span> Kelola Tahun
             </button>

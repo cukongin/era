@@ -24,8 +24,9 @@ use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\SettingsController;
 
 // Auth Routes (Public)
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1')->name('login.post'); // Max 5 attempts/min
+// SECURITY: Login URL changed from /login to /portal-masuk
+Route::get('/portal-masuk', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/portal-masuk', [AuthController::class, 'login'])->middleware('throttle:5,1')->name('login.post'); // Max 5 attempts/min
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Protected Routes (Login Required)
@@ -47,7 +48,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('settings/users/export', [App\Http\Controllers\SettingsController::class, 'massGenerateAndExport'])->name('settings.users.export');
         Route::delete('settings/users/bulk-destroy', [App\Http\Controllers\SettingsController::class, 'bulkDestroyUsers'])->name('settings.users.bulk_destroy');
         Route::post('settings/users/{id}/generate', [App\Http\Controllers\SettingsController::class, 'generateUserAccount'])->name('settings.users.generate');
+        Route::post('settings/users/{id}/generate', [App\Http\Controllers\SettingsController::class, 'generateUserAccount'])->name('settings.users.generate');
         Route::post('settings/users/{id}/impersonate', [App\Http\Controllers\SettingsController::class, 'impersonate'])->name('settings.users.impersonate');
+
+        // Database Backup
+        Route::get('settings/backup/download', [App\Http\Controllers\BackupController::class, 'download'])->name('backup.download');
         
         // Role Update
         Route::patch('settings/users/{id}/role', [App\Http\Controllers\SettingsController::class, 'updateRole'])->name('settings.users.role');
