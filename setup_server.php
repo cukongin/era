@@ -3,28 +3,36 @@
 // Upload this file to your public_html folder and access it via browser.
 
 // Optimization for Hostinger Web Process
-set_time_limit(600); // 10 Minutes
-ini_set('memory_limit', '1024M'); // 1GB Memory
+set_time_limit(600); 
+ini_set('memory_limit', '1024M');
 
-// Disable Output Buffering for Real-time Progress
-if (function_exists('apache_setenv')) {
-    @apache_setenv('no-gzip', 1);
+// Mode: Debug Log
+if (isset($_GET['mode']) && $_GET['mode'] === 'log') {
+    $logFile = 'storage/logs/laravel.log';
+    if (file_exists($logFile)) {
+        echo "<h1>Last 50 Lines of Error Log:</h1><pre>";
+        $lines = file($logFile);
+        $lines = array_slice($lines, -50);
+        foreach ($lines as $line) {
+            echo htmlspecialchars($line);
+        }
+        echo "</pre>";
+    } else {
+        echo "Log file empty or not found.";
+    }
+    exit;
 }
-@ini_set('zlib.output_compression', 0);
-@ini_set('implicit_flush', 1);
-while (ob_get_level() > 0) {
-    ob_end_flush();
-}
-ob_implicit_flush(1);
 
 // Security: Password Protection
-$password = "bismillah"; // Ganti jika perlu
+$password = "bismillah"; 
 if (!isset($_GET['auth']) || $_GET['auth'] !== $password) {
-    die("Akses Ditolak. Tambahkan ?auth=bismillah di URL.");
+    die("Akses Ditolak. <br><a href='?auth=bismillah'>Login Script</a> | <a href='?auth=bismillah&mode=log'>Cek Error Log</a>");
 }
 
 echo "<h1>🛠️ Setup Server E-Rapor (Tenang Jaya)</h1>";
-echo "PHP Version Running: <strong>" . phpversion() . "</strong> (Must be >= 8.0)<hr>";
+echo "<a href='?auth=bismillah&mode=log' target='_blank' style='background:red; color:white; padding:10px; text-decoration:none;'>🔴 CEK PENYEBAB ERROR 500</a><hr>";
+
+echo "PHP Version: " . phpversion() . "<br>";
 flush();
 
 function run_command($cmd) {
@@ -36,6 +44,11 @@ function run_command($cmd) {
     echo "</pre><hr>";
     flush();
 }
+
+// 0. FIX PERMISSIONS FIRST (Critical for 500 Error)
+echo "<h3>0. Fixing Permissions</h3>";
+run_command("chmod -R 777 storage bootstrap/cache");
+run_command("chmod -R 775 public");
 
 // 1. Cek Environment
 echo "<h3>1. Cek Environment</h3>";
