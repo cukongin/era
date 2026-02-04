@@ -84,7 +84,7 @@
                 :class="activeTab === 'maintenance' ? 'border-red-500 text-red-600' : 'border-transparent text-slate-500 hover:text-red-600 hover:border-red-300'"
                 class="group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm transition-all">
                 <span class="material-symbols-outlined mr-2" :class="activeTab === 'maintenance' ? 'text-red-600' : 'text-slate-400 group-hover:text-red-500'">health_and_safety</span>
-                Penyelamatan Data
+                Huru Hara
             </button>
             @endif
         </nav>
