@@ -36,6 +36,15 @@ class SettingsController extends Controller
 
     public function index()
     {
+        // Emergency: Clear View Cache on load to prevent 500 Errors after updates
+        // This is necessary because Blade changes often cause stale cache on production
+        try {
+            \Illuminate\Support\Facades\Artisan::call('view:clear');
+        } catch (\Exception $e) {
+            // Ignore if permission denied, but log it
+            \Illuminate\Support\Facades\Log::error('Failed to clear view cache: ' . $e->getMessage());
+        }
+
         // 1. Academic Year Data
         $activeYear = TahunAjaran::where('status', 'aktif')->first();
         $archivedYears = TahunAjaran::where('status', 'non-aktif')->orderBy('nama', 'desc')->get();
