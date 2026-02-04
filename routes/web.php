@@ -259,6 +259,7 @@ Route::middleware(['auth'])->group(function () {
         // Deadline & Whitelist
         Route::post('/settings/deadline/update', [App\Http\Controllers\DeadlineController::class, 'update'])->name('settings.deadline.update');
         Route::get('/settings/deadline/toggle/{id}', [App\Http\Controllers\DeadlineController::class, 'toggleLock'])->name('settings.deadline.toggle');
+        Route::post('/settings/general/update', [App\Http\Controllers\SettingsController::class, 'updateGeneral'])->name('settings.general.update');
         Route::post('/settings/deadline/whitelist/store', [App\Http\Controllers\DeadlineController::class, 'storeWhitelist'])->name('settings.deadline.whitelist.store');
         Route::delete('/settings/deadline/whitelist/{id}', [App\Http\Controllers\DeadlineController::class, 'removeWhitelist'])->name('settings.deadline.whitelist.remove');
         
