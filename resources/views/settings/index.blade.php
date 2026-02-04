@@ -1,0 +1,1169 @@
+@extends('layouts.app')
+
+@section('title', 'Konfigurasi Sistem')
+
+@section('content')
+<div class="flex flex-col gap-6" x-data="settingsPage">
+    
+    <!-- Header & Year Management -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Konfigurasi Sistem</h1>
+            <p class="text-slate-500 text-sm">Pusat pengaturan Tahun Ajaran, Penilaian, dan Rapor.</p>
+        </div>
+        <div class="flex items-center gap-3">
+             @if($activeYear)
+            <div class="bg-green-100/50 text-green-700 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 border border-green-200">
+                <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                {{ $activeYear->nama }}
+            </div>
+             <form action="{{ route('settings.year.regenerate', $activeYear->id) }}" method="POST" onsubmit="return confirm('Generate ulang periode default (Cawu/Semester) untuk tahun aktif ini?')">
+                 @csrf
+                 <button type="submit" class="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 p-1.5 rounded-lg shadow-sm transition-all flex items-center justify-center" title="Fix Periode">
+                     <span class="material-symbols-outlined text-[20px]">build</span>
+                 </button>
+             </form>
+            @else
+            <div class="bg-red-100 text-red-700 px-4 py-2 rounded-lg font-bold flex items-center gap-2">
+                <span class="material-symbols-outlined">warning</span> Tahun Ajaran Kosong
+            </div>
+            @endif
+            
+            <button onclick="document.getElementById('yearModal').classList.remove('hidden')" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg font-bold shadow-lg transition-all flex items-center gap-2 text-sm">
+                <span class="material-symbols-outlined text-[18px]">edit_calendar</span> Kelola Tahun
+            </button>
+        </div>
+    </div>
+
+    @if(!$activeYear)
+        <div class="p-8 text-center bg-yellow-50 text-yellow-800 rounded-xl border border-yellow-200">
+            <h3 class="font-bold text-lg">Sistem Belum Siap</h3>
+            <p>Silakan buat Tahun Ajaran baru terlebih dahulu.</p>
+        </div>
+    @else
+
+    <!-- TABS NAVIGATION -->
+    <div class="border-b border-slate-200 dark:border-slate-700">
+        <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+            <button @click="activeTab = 'grading'"
+                :class="activeTab === 'grading' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
+                class="group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm transition-all">
+                <span class="material-symbols-outlined mr-2" :class="activeTab === 'grading' ? 'text-primary' : 'text-slate-400 group-hover:text-slate-500'">tune</span>
+                Aturan Penilaian
+            </button>
+
+            <button @click="activeTab = 'kkm'"
+                :class="activeTab === 'kkm' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
+                class="group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm transition-all">
+                <span class="material-symbols-outlined mr-2" :class="activeTab === 'kkm' ? 'text-primary' : 'text-slate-400 group-hover:text-slate-500'">analytics</span>
+                Target KKM
+            </button>
+
+            <button @click="activeTab = 'identity'"
+                :class="activeTab === 'identity' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
+                class="group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm transition-all">
+                <span class="material-symbols-outlined mr-2" :class="activeTab === 'identity' ? 'text-primary' : 'text-slate-400 group-hover:text-slate-500'">branding_watermark</span>
+                Identitas Aplikasi
+            </button>
+
+            <button @click="activeTab = 'general'"
+                :class="activeTab === 'general' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
+                class="group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm transition-all">
+                <span class="material-symbols-outlined mr-2" :class="activeTab === 'general' ? 'text-primary' : 'text-slate-400 group-hover:text-slate-500'">settings_applications</span>
+                Umum & Lainnya
+            </button>
+
+            <!-- MAINTENANCE TAB -->
+            @if(auth()->user()->role === 'admin')
+            <button @click="activeTab = 'maintenance'"
+                :class="activeTab === 'maintenance' ? 'border-red-500 text-red-600' : 'border-transparent text-slate-500 hover:text-red-600 hover:border-red-300'"
+                class="group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm transition-all">
+                <span class="material-symbols-outlined mr-2" :class="activeTab === 'maintenance' ? 'text-red-600' : 'text-slate-400 group-hover:text-red-500'">health_and_safety</span>
+                Penyelamatan Data
+            </button>
+            @endif
+        </nav>
+    </div>
+
+    <!-- TAB CONTENT CONTAINER -->
+    <div class="min-h-[400px]">
+
+        <!-- TAB 1: ATURAN PENILAIAN (GRADING) -->
+        <!-- TAB 1: ATURAN PENILAIAN (GRADING) -->
+        <div x-show="activeTab === 'grading'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+            
+            <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 relative">
+                
+                <!-- Toolbar (Jenjang Switcher) -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100 dark:border-slate-800">
+                    <div class="bg-slate-100 dark:bg-slate-800 p-1 rounded-lg inline-flex">
+                        <a href="?tab=grading&jenjang=MI" 
+                           class="px-4 py-1.5 rounded-md text-sm font-bold transition-all flex items-center gap-2 {{ $jenjang === 'MI' ? 'bg-white dark:bg-slate-700 shadow text-slate-900 dark:text-white' : 'text-slate-500 hover:text-slate-700' }}">
+                            MI (Cawu)
+                        </a>
+                        <a href="?tab=grading&jenjang=MTS" 
+                           class="px-4 py-1.5 rounded-md text-sm font-bold transition-all flex items-center gap-2 {{ $jenjang === 'MTS' ? 'bg-white dark:bg-slate-700 shadow text-slate-900 dark:text-white' : 'text-slate-500 hover:text-slate-700' }}">
+                            MTs (Semester)
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Hidden Forms for Period Toggles -->
+                @forelse($periods as $periode)
+                <form id="form-toggle-{{ $periode->id }}" action="{{ route('settings.period.toggle', $periode->id) }}" method="POST" class="hidden">
+                    @csrf
+                </form>
+                @empty
+                @endforelse
+
+                <form action="{{ route('settings.grading.store') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="jenjang" value="{{ $jenjang }}">
+                    <input type="hidden" name="tab" value="grading">
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        
+                        <!-- Left Column: Bobot & Kenaikan -->
+                        <div class="lg:col-span-5 space-y-6">
+                            
+                            <!-- Card: Periode Input Nilai -->
+                            <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-5 mb-6">
+                                <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm mb-4">
+                                    <span class="material-symbols-outlined text-orange-500 text-sm">lock_clock</span> Periode Input & Kunci Nilai
+                                </h4>
+                                <div class="flex flex-col gap-3">
+                                    @foreach($periods as $periode)
+                                        <div class="flex items-center justify-between p-3 rounded-lg border {{ $periode->status == 'aktif' ? 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800' : 'bg-slate-50 border-slate-200 dark:bg-slate-800 dark:border-slate-700' }}">
+                                            <div>
+                                                <div class="font-bold text-sm text-slate-800 dark:text-white">{{ $periode->nama_periode }}</div>
+                                                <div class="text-[10px] {{ $periode->status == 'aktif' ? 'text-green-600' : 'text-slate-500' }}">
+                                                    {{ $periode->status == 'aktif' ? 'Aktif (Bisa Input)' : 'Terkunci' }}
+                                                </div>
+                                            </div>
+                                            
+                                            <button type="submit" form="form-toggle-{{ $periode->id }}" 
+                                                class="w-10 h-6 rounded-full transition-colors relative {{ $periode->status == 'aktif' ? 'bg-green-500' : 'bg-slate-300' }}">
+                                                <span class="absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform {{ $periode->status == 'aktif' ? 'translate-x-4' : '' }}"></span>
+                                            </button>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                            
+                            <!-- Card: Bobot -->
+                            <div class="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-200 dark:border-indigo-800 p-5">
+                                <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm mb-4">
+                                    <span class="material-symbols-outlined text-indigo-500 text-sm">tune</span> Komponen & Bobot ({{ $jenjang }})
+                                </h4>
+                                
+                                <div class="space-y-4">
+                                    <!-- Harian -->
+                                    <div class="bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+                                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1">Nilai Harian (PH)</label>
+                                        <div class="relative">
+                                            <input type="number" name="bobot_harian" value="{{ $activeBobot->bobot_harian ?? 0 }}" {{ $isLocked ? 'disabled' : '' }}
+                                                   class="w-full text-center font-bold rounded-lg border-slate-300 focus:ring-indigo-500 focus:border-indigo-500 text-indigo-600">
+                                            <span class="absolute right-3 top-2 text-xs font-bold text-slate-400">%</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- UTS -->
+                                    <div class="bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+                                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1">{{ $jenjang === 'MI' ? 'Ujian Cawu (UTS)' : 'Nilai Tengah Semester (PTS)' }}</label>
+                                        <div class="relative">
+                                            <input type="number" name="bobot_uts_cawu" value="{{ $activeBobot->bobot_uts_cawu ?? 0 }}" {{ $isLocked ? 'disabled' : '' }}
+                                                   class="w-full text-center font-bold rounded-lg border-slate-300 focus:ring-indigo-500 focus:border-indigo-500 text-indigo-600">
+                                            <span class="absolute right-3 top-2 text-xs font-bold text-slate-400">%</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- UAS (MTS Only) -->
+                                    @if($jenjang === 'MTS')
+                                    <div class="bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+                                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1">Nilai Akhir Semester (PAS)</label>
+                                        <div class="relative">
+                                            <input type="number" name="bobot_uas" value="{{ $activeBobot->bobot_uas ?? 0 }}" {{ $isLocked ? 'disabled' : '' }}
+                                                   class="w-full text-center font-bold rounded-lg border-slate-300 focus:ring-indigo-500 focus:border-indigo-500 text-indigo-600">
+                                            <span class="absolute right-3 top-2 text-xs font-bold text-slate-400">%</span>
+                                        </div>
+                                    </div>
+                                    @endif
+                                </div>
+                                <p class="text-[10px] text-slate-500 mt-2 italic">* Isi 0 jika tidak digunakan. Total disarankan 100% (tidak wajib).</p>
+                            </div>
+
+
+
+                            <!-- Card: Parameter Umum -->
+                            <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
+                                <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm mb-4">
+                                    <span class="material-symbols-outlined text-primary text-sm">settings</span> Parameter
+                                </h4>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">KKM Default</label>
+                                        <input type="number" name="kkm_default" value="{{ $gradingSettings['kkm_default'] ?? 70 }}" {{ $isLocked ? 'disabled' : '' }} 
+                                               class="w-full text-center font-bold rounded-lg border-slate-300 focus:ring-primary text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Tipe Skala</label>
+                                        <select name="scale_type" {{ $isLocked ? 'disabled' : '' }} class="w-full font-bold rounded-lg border-slate-300 focus:ring-primary text-sm">
+                                            <option value="0-100" {{ ($gradingSettings['scale_type'] ?? '') == '0-100' ? 'selected' : '' }}>0 - 100</option>
+                                            <option value="1-4" {{ ($gradingSettings['scale_type'] ?? '') == '1-4' ? 'selected' : '' }}>1 - 4</option>
+                                            <option value="0-10" {{ ($gradingSettings['scale_type'] ?? '') == '0-10' ? 'selected' : '' }}>0 - 10</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input type="hidden" name="rounding_enable" value="0">
+                                        <input type="checkbox" name="rounding_enable" value="1" {{ ($gradingSettings['rounding_enable'] ?? 0) ? 'checked' : '' }} {{ $isLocked ? 'disabled' : '' }} 
+                                               class="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary">
+                                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300">Bulatkan Nilai Akhir</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="lg:col-span-7 space-y-6">
+                            
+                             <!-- Card: Syarat Kenaikan -->
+                             <div class="bg-slate-50 dark:bg-slate-900/30 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
+                                <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm mb-4">
+                                    <span class="material-symbols-outlined text-primary text-sm">trending_up</span> Syarat Kenaikan & Akademik
+                                </h4>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Hari Efektif /Thn</label>
+                                        <input type="number" name="total_effective_days" value="{{ $gradingSettings['total_effective_days'] ?? 220 }}" {{ $isLocked ? 'disabled' : '' }} 
+                                               class="w-full text-center font-bold rounded-lg border-slate-300 focus:ring-primary text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Max Mapel Gagal</label>
+                                        <input type="number" name="promotion_max_kkm_failure" value="{{ $gradingSettings['promotion_max_kkm_failure'] ?? 3 }}" {{ $isLocked ? 'disabled' : '' }} 
+                                               class="w-full text-center font-bold rounded-lg border-slate-300 focus:ring-primary text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Min Absensi (%)</label>
+                                        <input type="number" name="promotion_min_attendance" value="{{ $gradingSettings['promotion_min_attendance'] ?? 85 }}" {{ $isLocked ? 'disabled' : '' }} 
+                                               class="w-full text-center font-bold rounded-lg border-slate-300 focus:ring-primary text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Min Sikap</label>
+                                        <select name="promotion_min_attitude" {{ $isLocked ? 'disabled' : '' }} class="w-full text-center font-bold rounded-lg border-slate-300 focus:ring-primary text-sm">
+                                            <option value="A" {{ ($gradingSettings['promotion_min_attitude'] ?? '') == 'A' ? 'selected' : '' }}>A</option>
+                                            <option value="B" {{ ($gradingSettings['promotion_min_attitude'] ?? '') == 'B' ? 'selected' : '' }}>B</option>
+                                            <option value="C" {{ ($gradingSettings['promotion_min_attitude'] ?? '') == 'C' ? 'selected' : '' }}>C</option>
+                                        </select>
+                                    </div>
+                                </div>
+                             </div>
+
+                             <!-- Card: Predikat -->
+                             <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                                <div class="px-4 py-3 bg-slate-50 border-b border-slate-200">
+                                    <h4 class="font-bold text-xs uppercase text-slate-500">Interval Predikat ({{ $jenjang }})</h4>
+                                </div>
+                                <table class="w-full text-sm text-left">
+                                    <thead class="text-xs text-slate-500 uppercase bg-white border-b border-slate-100">
+                                        <tr>
+                                            <th class="px-4 py-2">Grade</th>
+                                            <th class="px-4 py-2 text-center">Batas Bawah</th>
+                                            <th class="px-4 py-2 text-center">Batas Atas</th>
+                                            <th class="px-4 py-2">Deskripsi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100">
+                                        @foreach($predicates as $p)
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="px-4 py-2">
+                                                <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-700">{{ $p->grade }}</div>
+                                            </td>
+                                            <td class="px-4 py-2 text-center">
+                                                <input type="number" name="predikat[{{ $p->grade }}][min]" value="{{ $p->min_score }}" {{ $isLocked ? 'disabled' : '' }} 
+                                                       class="w-16 text-center font-bold bg-transparent border-0 border-b-2 border-slate-100 focus:border-primary focus:ring-0 p-1">
+                                            </td>
+                                            <td class="px-4 py-2 text-center">
+                                                <input type="number" name="predikat[{{ $p->grade }}][max]" value="{{ $p->max_score }}" {{ $isLocked ? 'disabled' : '' }} 
+                                                       class="w-16 text-center font-bold bg-transparent border-0 border-b-2 border-slate-100 focus:border-primary focus:ring-0 p-1">
+                                            </td>
+                                            <td class="px-4 py-2">
+                                                <input type="text" name="predikat[{{ $p->grade }}][deskripsi]" value="{{ $p->deskripsi ?? '' }}" {{ $isLocked ? 'disabled' : '' }} 
+                                                       class="w-full text-sm bg-transparent border-0 focus:ring-0 disabled:opacity-50" placeholder="Deskripsi...">
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                                    </tbody>
+                                </table>
+                             </div>
+
+                             <!-- Card: Pengaturan Titimangsa -->
+                             <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5 mt-6">
+                                <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm mb-4">
+                                    <span class="material-symbols-outlined text-green-600 text-sm">calendar_month</span> Pengaturan Titimangsa Rapor
+                                </h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Tempat Titimangsa</label>
+                                        <input type="text" name="titimangsa_tempat_{{ strtolower($jenjang) }}" 
+                                               value="{{ $gradingSettings['titimangsa_tempat_' . strtolower($jenjang)] ?? ($school->kabupaten ?? '') }}" 
+                                               placeholder="Contoh: Jakarta"
+                                               class="w-full font-bold rounded-lg border-slate-300 focus:ring-primary text-sm">
+                                        <p class="text-[10px] text-slate-400 mt-1">Kota/Tempat di atas tanda tangan.</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Tanggal Rapor</label>
+                                        <div class="relative">
+                                            <input type="text" name="titimangsa_{{ strtolower($jenjang) }}" 
+                                                value="{{ $gradingSettings['titimangsa_' . strtolower($jenjang)] ?? '' }}" 
+                                                placeholder="Contoh: 20 Juli 2024"
+                                                class="w-full font-bold rounded-lg border-slate-300 focus:ring-primary text-sm">
+                                             <span class="absolute right-3 top-2 text-slate-400 material-symbols-outlined text-[18px]">calendar_today</span>
+                                        </div>
+                                        <p class="text-[10px] text-slate-400 mt-1">Tanggal pembagian rapor.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                             <!-- Submit Button -->
+                             <div class="flex justify-end pt-4">
+                                @if(isset($isLocked) && $isLocked)
+                                    <div class="bg-amber-100 text-amber-800 px-4 py-2 rounded-lg font-bold flex items-center gap-2 border border-amber-200">
+                                        <span class="material-symbols-outlined">lock</span> Mode Baca
+                                    </div>
+                                @else
+                                    <button type="submit" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-lg shadow-indigo-200 transition-all flex items-center gap-2">
+                                        <span class="material-symbols-outlined">save</span> Simpan Aturan
+                                    </button>
+                                @endif
+                             </div>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- TAB 2: TARGET KKM (KKM) -->
+        <div x-show="activeTab === 'kkm'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
+            
+            <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                         <h3 class="font-bold text-lg text-slate-900 dark:text-white">Target KKM Mata Pelajaran</h3>
+                         <p class="text-sm text-slate-500">Nilai minimum untuk ketuntasan belajar per mata pelajaran.</p>
+                    </div>
+                </div>
+                
+                <div class="rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                    <form id="kkmForm" action="{{ route('settings.kkm.store') }}" method="POST">
+                        @csrf
+                        <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex justify-end">
+                             <button type="submit" x-show="!isLocked" class="bg-slate-800 text-white px-5 py-2 rounded-lg font-bold text-sm hover:bg-slate-700 transition-all shadow-sm">
+                                Simpan KKM
+                            </button>
+                             <div x-show="isLocked" class="bg-slate-200 text-slate-500 px-5 py-2 rounded-lg font-bold text-sm flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">lock</span> Terkunci
+                            </div>
+                        </div>
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-white dark:bg-slate-800 uppercase text-xs font-bold text-slate-500 border-b border-slate-200 dark:border-slate-700">
+                                <tr>
+                                    <th class="px-6 py-4">Mata Pelajaran</th>
+                                    <th class="px-6 py-4 w-40 text-center bg-teal-50/50 text-teal-700">KKM MI</th>
+                                    <th class="px-6 py-4 w-40 text-center bg-indigo-50/50 text-indigo-700">KKM MTs</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 dark:divide-slate-700 bg-white">
+                                @foreach($mapels as $mapel)
+                                <tr class="hover:bg-slate-50 transition-colors">
+                                    <td class="px-6 py-3 font-semibold text-slate-700 dark:text-white">
+                                        {{ $mapel->nama_mapel }}
+                                        <span class="text-xs font-normal text-slate-400 block">{{ $mapel->kode_mapel }}</span>
+                                    </td>
+                                    <td class="px-6 py-3 text-center bg-teal-50/20">
+                                        @if($mapel->target_jenjang == 'MI' || $mapel->target_jenjang == 'SEMUA')
+                                            <input type="number" name="kkm[{{ $mapel->id }}][MI]" value="{{ $kkms[$mapel->id.'-MI']->nilai_kkm ?? 70 }}" :disabled="isLocked" class="w-20 text-center font-bold text-teal-700 rounded border-slate-200 focus:border-teal-500 focus:ring-teal-500 text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                                        @else
+                                            <span class="text-slate-300">-</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-3 text-center bg-indigo-50/20">
+                                         @if($mapel->target_jenjang == 'MTS' || $mapel->target_jenjang == 'SEMUA')
+                                            <input type="number" name="kkm[{{ $mapel->id }}][MTS]" value="{{ $kkms[$mapel->id.'-MTS']->nilai_kkm ?? 75 }}" :disabled="isLocked" class="w-20 text-center font-bold text-indigo-700 rounded border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                                        @else
+                                            <span class="text-slate-300">-</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB [NEW]: IDENTITAS APLIKASI -->
+        <div x-show="activeTab === 'identity'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
+            <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+                <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">storefront</span> Identitas Sekolah & Aplikasi
+                </h3>
+
+                <form action="{{ route('settings.identity.update') }}" method="POST" enctype="multipart/form-data" class="max-w-4xl">
+                    @csrf
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        
+                        <!-- Left: Info Aplikasi -->
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Nama Aplikasi</label>
+                                <input type="text" name="app_name" value="{{ \App\Models\GlobalSetting::val('app_name', 'E-Rapor') }}" class="w-full rounded-lg border-slate-300 dark:bg-slate-800 focus:ring-primary focus:border-primary">
+                                <p class="text-xs text-slate-500 mt-1">Nama yang tampil di Tab Browser dan Login Page.</p>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Sub-Judul / Tagline</label>
+                                <input type="text" name="app_tagline" value="{{ \App\Models\GlobalSetting::val('app_tagline', 'Integrated System') }}" class="w-full rounded-lg border-slate-300 dark:bg-slate-800 focus:ring-primary focus:border-primary">
+                                <p class="text-xs text-slate-500 mt-1">Teks kecil di bawah nama aplikasi. Contoh: "Integrated System"</p>
+                            </div>
+                        </div>
+
+                        <!-- Right: Logo Upload -->
+                        <div class="space-y-4">
+                            <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Logo Sekolah</label>
+                            
+                            <div class="flex items-start gap-4">
+                                <div class="w-32 h-32 bg-slate-100 rounded-lg border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden relative group">
+                                    @if(\App\Models\GlobalSetting::val('app_logo'))
+                                        <img src="{{ asset('public/' . \App\Models\GlobalSetting::val('app_logo')) }}" class="w-full h-full object-contain p-2">
+                                    @else
+                                        <span class="material-symbols-outlined text-4xl text-slate-300">image</span>
+                                    @endif
+                                </div>
+                                <div class="flex-1">
+                                    <input type="file" name="app_logo" class="block w-full text-sm text-slate-500
+                                      file:mr-4 file:py-2 file:px-4
+                                      file:rounded-full file:border-0
+                                      file:text-sm file:font-semibold
+                                      file:bg-primary/10 file:text-primary
+                                      hover:file:bg-primary/20" accept="image/*"
+                                    >
+                                    <p class="text-xs text-slate-500 mt-2">Format: PNG, JPG (Transparan disarankan). Maks 2MB.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Action Button -->
+                <div class="flex justify-end pt-4 border-t border-slate-200 dark:border-slate-700" x-show="!isLocked">
+                    <button @click="saveRules()" :disabled="loading" class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-700 hover:scale-105 shadow-lg transition-all flex items-center gap-2 disabled:opacity-50 disabled:scale-100">
+                        <span class="material-symbols-outlined" x-show="!loading">save_as</span>
+                        <span class="material-symbols-outlined animate-spin" x-show="loading">sync</span>
+                        <span x-text="loading ? 'Menyimpan...' : 'Simpan Konfigurasi'"></span>
+                    </button>
+                </div>       
+                
+                <div class="flex justify-end pt-4 border-t border-slate-200 dark:border-slate-700" x-show="isLocked">
+                    <div class="px-6 py-3 rounded-xl bg-slate-100 text-slate-500 font-bold flex items-center gap-2 border border-slate-200">
+                         <span class="material-symbols-outlined">lock</span> Mode Baca (Terkunci)
+                    </div>
+                </div>       </form>
+            </div>
+        </div>
+
+        <!-- TAB 3: UMUM & PERIODE (GENERAL) -->
+        <div x-show="activeTab === 'general'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
+            
+             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                 
+                 <!-- LEFT COLUMN: DEADLINE & WHITELIST -->
+                 <div class="space-y-6">
+                     
+                     <!-- Card: Safety Lock (NEW) -->
+                     <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-10">
+                            <span class="material-symbols-outlined text-6xl text-slate-800 dark:text-white">lock_person</span>
+                        </div>
+                        <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                             <span class="material-symbols-outlined text-amber-500">lock</span> Mode Edit Data Lama
+                        </h3>
+                        <p class="text-xs text-slate-500 mb-6 max-w-md">
+                            Secara default, tahun ajaran lampau dikunci untuk menjaga validitas data rapor yang sudah terbit.
+                            Aktifkan opsi ini jika Anda perlu memperbaiki kesalahan masa lalu.
+                        </p>
+
+                        <form action="{{ route('settings.general.update') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="safety_lock_marker" value="1">
+                            <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                                <div>
+                                    <h4 class="font-bold text-sm text-slate-700 dark:text-white">Izinkan Edit Tahun Lalu</h4>
+                                    <p class="text-[10px] text-slate-500">Membuka kunci input nilai & kenaikan kelas.</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="allow_edit_past_data" value="1" class="sr-only peer" onchange="this.form.submit()" {{ \App\Models\GlobalSetting::val('allow_edit_past_data') ? 'checked' : '' }}>
+                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-amber-300 dark:peer-focus:ring-amber-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-amber-600"></div>
+                                </label>
+                            </div>
+                        </form>
+                     </div>
+
+                     <!-- Card: Deadline Settings -->
+                    <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+                        <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                             <span class="material-symbols-outlined text-red-500">timer</span> Pengaturan Tenggat
+                        </h3>
+                        <form action="{{ route('settings.deadline.update') }}" method="POST">
+                            @csrf
+                            <div class="space-y-4">
+                                @foreach($periods as $periode)
+                                <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3 border {{ now() > $periode->end_date ? 'border-red-200' : 'border-green-200' }}">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <div>
+                                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">{{ $periode->lingkup_jenjang }}</span>
+                                            <h4 class="font-bold text-sm text-slate-800 dark:text-white">{{ $periode->nama_periode }}</h4>
+                                        </div>
+                                        <div>
+                                            @if($periode->end_date)
+                                                @if(now() > $periode->end_date)
+                                                    <span class="text-[10px] font-bold text-red-600 bg-red-100 px-2 py-0.5 rounded">TERKUNCI</span>
+                                                @else
+                                                    <span class="text-[10px] font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded">TERBUKA</span>
+                                                @endif
+                                            @else
+                                                <span class="text-[10px] text-slate-400 italic">Belum diset</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-2 items-end">
+                                        <div class="flex-1">
+                                            <input type="datetime-local" name="deadlines[{{ $periode->id }}]" 
+                                                   value="{{ $periode->end_date ? \Carbon\Carbon::parse($periode->end_date)->format('Y-m-d\TH:i') : '' }}"
+                                                   class="w-full rounded-lg border-slate-300 dark:bg-slate-800 text-xs font-bold">
+                                        </div>
+                                    </div>
+                                    <!-- Quick Actions -->
+                                    <div class="mt-2 text-right">
+                                        @if(now() > $periode->end_date)
+                                             <a href="{{ route('settings.deadline.toggle', ['id' => $periode->id, 'action' => 'unlock']) }}" class="text-[10px] font-bold text-green-600 hover:underline">Buka 24 Jam</a>
+                                        @else
+                                             <a href="{{ route('settings.deadline.toggle', ['id' => $periode->id, 'action' => 'lock']) }}" class="text-[10px] font-bold text-red-600 hover:underline">Kunci Sekarang</a>
+                                        @endif
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                            <div class="mt-4 text-right">
+                                <button type="submit" class="bg-slate-900 text-white px-4 py-2 rounded-lg font-bold text-xs hover:bg-slate-800 shadow-lg">Simpan Tenggat</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Card: Whitelist -->
+                    <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
+                                <span class="material-symbols-outlined text-green-500">verified_user</span> Whitelist
+                            </h3>
+                            <button onclick="document.getElementById('modalWhitelist').showModal()" class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100">
+                                + Guru
+                            </button>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-slate-50 dark:bg-slate-800/50 text-[10px] uppercase font-bold text-slate-500">
+                                    <tr>
+                                        <th class="p-2 pl-3">Guru</th>
+                                        <th class="p-2">Berlaku Sampai</th>
+                                        <th class="p-2 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-xs">
+                                    @forelse($whitelist as $item)
+                                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                                        <td class="p-2 pl-3">
+                                            <span class="font-bold block">{{ $item->guru_name }}</span>
+                                            <span class="text-[10px] text-slate-500">{{ $item->nama_periode }}</span>
+                                        </td>
+                                        <td class="p-2 text-green-600 font-bold">{{ \Carbon\Carbon::parse($item->valid_until)->format('d M H:i') }}</td>
+                                        <td class="p-2 text-right">
+                                            <form action="{{ route('settings.deadline.whitelist.remove', $item->id) }}" method="POST" onsubmit="return confirm('Cabut akses?');">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="text-red-500 hover:text-red-700 font-bold">Hapus</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="3" class="p-4 text-center text-slate-400 italic">Belum ada whitelist.</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                 </div>
+
+                 <!-- RIGHT COLUMN: RAPOR & SHORTCUTS -->
+                 <div class="space-y-6">
+                     <!-- Konfigurasi Rapor -->
+                     <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 space-y-6">
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-900 dark:text-white">Opsi Cetak Rapor</h3>
+                            <p class="text-sm text-slate-500">Komponen opsional pada PDF Rapor.</p>
+                        </div>
+                        
+                        <form action="{{ route('settings.users.permissions') }}" method="POST" class="space-y-4">
+                            @csrf
+                            <!-- Toggle Ekskul -->
+                            <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200">
+                                 <div class="flex items-center gap-3">
+                                     <div class="p-2 bg-blue-100 text-blue-600 rounded-lg">
+                                         <span class="material-symbols-outlined text-lg">sports_soccer</span>
+                                     </div>
+                                     <span class="font-bold text-slate-700 text-sm">Tabel Ekstrakurikuler</span>
+                                 </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="hidden" name="rapor_show_ekskul" value="0">
+                                    <input type="checkbox" name="rapor_show_ekskul" value="1" class="sr-only peer" {{ \App\Models\GlobalSetting::val('rapor_show_ekskul', 1) ? 'checked' : '' }}>
+                                    <div class="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:bg-primary peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                                </label>
+                            </div>
+                            
+                            <!-- Toggle Prestasi -->
+                            <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2 bg-amber-100 text-amber-600 rounded-lg">
+                                        <span class="material-symbols-outlined text-lg">emoji_events</span>
+                                    </div>
+                                    <span class="font-bold text-slate-700 text-sm">Tabel Prestasi</span>
+                                </div>
+                               <label class="relative inline-flex items-center cursor-pointer">
+                                   <input type="hidden" name="rapor_show_prestasi" value="0">
+                                   <input type="checkbox" name="rapor_show_prestasi" value="1" class="sr-only peer" {{ \App\Models\GlobalSetting::val('rapor_show_prestasi', 0) ? 'checked' : '' }}>
+                                   <div class="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:bg-primary peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                               </label>
+                           </div>
+    
+                           <div class="pt-4 text-right">
+                               <button type="submit" class="text-sm font-bold text-primary hover:text-green-700 hover:underline">Simpan Opsi Rapor</button>
+                           </div>
+                        </form>
+                     </div>
+    
+                     <!-- Shortcut Links -->
+                     <div>
+                         <div class="grid grid-cols-1 gap-4">
+                            <a href="{{ route('settings.users.index') }}" class="flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-primary/50 hover:bg-primary/5 transition-all group">
+                                <span class="material-symbols-outlined text-3xl text-slate-400 group-hover:text-primary">group</span>
+                                <div class="text-left">
+                                    <h4 class="font-bold text-slate-700 text-sm">User & Hak Akses</h4>
+                                    <p class="text-xs text-slate-500">Kelola akun guru & siswa</p>
+                                </div>
+                            </a>
+                            <a href="{{ route('settings.menus.index') }}" class="flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-primary/50 hover:bg-primary/5 transition-all group">
+                                <span class="material-symbols-outlined text-3xl text-slate-400 group-hover:text-primary">menu_open</span>
+                                <div class="text-left">
+                                    <h4 class="font-bold text-slate-700 text-sm">Menu Sidebar</h4>
+                                    <p class="text-xs text-slate-500">Atur menu aplikasi</p>
+                                </div>
+                            </a>
+                            <a href="{{ route('settings.pages.index') }}" class="flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-primary/50 hover:bg-primary/5 transition-all group">
+                                <span class="material-symbols-outlined text-3xl text-slate-400 group-hover:text-primary">article</span>
+                                <div class="text-left">
+                                    <h4 class="font-bold text-slate-700 text-sm">Halaman & Informasi</h4>
+                                    <p class="text-xs text-slate-500">Edit konten halaman</p>
+                                </div>
+                            </a>
+                         </div>
+                     </div>
+                 </div>
+
+             </div>
+        </div>
+
+        <!-- TAB 4: SYSTEM HEALTH DASHBOARD -->
+        <div x-show="activeTab === 'maintenance'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
+            <div class="bg-red-50 dark:bg-red-900/10 rounded-xl shadow-sm border border-red-200 dark:border-red-800 p-6 md:p-8">
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-100 dark:bg-red-800/30 text-red-600 dark:text-red-400 mb-4">
+                        <span class="material-symbols-outlined text-5xl">medical_services</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-red-700 dark:text-red-400 mb-2">Peta Masalah & Solusi (System Health)</h3>
+                    <p class="text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+                        Pusat perbaikan data mandiri. Gunakan fitur-fitur ini untuk memperbaiki error sistem tanpa perlu akses database manual.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto text-left">
+                    
+                    <!-- CARD 1: RESET PROMOTION (Critical) -->
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-red-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-3 opacity-10">
+                             <span class="material-symbols-outlined text-6xl text-red-500">restart_alt</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
+                                <span class="material-symbols-outlined text-red-500">warning</span> Reset Kenaikan Kelas
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-4">
+                                <b>Masalah:</b> Setelah proses naik kelas, siswa menumpuk di satu kelas atau salah masuk kelas (seperti kasus 37 siswa).
+                                <br><br>
+                                <b>Solusi:</b> Hapus semua hasil kenaikan, hapus kelas tahun depan yang rusak, dan kembalikan ke tahun ini.
+                            </p>
+                        </div>
+                        <form action="{{ route('settings.maintenance.reset-promotion') }}" method="POST" onsubmit="return confirm('⚠️ BAHAYA: RESET TOTAL? ⚠️\n\nData kenaikan kelas akan DIHAPUS. Anda harus ulang dari awal.\nKetik OK untuk lanjut.')">
+                            @csrf
+                            <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined">delete_forever</span> OBATI KENAIKAN KELAS
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- CARD 2: CLEAN ORPHANS -->
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-orange-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-3 opacity-10">
+                             <span class="material-symbols-outlined text-6xl text-orange-500">cleaning_services</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
+                                <span class="material-symbols-outlined text-orange-500">recycling</span> Bersihkan Data Sampah
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-4">
+                                <b>Masalah:</b> Ada nilai siswa yang sudah keluar, atau siswa ada di dua kelas yang berbeda, atau data "yatim piatu" sisa penghapusan manual.
+                                <br><br>
+                                <b>Solusi:</b> Scan dan hapus data nilai/anggota yang induknya (Siswa/Kelas) sudah tidak ada.
+                            </p>
+                        </div>
+                        <form action="{{ route('settings.maintenance.fix-orphans') }}" method="POST" onsubmit="return confirm('Bersihkan data sampah (orphans)?')">
+                            @csrf
+                            <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined">delete_sweep</span> SAPU BERSIH SAMPAH
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- CARD 3: DEDUPLICATE -->
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-blue-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-3 opacity-10">
+                             <span class="material-symbols-outlined text-6xl text-blue-500">content_copy</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
+                                <span class="material-symbols-outlined text-blue-500">difference</span> Hapus Nilai Ganda
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-4">
+                                <b>Masalah:</b> Satu siswa punya 2 nilai untuk mapel yang sama. Biasanya terjadi karena import Excel berulang kali.
+                                <br><br>
+                                <b>Solusi:</b> Cari duplikat, pertahankan data yang paling baru di-update, hapus sisanya.
+                            </p>
+                        </div>
+                        <form action="{{ route('settings.maintenance.deduplicate-grades') }}" method="POST" onsubmit="return confirm('Cari dan hapus nilai ganda?')">
+                            @csrf
+                            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined">filter_list_off</span> HAPUS DUPLIKAT
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- CARD 4: FORCE SYNC -->
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-teal-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
+                         <div class="absolute top-0 right-0 p-3 opacity-10">
+                             <span class="material-symbols-outlined text-6xl text-teal-500">sync_lock</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
+                                <span class="material-symbols-outlined text-teal-500">update</span> Paksa Hitung Ulang
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-4">
+                                <b>Masalah:</b> Anda baru saja mengubah "Bobot Nilai" (Misal: Harian 50%, UAS 50%), tapi nilai akhir siswa belum berubah.
+                                <br><br>
+                                <b>Solusi:</b> Paksa sistem menghitung ulang semua nilai Rapor (Semester/Cawu) berdasarkan rumus bobot terbaru.
+                                <br>
+                                <i>*Mendukung rumus (Tugas+THB)/2 jika bobot diatur 50:50.</i>
+                            </p>
+                        </div>
+                        <form action="{{ route('settings.maintenance.force-calcs') }}" method="POST" onsubmit="return confirm('Mulai perhitungan ulang massal (mungkin memakan waktu)?')">
+                            @csrf
+                            <button type="submit" class="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined">calculate</span> HITUNG ULANG TOTAL
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- CARD 5: SYNC STUDENT STATUS -->
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-indigo-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-3 opacity-10">
+                             <span class="material-symbols-outlined text-6xl text-indigo-500">manage_accounts</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
+                                <span class="material-symbols-outlined text-indigo-500">sync_alt</span> Sinkronisasi Status Siswa
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-4">
+                                <b>Masalah:</b> Siswa "Aktif" tapi tidak punya kelas, atau siswa masuk kelas tapi statusnya "Non-Aktif".
+                                <br><br>
+                                <b>Solusi:</b> Cek otomatis kehadiran di kelas tahun ini. <br>Ada Kelas = <b>Aktif</b>. Tidak Ada = <b>Non-Aktif</b>.
+                            </p>
+                        </div>
+                        <form action="{{ route('settings.maintenance.fix-student-status') }}" method="POST" onsubmit="return confirm('Sinkronisasi status Aktif/Non-Aktif semua siswa?')">
+                            @csrf
+                            <button type="submit" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined">person_search</span> OBATI STATUS GALAU
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- CARD 6: GENERATE ACCOUNTS -->
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-emerald-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-3 opacity-10">
+                             <span class="material-symbols-outlined text-6xl text-emerald-500">key</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
+                                <span class="material-symbols-outlined text-emerald-500">vpn_key</span> Generate Akun Massal
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-4">
+                                <b>Masalah:</b> Guru atau Siswa baru belum bisa login karena belum dibuatkan usernamenya.
+                                <br><br>
+                                <b>Solusi:</b> Buatkan akun otomatis untuk semua yang belum punya. <br>User: NIP/NIS, Pass: <b>guru123 / siswa123</b>.
+                            </p>
+                        </div>
+                        <form action="{{ route('settings.maintenance.generate-accounts') }}" method="POST" onsubmit="return confirm('Buatkan akun untuk user yang belum punya?')">
+                            @csrf
+                            <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined">add_reaction</span> SUNTIK VITAMIN AKUN
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- CARD 7: SYSTEM DETOX -->
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-pink-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-3 opacity-10">
+                             <span class="material-symbols-outlined text-6xl text-pink-500">cleaning_bucket</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
+                                <span class="material-symbols-outlined text-pink-500">mop</span> Detox Sistem (Clear Cache)
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-4">
+                                <b>Masalah:</b> Aplikasi terasa berat, lambat, atau perubahan setting tidak langsung muncul.
+                                <br><br>
+                                <b>Solusi:</b> Bersihkan semua file sampah (cache) dan paksa sistem rebuild konfigurasi.
+                            </p>
+                        </div>
+                        <form action="{{ route('settings.maintenance.system-detox') }}" method="POST" onsubmit="return confirm('Bersihkan semua cache sistem agar lebih ringan?')">
+                            @csrf
+                            <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined">restart_alt</span> MINUM JAMU DETOX
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- CARD 8: FIX JENJANG -->
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-violet-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-3 opacity-10">
+                             <span class="material-symbols-outlined text-6xl text-violet-500">school</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
+                                <span class="material-symbols-outlined text-violet-500">auto_fix_high</span> Terapi Identitas Kelas
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-4">
+                                <b>Masalah:</b> Salah set jenjang (misal Kelas 7 tapi jenjang MI).
+                                <br><br>
+                                <b>Solusi:</b> Auto-detect dari nama kelas. <br>Kelas 1-6 = <b>MI</b>. Kelas 7-9 = <b>MTs</b>.
+                            </p>
+                        </div>
+                        <form action="{{ route('settings.maintenance.fix-jenjang') }}" method="POST" onsubmit="return confirm('Perbaiki identitas jenjang (MI/MTS) berdasarkan nama kelas?')">
+                            @csrf
+                            <button type="submit" class="w-full bg-violet-500 hover:bg-violet-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined">healing</span> TERAPI JENJANG
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- CARD 9: TRIM DATA -->
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-cyan-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-3 opacity-10">
+                             <span class="material-symbols-outlined text-6xl text-cyan-500">content_cut</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
+                                <span class="material-symbols-outlined text-cyan-500">face_retouching_natural</span> Operasi Plastik (Trim Data)
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-4">
+                                <b>Masalah:</b> Nama " Ahmad" (pakai spasi) tidak ketemu saat dicari "Ahmad".
+                                <br><br>
+                                <b>Solusi:</b> Potong semua spasi berlebih di depan/belakang Nama, NIS, dan NIP.
+                            </p>
+                        </div>
+                        <form action="{{ route('settings.maintenance.trim-data') }}" method="POST" onsubmit="return confirm('Rapikan spasi pada semua nama dan nomor induk?')">
+                            @csrf
+                            <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined">cut</span> BEDAH PLASTIK
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- CARD 10: LOG CLEANER -->
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-3 opacity-10">
+                             <span class="material-symbols-outlined text-6xl text-slate-500">delete_sweep</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
+                                <span class="material-symbols-outlined text-slate-500">soap</span> Luluran Sistem (Log Cleaner)
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-4">
+                                <b>Masalah:</b> File log error menumpuk (laravel.log) menghabiskan penyimpanan server.
+                                <br><br>
+                                <b>Solusi:</b> Kosongkan file log agar penyimpanan kembali lega.
+                            </p>
+                        </div>
+                        <form action="{{ route('settings.maintenance.clear-logs') }}" method="POST" onsubmit="return confirm('Kosongkan file log sistem?')">
+                            @csrf
+                            <button type="submit" class="w-full bg-slate-500 hover:bg-slate-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined">recycling</span> BERSIHKAN LOG
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- CARD 11: SYNC HISTORY (Request User) -->
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-amber-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-3 opacity-10">
+                             <span class="material-symbols-outlined text-6xl text-amber-500">restore_page</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
+                                <span class="material-symbols-outlined text-amber-500">history</span> Sinkronisasi Riwayat
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-4">
+                                <b>Masalah:</b> Data kenaikan kelas/riwayat nilai di Rapor kosong atau hilang.
+                                <br><br>
+                                <b>Solusi:</b> Tarik ulang semua status (Naik/Lulus/Tinggal) dari riwayat Anggota Kelas tahun-tahun sebelumnya.
+                            </p>
+                        </div>
+                        <form action="{{ route('settings.maintenance.sync-history') }}" method="POST" onsubmit="return confirm('Tarik ulang semua riwayat status kenaikan siswa? Proses ini akan melengkapi data yang hilang.')">
+                            @csrf
+                            <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined">sync</span> TARIK RIWAYAT
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- CARD 12: FACTORY RESET (DANGER ZONE) -->
+                    <div class="bg-red-50 dark:bg-red-900/10 p-6 rounded-xl border-2 border-red-500 flex flex-col items-center text-center gap-4 mt-8 col-span-full">
+                        <h4 class="font-bold text-2xl text-red-600 dark:text-red-400 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-3xl">dangerous</span> ZONA BAHAYA: RESET TOTAL
+                        </h4>
+                        <p class="text-slate-600 dark:text-slate-300 max-w-2xl">
+                            Tindakan ini akan <b>MENGHAPUS SEMUA DATA</b> (Siswa, Guru, Kelas, Nilai, Absensi). <br>
+                            Yang tersisa HANYA akun <b>Admin & Staff TU</b> serta Data Master (Mapel & Tahun Ajaran). <br>
+                            Gunakan ini jika Anda ingin memulai sistem dari nol (Fresh Start).
+                        </p>
+                        <form action="{{ route('settings.maintenance.reset-system') }}" method="POST" onsubmit="return confirmReset(event)">
+                            @csrf
+                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg transition-transform hover:scale-105 flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined">delete_forever</span> RESET SISTEM DARI AWAL
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    @endif
+</div>
+
+<script>
+function confirmReset(e) {
+    e.preventDefault(); // Stop form
+    const form = e.target;
+
+    Swal.fire({
+        title: '⚠️ ZONA BAHAYA!',
+        text: "Anda akan MENGHAPUS SEMUA DATA (Siswa, Guru, Nilai, Kelas). Admin & TU tidak dihapus. Tindakan ini TIDAK BISA DIBATALKAN.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, Hapus Semuanya!',
+        cancelButtonText: 'Batal',
+        background: '#fff',
+        color: '#545454'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Second Level: Challenge
+            Swal.fire({
+                title: 'KONFIRMASI TERAKHIR',
+                text: 'Ketik "RESET" (Huruf Besar) untuk mengeksekusi penghapusan massal.',
+                input: 'text',
+                inputAttributes: {
+                    autocapitalize: 'off',
+                    placeholder: 'Ketik RESET disini...'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'LEDAKKAN 💣',
+                confirmButtonColor: '#d33',
+                showLoaderOnConfirm: true,
+                preConfirm: (text) => {
+                    if (text !== 'RESET') {
+                        Swal.showValidationMessage('Kode salah! Ketik "RESET" dengan huruf besar.')
+                    }
+                    return text === 'RESET';
+                },
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Memproses Kiamat...',
+                        text: 'Sistem sedang dibersihkan. Jangan tutup halaman ini.',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        didOpen: () => {
+                            Swal.showLoading()
+                        }
+                    }).then(() => {
+                        form.submit(); // Submit the form programmatically
+                    });
+                }
+            });
+        }
+    })
+    return false;
+}
+</script>
+
+<!-- Modal Year -->
+<div id="yearModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="document.getElementById('yearModal').classList.add('hidden')"></div>
+
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+        <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white dark:bg-slate-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <h3 class="text-lg leading-6 font-medium text-slate-900 dark:text-white" id="modal-title">
+                    Kelola Tahun Ajaran
+                </h3>
+                
+                <div class="mt-4 flex flex-col gap-6">
+                    <!-- Form New -->
+                    <form action="{{ route('settings.year.store') }}" method="POST" class="flex gap-2">
+                        @csrf
+                        <input type="text" name="nama" placeholder="Contoh: 2025/2026" class="flex-1 rounded-lg border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary" required>
+                        <button type="submit" class="bg-primary text-white px-4 py-2 rounded-lg font-bold hover:bg-green-600 transition-all">Tambah</button>
+                    </form>
+
+                    <!-- List Archived -->
+                    <div class="flex flex-col gap-2 max-h-60 overflow-y-auto">
+                        <label class="text-xs font-bold uppercase text-slate-500">Arsip Tahun Ajaran</label>
+                        @foreach($archivedYears as $year)
+                        <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                             <span class="font-medium text-slate-700 dark:text-slate-300">{{ $year->nama }}</span>
+                             <div class="flex gap-1">
+                                <form action="{{ route('settings.year.toggle', $year->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="text-xs bg-slate-200 hover:bg-primary hover:text-white px-3 py-1 rounded transition-colors">Aktifkan</button>
+                                </form>
+                                <form action="{{ route('settings.year.destroy', $year->id) }}" method="POST" onsubmit="return confirm('YAKIN HAPUS TAHUN INI? \nSemua data kelas, nilai, dan absensi di tahun ini akan hilang PERMANEN.')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded transition-colors" title="Hapus Tahun">Hapus</button>
+                                </form>
+                             </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 dark:bg-slate-700/50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="document.getElementById('yearModal').classList.add('hidden')">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Add Whitelist -->
+<dialog id="modalWhitelist" class="modal rounded-xl shadow-2xl p-0 backdrop:bg-slate-900/50 w-full max-w-md">
+    <div class="bg-white dark:bg-slate-800 p-6">
+        <h3 class="font-bold text-lg mb-4 text-slate-800 dark:text-white">Beri Akses Khusus</h3>
+        <form action="{{ route('settings.deadline.whitelist.store') }}" method="POST">
+            @csrf
+            
+            <div class="mb-4">
+                <label class="block text-xs font-bold text-slate-500 mb-1">Pilih Guru</label>
+                <div class="relative">
+                    <select name="id_guru" required class="w-full rounded-lg border-slate-300 dark:bg-slate-700 dark:border-slate-600 dark:text-white text-sm focus:ring-primary appearance-none">
+                        <option value="" disabled selected>-- Cari Nama Guru --</option>
+                        @foreach($teachers as $teacher)
+                        <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
+                        @endforeach
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-700 dark:text-slate-300">
+                        <span class="material-symbols-outlined text-sm">expand_more</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-xs font-bold text-slate-500 mb-1">Periode Akses</label>
+                <select name="id_periode" class="w-full rounded-lg border-slate-300 dark:bg-slate-700 dark:border-slate-600 dark:text-white text-sm focus:ring-primary">
+                    @foreach($periods as $p)
+                    <option value="{{ $p->id }}">{{ $p->nama_periode }} ({{ $p->lingkup_jenjang }})</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="mb-6 grid grid-cols-2 gap-4">
+                <div>
+                     <label class="block text-xs font-bold text-slate-500 mb-1">Durasi Akses</label>
+                     <select name="duration" class="w-full rounded-lg border-slate-300 dark:bg-slate-700 dark:border-slate-600 dark:text-white text-sm focus:ring-primary">
+                         <option value="1">1 Hari (24 Jam)</option>
+                         <option value="3">3 Hari</option>
+                         <option value="7">1 Minggu</option>
+                     </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Alasan</label>
+                    <input type="text" name="alasan" required placeholder="Contoh: Sakit..." class="w-full rounded-lg border-slate-300 dark:bg-slate-700 dark:border-slate-600 dark:text-white text-sm focus:ring-primary">
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2">
+                <button type="button" onclick="document.getElementById('modalWhitelist').close()" class="px-4 py-2 rounded-lg text-slate-500 text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">Batal</button>
+                <button type="submit" class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-colors">Berikan Akses</button>
+            </div>
+        </form>
+    </div>
+</dialog>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('settingsPage', () => ({
+            activeTab: new URLSearchParams(window.location.search).get('tab') || 'grading',
+            isLocked: {{ $isLocked ? 'true' : 'false' }},
+            jenjang: '{{ $jenjang }}', // From Controller
+            
+            init() {
+                // Optional: Auto-scroll to error if any
+                if (document.querySelector('.text-red-600')) {
+                    // document.querySelector('.text-red-600').scrollIntoView();
+                }
+            }
+        }))
+    })
+</script>
+@endsection
