@@ -60,10 +60,12 @@
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true,
+        "platform": {
+            "php": "7.4.33"
+        },
         "allow-plugins": {
             "php-http/discovery": true
         }
-    },
     "minimum-stability": "dev",
-    "prefer-stable": true
-}
+        "prefer-stable": true
+    }
