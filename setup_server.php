@@ -52,12 +52,24 @@ if (!file_exists('.env')) {
 }
 
 // 2. Composer Install (Install Library)
+// 2. Install Library (Composer)
 echo "<h3>2. Install Library (Composer)</h3>";
-// Hostinger usually supports 'composer' or 'php /usr/bin/composer'
-if (file_exists('composer.lock')) {
-    // Try standard composer
-    run_command("composer install --optimize-autoloader --no-dev");
+
+if (file_exists('vendor') && is_dir('vendor')) {
+    echo "✅ Folder <strong>vendor</strong> ditemukan (Manual Upload Detected).<br>";
+    echo "Running: composer dump-autoload (Optimizing)...<br>";
+    flush();
+    // Try dump-autoload
+    run_command("composer dump-autoload --optimize");
 } else {
+    // Hostinger usually supports 'composer' or 'php /usr/bin/composer'
+    if (file_exists('composer.lock')) {
+        // Try standard composer
+        run_command("composer install --optimize-autoloader --no-dev");
+    } else {
+        echo "⚠️ File composer.lock tidak ditemukan. Pastikan Git Clone berhasil.<br>";
+    }
+}
     echo "⚠️ File composer.lock tidak ditemukan. Pastikan Git Clone berhasil.<br>";
 }
 
