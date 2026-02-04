@@ -25,7 +25,7 @@ use App\Http\Controllers\SettingsController;
 
 // Auth Routes (Public)
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1')->name('login.post'); // Max 5 attempts/min
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Protected Routes (Login Required)

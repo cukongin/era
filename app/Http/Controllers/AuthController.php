@@ -23,6 +23,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+            \App\Models\AuditLog::log('LOGIN', 'User Login', 'User logged in successfully.');
             return redirect()->intended('/');
         }
 
@@ -34,6 +35,9 @@ class AuthController extends Controller
     // Proses Logout
     public function logout(Request $request)
     {
+        if(Auth::check()){
+             \App\Models\AuditLog::log('LOGOUT', 'User Logout', 'User logged out.');
+        }
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
