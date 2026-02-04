@@ -1023,23 +1023,19 @@ class WaliKelasController extends Controller
             if ($attPercentage < $minAttendance) $failConditions[] = "Kehadiran ($attPercentage% < $minAttendance%)";
 
             if (count($failConditions) > 0) {
-                 // If fails critically (e.g. lots of mapel failures), maybe suggest Retain
-                 // If fails marginally (e.g. just attitude), suggest Review?
-                 // For safety: If ANY fail condition met -> Review/Retain.
-                 if ($underKkmCount > ($maxKkmFailure + 2)) {
-                     $recommendation = $defaultRetain; // Definitively fail if waay below
-                     $systemStatus = 'retain';
-                 } else {
-                     $recommendation = 'Perlu Tinjauan';
-                     $systemStatus = 'review';
-                 }
+                 // STRICT: If any failure condition is met -> Automatically RETAIN
+                 $recommendation = $defaultRetain; 
+                 $systemStatus = 'retain';
             }
 
-            // Existing Decision Overrides
             // Result
             $fail = count($failConditions) > 0;
-            $isConditional = $fail && $systemStatus == 'review'; // If it failed but system suggests review
-            $systemStatus = $fail ? 'retain' : ($isConditional ? 'review' : (($kelas->jenjang->kode == 'MI' && $kelas->tingkat == 6) || ($kelas->jenjang->kode == 'MTS' && $kelas->tingkat == 9) ? 'graduate' : 'promote')); 
+            // $isConditional logic removed since we now default to Retain for any failure
+            
+            // Recalculate System Status (Final Check)
+            // If fail -> Retain. Else -> Promote/Graduate
+            $baseStatus = ($kelas->jenjang->kode == 'MI' && $kelas->tingkat == 6) || ($kelas->jenjang->kode == 'MTS' && $kelas->tingkat == 9) ? 'graduate' : 'promote';
+            $systemStatus = $fail ? 'retain' : $baseStatus; 
             
             // Override Logic
             $decisionObj = $decisions[$sId] ?? null;
