@@ -2,20 +2,39 @@
 // setup_server.php - "Tenang Jaya" Deployment Helper
 // Upload this file to your public_html folder and access it via browser.
 
+// Optimization for Hostinger Web Process
+set_time_limit(600); // 10 Minutes
+ini_set('memory_limit', '1024M'); // 1GB Memory
+
+// Disable Output Buffering for Real-time Progress
+if (function_exists('apache_setenv')) {
+    @apache_setenv('no-gzip', 1);
+}
+@ini_set('zlib.output_compression', 0);
+@ini_set('implicit_flush', 1);
+while (ob_get_level() > 0) {
+    ob_end_flush();
+}
+ob_implicit_flush(1);
+
 // Security: Password Protection
 $password = "bismillah"; // Ganti jika perlu
 if (!isset($_GET['auth']) || $_GET['auth'] !== $password) {
     die("Akses Ditolak. Tambahkan ?auth=bismillah di URL.");
 }
 
-echo "<h1>🛠️ Setup Server E-Rapor (Tenang Jaya)</h1><hr>";
+echo "<h1>🛠️ Setup Server E-Rapor (Tenang Jaya)</h1>";
+echo "PHP Version Running: <strong>" . phpversion() . "</strong> (Must be >= 8.0)<hr>";
+flush();
 
 function run_command($cmd) {
     echo "<strong>Running:</strong> $cmd<br>";
+    flush();
     echo "<pre>";
     $output = shell_exec($cmd . " 2>&1");
     echo $output;
     echo "</pre><hr>";
+    flush();
 }
 
 // 1. Cek Environment
