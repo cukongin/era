@@ -26,14 +26,13 @@ try {
 echo "<hr>";
 echo "<h2>DIAGNOSA SERVER:</h2>";
 
-// 1. Check Permissions
-echo "<h3>1. Cek Permission Folder:</h3>";
-$dirs = ['../storage', '../storage/framework', '../storage/framework/views', '../storage/logs'];
+// 1. Check Execution Functions
+echo "<h3>1. Cek Fungsi Sistem:</h3>";
+$funcs = ['exec', 'shell_exec', 'system', 'passthru', 'proc_open'];
 echo "<ul>";
-foreach ($dirs as $dir) {
-    $path = __DIR__ . '/' . $dir;
-    $writable = is_writable($path) ? "<span style='color:green'>WRITABLE (OK)</span>" : "<span style='color:red'>NOT WRITABLE (GAGAL)</span>";
-    echo "<li>$dir: $writable</li>";
+foreach ($funcs as $func) {
+    $status = function_exists($func) ? "<span style='color:green'>AKTIF (Bisa Dipakai)</span>" : "<span style='color:red'>NON-AKTIF (Diblokir)</span>";
+    echo "<li>$func: $status</li>";
 }
 echo "</ul>";
 
