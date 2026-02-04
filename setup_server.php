@@ -79,5 +79,16 @@ run_command("php artisan config:cache");
 run_command("php artisan route:cache");
 run_command("php artisan view:cache");
 
+// 7. Fix Document Root (Redirect to public/)
+echo "<h3>7. Fixing Document Root</h3>";
+$htaccess = "
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+";
+file_put_contents('.htaccess', trim($htaccess));
+echo "✅ Berhasil membuat file .htaccess untuk redirect ke folder public.<br>";
+
 echo "<br><strong>🏁 Setup Selesai! Hapus file ini setelah sukses.</strong>";
 echo "<br><a href='/portal-masuk'>Klik disini untuk Login (portal-masuk)</a>";
