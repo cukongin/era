@@ -16,6 +16,12 @@ class AuthController extends Controller
     // Proses Login
     public function login(Request $request)
     {
+        // Honeypot Check (Anti-Bot)
+        if ($request->filled('website')) {
+            \App\Models\AuditLog::log('BOT_DETECTED', 'Login Page', 'Honeypot triggered during login attempt.');
+            return back()->withErrors(['email' => 'System detected unusual activity.']);
+        }
+
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],

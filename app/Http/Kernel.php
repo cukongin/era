@@ -38,6 +38,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\SecureHeaders::class, // Security Guard
+            \App\Http\Middleware\InputSanitizer::class, // Anti-XSS Sanitizer
         ],
 
         'api' => [

@@ -21,7 +21,16 @@ class ProfileController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,'.$user->id,
-            'password' => 'nullable|min:6|confirmed'
+            'password' => [
+                'nullable',
+                'min:8',             // Minimum 8 characters
+                'regex:/[a-z]/',      // Must contain at least one lowercase letter
+                'regex:/[0-9]/',      // Must contain at least one digit
+                'confirmed'
+            ]
+        ], [
+            'password.min' => 'Password minimal 8 karakter!',
+            'password.regex' => 'Password harus kombinasi huruf dan angka!'
         ]);
 
         $user->name = $request->name;

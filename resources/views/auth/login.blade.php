@@ -56,6 +56,11 @@
                     <label class="text-xs font-bold text-slate-700 uppercase tracking-wide">Email Address</label>
                     <input type="email" name="email" class="w-full rounded-lg border-slate-300 focus:border-primary focus:ring-primary text-sm placeholder-slate-400" placeholder="admin@madrasah.com" value="{{ old('email') }}" required>
                 </div>
+
+                <!-- Honeypot for Bots (Hidden) -->
+                <div class="hidden">
+                    <label>Don't fill this out if you're human: <input type="text" name="website" value="{{ old('website') }}" tabindex="-1" autocomplete="off"></label>
+                </div>
                 
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-bold text-slate-700 uppercase tracking-wide">Password</label>
