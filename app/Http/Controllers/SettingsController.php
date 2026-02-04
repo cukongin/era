@@ -1034,4 +1034,30 @@ class SettingsController extends Controller
 
         return response()->json(['message' => "Berhasil menghitung ulang $count data nilai siswa ($jenjang)."]);
     }
+
+    public function updateApplication()
+    {
+        // Security: Admin Only
+        if (auth()->user()->role !== 'admin') abort(403);
+        
+        $output = [];
+        $returnVar = 0;
+        
+        // Command: git pull
+        // 2>&1 redirects stderr to stdout so we capture errors too
+        exec('git pull origin master 2>&1', $output, $returnVar);
+        
+        // Clear Cache
+        \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+        \Illuminate\Support\Facades\Artisan::call('view:clear');
+        \Illuminate\Support\Facades\Artisan::call('config:clear');
+        
+        $log = implode("\n", $output);
+        
+        if ($returnVar === 0) {
+            return back()->with('success', "Update Berhasil! Sistem sudah versi terbaru.\nLog:\n" . $log);
+        } else {
+            return back()->with('error', "Update Gagal via Git.\nLog:\n" . $log);
+        }
+    }
 }

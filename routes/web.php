@@ -228,6 +228,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/fix-orphans', [App\Http\Controllers\MaintenanceController::class, 'cleanupOrphans'])->name('settings.maintenance.fix-orphans');
             Route::post('/deduplicate-grades', [App\Http\Controllers\MaintenanceController::class, 'deduplicateGrades'])->name('settings.maintenance.deduplicate-grades');
             Route::post('/force-calcs', [App\Http\Controllers\MaintenanceController::class, 'forceFullRecalculation'])->name('settings.maintenance.force-calcs');
+            Route::post('/update-app', [App\Http\Controllers\SettingsController::class, 'updateApplication'])->name('settings.maintenance.update-app');
             Route::post('/fix-student-status', [App\Http\Controllers\MaintenanceController::class, 'syncStudentStatus'])->name('settings.maintenance.fix-student-status');
             Route::post('/generate-accounts', [App\Http\Controllers\MaintenanceController::class, 'generateMissingAccounts'])->name('settings.maintenance.generate-accounts');
             Route::post('/generate-accounts', [App\Http\Controllers\MaintenanceController::class, 'generateMissingAccounts'])->name('settings.maintenance.generate-accounts');
