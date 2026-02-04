@@ -294,15 +294,21 @@
                         </div>
                         
                         <!-- System Recommendation Badge (Compact) -->
-                        @if($stat->system_status == 'promote' || $stat->system_status == 'graduate')
-                            <div class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center" title="{{ $stat->recommendation }}">
-                                <span class="material-symbols-outlined text-[18px]">check</span>
-                            </div>
-                        @else
-                            <div class="w-8 h-8 {{ $stat->system_status == 'review' ? 'bg-amber-100 text-amber-600' : 'bg-red-100 text-red-600' }} rounded-full flex items-center justify-center" title="{{ $stat->recommendation }}">
-                                <span class="material-symbols-outlined text-[18px]">{{ $stat->system_status == 'review' ? 'warning' : 'close' }}</span>
-                            </div>
-                        @endif
+                        <div class="flex items-center gap-2">
+                             <span class="text-xs font-bold text-right {{ $stat->system_status == 'promote' || $stat->system_status == 'graduate' ? 'text-emerald-600' : ($stat->system_status == 'review' ? 'text-amber-600' : 'text-red-600') }}">
+                                {{ $stat->recommendation }}
+                            </span>
+
+                            @if($stat->system_status == 'promote' || $stat->system_status == 'graduate')
+                                <div class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-[18px]">check</span>
+                                </div>
+                            @else
+                                <div class="w-8 h-8 {{ $stat->system_status == 'review' ? 'bg-amber-100 text-amber-600' : 'bg-red-100 text-red-600' }} rounded-full flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-[18px]">{{ $stat->system_status == 'review' ? 'warning' : 'close' }}</span>
+                                </div>
+                            @endif
+                        </div>
                     </div>
 
                     <!-- Stats Grid -->
