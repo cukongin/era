@@ -109,11 +109,12 @@ echo "<h3>7. Fixing Document Root</h3>";
 $htaccess = "
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteCond %{REQUEST_URI} !^/setup_server.php
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
 ";
 file_put_contents('.htaccess', trim($htaccess));
-echo "✅ Berhasil membuat file .htaccess untuk redirect ke folder public.<br>";
+echo "✅ Berhasil membuat file .htaccess (Safe Mode).<br>";
 
 echo "<br><strong>🏁 Setup Selesai! Hapus file ini setelah sukses.</strong>";
 echo "<br><a href='/portal-masuk'>Klik disini untuk Login (portal-masuk)</a>";
