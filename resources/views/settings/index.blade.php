@@ -48,8 +48,8 @@
     @else
 
     <!-- TABS NAVIGATION -->
-    <div class="border-b border-slate-200 dark:border-slate-700">
-        <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+    <div class="border-b border-slate-200 dark:border-slate-700 overflow-x-auto no-scrollbar">
+        <nav class="-mb-px flex space-x-6 min-w-max px-2" aria-label="Tabs">
             <button @click="activeTab = 'grading'"
                 :class="activeTab === 'grading' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
                 class="group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm transition-all">
