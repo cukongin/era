@@ -999,8 +999,20 @@ class WaliKelasController extends Controller
             $recommendation = $defaultPromote;
             $systemStatus = 'promote'; 
 
-            // Logic Check
             $failConditions = [];
+
+            // CHECK: Must participate in ALL Periods
+            // We check if student has at least one grade entry in each period
+            $attendedPeriodIds = $sGrades->pluck('id_periode')->unique();
+            $missingPeriods = $periods->filter(function($p) use ($attendedPeriodIds) {
+                return !$attendedPeriodIds->contains($p->id);
+            });
+
+            if ($missingPeriods->count() > 0) {
+                // Formatting: "Ganjil, Genap"
+                $periodNames = $missingPeriods->pluck('nama_periode')->join(', ');
+                $failConditions[] = "Tidak mengikuti ujian periode: $periodNames";
+            }
             
             if ($underKkmCount > $maxKkmFailure) $failConditions[] = "Mapel < KKM ($underKkmCount > $maxKkmFailure)";
             if ($currentAttRank < $minAttRank) $failConditions[] = "Sikap ($attitudeCode < $minAttitude)";
