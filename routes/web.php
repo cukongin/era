@@ -89,7 +89,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/settings/deadline', [App\Http\Controllers\DeadlineController::class, 'update'])->name('settings.deadline.update');
         Route::get('/settings/deadline/toggle/{id}', [App\Http\Controllers\DeadlineController::class, 'toggleLock'])->name('settings.deadline.toggle');
         Route::post('/settings/deadline/update', [SettingsController::class, 'updateDeadline'])->name('settings.deadline.update');
-        Route::post('/settings/general/update', [SettingsController::class, 'updateGeneral'])->name('settings.general.update');
+        Route::post('/settings/maintenance/force-calcs', [SettingsController::class, 'recalculateGrades'])->name('settings.maintenance.force-calcs');
+        Route::post('/settings/maintenance/update-app', [SettingsController::class, 'updateApplication'])->name('settings.maintenance.update-app');
         Route::get('/settings/deadline/whitelist-remove/{id}', [SettingsController::class, 'removeWhitelist'])->name('settings.deadline.whitelist.remove');
         Route::post('/settings/deadline/whitelist', [App\Http\Controllers\DeadlineController::class, 'storeWhitelist'])->name('settings.deadline.whitelist.store');
         Route::delete('/settings/deadline/whitelist/{id}', [App\Http\Controllers\DeadlineController::class, 'removeWhitelist'])->name('settings.deadline.whitelist.remove');

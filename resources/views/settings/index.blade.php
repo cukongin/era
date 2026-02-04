@@ -706,6 +706,30 @@
                             </a>
                          </div>
                      </div>
+
+                <!-- AUTO UPDATE CARD -->
+                <div class="mb-8 p-6 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-2xl shadow-xl text-white flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                         <span class="material-symbols-outlined text-9xl">cloud_sync</span>
+                    </div>
+                    
+                    <div class="relative z-10">
+                        <h3 class="text-2xl font-bold flex items-center gap-2 mb-2">
+                             <span class="material-symbols-outlined">rocket_launch</span> Update Aplikasi Otomatis
+                        </h3>
+                        <p class="text-violet-100 max-w-xl">
+                            Klik tombol ini untuk menarik update terbaru dari sistem pusat (GitHub). 
+                            Pastikan koneksi internet server stabil.
+                        </p>
+                    </div>
+
+                    <form action="{{ route('settings.maintenance.update-app') }}" method="POST" class="relative z-10" onsubmit="return confirm('Mulai proses update otomatis? Website mungkin tidak bisa diakses beberapa detik.')">
+                        @csrf
+                        <button type="submit" class="bg-white text-violet-700 hover:bg-violet-50 font-bold py-3 px-6 rounded-xl shadow-lg transition-transform hover:scale-105 flex items-center gap-2">
+                            <span class="material-symbols-outlined">download</span> Update Sekarang
+                        </button>
+                    </form>
+                </div>
                  </div>
 
              </div>
