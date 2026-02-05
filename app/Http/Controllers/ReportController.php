@@ -1072,7 +1072,8 @@ class ReportController extends Controller
         $students = $class->anggota_kelas()->with('siswa')->get();
         
         // Grades
-        $grades = NilaiSiswa::where('id_kelas', $class->id)
+        $grades = NilaiSiswa::with('mapel')
+            ->where('id_kelas', $class->id)
             ->whereIn('id_periode', $targetPeriodIds)
             ->get()
             ->groupBy('id_siswa');
@@ -1082,7 +1083,32 @@ class ReportController extends Controller
             ->where('id_kelas', $class->id)
             ->whereIn('id_periode', $targetPeriodIds)
             ->get()
-            ->groupBy('id_siswa'); // Group by Student for aggregation
+            ->groupBy('id_siswa'); 
+
+        // --- TREND ANALYSIS (PREPARATION) ---
+        $previousRanks = [];
+        if (!$isAnnual && $periode) {
+            // Find Previous Period in the same Academic Year
+            $prevPeriode = $periodes->where('id', '<', $periode->id)->sortByDesc('id')->first();
+            
+            if ($prevPeriode) {
+                // Fetch basic grades for Previous Period to Calculate Rank Snapshot
+                // Optimization: Don't need full details, just Total Score per student
+                $prevGrades = DB::table('nilai_siswa')
+                    ->select('id_siswa', DB::raw('SUM(nilai_akhir) as total_score'))
+                    ->where('id_kelas', $class->id)
+                    ->where('id_periode', $prevPeriode->id)
+                    ->groupBy('id_siswa')
+                    ->orderByDesc('total_score')
+                    ->get();
+                
+                // Assign Ranks
+                $pRank = 1;
+                foreach($prevGrades as $pg) {
+                    $previousRanks[$pg->id_siswa] = $pRank++;
+                }
+            }
+        }
 
         // 3. Calculate Stats & Rank
         $rankingData = [];
@@ -1124,7 +1150,8 @@ class ReportController extends Controller
                 'avg' => $avgScore,
                 'absence' => $absenceCount,
                 'grades_count' => $gradeCount,
-                'tie_reason' => null
+                'tie_reason' => null,
+                'prev_rank' => $previousRanks[$ak->siswa->id] ?? null
             ];
         }
 
@@ -1195,10 +1222,30 @@ class ReportController extends Controller
                  $insight[] = "⚠️ Awas: Absen Tinggi (" . $data['absence'] . ")";
             }
             
+            // 3. Trend Analysis (Rising Star)
+            if (isset($data['prev_rank'])) {
+                $diff = $data['prev_rank'] - $data['rank'];
+                if ($diff >= 3) {
+                    $insight[] = "🚀 Rising Star (Naik $diff Peringkat)";
+                    $data['trend_status'] = 'rising';
+                } elseif ($diff <= -3) {
+                    $insight[] = "📉 Perlu Evaluasi (Turun " . abs($diff) . " Peringkat)";
+                    $data['trend_status'] = 'falling';
+                } elseif ($diff > 0) {
+                     $data['trend_status'] = 'up'; // Small improvement
+                } elseif ($diff < 0) {
+                     $data['trend_status'] = 'down'; // Small drop
+                } else {
+                     $data['trend_status'] = 'flat';
+                }
+                $data['trend_diff'] = $diff;
+            } else {
+                $data['trend_status'] = null;
+            }
+
             // Merge Logic: Tie Reason is ALWAYS the Prefix if exists
             if ($data['tie_reason']) {
                 $data['insight'] = "⚖️ " . $data['tie_reason'];
-                // Optionally append secondary insight? Maybe too long.
             } else {
                 $data['insight'] = implode(" • ", $insight);
             }
@@ -1207,9 +1254,50 @@ class ReportController extends Controller
         }
         unset($data);
 
+        // --- ADVANCED ANALYTICS START ---
+        
+        // 1. Mapel Difficulty Analysis ("Mapel Neraka" vs "Surga")
+        // Aggregate all grades in this selection
+        $allMapelGrades = collect();
+        if ($isAnnual) {
+             // Re-fetch all grades flat for mapel analysis? Or reuse $grades structure?
+             // $grades is grouped by id_siswa. Need to pivot to Group By ID Mapel.
+             foreach($grades as $sGrades) {
+                 foreach($sGrades as $grade) {
+                     $allMapelGrades->push($grade);
+                 }
+             }
+        } else {
+            // Flatten the nested collection from groupBy('id_siswa')
+             $allMapelGrades = $grades->flatten();
+        }
+
+        $mapelStats = $allMapelGrades->groupBy('id_mapel')->map(function ($row) {
+            return [
+                'avg' => $row->avg('nilai_akhir'),
+                'count' => $row->count(),
+                'mapel' => $row->first()->mapel ?? null // Eager loading might be needed on initial query
+            ];
+        })->sortBy('avg'); // Low to High
+
+        $mapelAnalysis = [
+            'hardest' => $mapelStats->first(), // Lowest Avg
+            'easiest' => $mapelStats->last(),  // Highest Avg
+            'all' => $mapelStats
+        ];
+        
+        // 2. Anomaly Detection (The "Syainur" Paradox)
+        // High Rank (Top 5) BUT High Absence (>= 10)
+        $anomalies = collect($rankingData)->filter(function($student) {
+            return $student['rank'] <= 5 && $student['absence'] >= 10;
+        });
+
         // 6. Podium (Top 3)
         $podium = array_slice($rankingData, 0, 3);
 
-        return view('reports.class_analytics', compact('class', 'periode', 'periodes', 'rankingData', 'podium', 'isAnnual'));
+        return view('reports.class_analytics', compact(
+            'class', 'periode', 'periodes', 'rankingData', 'podium', 'isAnnual', 
+            'mapelAnalysis', 'anomalies'
+        ));
     }
 }

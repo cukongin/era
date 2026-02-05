@@ -152,6 +152,92 @@
         </div>
     </div>
     @endif
+    
+    <!-- 2.5 Advanced Analytics Dashboard (Mapel & Anomaly) -->
+    @if(isset($mapelAnalysis) || (isset($anomalies) && count($anomalies) > 0))
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        <!-- Peta Mapel (Neraka/Surga) -->
+        @if(isset($mapelAnalysis))
+        <div class="bg-white dark:bg-[#1a2332] rounded-xl border border-slate-200 dark:border-[#2a3441] p-4 shadow-sm">
+            <h3 class="font-bold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-indigo-500">analytics</span> Intelijen Mapel
+            </h3>
+            <div class="space-y-3">
+                <!-- Mapel Surga -->
+                 @if($mapelAnalysis['easiest'])
+                <div class="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-3 border border-emerald-100 dark:border-emerald-800/50 flex justify-between items-center group cursor-help"
+                     title="Mapel dengan rata-rata kelas tertinggi">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-emerald-100 dark:bg-emerald-800 text-emerald-600 dark:text-emerald-300 rounded-full w-8 h-8 flex items-center justify-center font-bold text-lg">
+                            😊
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Mapel "Surga"</div>
+                            <div class="font-bold text-slate-800 dark:text-white">{{ $mapelAnalysis['easiest']['mapel']->nama_mapel ?? 'N/A' }}</div>
+                        </div>
+                    </div>
+                     <span class="text-xl font-black text-emerald-500">{{ number_format($mapelAnalysis['easiest']['avg'], 2) }}</span>
+                </div>
+                @endif
+                
+                <!-- Mapel Neraka -->
+                @if($mapelAnalysis['hardest'])
+                <div class="bg-rose-50 dark:bg-rose-900/20 rounded-lg p-3 border border-rose-100 dark:border-rose-800/50 flex justify-between items-center group cursor-help"
+                     title="Mapel dengan rata-rata kelas terendah">
+                     <div class="flex items-center gap-3">
+                        <div class="bg-rose-100 dark:bg-rose-800 text-rose-600 dark:text-rose-300 rounded-full w-8 h-8 flex items-center justify-center font-bold text-lg">
+                            🔥
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider">Mapel "Neraka"</div>
+                            <div class="font-bold text-slate-800 dark:text-white">{{ $mapelAnalysis['hardest']['mapel']->nama_mapel ?? 'N/A' }}</div>
+                        </div>
+                    </div>
+                     <span class="text-xl font-black text-rose-500">{{ number_format($mapelAnalysis['hardest']['avg'], 2) }}</span>
+                </div>
+                @endif
+            </div>
+        </div>
+        @endif
+
+        <!-- Anomaly Detection -->
+         @if(isset($anomalies) && count($anomalies) > 0)
+        <div class="bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800/50 p-4 shadow-sm relative overflow-hidden">
+             <!-- Background Warning Icon -->
+            <span class="material-symbols-outlined absolute -right-4 -bottom-4 text-9xl text-amber-500/10 pointer-events-none">warning</span>
+            
+            <h3 class="font-bold text-amber-800 dark:text-amber-300 mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined">warning</span> Deteksi Anomali (Paradoks)
+            </h3>
+            <div class="space-y-2">
+                @foreach($anomalies as $badStudent)
+                <div class="bg-white/80 dark:bg-[#121c16]/50 p-2 rounded-lg border border-amber-200/50 flex justify-between items-center">
+                    <div>
+                        <div class="font-bold text-slate-800 dark:text-white text-sm">
+                             Rank #{{ $badStudent['rank'] }} - {{ $badStudent['student']->nama_lengkap }}
+                        </div>
+                        <div class="text-xs text-amber-700 dark:text-amber-400">
+                            Prestasi Tinggi tapi <strong>{{ $badStudent['absence'] }} Hari Absen</strong>
+                        </div>
+                    </div>
+                    <!-- Action or Icon -->
+                     <span class="material-symbols-outlined text-amber-500 animate-pulse" title="Perlu Diselidiki">priority_high</span>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @else
+        <!-- Empty State for Anomalies (Good thing) -->
+         <div class="bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-slate-200 dark:border-[#2a3441] p-4 flex flex-col items-center justify-center text-center opacity-70">
+             <span class="material-symbols-outlined text-4xl text-slate-300 mb-2">check_circle</span>
+             <h3 class="text-sm font-bold text-slate-600 dark:text-slate-400">Tidak Ada Anomali</h3>
+             <p class="text-xs text-slate-400">Semua siswa berprestasi memiliki absensi wajar.</p>
+         </div>
+        @endif
+        
+    </div>
+    @endif
 
     <!-- 3. Ranking Table -->
     <div class="bg-white dark:bg-[#1a2332] rounded-xl border border-slate-200 dark:border-[#2a3441] shadow-sm overflow-hidden">
@@ -176,16 +262,26 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-[#2a3441]">
                     @foreach($rankingData as $data)
-                    <tr class="hover:bg-slate-50 dark:hover:bg-[#253041] transition-colors group {{ isset($data['tie_reason']) ? 'bg-amber-50/30 dark:bg-amber-900/10' : '' }}">
-                        <td class="px-6 py-4 text-center">
-                            @if($data['rank'] <= 3)
-                                <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white shadow-sm mx-auto
-                                    {{ $data['rank'] == 1 ? 'bg-amber-500' : ($data['rank'] == 2 ? 'bg-slate-500' : 'bg-orange-600') }}">
-                                    {{ $data['rank'] }}
-                                </div>
-                            @else
-                                <span class="font-bold text-slate-500 font-mono text-lg">#{{ $data['rank'] }}</span>
-                            @endif
+                    <tr class="hover:bg-slate-50 dark:hover:bg-[#1f2937]/50 border-b border-slate-100 dark:border-slate-800 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <span class="bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 font-bold py-1 px-3 rounded-full text-sm">
+                                    #{{ $data['rank'] }}
+                                </span>
+                                
+                                <!-- Trend Indicator -->
+                                @if(isset($data['trend_status']))
+                                    @if($data['trend_status'] == 'rising')
+                                        <span class="material-symbols-outlined text-emerald-500 text-lg animate-bounce" title="Melesat Naik {{ $data['trend_diff'] }} Peringkat">rocket_launch</span>
+                                    @elseif($data['trend_status'] == 'falling')
+                                        <span class="material-symbols-outlined text-rose-500 text-lg" title="Turun {{ abs($data['trend_diff']) }} Peringkat">trending_down</span>
+                                    @elseif($data['trend_status'] == 'up')
+                                        <span class="material-symbols-outlined text-emerald-400 text-base" title="Naik {{ $data['trend_diff'] }} Peringkat">arrow_upward</span>
+                                    @elseif($data['trend_status'] == 'down')
+                                        <span class="material-symbols-outlined text-rose-400 text-base" title="Turun {{ abs($data['trend_diff']) }} Peringkat">arrow_downward</span>
+                                    @endif
+                                @endif
+                            </div>
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex flex-col">
