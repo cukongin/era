@@ -90,7 +90,9 @@
 
                 <div class="flex justify-between items-start">
                     <div>
-                        <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ $data->class->nama_kelas }}</h3>
+                        <a href="{{ route('tu.dkn.show', $data->class->id) }}" class="text-lg font-bold text-slate-900 dark:text-white hover:text-primary transition-colors underline-offset-4 hover:underline">
+                            {{ $data->class->nama_kelas }}
+                        </a>
                         <p class="text-xs text-slate-500 uppercase tracking-wider font-bold">{{ $data->class->wali_kelas->name ?? 'No Wali' }}</p>
                     </div>
                     <span class="text-xs font-bold px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
