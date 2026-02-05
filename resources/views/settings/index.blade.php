@@ -490,7 +490,7 @@
 
                     <!-- Action Button -->
                 <div class="flex justify-end pt-4 border-t border-slate-200 dark:border-slate-700" x-show="!isLocked">
-                    <button @click="saveRules()" :disabled="loading" class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-700 hover:scale-105 shadow-lg transition-all flex items-center gap-2 disabled:opacity-50 disabled:scale-100">
+                    <button @click="saveRules()" :disabled="loading" class="bg-green-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-green-700 hover:scale-105 shadow-lg transition-all flex items-center gap-2 disabled:opacity-50 disabled:scale-100">
                         <span class="material-symbols-outlined" x-show="!loading">save_as</span>
                         <span class="material-symbols-outlined animate-spin" x-show="loading">sync</span>
                         <span x-text="loading ? 'Menyimpan...' : 'Simpan Konfigurasi'"></span>
