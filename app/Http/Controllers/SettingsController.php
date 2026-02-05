@@ -1049,33 +1049,40 @@ class SettingsController extends Controller
         // Security: Admin Only
         if (auth()->user()->role !== 'admin') abort(403);
         
-        $output = [];
-        $returnVar = 0;
-        
-        // Cek apakah fungsi exec aktif?
-        if (!function_exists('exec')) {
-            return back()->with('error', "Gagal: Fungsi 'exec' dinonaktifkan oleh server. Silakan update manual via Terminal/Git.");
-        }
+        $log = "";
 
         try {
-            // Command: git pull (pakai backslash \exec untuk global namespace)
-            // 2>&1 redirects stderr to stdout so we capture errors too
-            \exec('git pull origin master 2>&1', $output, $returnVar);
+            // Use Symfony Process (Safe wrapper for proc_open)
+            // exec() is disabled on Hostinger, but proc_open is active.
             
-            // Clear Cache
+            // 1. Git Pull
+            $process = \Symfony\Component\Process\Process::fromShellCommandline('git pull origin master');
+            $process->setWorkingDirectory(base_path()); // Ensure we are in project root
+            $process->run();
+
+            if (!$process->isSuccessful()) {
+                throw new \Symfony\Component\Process\Exception\ProcessFailedException($process);
+            }
+            
+            $log .= "Git Output:\n" . $process->getOutput() . "\n";
+            
+            // 2. Clear Caches (Internal Artisan Call - Safe)
             \Illuminate\Support\Facades\Artisan::call('optimize:clear');
             \Illuminate\Support\Facades\Artisan::call('view:clear');
             \Illuminate\Support\Facades\Artisan::call('config:clear');
             
-            $log = implode("\n", $output);
-            
-            if ($returnVar === 0) {
-                return back()->with('success', "Update Berhasil! Sistem sudah versi terbaru.\nLog:\n" . $log);
-            } else {
-                return back()->with('error', "Update Gagal via Git.\nLog:\n" . $log);
-            }
+            $log .= "Cache Cleared Successfully.\n";
+
+            return back()->with('success', "Update Berhasil! Sistem via Git (Proc Open).\nLog:\n" . $log);
+
         } catch (\Throwable $e) {
-             return back()->with('error', "Terjadi Error Sistem: " . $e->getMessage());
+             // Create a detailed error log
+             $errorLog = "Error: " . $e->getMessage();
+             if (method_exists($e, 'getProcess')) {
+                 $errorLog .= "\nCommand Output: " . $e->getProcess()->getErrorOutput();
+             }
+             
+             return back()->with('error', "Update Gagal (System Error):\n" . $errorLog);
         }
     }
 }
