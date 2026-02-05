@@ -51,6 +51,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('settings/users/{id}/generate', [App\Http\Controllers\SettingsController::class, 'generateUserAccount'])->name('settings.users.generate');
         Route::post('settings/users/{id}/impersonate', [App\Http\Controllers\SettingsController::class, 'impersonate'])->name('settings.users.impersonate');
 
+        // Super Migration Routes
+        Route::post('settings/migration/export', [App\Http\Controllers\MigrationController::class, 'export'])->name('settings.migration.export');
+        Route::post('settings/migration/import', [App\Http\Controllers\MigrationController::class, 'import'])->name('settings.migration.import');
+
         // Database Backup
         Route::get('settings/backup/download', [App\Http\Controllers\BackupController::class, 'download'])->name('backup.download');
         

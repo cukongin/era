@@ -738,6 +738,77 @@
                 </div>
 
                 <!-- AUTO UPDATE CARD (Hero Banner) -->
+                <!-- SUPER MIGRATION (DATA SYNC) -->
+                <div class="mb-8 p-6 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl shadow-xl text-white flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden max-w-6xl mx-auto">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                            <span class="material-symbols-outlined text-9xl">move_up</span>
+                    </div>
+                    
+                    <div class="relative z-10 flex-1">
+                        <h3 class="text-2xl font-bold flex items-center gap-2 mb-2">
+                                <span class="material-symbols-outlined">dataset_linked</span> Super Migration (Data Sync)
+                        </h3>
+                        <p class="text-emerald-100 max-w-xl text-sm">
+                            Pindahkan data antar server (Local ↔ Online) tanpa duplikat. 
+                            <br>Sistem akan cerdas menggabungkan data (Upsert) tanpa menimpa akun Admin.
+                        </p>
+                    </div>
+
+                    <div class="relative z-10 flex gap-3">
+                        <!-- EXPORT -->
+                        <form action="{{ route('settings.migration.export') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="bg-white text-emerald-700 hover:bg-emerald-50 font-bold py-3 px-6 rounded-xl shadow-lg transition-transform hover:scale-105 flex items-center gap-2">
+                                <span class="material-symbols-outlined">download</span> Download Data (JSON)
+                            </button>
+                        </form>
+                        
+                        <!-- IMPORT TRIGGER -->
+                        <button onclick="document.getElementById('modalMigration').showModal()" class="bg-emerald-800 text-white hover:bg-emerald-900 border border-emerald-500 font-bold py-3 px-6 rounded-xl shadow-lg transition-transform hover:scale-105 flex items-center gap-2">
+                            <span class="material-symbols-outlined">upload</span> Upload Data
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MODAL MIGRATION -->
+                <dialog id="modalMigration" class="modal rounded-2xl shadow-2xl p-0 backdrop:backdrop-blur-sm">
+                    <div class="w-[500px] bg-white dark:bg-slate-800 text-slate-900 dark:text-white flex flex-col">
+                        <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                            <h3 class="font-bold text-lg"><span class="material-symbols-outlined align-bottom">upload_file</span> Import Data Migrasi</h3>
+                            <button onclick="this.closest('dialog').close()" class="w-8 h-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                                <span class="material-symbols-outlined text-sm">close</span>
+                            </button>
+                        </div>
+                        <form action="{{ route('settings.migration.import') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
+                            @csrf
+                            <div class="p-4 bg-blue-50 text-blue-800 text-xs rounded-lg flex gap-3 items-start">
+                                <span class="material-symbols-outlined text-lg shrink-0">info</span>
+                                <div>
+                                    <b>Cara Kerja:</b>
+                                    <ul class="list-disc ml-4 space-y-1 mt-1">
+                                        <li>Data yang sama (misal NISN sama) akan <b>Diupdate</b>.</li>
+                                        <li>Data baru akan <b>Ditambahkan</b>.</li>
+                                        <li>Data Akun Admin <b>TIDAK</b> akan ditimpa.</li>
+                                        <li>Proses mungkin memakan waktu untuk data besar.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-bold mb-2">Pilih File JSON Backup</label>
+                                <input type="file" name="backup_file" accept=".json" required
+                                    class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 border border-slate-200 rounded-lg cursor-pointer">
+                            </div>
+
+                            <div class="flex justify-end pt-4">
+                                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-6 rounded-lg shadow-lg flex items-center gap-2">
+                                    <span class="material-symbols-outlined">cloud_upload</span> Mulai Migrasi
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </dialog>
+
                 <div class="mb-8 p-6 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-2xl shadow-xl text-white flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden max-w-6xl mx-auto">
                     <div class="absolute top-0 right-0 p-4 opacity-10">
                          <span class="material-symbols-outlined text-9xl">cloud_sync</span>
