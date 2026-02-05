@@ -1174,6 +1174,8 @@ class ReportController extends Controller
                 $insight[] = "Kehadiran Sempurna (0 Absen)";
             } elseif ($data['absence'] <= 3) {
                 $insight[] = "Kehadiran Sangat Baik";
+            } elseif ($data['absence'] <= 9) {
+                $insight[] = "Kehadiran Cukup";
             } elseif ($data['absence'] >= 10) {
                 $insight[] = "Perlu Perhatian (10+ Absen)";
             }
@@ -1183,6 +1185,10 @@ class ReportController extends Controller
                 $insight[] = "Nilai Sangat Memuaskan";
             } elseif ($data['avg'] >= 80) {
                 $insight[] = "Nilai Baik";
+            } elseif ($data['avg'] >= 75) {
+                $insight[] = "Nilai Cukup";
+            } else {
+                 $insight[] = "Perlu Ditingkatkan";
             }
 
             // Merge Logic: Tie Reason overrides/prepends if exists
