@@ -435,7 +435,7 @@
                         <th class="px-6 py-4 font-bold text-center">{{ ($isAnnual ?? false) ? 'Total Rata-rata' : 'Total Nilai' }}</th>
                         <th class="px-6 py-4 font-bold text-center">Rata-rata</th>
                         <th class="px-6 py-4 font-bold text-center">Kehadiran (Absen)</th>
-                        <th class="px-6 py-4 font-bold text-center">Kepribadian</th> <!-- New Column -->
+                        <th class="px-6 py-4 font-bold text-center">Kepribadian</th>
                         <th class="px-6 py-4 font-bold text-center">Keterangan</th>
                     </tr>
                 </thead>
@@ -450,7 +450,6 @@
                                 
                                 <!-- Trend Indicator -->
                                 @if(isset($data['trend_status']))
-                                    {{-- Standard Trends (Period Mode) --}}
                                     @if($data['trend_status'] == 'rising')
                                         <button onclick="showAnalyticsModal('rising', 'Rocket Star 🚀', '{{ $data['student']->nama_lengkap }} melesat naik {{ $data['trend_diff'] }} peringkat!', 'Dari Ranking #{{ $data['prev_rank'] }} ke #{{ $data['rank'] }}')" 
                                             class="material-symbols-outlined text-emerald-500 text-lg animate-bounce cursor-pointer hover:scale-125 transition-transform" 
@@ -460,7 +459,7 @@
                                             class="material-symbols-outlined text-rose-500 text-lg cursor-pointer hover:scale-125 transition-transform" 
                                             title="Klik untuk detail">trending_down</button>
                                     
-                                    {{-- Annual Trends (Annual Mode) --}}
+                                    {{-- Annual Trends --}}
                                     @elseif($data['trend_status'] == 'comeback')
                                          <button onclick="showAnalyticsModal('rising', 'Raja Comeback 👑', '{{ $data['student']->nama_lengkap }} berhasil bangkit dari peringkat bawah!', 'Awal: Rank #{{ $data['start_rank'] }} ➔ Akhir: Rank #{{ $data['end_rank'] }}')" 
                                             class="material-symbols-outlined text-purple-500 text-lg animate-pulse cursor-pointer hover:scale-125 transition-transform" 
@@ -517,7 +516,6 @@
                                 <span class="font-bold text-slate-600">{{ $data['absence'] }} Hari</span>
                             @endif
                         </td>
-                         <!-- Personality Column -->
                         <td class="px-6 py-4 text-center max-w-[150px]">
                             <span class="text-xs text-slate-600 dark:text-slate-400 italic line-clamp-2" title="{{ $data['personality'] ?? '-' }}">
                                 {{ $data['personality'] ?? '-' }}
