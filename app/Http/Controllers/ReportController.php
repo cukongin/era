@@ -1164,23 +1164,43 @@ class ReportController extends Controller
                 }
             }
             
-            // 2. Performance Insight (Only Critical Ones)
+            // 2. Behavioral Insights (The "Details" User wants)
+            // Logic: Combine Academic vs Attendance to create a "Profile"
+            
+            $isSmart = $data['avg'] >= 80;
+            $isDiligent = $data['absence'] <= 3;
+            $isLazy = $data['absence'] >= 10;
+            $isLowScore = $data['avg'] < 75;
+
             if ($data['rank'] == 1) {
-                $insight[] = "🏆 Juara Umum";
-            }
-            
-            // Only Show Extremes (No "Cukup" or "Baik")
-            if ($data['absence'] == 0) {
-                $insight[] = "Kehadiran Sempurna";
-            } elseif ($data['absence'] >= 15) {
-                $insight[] = "Perlu Perhatian (Absen Tinggi)";
-            }
-            
-            // Merge Logic
-            if ($data['tie_reason']) {
-                $data['insight'] = $data['tie_reason'];
+                 $insight[] = "🏆 Juara Umum";
             } else {
-                $data['insight'] = implode(" ", $insight);
+                if ($isSmart && $isDiligent) {
+                    $insight[] = "🌟 Siswa Teladan (Pintar & Rajin)";
+                } elseif ($isSmart && $isLazy) {
+                    $insight[] = "💡 Potensi Besar (Tapi Sering Absen)";
+                } elseif ($isLowScore && $isDiligent) {
+                    $insight[] = "💪 Sangat Rajin (Perlu Bimbingan Akademik)";
+                } elseif ($isLowScore && $isLazy) {
+                    $insight[] = "⚠️ Perlu Perhatian Khusus (Akademik & Absen)";
+                } elseif ($isLowScore) {
+                    $insight[] = "Perlu Remedial";
+                } elseif ($isDiligent) {
+                    $insight[] = "Kehadiran Sangat Baik";
+                }
+            }
+
+            // High Absence Warning (Always show if critical)
+            if ($data['absence'] >= 15 && !$isLazy) { // Avoid double tag if caught by isLazy above
+                 $insight[] = "⚠️ Awas: Absen Tinggi (" . $data['absence'] . ")";
+            }
+            
+            // Merge Logic: Tie Reason is ALWAYS the Prefix if exists
+            if ($data['tie_reason']) {
+                $data['insight'] = "⚖️ " . $data['tie_reason'];
+                // Optionally append secondary insight? Maybe too long.
+            } else {
+                $data['insight'] = implode(" • ", $insight);
             }
 
             $prevData = &$data; 
