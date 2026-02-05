@@ -439,23 +439,26 @@ class TuController extends Controller
         $periods = Periode::where('id_tahun_ajaran', $selectedYearId)->get();
         
         // Filter Logic
-        $selectedPeriodId = $request->period_id; // can be 'all' or ID
-        $currentPeriod = null; // null means ALL if selectedPeriodId is 'all', or default to active if empty
+        // Default to 'all' so User sees EVERYTHING immediately (Requested by Boss)
+        $selectedPeriodId = $request->get('period_id', 'all'); 
+        $currentPeriod = null; 
         
         if ($selectedPeriodId === 'all') {
             $currentPeriod = null; // Mode: All Periods
         } elseif ($selectedPeriodId) {
             $currentPeriod = $periods->find($selectedPeriodId);
-        } else {
-             // Default: Active period
-             $currentPeriod = $periods->where('status', 'aktif')->first() ?? $periods->first();
-             // If User explicitly wants "All" on load, they should use ?period_id=all. Default is specific.
         }
         
         // 2. Fetch Classes (Filtered by Jenjang & Selection)
         $classesQuery = Kelas::where('id_tahun_ajaran', $selectedYearId)
             ->with(['wali_kelas', 'jenjang'])
             ->withCount('anggota_kelas');
+
+        $user = \Illuminate\Support\Facades\Auth::user();
+        if (!$user->isAdmin() && !$user->isTu()) {
+            // Wali Kelas Limitation: Only show their classes
+            $classesQuery->where('id_wali_kelas', $user->id);
+        }
 
         if ($request->jenjang) {
             $classesQuery->whereHas('jenjang', fn($q) => $q->where('kode', $request->jenjang));
@@ -471,12 +474,15 @@ class TuController extends Controller
             ->orderBy('nama_kelas')
             ->get();
             
-        // For Dropdown List (Unfiltered by class selection, but filtered by Jenjang)
-        $allClasses = Kelas::where('id_tahun_ajaran', $selectedYearId);
-        if ($request->jenjang) {
-             $allClasses->whereHas('jenjang', fn($q) => $q->where('kode', $request->jenjang));
+        // For Dropdown List (Unfiltered by class selection, but filtered by Jenjang AND PERMISSION)
+        $allClassesQuery = Kelas::where('id_tahun_ajaran', $selectedYearId);
+        if (!$user->isAdmin() && !$user->isTu()) {
+             $allClassesQuery->where('id_wali_kelas', $user->id);
         }
-        $allClasses = $allClasses->orderBy('nama_kelas')->get();
+        if ($request->jenjang) {
+             $allClassesQuery->whereHas('jenjang', fn($q) => $q->where('kode', $request->jenjang));
+        }
+        $allClasses = $allClassesQuery->orderBy('nama_kelas')->get();
 
         // Periods (Filtered by Jenjang)
         $periodsQuery = Periode::where('id_tahun_ajaran', $selectedYearId);

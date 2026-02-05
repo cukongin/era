@@ -170,8 +170,9 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // TU Area (New)
-    Route::middleware(['role:staff_tu,admin'])->prefix('tu')->group(function () {
-        Route::get('/dashboard', [App\Http\Controllers\TuController::class, 'index'])->name('tu.dashboard');
+    // Updated to allow teacher access for Global Monitoring (Filtered Scope)
+    Route::middleware(['role:staff_tu,admin,teacher'])->prefix('tu')->group(function () {
+        Route::get('/dashboard', [App\Http\Controllers\TuController::class, 'index'])->name('tu.dashboard')->middleware('role:staff_tu,admin'); // Dashboard restricted
         Route::get('/monitoring', [App\Http\Controllers\TuController::class, 'globalMonitoring'])->name('tu.monitoring.global'); 
         Route::get('/dkn', [App\Http\Controllers\TuController::class, 'dkn'])->name('tu.dkn.index');
         
