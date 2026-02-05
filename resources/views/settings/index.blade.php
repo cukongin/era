@@ -1002,7 +1002,10 @@
                                 <b>Solusi:</b> Tarik ulang semua status (Naik/Lulus/Tinggal) dari riwayat Anggota Kelas tahun-tahun sebelumnya.
                             </p>
                         </div>
-                        <form action="{{ route('settings.maintenance.sync-history') }}" method="POST" onsubmit="return confirm('Tarik ulang semua riwayat status kenaikan siswa? Proses ini akan melengkapi data yang hilang.')">
+                        <form action="{{ route('settings.maintenance.sync-history') }}" method="POST" 
+                              data-confirm-delete="true"
+                              data-title="Tarik Riwayat Kenaikan?"
+                              data-message="Proses ini akan melengkapi data status kenaikan yang hilang dari tahun sebelumnya.">
                             @csrf
                             <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
                                 <span class="material-symbols-outlined">sync</span> TARIK RIWAYAT

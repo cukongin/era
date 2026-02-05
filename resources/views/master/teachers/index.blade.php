@@ -18,7 +18,10 @@
                 <span class="material-symbols-outlined text-[20px]">upload_file</span>
                 <span>Import Excel</span>
             </button>
-            <form action="{{ route('master.teachers.destroy-all') }}" method="POST" onsubmit="return confirm('SEMUA data guru dan akun loginnya akan DIHAPUS. Yakin?')">
+            <form action="{{ route('master.teachers.destroy-all') }}" method="POST" 
+                  data-confirm-delete="true"
+                  data-title="Hapus SEMUA Guru?"
+                  data-message="AWAS: Semua data guru dan akun loginnya akan DIHAPUS PERMANEN. Tindakan ini tidak bisa dibatalkan.">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="flex items-center justify-center gap-2 h-10 px-4 rounded-lg bg-red-100 text-red-700 border border-red-200 text-sm font-bold shadow-sm hover:bg-red-200 transition-all">
@@ -292,7 +295,10 @@
                                         <span class="material-symbols-outlined text-[18px]">edit</span>
                                     </a>
                                     <!-- Delete Button -->
-                                    <form action="{{ route('master.teachers.destroy', $teacher->id) }}" method="POST" onsubmit="return confirm('Yakin hapus guru ini?');">
+                                    <form action="{{ route('master.teachers.destroy', $teacher->id) }}" method="POST"
+                                          data-confirm-delete="true"
+                                          data-title="Hapus Guru Ini?"
+                                          data-message="Data profil dan akun login guru ini akan dihapus.">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors" title="Hapus">
