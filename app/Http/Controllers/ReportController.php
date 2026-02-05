@@ -1190,6 +1190,13 @@ class ReportController extends Controller
             ];
         }
 
+        // 3. Fetch Promotion Decisions (Bulk)
+        $promoDecisions = \Illuminate\Support\Facades\DB::table('promotion_decisions')
+            ->where('id_kelas', $classId)
+            ->where('id_tahun_ajaran', $activeYear->id)
+            ->get()
+            ->keyBy('id_siswa');
+            
         // 4. Sort with Tie-Breaker Logic (Same for both)
         usort($rankingData, function($a, $b) {
             // 1. Total Score (Desc)
@@ -1211,6 +1218,7 @@ class ReportController extends Controller
         foreach ($rankingData as &$data) {
             $data['rank'] = $rank++;
             $insight = [];
+            $sid = $data['student']->id;
 
             // 1. Tie Breaker Check
             if ($prevData) {
@@ -1227,8 +1235,6 @@ class ReportController extends Controller
             }
             
             // 2. Behavioral Insights (The "Details" User wants)
-            // Logic: Combine Academic vs Attendance vs Trend to create a "Profile"
-            
             $isSmart = $data['avg'] >= 85; 
             $isDiligent = $data['absence'] <= 3;
             $isLazy = $data['absence'] >= 10;
@@ -1261,12 +1267,11 @@ class ReportController extends Controller
             
             // 3. Trend Analysis (Rising Star & Annual Journey)
             if ($isAnnual) {
-                // Annual Logic: Analyze Journey
                 $journey = $data['rank_journey'];
                 if (count($journey) >= 2) {
                     $firstRank = $journey[0]['rank'];
                     $lastRank = end($journey)['rank'];
-                    $diff = $firstRank - $lastRank; // Positive = Improved (e.g. 10 -> 1 = +9)
+                    $diff = $firstRank - $lastRank; 
                     
                     $data['trend_diff'] = $diff;
                     $data['start_rank'] = $firstRank;
@@ -1275,11 +1280,45 @@ class ReportController extends Controller
                     // Add Stability Insight if no other insight exists
                     if (empty($insight) && abs($diff) <= 1) {
                         $insight[] = "⚓ Performa Stabil";
-                        $data['trend_status'] = 'stable'; // Force stable for display
-                    } elseif ($diff > 3) {
-                         // Already handled by trend status below?
+                        $data['trend_status'] = 'stable'; 
+                    }
+                    
+                    // Assign Trend Status only if not manually stable
+                    if (!isset($data['trend_status'])) {
+                         if ($diff >= 5) $data['trend_status'] = 'rising';
+                         elseif ($diff <= -5) $data['trend_status'] = 'falling';
+                         else $data['trend_status'] = ($diff > 0) ? 'up' : 'down';
                     }
 
+                    if ($diff >= 5) {
+                         $insight[] = "👑 Raja Comeback (Naik Drastis)";
+                    } elseif ($diff <= -5) {
+                         $insight[] = "📉 Mengalami Penurunan Signifikan";
+                    }
+                }
+            }
+            
+            // 4. SYNC WITH PROMOTION STATUS (USER REQUEST)
+            // Priority Override: If Retained/Failed, this is the most important status.
+            if (isset($promoDecisions[$sid])) {
+                $promo = $promoDecisions[$sid];
+                // 'promoted', 'retained', 'conditional', 'graduated', 'not_graduated'
+                
+                if ($promo->final_decision == 'retained') {
+                    // Force Wipe other positive insights if retained
+                    $insight = ["⛔ Tinggal Kelas"]; 
+                    // Optional: Append reason in tooltip or subtext logic later
+                } elseif ($promo->final_decision == 'not_graduated') {
+                    $insight = ["⛔ Tidak Lulus"];
+                } elseif ($promo->final_decision == 'conditional') {
+                    // Prepend Warning
+                    array_unshift($insight, "⚠️ Naik Bersyarat");
+                }
+            }
+            
+            $data['insight'] = implode(' • ', $insight);
+            $prevData = &$data;
+        }
 
                     if ($diff >= 5) {
                          $insight[] = "👑 Raja Comeback (Naik Drastis)";
