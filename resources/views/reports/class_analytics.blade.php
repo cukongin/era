@@ -212,17 +212,21 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 text-center">
-                            @if($data['tie_reason'])
-                                <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border
-                                    {{ str_contains($data['tie_reason'], 'Menang') 
-                                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
-                                        : 'bg-slate-50 text-slate-500 border-slate-200' }}">
-                                    @if(str_contains($data['tie_reason'], 'Menang'))
+                            @if(!empty($data['insight']))
+                                <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border max-w-[200px] leading-tight
+                                    {{ str_contains($data['insight'], 'Kalah') || str_contains($data['insight'], 'Perhatian')
+                                        ? 'bg-red-50 text-red-700 border-red-200' 
+                                        : (str_contains($data['insight'], 'Menang') || str_contains($data['insight'], 'Juara') || str_contains($data['insight'], 'Sempurna')
+                                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                            : 'bg-blue-50 text-blue-700 border-blue-200') }}">
+                                    @if(str_contains($data['insight'], 'Menang') || str_contains($data['insight'], 'Juara') || str_contains($data['insight'], 'Sempurna'))
                                         <span class="material-symbols-outlined text-[16px]">verified</span>
+                                    @elseif(str_contains($data['insight'], 'Kalah') || str_contains($data['insight'], 'Perhatian'))
+                                        <span class="material-symbols-outlined text-[16px]">warning</span>
                                     @else
-                                        <span class="material-symbols-outlined text-[16px]">info</span>
+                                        <span class="material-symbols-outlined text-[16px]">auto_awesome</span>
                                     @endif
-                                    {{ $data['tie_reason'] }}
+                                    {{ $data['insight'] }}
                                 </div>
                             @else
                                 <span class="text-slate-300 transform scale-x-150 inline-block">-</span>

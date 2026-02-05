@@ -1148,19 +1148,50 @@ class ReportController extends Controller
         
         foreach ($rankingData as &$data) {
             $data['rank'] = $rank++;
-            
+            $insight = [];
+
+            // 1. Tie Breaker Check
             if ($prevData) {
                 $scoreTie = abs($data['total'] - $prevData['total']) < 0.01;
                 
                 if ($scoreTie) {
                     if ($prevData['absence'] < $data['absence']) {
-                        $prevData['tie_reason'] = "Menang di Kehadiran (Sakit/Izin/Alpa lebih sedikit)";
+                        $prevData['tie_reason'] = "Menang di Kehadiran (Lebih Rajin)";
                         $data['tie_reason'] = "Kalah di Kehadiran";
                     } elseif ($prevData['absence'] == $data['absence']) {
-                         $data['tie_reason'] = "Seri Nilai & Presensi (Urut Abjad)";
+                         $data['tie_reason'] = "Seri Mutlak (Urut Abjad)";
                     }
                 }
             }
+            
+            // 2. Performance Insight (Available for all)
+            if ($data['rank'] == 1) {
+                $insight[] = "🏆 Juara Umum";
+            }
+            
+            // Attendance Insight
+            if ($data['absence'] == 0) {
+                $insight[] = "Kehadiran Sempurna (0 Absen)";
+            } elseif ($data['absence'] <= 3) {
+                $insight[] = "Kehadiran Sangat Baik";
+            } elseif ($data['absence'] >= 10) {
+                $insight[] = "Perlu Perhatian (10+ Absen)";
+            }
+            
+            // Academic Insight
+            if ($data['avg'] >= 90) {
+                $insight[] = "Nilai Sangat Memuaskan";
+            } elseif ($data['avg'] >= 80) {
+                $insight[] = "Nilai Baik";
+            }
+
+            // Merge Logic: Tie Reason overrides/prepends if exists
+            if ($data['tie_reason']) {
+                $data['insight'] = $data['tie_reason'];
+            } else {
+                $data['insight'] = implode(" • ", $insight);
+            }
+
             $prevData = &$data; 
         }
         unset($data);
