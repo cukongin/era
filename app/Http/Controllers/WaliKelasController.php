@@ -446,7 +446,7 @@ class WaliKelasController extends Controller
         }
         fclose($handle);
 
-        return back()->with('success', "Berhasil import absensi untuk $count siswa.");
+        return redirect()->route('walikelas.monitoring')->with('success', "Berhasil import absensi untuk $count siswa.");
     }
 
     public function inputCatatan()

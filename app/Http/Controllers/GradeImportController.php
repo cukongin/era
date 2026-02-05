@@ -911,7 +911,7 @@ class GradeImportController extends Controller
         }
         
         Cache::forget($request->import_key);
-        return redirect()->route('grade.import.global.index')->with('success', "Sukses import global ($count nilai).");
+        return redirect()->route('tu.monitoring.global')->with('success', "Sukses import global ($count nilai).");
     }
 
 }
