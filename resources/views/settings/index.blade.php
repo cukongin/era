@@ -573,9 +573,9 @@
                                     <!-- Quick Actions -->
                                     <div class="mt-2 text-right">
                                         @if(now() > $periode->end_date)
-                                             <a href="{{ route('settings.deadline.toggle', ['id' => $periode->id, 'action' => 'unlock']) }}" class="text-[10px] font-bold text-green-600 hover:underline">Buka 24 Jam</a>
+                                             <button type="button" @click="confirmAction('{{ route('settings.deadline.toggle', ['id' => $periode->id, 'action' => 'unlock']) }}', 'Buka Periode Ini 24 Jam?')" class="text-[10px] font-bold text-green-600 hover:underline">Buka 24 Jam</button>
                                         @else
-                                             <a href="{{ route('settings.deadline.toggle', ['id' => $periode->id, 'action' => 'lock']) }}" class="text-[10px] font-bold text-red-600 hover:underline">Kunci Sekarang</a>
+                                             <button type="button" @click="confirmAction('{{ route('settings.deadline.toggle', ['id' => $periode->id, 'action' => 'lock']) }}', 'Kunci Periode Ini Sekarang?')" class="text-[10px] font-bold text-red-600 hover:underline">Kunci Sekarang</button>
                                         @endif
                                     </div>
                                 </div>
@@ -742,7 +742,10 @@
                         </p>
                     </div>
 
-                    <form action="{{ route('settings.maintenance.update-app') }}" method="POST" class="relative z-10" onsubmit="return confirm('Mulai proses update otomatis? Website mungkin tidak bisa diakses beberapa detik.')">
+                            <form action="{{ route('settings.maintenance.update-app') }}" method="POST" class="relative z-10" 
+                  data-confirm-delete="true"
+                  data-title="Mulai Update Otomatis?"
+                  data-message="Website mungkin tidak bisa diakses beberapa detik saat proses update berlangsung.">
                         @csrf
                         <button type="submit" class="bg-white text-violet-700 hover:bg-violet-50 font-bold py-3 px-6 rounded-xl shadow-lg transition-transform hover:scale-105 flex items-center gap-2">
                             <span class="material-symbols-outlined">download</span> Update Sekarang
@@ -1124,7 +1127,10 @@ function confirmReset(e) {
                                     @csrf
                                     <button type="submit" class="text-xs bg-slate-200 hover:bg-primary hover:text-white px-3 py-1 rounded transition-colors">Aktifkan</button>
                                 </form>
-                                <form action="{{ route('settings.year.destroy', $year->id) }}" method="POST" onsubmit="return confirm('YAKIN HAPUS TAHUN INI? \nSemua data kelas, nilai, dan absensi di tahun ini akan hilang PERMANEN.')">
+                                 <form action="{{ route('settings.year.destroy', $year->id) }}" method="POST" 
+                                      data-confirm-delete="true" 
+                                      data-title="Hapus Tahun Ajaran?"
+                                      data-message="Semua data kelas, nilai, dan absensi di tahun ini akan hilang PERMANEN.">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded transition-colors" title="Hapus Tahun">Hapus</button>

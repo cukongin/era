@@ -293,45 +293,94 @@
     @stack('scripts')
     
     <!-- Global SweetAlert Handler -->
+    <!-- Global SweetAlert Handler -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Success Message
+            // 1. Toast Mixin Configuration
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true,
+                padding: '1em',
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+
+            // 2. Session: Success (Toast)
             @if(session('success'))
-                Swal.fire({
+                Toast.fire({
                     icon: 'success',
-                    title: 'Berhasil!',
-                    text: "{{ session('success') }}",
-                    // timer: 3000,
-                    showConfirmButton: true,
-                    confirmButtonColor: '#059669' // Emerald-600
+                    title: "{{ session('success') }}",
+                    background: '#ecfdf5', // emerald-50
+                    color: '#065f46', // emerald-900
+                    iconColor: '#10b981' // emerald-500
                 });
             @endif
 
-            // Error Message
+            // 3. Session: Error (Modal - More prominent)
             @if(session('error'))
                 Swal.fire({
                     icon: 'error',
-                    title: 'Terjadi Kesalahan',
-                    text: "{{ session('error') }}",
-                    confirmButtonColor: '#dc2626' // Red-600
+                    title: 'Oops...',
+                    html: `<div class="text-sm text-slate-600 dark:text-slate-300">{{ session('error') }}</div>`,
+                    confirmButtonText: 'Tutup',
+                    confirmButtonColor: '#ef4444', // red-500
+                    background: document.documentElement.classList.contains('dark') ? '#1e293b' : '#ffffff',
+                    color: document.documentElement.classList.contains('dark') ? '#f1f5f9' : '#1e293b'
                 });
             @endif
 
-            // Validation Errors
+            // 4. Validation Errors (Modal)
             @if($errors->any())
-                let errorHtml = '<ul class="text-left text-sm space-y-1">';
+                let errorHtml = '<div class="text-left text-sm space-y-2 bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">';
                 @foreach($errors->all() as $error)
-                    errorHtml += '<li class="text-red-600 flex items-start gap-2"><span class="material-symbols-outlined text-sm mt-0.5">error</span>{{ $error }}</li>';
+                    errorHtml += '<div class="flex items-start gap-2 text-red-700 dark:text-red-300"><span class="material-symbols-outlined text-sm mt-0.5 transform scale-90">circle</span><span>{{ $error }}</span></div>';
                 @endforeach
-                errorHtml += '</ul>';
+                errorHtml += '</div>';
 
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Validasi Gagal',
+                    title: 'Periksa Kembali Input',
                     html: errorHtml,
-                    confirmButtonColor: '#d97706' // Amber-600
+                    confirmButtonText: 'Saya Perbaiki',
+                    confirmButtonColor: '#f59e0b', // amber-500
+                    background: document.documentElement.classList.contains('dark') ? '#1e293b' : '#ffffff',
+                    color: document.documentElement.classList.contains('dark') ? '#f1f5f9' : '#1e293b'
                 });
             @endif
+
+            // 5. Global Confirmation Handler
+            // Usage: <form ... data-confirm-delete="true" data-message="Yakin hapus data ini?">
+            document.addEventListener('submit', function(e) {
+                const form = e.target;
+                if (form.getAttribute('data-confirm-delete') === 'true') {
+                    e.preventDefault();
+                    
+                    const message = form.getAttribute('data-message') || 'Data yang dihapus tidak dapat dikembalikan!';
+                    const title = form.getAttribute('data-title') || 'Yakin Hapus?';
+                    
+                    Swal.fire({
+                        title: title,
+                        text: message,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: 'Ya, Hapus!',
+                        cancelButtonText: 'Batal',
+                        background: document.documentElement.classList.contains('dark') ? '#1e293b' : '#ffffff',
+                        color: document.documentElement.classList.contains('dark') ? '#f1f5f9' : '#1e293b'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                }
+            });
         });
     </script>
 </body>
