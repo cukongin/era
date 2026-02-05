@@ -131,7 +131,7 @@ class SettingsController extends Controller
             // Fetch Global Settings relevant to Grading
             $gradingSettings = \App\Models\GlobalSetting::whereIn('key', [
                 'kkm_default', 'rounding_enable', 'promotion_max_kkm_failure', 
-                'promotion_min_attendance', 'promotion_min_attitude', 'total_effective_days', 'scale_type',
+                'promotion_min_attendance', 'promotion_min_attitude', 'total_effective_days', 'scale_type', 'promotion_requires_all_periods',
                 'titimangsa_mi', 'titimangsa_mts',
                 'titimangsa_tempat_mi', 'titimangsa_tempat_mts'
             ])->pluck('value', 'key')->toArray();
