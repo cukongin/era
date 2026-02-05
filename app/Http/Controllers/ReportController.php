@@ -1045,73 +1045,99 @@ class ReportController extends Controller
         $class = Kelas::with(['wali_kelas', 'jenjang', 'tahun_ajaran'])->findOrFail($classId);
         $activeYear = $class->tahun_ajaran;
         
-        // 1. Determine Period
-        // Same logic as Leger: specific period or Active or Last
         $periodes = Periode::where('id_tahun_ajaran', $activeYear->id)
              ->where('lingkup_jenjang', $class->jenjang->kode)
              ->get();
-             
-        if ($request->period_id) {
-            $periode = $periodes->firstWhere('id', $request->period_id);
-        } else {
-            $periode = $periodes->firstWhere('status', 'aktif');
-            if (!$periode) $periode = $periodes->last();
-        }
-        
-        if (!$periode) return back()->with('error', 'Periode tidak ditemukan.');
 
-        // 2. Fetch Data
+        $isAnnual = $request->period_id === 'annual';
+        $periode = null;
+
+        if ($isAnnual) {
+            // Annual Mode: Use ALL periods
+            $targetPeriodIds = $periodes->pluck('id');
+        } else {
+            // Single Period Mode
+            if ($request->period_id) {
+                $periode = $periodes->firstWhere('id', $request->period_id);
+            } else {
+                $periode = $periodes->firstWhere('status', 'aktif');
+                if (!$periode) $periode = $periodes->last();
+            }
+            if (!$periode && !$isAnnual) return back()->with('error', 'Periode tidak ditemukan.');
+            
+            $targetPeriodIds = [$periode->id]; // Single ID array
+        }
+
+        // 2. Fetch Data (Filtered by Target Periods)
         $students = $class->anggota_kelas()->with('siswa')->get();
-        // Mapels
-        $assignedMapelIds = PengajarMapel::where('id_kelas', $class->id)->pluck('id_mapel');
+        
         // Grades
         $grades = NilaiSiswa::where('id_kelas', $class->id)
-            ->where('id_periode', $periode->id)
+            ->whereIn('id_periode', $targetPeriodIds)
             ->get()
             ->groupBy('id_siswa');
+            
         // Attendance
         $attendance = DB::table('catatan_kehadiran')
             ->where('id_kelas', $class->id)
-            ->where('id_periode', $periode->id)
+            ->whereIn('id_periode', $targetPeriodIds)
             ->get()
-            ->keyBy('id_siswa');
+            ->groupBy('id_siswa'); // Group by Student for aggregation
 
         // 3. Calculate Stats & Rank
         $rankingData = [];
         
         foreach($students as $ak) {
             $sGrades = $grades[$ak->siswa->id] ?? collect([]);
-            $sAtt = $attendance[$ak->siswa->id] ?? null;
+            $sAttRecords = $attendance[$ak->siswa->id] ?? collect([]);
             
-            $totalScore = $sGrades->sum('nilai_akhir');
-            $avgScore = $sGrades->count() > 0 ? $totalScore / $sGrades->count() : 0;
+            // Calculate Scores
+            if ($isAnnual) {
+                // Annual Logic: Average of Mapel Averages (Same as Leger Rekap)
+                $mapelGrades = $sGrades->groupBy('id_mapel');
+                $mapelAvgs = [];
+                foreach ($mapelGrades as $mId => $mGrades) {
+                     $mapelAvgs[] = $mGrades->avg('nilai_akhir');
+                }
+                
+                $totalScore = array_sum($mapelAvgs); // Total of Averages
+                $count = count($mapelAvgs);
+                $avgScore = $count > 0 ? $totalScore / $count : 0;
+                $gradeCount = $count; // Count of Mapels
+            } else {
+                // Single Period Logic
+                $totalScore = $sGrades->sum('nilai_akhir');
+                $count = $sGrades->count();
+                $avgScore = $count > 0 ? $totalScore / $count : 0;
+                $gradeCount = $count;
+            }
             
-            // Tie Breaker Metrics
-            // Lower attendance issues = Higher Rank
-            $absenceCount = ($sAtt->sakit ?? 0) + ($sAtt->izin ?? 0) + ($sAtt->tanpa_keterangan ?? 0);
+            // Calculate Absence (Sum across periods)
+            $absenceCount = 0;
+            foreach ($sAttRecords as $att) {
+                $absenceCount += ($att->sakit ?? 0) + ($att->izin ?? 0) + ($att->tanpa_keterangan ?? 0);
+            }
             
             $rankingData[] = [
                 'student' => $ak->siswa,
                 'total' => $totalScore,
                 'avg' => $avgScore,
                 'absence' => $absenceCount,
-                'grades_count' => $sGrades->count(),
-                'tie_reason' => null // Will be filled during sort
+                'grades_count' => $gradeCount,
+                'tie_reason' => null
             ];
         }
 
-        // 4. Sort with Tie-Breaker Logic
+        // 4. Sort with Tie-Breaker Logic (Same for both)
         usort($rankingData, function($a, $b) {
             // 1. Total Score (Desc)
             if (abs($a['total'] - $b['total']) > 0.01) {
                 return $b['total'] <=> $a['total'];
             }
-            
-            // 2. Absence Count (Asc) - Less absence is better
+            // 2. Absence Count (Asc)
             if ($a['absence'] !== $b['absence']) {
                 return $a['absence'] <=> $b['absence'];
             }
-            
             // 3. Name (Asc)
             return strcasecmp($a['student']->nama_lengkap, $b['student']->nama_lengkap);
         });
@@ -1123,28 +1149,25 @@ class ReportController extends Controller
         foreach ($rankingData as &$data) {
             $data['rank'] = $rank++;
             
-            // Check for Tie Conditions with Previous
             if ($prevData) {
                 $scoreTie = abs($data['total'] - $prevData['total']) < 0.01;
                 
                 if ($scoreTie) {
-                    // Explain why Previous won (or if they are truly equal)
                     if ($prevData['absence'] < $data['absence']) {
                         $prevData['tie_reason'] = "Menang di Kehadiran (Sakit/Izin/Alpa lebih sedikit)";
                         $data['tie_reason'] = "Kalah di Kehadiran";
                     } elseif ($prevData['absence'] == $data['absence']) {
-                         // True Tie on Score & Absence -> Alphabetical
                          $data['tie_reason'] = "Seri Nilai & Presensi (Urut Abjad)";
                     }
                 }
             }
-            $prevData = &$data; // Reference needed to update prev iteration
+            $prevData = &$data; 
         }
-        unset($data); // Break reference
+        unset($data);
 
         // 6. Podium (Top 3)
         $podium = array_slice($rankingData, 0, 3);
 
-        return view('reports.class_analytics', compact('class', 'periode', 'periodes', 'rankingData', 'podium'));
+        return view('reports.class_analytics', compact('class', 'periode', 'periodes', 'rankingData', 'podium', 'isAnnual'));
     }
 }

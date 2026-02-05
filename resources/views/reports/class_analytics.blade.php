@@ -13,6 +13,9 @@
                     <span class="material-symbols-outlined">arrow_back</span>
                 </a>
                 <h1 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Analisa Prestasi</h1>
+                @if($isAnnual ?? false)
+                    <span class="bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 text-xs font-bold px-2 py-1 rounded-full border border-purple-200 dark:border-purple-800">Mode Tahunan</span>
+                @endif
             </div>
             <p class="text-slate-500 dark:text-slate-400 ml-8">Ranking detail dan analisa nilai siswa kelas <span class="font-bold text-primary">{{ $class->nama_kelas }}</span>.</p>
         </div>
@@ -21,15 +24,17 @@
             <!-- Period Selector -->
             <form action="{{ route('reports.class.analytics', $class->id) }}" method="GET">
                 <div class="relative group">
-                    <select name="period_id" class="appearance-none pl-10 pr-8 py-2.5 text-sm font-bold text-slate-700 bg-white border-2 border-slate-200 rounded-xl hover:border-primary/50 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 dark:bg-[#1a2332] dark:text-slate-200 dark:border-slate-700 cursor-pointer min-w-[200px] shadow-sm transition-all" onchange="this.form.submit()">
+                    <select name="period_id" class="appearance-none pl-10 pr-8 py-2.5 text-sm font-bold text-slate-700 bg-white border-2 border-slate-200 rounded-xl hover:border-primary/50 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 dark:bg-[#1a2332] dark:text-slate-200 dark:border-slate-700 cursor-pointer min-w-[220px] shadow-sm transition-all" onchange="this.form.submit()">
+                        <option value="annual" {{ ($isAnnual ?? false) ? 'selected' : '' }} class="font-bold text-purple-600">🏆 Analisa Tahunan (Semua)</option>
+                        <option disabled>──────────</option>
                         @foreach($periodes as $p)
-                            <option value="{{ $p->id }}" {{ isset($periode) && $periode->id == $p->id ? 'selected' : '' }}>
+                            <option value="{{ $p->id }}" {{ isset($periode) && $periode->id == $p->id && !($isAnnual ?? false) ? 'selected' : '' }}>
                                 {{ $p->nama_periode }}
                             </option>
                         @endforeach
                     </select>
                     <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 group-hover:text-primary transition-colors">
-                        <span class="material-symbols-outlined text-[20px]">calendar_month</span>
+                        <span class="material-symbols-outlined text-[20px] {{ ($isAnnual ?? false) ? 'text-purple-500' : '' }}">calendar_month</span>
                     </div>
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
                         <span class="material-symbols-outlined text-[18px]">expand_more</span>
@@ -65,7 +70,7 @@
                 <div class="text-center mt-2">
                     <h3 class="font-bold text-slate-800 dark:text-white text-sm md:text-base line-clamp-1 max-w-[120px]">{{ $podium[1]['student']->nama_lengkap }}</h3>
                     <div class="text-xs font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full inline-block mt-1">
-                        {{ number_format($podium[1]['total'], 0) }} Poin
+                        {{ number_format($podium[1]['total'], 2) }} {{ ($isAnnual ?? false) ? 'Avg Poin' : 'Poin' }}
                     </div>
                 </div>
                 <!-- Podium Base -->
@@ -90,7 +95,7 @@
                  <div class="text-center mt-2">
                     <h3 class="font-black text-slate-900 dark:text-white text-base md:text-lg line-clamp-1 max-w-[150px]">{{ $podium[0]['student']->nama_lengkap }}</h3>
                      <div class="text-sm font-bold text-amber-600 bg-amber-100 dark:bg-amber-900/40 px-3 py-0.5 rounded-full inline-block mt-1">
-                        {{ number_format($podium[0]['total'], 0) }} Poin
+                        {{ number_format($podium[0]['total'], 2) }} {{ ($isAnnual ?? false) ? 'Avg Poin' : 'Poin' }}
                     </div>
                     @if(isset($podium[0]['tie_reason']))
                          <div class="text-[10px] text-amber-600 mt-1 font-medium animate-pulse">
@@ -121,7 +126,7 @@
                <div class="text-center mt-2">
                     <h3 class="font-bold text-slate-800 dark:text-white text-sm md:text-base line-clamp-1 max-w-[120px]">{{ $podium[2]['student']->nama_lengkap }}</h3>
                      <div class="text-xs font-bold text-orange-600 bg-orange-100 dark:bg-orange-900/40 px-2 py-0.5 rounded-full inline-block mt-1">
-                        {{ number_format($podium[2]['total'], 0) }} Poin
+                        {{ number_format($podium[2]['total'], 2) }} {{ ($isAnnual ?? false) ? 'Avg Poin' : 'Poin' }}
                     </div>
                 </div>
                 <!-- Podium Base -->
@@ -135,8 +140,11 @@
 
     <!-- 3. Ranking Table -->
     <div class="bg-white dark:bg-[#1a2332] rounded-xl border border-slate-200 dark:border-[#2a3441] shadow-sm overflow-hidden">
-        <div class="p-4 bg-slate-50 dark:bg-[#1e2837] border-b border-slate-100 dark:border-[#2a3441]">
-             <h3 class="font-bold text-slate-700 dark:text-slate-300">Daftar Peringkat Lengkap</h3>
+        <div class="p-4 bg-slate-50 dark:bg-[#1e2837] border-b border-slate-100 dark:border-[#2a3441] flex justify-between items-center">
+             <h3 class="font-bold text-slate-700 dark:text-slate-300">Daftar Peringkat {{ ($isAnnual ?? false) ? 'Tahunan' : 'Periode' }}</h3>
+             @if($isAnnual ?? false)
+                 <span class="text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded border border-purple-100">Kumulatif Semua Periode</span>
+             @endif
         </div>
         
         <div class="overflow-x-auto">
@@ -145,7 +153,7 @@
                     <tr>
                         <th class="px-6 py-4 font-bold text-center w-20">Rank</th>
                         <th class="px-6 py-4 font-bold">Nama Siswa / NIS</th>
-                        <th class="px-6 py-4 font-bold text-center">Total Nilai</th>
+                        <th class="px-6 py-4 font-bold text-center">{{ ($isAnnual ?? false) ? 'Total Rata-rata' : 'Total Nilai' }}</th>
                         <th class="px-6 py-4 font-bold text-center">Rata-rata</th>
                         <th class="px-6 py-4 font-bold text-center">Kehadiran (Absen)</th>
                         <th class="px-6 py-4 font-bold text-center">Keterangan</th>
@@ -171,8 +179,10 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 text-center">
-                            <span class="font-black text-indigo-600 dark:text-indigo-400 text-lg">{{ number_format($data['total'], 0) }}</span>
+                            <span class="font-black text-indigo-600 dark:text-indigo-400 text-lg">{{ number_format($data['total'], 2) }}</span>
+                            @if(!($isAnnual ?? false))
                             <div class="text-[10px] text-slate-400 mt-0.5">dari {{ $data['grades_count'] }} Mapel</div>
+                            @endif
                         </td>
                         <td class="px-6 py-4 text-center font-medium text-slate-700 dark:text-slate-300">
                              {{ number_format($data['avg'], 2) }}
