@@ -1167,11 +1167,10 @@ class ReportController extends Controller
             // Get last attendance record for personality (most recent)
             $lastAtt = $sAttRecords->last();
             if ($lastAtt) {
-                 // Combine Kelakuan & Kerajinan if available
-                 $pParts = [];
-                 if (!empty($lastAtt->kelakuan) && $lastAtt->kelakuan != '-') $pParts[] = $lastAtt->kelakuan;
-                 if (!empty($lastAtt->kerajinan) && $lastAtt->kerajinan != '-') $pParts[] = $lastAtt->kerajinan;
-                 $personality = !empty($pParts) ? implode(', ', $pParts) : '-';
+                 // Instruction: Only take 'Kelakuan'
+                 if (!empty($lastAtt->kelakuan) && $lastAtt->kelakuan != '-') {
+                     $personality = $lastAtt->kelakuan;
+                 }
             }
 
             foreach ($sAttRecords as $att) {
@@ -1228,9 +1227,9 @@ class ReportController extends Controller
             }
             
             // 2. Behavioral Insights (The "Details" User wants)
-            // Logic: Combine Academic vs Attendance to create a "Profile"
+            // Logic: Combine Academic vs Attendance vs Trend to create a "Profile"
             
-            $isSmart = $data['avg'] >= 85; // Raised bar for "Smart"
+            $isSmart = $data['avg'] >= 85; 
             $isDiligent = $data['absence'] <= 3;
             $isLazy = $data['absence'] >= 10;
             $isLowScore = $data['avg'] < 75;
@@ -1243,13 +1242,11 @@ class ReportController extends Controller
                 if ($isTopRank && $isDiligent) {
                     $insight[] = "🌟 Siswa Teladan (Pintar & Rajin)";
                 } elseif ($isTopRank && $isLazy) {
-                    // "Anomali" logic
                     $insight[] = "💡 Cerdas tapi Sering Absen";
                 } elseif ($isLowRank && $isDiligent) {
-                    // "Rajin tapi Kurang" logic
                     $insight[] = "💪 Rajin tapi Nilai Kalah Bersaing";
                 } elseif ($isLowRank && $isLazy) {
-                    $insight[] = "⚠️ Perlu Perhatian Khusus (Akademik & Absen)";
+                    $insight[] = "⚠️ Perlu Perhatian Khusus";
                 } elseif ($isLowScore) {
                     $insight[] = "Perlu Remedial";
                 } elseif ($isDiligent) {
@@ -1257,8 +1254,8 @@ class ReportController extends Controller
                 }
             }
 
-            // High Absence Warning (Always show if critical)
-            if ($data['absence'] >= 10 && !$isLazy) { // Avoid double tag if caught by isLazy above
+            // High Absence Warning
+            if ($data['absence'] >= 10 && !$isLazy) { 
                  $insight[] = "⚠️ Awas: Absen Tinggi (" . $data['absence'] . ")";
             }
             
@@ -1274,6 +1271,15 @@ class ReportController extends Controller
                     $data['trend_diff'] = $diff;
                     $data['start_rank'] = $firstRank;
                     $data['end_rank'] = $lastRank;
+                    
+                    // Add Stability Insight if no other insight exists
+                    if (empty($insight) && abs($diff) <= 1) {
+                        $insight[] = "⚓ Performa Stabil";
+                        $data['trend_status'] = 'stable'; // Force stable for display
+                    } elseif ($diff > 3) {
+                         // Already handled by trend status below?
+                    }
+
 
                     if ($diff >= 5) {
                          $insight[] = "👑 Raja Comeback (Naik Drastis)";

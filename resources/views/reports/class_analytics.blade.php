@@ -376,6 +376,11 @@
                                          <button onclick="showAnalyticsModal('stable', 'Dewa Stabil 🛡️', '{{ $data['student']->nama_lengkap }} konsisten di papan atas sepanjang tahun.', 'Selalu berada di Top Tier peringkat kelas.')" 
                                             class="material-symbols-outlined text-blue-500 text-lg cursor-pointer hover:scale-125 transition-transform" 
                                             title="Klik untuk detail">shield</button>
+                                    
+                                    @elseif($data['trend_status'] == 'stable')
+                                         <button onclick="showAnalyticsModal('stable', 'Performa Stabil ⚓', '{{ $data['student']->nama_lengkap }} mempertahankan posisinya.', 'Tidak ada perubahan peringkat yang signifikan.')" 
+                                            class="material-symbols-outlined text-slate-400 text-lg cursor-pointer hover:scale-125 transition-transform" 
+                                            title="Klik untuk detail">remove</button>
                                             
                                     {{-- Minor Trends --}}
                                     @elseif($data['trend_status'] == 'up' || $data['trend_status'] == 'improved')
@@ -387,11 +392,14 @@
                                 
                                 <!-- Journey Path (Annual Only) -->
                                 @if(isset($data['rank_journey']) && count($data['rank_journey']) > 1)
-                                <div class="absolute -top-3 -right-2 bg-white dark:bg-slate-700 text-[9px] font-mono font-bold text-slate-500 border border-slate-200 dark:border-slate-600 rounded px-1 shadow-sm whitespace-nowrap z-10 hidden group-hover:block transition-all animate-fade-in">
+                                <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-white dark:bg-slate-700 text-[9px] font-mono font-bold text-slate-500 border border-slate-200 dark:border-slate-600 rounded-md px-2 py-1 shadow-lg whitespace-nowrap z-20 hidden group-hover:block transition-all animate-fade-in pointer-events-none">
+                                    <div class="text-[8px] text-slate-400 mb-0.5 border-b border-slate-100 pb-0.5">Riwayat Ranking</div>
+                                    <div class="flex items-center gap-1">
                                     @foreach($data['rank_journey'] as $j)
                                         <span class="{{ $loop->last ? 'text-indigo-600 font-black' : '' }}">#{{ $j['rank'] }}</span>
                                         @if(!$loop->last) <span class="text-slate-300">➜</span> @endif
                                     @endforeach
+                                    </div>
                                 </div>
                                 @endif
                             </div>
