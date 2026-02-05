@@ -272,6 +272,7 @@
                                 
                                 <!-- Trend Indicator -->
                                 @if(isset($data['trend_status']))
+                                    {{-- Standard Trends (Period Mode) --}}
                                     @if($data['trend_status'] == 'rising')
                                         <button onclick="showAnalyticsModal('rising', 'Rocket Star 🚀', '{{ $data['student']->nama_lengkap }} melesat naik {{ $data['trend_diff'] }} peringkat!', 'Dari Ranking #{{ $data['prev_rank'] }} ke #{{ $data['rank'] }}')" 
                                             class="material-symbols-outlined text-emerald-500 text-lg animate-bounce cursor-pointer hover:scale-125 transition-transform" 
@@ -280,11 +281,37 @@
                                         <button onclick="showAnalyticsModal('falling', 'Perlu Evaluasi 📉', '{{ $data['student']->nama_lengkap }} turun {{ abs($data['trend_diff']) }} peringkat.', 'Dari Ranking #{{ $data['prev_rank'] }} anjlok ke #{{ $data['rank'] }}')" 
                                             class="material-symbols-outlined text-rose-500 text-lg cursor-pointer hover:scale-125 transition-transform" 
                                             title="Klik untuk detail">trending_down</button>
-                                    @elseif($data['trend_status'] == 'up')
-                                        <span class="material-symbols-outlined text-emerald-400 text-base" title="Naik {{ $data['trend_diff'] }} Peringkat">arrow_upward</span>
+                                    
+                                    {{-- Annual Trends (Annual Mode) --}}
+                                    @elseif($data['trend_status'] == 'comeback')
+                                         <button onclick="showAnalyticsModal('rising', 'Raja Comeback 👑', '{{ $data['student']->nama_lengkap }} berhasil bangkit dari peringkat bawah!', 'Awal: Rank #{{ $data['start_rank'] }} ➔ Akhir: Rank #{{ $data['end_rank'] }}')" 
+                                            class="material-symbols-outlined text-purple-500 text-lg animate-pulse cursor-pointer hover:scale-125 transition-transform" 
+                                            title="Klik untuk detail">crown</button>
+                                    @elseif($data['trend_status'] == 'dropped')
+                                         <button onclick="showAnalyticsModal('falling', 'Early Bird 📉', '{{ $data['student']->nama_lengkap }} mengalami penurunan performa di akhir tahun.', 'Awal: Rank #{{ $data['start_rank'] }} ➔ Akhir: Rank #{{ $data['end_rank'] }}')" 
+                                            class="material-symbols-outlined text-orange-500 text-lg cursor-pointer hover:scale-125 transition-transform" 
+                                            title="Klik untuk detail">history_toggle_off</button>
+                                    @elseif($data['trend_status'] == 'stable_high')
+                                         <button onclick="showAnalyticsModal('stable', 'Dewa Stabil 🛡️', '{{ $data['student']->nama_lengkap }} konsisten di papan atas sepanjang tahun.', 'Selalu berada di Top Tier peringkat kelas.')" 
+                                            class="material-symbols-outlined text-blue-500 text-lg cursor-pointer hover:scale-125 transition-transform" 
+                                            title="Klik untuk detail">shield</button>
+                                            
+                                    {{-- Minor Trends --}}
+                                    @elseif($data['trend_status'] == 'up' || $data['trend_status'] == 'improved')
+                                        <span class="material-symbols-outlined text-emerald-400 text-base" title="Naik dari sebelumnya">arrow_upward</span>
                                     @elseif($data['trend_status'] == 'down')
-                                        <span class="material-symbols-outlined text-rose-400 text-base" title="Turun {{ abs($data['trend_diff']) }} Peringkat">arrow_downward</span>
+                                        <span class="material-symbols-outlined text-rose-400 text-base" title="Turun dari sebelumnya">arrow_downward</span>
                                     @endif
+                                @endif
+                                
+                                <!-- Journey Path (Annual Only) -->
+                                @if(isset($data['rank_journey']) && count($data['rank_journey']) > 1)
+                                <div class="absolute -top-3 -right-2 bg-white dark:bg-slate-700 text-[9px] font-mono font-bold text-slate-500 border border-slate-200 dark:border-slate-600 rounded px-1 shadow-sm whitespace-nowrap z-10 hidden group-hover:block transition-all animate-fade-in">
+                                    @foreach($data['rank_journey'] as $j)
+                                        <span class="{{ $loop->last ? 'text-indigo-600 font-black' : '' }}">#{{ $j['rank'] }}</span>
+                                        @if(!$loop->last) <span class="text-slate-300">➜</span> @endif
+                                    @endforeach
+                                </div>
                                 @endif
                             </div>
                         </td>
@@ -367,6 +394,9 @@
         } else if (type === 'anomaly') {
             modalIcon.classList.add('text-amber-500');
             modalIcon.innerText = 'warning';
+        } else if (type === 'stable') {
+            modalIcon.classList.add('text-blue-500');
+            modalIcon.innerText = 'shield';
         }
         
         // Show

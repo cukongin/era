@@ -1087,13 +1087,35 @@ class ReportController extends Controller
 
         // --- TREND ANALYSIS (PREPARATION) ---
         $previousRanks = [];
-        if (!$isAnnual && $periode) {
-            // Find Previous Period in the same Academic Year
+        $rankJourney = []; // For Annual View: ['Sem 1' => 10, 'Sem 2' => 1]
+        
+        if ($isAnnual) {
+            // Annual Mode: Calculate Rank for EACH Period to show "Journey"
+            foreach($periodes as $p) {
+                 // Calculate Rank snapshot for this period
+                 $pGrades = DB::table('nilai_siswa')
+                    ->select('id_siswa', DB::raw('SUM(nilai_akhir) as total_score'))
+                    ->where('id_kelas', $class->id)
+                    ->where('id_periode', $p->id)
+                    ->groupBy('id_siswa')
+                    ->orderByDesc('total_score')
+                    ->get();
+                
+                $pr = 1;
+                foreach($pGrades as $pg) {
+                    $rankJourney[$pg->id_siswa][] = [
+                        'period' => $p->nama_periode,
+                        'rank' => $pr++
+                    ];
+                }
+            }
+        
+        } elseif ($periode) {
+            // Single Period Mode: Find Previous Period in the same Academic Year
             $prevPeriode = $periodes->where('id', '<', $periode->id)->sortByDesc('id')->first();
             
             if ($prevPeriode) {
                 // Fetch basic grades for Previous Period to Calculate Rank Snapshot
-                // Optimization: Don't need full details, just Total Score per student
                 $prevGrades = DB::table('nilai_siswa')
                     ->select('id_siswa', DB::raw('SUM(nilai_akhir) as total_score'))
                     ->where('id_kelas', $class->id)
@@ -1151,7 +1173,8 @@ class ReportController extends Controller
                 'absence' => $absenceCount,
                 'grades_count' => $gradeCount,
                 'tie_reason' => null,
-                'prev_rank' => $previousRanks[$ak->siswa->id] ?? null
+                'prev_rank' => $previousRanks[$ak->siswa->id] ?? null,
+                'rank_journey' => $rankJourney[$ak->siswa->id] ?? []
             ];
         }
 
@@ -1222,8 +1245,36 @@ class ReportController extends Controller
                  $insight[] = "⚠️ Awas: Absen Tinggi (" . $data['absence'] . ")";
             }
             
-            // 3. Trend Analysis (Rising Star)
-            if (isset($data['prev_rank'])) {
+            // 3. Trend Analysis (Rising Star & Annual Journey)
+            if ($isAnnual) {
+                // Annual Logic: Analyze Journey
+                $journey = $data['rank_journey'];
+                if (count($journey) >= 2) {
+                    $firstRank = $journey[0]['rank'];
+                    $lastRank = end($journey)['rank'];
+                    $diff = $firstRank - $lastRank; // Positive = Improved (e.g. 10 -> 1 = +9)
+                    
+                    $data['trend_diff'] = $diff;
+                    $data['start_rank'] = $firstRank;
+                    $data['end_rank'] = $lastRank;
+
+                    if ($diff >= 5) {
+                         $insight[] = "👑 Raja Comeback (Naik Drastis)";
+                         $data['trend_status'] = 'comeback';
+                    } elseif ($diff >= 1) {
+                         $data['trend_status'] = 'improved';
+                    } elseif ($diff <= -5) {
+                         $insight[] = "📉 Early Bird (Awal Bagus, Akhir Turun)";
+                         $data['trend_status'] = 'dropped';
+                    } elseif (abs($diff) <= 1 && $data['rank'] <= 3) {
+                         $insight[] = "🛡️ Dewa Stabil (Konsisten Top)";
+                         $data['trend_status'] = 'stable_high';
+                    } else {
+                         $data['trend_status'] = 'stable';
+                    }
+                }
+            } elseif (isset($data['prev_rank'])) {
+                // Single Period Logic (Existing)
                 $diff = $data['prev_rank'] - $data['rank'];
                 if ($diff >= 3) {
                     $insight[] = "🚀 Rising Star (Naik $diff Peringkat)";
