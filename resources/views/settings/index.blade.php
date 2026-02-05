@@ -1284,6 +1284,13 @@ function confirmReset(e) {
             activeTab: new URLSearchParams(window.location.search).get('tab') || 'grading',
             isLocked: {{ $isLocked ? 'true' : 'false' }},
             jenjang: '{{ $jenjang }}', // From Controller
+            loading: false,
+
+            saveRules() {
+                this.loading = true;
+                // Submit the form closest to the button
+                this.$el.closest('form').submit();
+            },
             
             init() {
                 // Optional: Auto-scroll to error if any
