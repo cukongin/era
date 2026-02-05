@@ -1277,66 +1277,28 @@ class ReportController extends Controller
                     $data['start_rank'] = $firstRank;
                     $data['end_rank'] = $lastRank;
                     
-                    // Add Stability Insight if no other insight exists
-                    if (empty($insight) && abs($diff) <= 1) {
-                        $insight[] = "⚓ Performa Stabil";
-                        $data['trend_status'] = 'stable'; 
-                    }
-                    
-                    // Assign Trend Status only if not manually stable
-                    if (!isset($data['trend_status'])) {
-                         if ($diff >= 5) $data['trend_status'] = 'rising';
-                         elseif ($diff <= -5) $data['trend_status'] = 'falling';
-                         else $data['trend_status'] = ($diff > 0) ? 'up' : 'down';
-                    }
-
-                    if ($diff >= 5) {
-                         $insight[] = "👑 Raja Comeback (Naik Drastis)";
-                    } elseif ($diff <= -5) {
-                         $insight[] = "📉 Mengalami Penurunan Signifikan";
-                    }
-                }
-            }
-            
-            // 4. SYNC WITH PROMOTION STATUS (USER REQUEST)
-            // Priority Override: If Retained/Failed, this is the most important status.
-            if (isset($promoDecisions[$sid])) {
-                $promo = $promoDecisions[$sid];
-                // 'promoted', 'retained', 'conditional', 'graduated', 'not_graduated'
-                
-                if ($promo->final_decision == 'retained') {
-                    // Force Wipe other positive insights if retained
-                    $insight = ["⛔ Tinggal Kelas"]; 
-                    // Optional: Append reason in tooltip or subtext logic later
-                } elseif ($promo->final_decision == 'not_graduated') {
-                    $insight = ["⛔ Tidak Lulus"];
-                } elseif ($promo->final_decision == 'conditional') {
-                    // Prepend Warning
-                    array_unshift($insight, "⚠️ Naik Bersyarat");
-                }
-            }
-            
-            $data['insight'] = implode(' • ', $insight);
-            $prevData = &$data;
-        }
-
+                    // Detailed Trend Status for Annual
                     if ($diff >= 5) {
                          $insight[] = "👑 Raja Comeback (Naik Drastis)";
                          $data['trend_status'] = 'comeback';
                     } elseif ($diff >= 1) {
                          $data['trend_status'] = 'improved';
                     } elseif ($diff <= -5) {
-                         $insight[] = "📉 Early Bird (Awal Bagus, Akhir Turun)";
+                         $insight[] = "📉 Mengalami Penurunan Signifikan";
                          $data['trend_status'] = 'dropped';
                     } elseif (abs($diff) <= 1 && $data['rank'] <= 3) {
                          $insight[] = "🛡️ Dewa Stabil (Konsisten Top)";
                          $data['trend_status'] = 'stable_high';
-                    } else {
+                    } elseif (abs($diff) <= 1) {
+                         $insight[] = "⚓ Performa Stabil";
                          $data['trend_status'] = 'stable';
+                    } else {
+                         // Default fallbacks
+                         $data['trend_status'] = ($diff > 0) ? 'up' : 'down';
                     }
                 }
             } elseif (isset($data['prev_rank'])) {
-                // Single Period Logic (Existing)
+                // Standard Period Logic (Existing)
                 $diff = $data['prev_rank'] - $data['rank'];
                 if ($diff >= 3) {
                     $insight[] = "🚀 Rising Star (Naik $diff Peringkat)";
@@ -1356,6 +1318,23 @@ class ReportController extends Controller
                 $data['trend_status'] = null;
             }
 
+            // 4. SYNC WITH PROMOTION STATUS (USER REQUEST)
+            // Priority Override: If Retained/Failed, this is the most important status.
+            if (isset($promoDecisions[$sid])) {
+                $promo = $promoDecisions[$sid];
+                // 'promoted', 'retained', 'conditional', 'graduated', 'not_graduated'
+                
+                if ($promo->final_decision == 'retained') {
+                    // Force Wipe other positive insights if retained
+                    $insight = ["⛔ Tinggal Kelas"]; 
+                } elseif ($promo->final_decision == 'not_graduated') {
+                    $insight = ["⛔ Tidak Lulus"];
+                } elseif ($promo->final_decision == 'conditional') {
+                    // Prepend Warning
+                    array_unshift($insight, "⚠️ Naik Bersyarat");
+                }
+            }
+            
             // Merge Logic: Tie Reason is ALWAYS the Prefix if exists
             if ($data['tie_reason']) {
                 $data['insight'] = "⚖️ " . $data['tie_reason'];
