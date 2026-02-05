@@ -392,12 +392,19 @@ class SettingsController extends Controller
         ];
 
         foreach ($settingsToSave as $key) {
-            if ($request->has($key)) {
-                \App\Models\GlobalSetting::updateOrCreate(
-                    ['key' => $key],
-                    ['value' => $request->input($key)]
-                );
+            // Special handling for checkboxes: If missing, set to 0
+            if (in_array($key, ['rounding_enable', 'promotion_requires_all_periods'])) {
+                $value = $request->has($key) ? $request->input($key) : 0;
+            } else {
+                // For other inputs, only update if present to avoid overwriting with null
+                if (!$request->has($key)) continue;
+                $value = $request->input($key);
             }
+
+            \App\Models\GlobalSetting::updateOrCreate(
+                ['key' => $key],
+                ['value' => $value]
+            );
         }
 
 
