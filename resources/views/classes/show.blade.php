@@ -136,14 +136,23 @@
             <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
                 <h3 class="font-semibold text-lg">Mata Pelajaran & Guru</h3>
                 <div class="flex items-center gap-2">
-                    <form action="{{ route('classes.auto-assign-subjects', $class->id) }}" method="POST" onsubmit="return confirm('Generate Paket Mapel Otomatis sesuai Jenjang? Mapel yang sudah ada tidak akan diduplikasi.');">
+                    <form action="{{ route('classes.auto-assign-subjects', $class->id) }}" method="POST"
+                          data-confirm-delete="true"
+                          data-title="Generate Paket Mapel?"
+                          data-message="Sistem akan otomatis menambahkan mapel sesuai jenjang. Mapel yang sudah ada tidak diduplikasi."
+                          data-confirm-text="Ya, Generate!"
+                          data-confirm-color="#3b82f6"
+                          data-icon="info">
                         @csrf
                         <button type="submit" class="flex items-center gap-2 bg-slate-100 text-slate-700 border border-slate-200 px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-200 transition-colors shadow-sm">
                             <span class="material-symbols-outlined text-[18px]">auto_fix_high</span>
                             Generate Paket Mapel
                         </button>
                     </form>
-                    <form action="{{ route('classes.reset-subjects', $class->id) }}" method="POST" onsubmit="return confirm('Yakin ingin MENGHAPUS SEMUA Mapel di kelas ini? Data guru pengampu juga akan hilang.');">
+                    <form action="{{ route('classes.reset-subjects', $class->id) }}" method="POST"
+                          data-confirm-delete="true"
+                          data-title="Hapus SEMUA Mapel?"
+                          data-message="Semua mapel dan guru pengampu di kelas ini akan DIHAPUS.">
                         @csrf
                         <button type="submit" class="flex items-center gap-2 bg-red-100 text-red-700 border border-red-200 px-4 py-2 rounded-lg text-sm font-bold hover:bg-red-200 transition-colors shadow-sm" title="Hapus Semua Mapel">
                             <span class="material-symbols-outlined text-[18px]">delete_sweep</span>
@@ -404,7 +413,18 @@
             },
 
             async removeStudent(studentId) {
-                if(!confirm('Keluarkan santri ini?')) return;
+                const result = await Swal.fire({
+                    title: 'Keluarkan Santri?',
+                    text: "Santri ini akan dihapus dari kelas anggota.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, Keluarkan!',
+                    cancelButtonText: 'Batal'
+                });
+
+                if (!result.isConfirmed) return;
 
                 // Optimistic UI Update
                 this.enrolled = this.enrolled.filter(s => s.id != studentId);
@@ -419,9 +439,18 @@
                             'Accept': 'application/json'
                         }
                     });
+                    
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Santri berhasil dikeluarkan'
+                    });
+
                 } catch(e) {
                     console.error(e);
-                    alert('Gagal menghapus data');
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Gagal menghapus data'
+                    });
                     window.location.reload();
                 }
             }

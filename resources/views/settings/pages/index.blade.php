@@ -46,7 +46,10 @@
                                 <a href="{{ route('settings.pages.edit', $page->id) }}" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg text-slate-500 transition-colors">
                                     <span class="material-symbols-outlined text-lg">edit</span>
                                 </a>
-                                <form action="{{ route('settings.pages.destroy', $page->id) }}" method="POST" onsubmit="return confirm('Hapus halaman ini?')">
+                                <form action="{{ route('settings.pages.destroy', $page->id) }}" method="POST"
+                                      data-confirm-delete="true"
+                                      data-title="Hapus Halaman?"
+                                      data-message="Halaman ini akan dihapus permanen.">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="p-2 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg text-slate-400 hover:text-red-500 transition-colors">

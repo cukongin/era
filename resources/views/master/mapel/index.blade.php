@@ -141,7 +141,10 @@
                         <td class="px-6 py-4 text-right">
                             <div class="flex items-center justify-end gap-2">
                                 <button onclick='openEditModal(@json($mapel))' class="p-1 rounded text-blue-600 hover:bg-blue-50 transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
-                                <form action="{{ route('master.mapel.destroy', $mapel->id) }}" method="POST" onsubmit="return confirm('Hapus Mapel ini?');">
+                                <form action="{{ route('master.mapel.destroy', $mapel->id) }}" method="POST"
+                                      data-confirm-delete="true"
+                                      data-title="Hapus Mapel?"
+                                      data-message="Mapel ini akan dihapus permanen.">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="p-1 rounded text-red-600 hover:bg-red-50 transition-colors"><span class="material-symbols-outlined text-[20px]">delete</span></button>

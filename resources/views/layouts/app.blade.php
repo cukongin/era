@@ -354,7 +354,7 @@
             @endif
 
             // 5. Global Confirmation Handler
-            // Usage: <form ... data-confirm-delete="true" data-message="Yakin hapus data ini?">
+            // Usage: <form ... data-confirm-delete="true" data-title="..." data-message="..." data-confirm-text="Ya, Simpan!" data-confirm-color="#10b981">
             document.addEventListener('submit', function(e) {
                 const form = e.target;
                 if (form.getAttribute('data-confirm-delete') === 'true') {
@@ -362,16 +362,20 @@
                     
                     const message = form.getAttribute('data-message') || 'Data yang dihapus tidak dapat dikembalikan!';
                     const title = form.getAttribute('data-title') || 'Yakin Hapus?';
-                    
+                    const confirmText = form.getAttribute('data-confirm-text') || 'Ya, Hapus!';
+                    const cancelText = form.getAttribute('data-cancel-text') || 'Batal';
+                    const confirmColor = form.getAttribute('data-confirm-color') || '#ef4444'; // Default Red
+                    const iconType = form.getAttribute('data-icon') || 'warning';
+
                     Swal.fire({
                         title: title,
                         text: message,
-                        icon: 'warning',
+                        icon: iconType,
                         showCancelButton: true,
-                        confirmButtonColor: '#ef4444',
-                        cancelButtonColor: '#64748b',
-                        confirmButtonText: 'Ya, Hapus!',
-                        cancelButtonText: 'Batal',
+                        confirmButtonColor: confirmColor,
+                        cancelButtonColor: '#64748b', // slate-500
+                        confirmButtonText: confirmText,
+                        cancelButtonText: cancelText,
                         background: document.documentElement.classList.contains('dark') ? '#1e293b' : '#ffffff',
                         color: document.documentElement.classList.contains('dark') ? '#f1f5f9' : '#1e293b'
                     }).then((result) => {

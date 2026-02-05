@@ -120,7 +120,14 @@
                         <span>Terkunci</span>
                     </div>
                 @else
-                    <form action="{{ route('walikelas.monitoring.finalize') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin mengunci SEMUA nilai di periode ini? Aksi ini akan mengubah status nilai menjadi Final.')" class="w-full md:w-auto">
+                    <form action="{{ route('walikelas.monitoring.finalize') }}" method="POST"
+                          data-confirm-delete="true" 
+                          data-title="Kunci Nilai (Final)?"
+                          data-message="Nilai akan dikunci dan siap dicetak. Pastikan semua nilai sudah benar." 
+                          data-confirm-text="Ya, Kunci Nilai!"
+                          data-confirm-color="#059669"
+                          data-icon="question"
+                          class="w-full md:w-auto">
                         @csrf
                         <input type="hidden" name="kelas_id" value="{{ $kelas->id }}">
                         <input type="hidden" name="periode_id" value="{{ $periode->id }}">

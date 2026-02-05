@@ -42,7 +42,13 @@
 
         {{-- Auto Rapor (Admin/TU Only) --}}
         @if(!$isWaliOnly)
-        <form action="{{ route('ijazah.generate-avg') }}" method="POST" onsubmit="return confirm('Sistem akan menarik Rata-rata Nilai Rapor dari database untuk Kelas ini. Lanjut?')">
+        <form action="{{ route('ijazah.generate-avg') }}" method="POST"
+              data-confirm-delete="true"
+              data-title="Tarik Auto-Rapor?"
+              data-message="Sistem akan menghitung ulang Nilai Rapor (RR) siswa dari database nilai semester."
+              data-confirm-text="Ya, Tarik Data!"
+              data-confirm-color="#4f46e5"
+              data-icon="info">
             @csrf
             <input type="hidden" name="kelas_id" value="{{ $kelas->id }}">
             <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white w-8 h-8 md:w-auto md:h-auto md:px-4 md:py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2 transition-colors shadow-sm" title="Auto-Rapor">
@@ -67,7 +73,13 @@
             </div>
             
             @if(auth()->user()->isAdmin())
-            <form action="{{ route('ijazah.store') }}" method="POST" onsubmit="return confirm('Buka kunci nilai? Status akan kembali menjadi Draft.')">
+            <form action="{{ route('ijazah.store') }}" method="POST"
+                  data-confirm-delete="true"
+                  data-title="Buka Kunci Nilai?"
+                  data-message="Status nilai akan kembali menjadi Draft dan bisa diedit kembali."
+                  data-confirm-text="Ya, Buka Kunci!"
+                  data-confirm-color="#059669"
+                  data-icon="question">
                 @csrf
                 <input type="hidden" name="kelas_id" value="{{ $kelas->id }}">
                 <input type="hidden" name="action" value="draft"> {{-- Reset to draft --}}
@@ -95,7 +107,7 @@
             <button type="submit" name="action" value="draft" form="dknForm" class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 shadow-sm transition-all">
                 <span class="material-symbols-outlined text-[20px]">save</span> <span class="hidden md:inline">Draft</span>
             </button>
-            <button type="submit" name="action" value="finalize" form="dknForm" onclick="return confirm('Yakin ingin memfinalisasi data? Data akan dikunci dan tidak dapat diedit lagi.')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 shadow-lg shadow-emerald-500/30 transform active:scale-95 transition-all">
+            <button type="button" onclick="confirmFinalize()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 shadow-lg shadow-emerald-500/30 transform active:scale-95 transition-all">
                 <span class="material-symbols-outlined text-[20px]">lock</span> <span class="hidden md:inline">Finalisasi</span>
             </button>
         @endif
@@ -309,3 +321,31 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    function confirmFinalize() {
+        Swal.fire({
+            title: 'Finalisasi Nilai Ijazah?',
+            text: "Data akan DIKUNCI dan tidak dapat diedit lagi. Pastikan semua nilai sudah benar!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#059669', // emerald-600
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Finalisasi!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Create a hidden input for the action
+                let form = document.getElementById('dknForm');
+                let input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'action';
+                input.value = 'finalize';
+                form.appendChild(input);
+                form.submit();
+            }
+        });
+    }
+</script>
+@endpush

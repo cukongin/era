@@ -54,7 +54,13 @@
 
             <!-- Moved Reset Button Here -->
             <div class="pb-2 md:pb-0">
-                <form action="{{ route('classes.reset') }}" method="POST" onsubmit="return confirm('BAHAYA! Aksi ini akan MENGHAPUS SEMUA KELAS di tahun ajaran aktif ini. Pastikan Anda hanya melakukan ini jika ingin mengulang proses kenaikan kelas dari awal. Lanjutkan?');">
+                <form action="{{ route('classes.reset') }}" method="POST"
+                      data-confirm-delete="true"
+                      data-title="RESET KELAS TOTAL?"
+                      data-message="BAHAYA: Aksi ini akan MENGHAPUS SEMUA KELAS di tahun ajaran aktif ini. Data tidak dapat dikembalikan."
+                      data-confirm-text="Ya, Reset Total!"
+                      data-confirm-color="#ef4444"
+                      data-icon="warning">
                     @csrf
                     <button type="submit" class="flex items-center justify-center gap-2 rounded-lg py-2 px-3 bg-red-50 text-red-600 text-xs font-bold border border-red-200 hover:bg-red-100 transition-all">
                         <span class="material-symbols-outlined text-[16px]">restart_alt</span>
@@ -109,7 +115,10 @@
                            class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5">
                             Edit Data
                         </a>
-                        <form action="{{ route('classes.destroy', $class->id) }}" method="POST" onsubmit="return confirm('Yakin hapus kelas ini?');">
+                        <form action="{{ route('classes.destroy', $class->id) }}" method="POST"
+                              data-confirm-delete="true"
+                              data-title="Hapus Kelas?"
+                              data-message="Data kelas dan anggota di dalamnya akan terhapus.">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20">
@@ -283,7 +292,13 @@
     <div class="fixed inset-0 z-10 overflow-y-auto">
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-[#1a2e22] text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-slate-200 dark:border-slate-800">
-                <form action="{{ route('classes.bulk-promote') }}" method="POST">
+                    <form action="{{ route('classes.bulk-promote') }}" method="POST"
+                          data-confirm-delete="true"
+                          data-title="Proses Kenaikan?"
+                          data-message="Siswa akan dipindahkan secara massal ke tingkat selanjutnya."
+                          data-confirm-text="Ya, Proses!"
+                          data-confirm-color="#f59e0b"
+                          data-icon="question">
                     @csrf
                     <div class="bg-white dark:bg-[#1a2e22] px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                         <div class="flex items-center gap-4 mb-4">
@@ -325,7 +340,7 @@
                         </div>
                     </div>
                     <div class="bg-slate-50 dark:bg-black/20 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                        <button type="submit" onclick="return confirm('Yakin ingin memproses? Ini akan memindahkan siswa secara massal.')" class="inline-flex w-full justify-center rounded-md bg-amber-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-amber-600 sm:ml-3 sm:w-auto">Proses Sekarang</button>
+                        <button type="submit" class="inline-flex w-full justify-center rounded-md bg-amber-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-amber-600 sm:ml-3 sm:w-auto">Proses Sekarang</button>
                         <button type="button" onclick="closePromoteModal()" class="mt-3 inline-flex w-full justify-center rounded-md bg-white dark:bg-slate-800 px-3 py-2 text-sm font-semibold text-slate-900 dark:text-slate-300 shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-700 hover:bg-slate-50 sm:mt-0 sm:w-auto">Batal</button>
                     </div>
                 </form>

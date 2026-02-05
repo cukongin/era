@@ -95,7 +95,10 @@
                             </a>
                             
                             @if(!$tpl->is_active || $templates->where('type', $type)->count() > 1)
-                            <form action="{{ route('settings.templates.destroy', $tpl->id) }}" method="POST" onsubmit="return confirm('Hapus template ini?')">
+                            <form action="{{ route('settings.templates.destroy', $tpl->id) }}" method="POST"
+                                  data-confirm-delete="true"
+                                  data-title="Hapus Template?"
+                                  data-message="Template ini akan dihapus permanen.">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Hapus">

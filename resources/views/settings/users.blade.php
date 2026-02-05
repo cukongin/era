@@ -67,7 +67,13 @@
                      <p class="text-xs text-yellow-700">Aksi ini akan mereset password seluruh user dengan role <strong>{{ ucfirst(request('role')) }}</strong>.</p>
                  </div>
             </div>
-            <form action="{{ route('settings.users.export') }}" method="POST" onsubmit="return confirm('PERINGATAN KERAS! \n\nSemua password user role {{ request('role') }} akan di-RESET dan diganti baru.\nFile CSV berisi password baru akan didownload otomatis.\n\nLanjutkan?')">
+            <form action="{{ route('settings.users.export') }}" method="POST"
+                  data-confirm-delete="true"
+                  data-title="RESET & EXPORT PASSWORD?"
+                  data-message="PERINGATAN KERAS: Semua password user role {{ request('role') }} akan di-RESET dan diganti baru. File CSV berisi password baru akan didownload."
+                  data-confirm-text="Ya, Reset & Export!"
+                  data-confirm-color="#0f172a"
+                  data-icon="warning">
                 @csrf
                 <input type="hidden" name="role" value="{{ request('role') }}">
                 <button type="submit" class="bg-slate-900 text-white px-4 py-2 rounded-lg font-bold text-sm shadow hover:bg-slate-800 flex items-center gap-2 transition-all">
@@ -94,7 +100,10 @@
                    <div class="flex items-center gap-2 text-red-700">
                        <span class="font-bold x-text" x-text="selectedUsers.length + ' User terpilih'"></span>
                    </div>
-                   <form action="{{ route('settings.users.bulk_destroy') }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus user terpilih? Data tidak dapat dikembalikan.')">
+                   <form action="{{ route('settings.users.bulk_destroy') }}" method="POST"
+                         data-confirm-delete="true"
+                         data-title="Hapus User Terpilih?"
+                         data-message="Yakin ingin menghapus user terpilih? Data tidak dapat dikembalikan.">
                         @csrf
                         @method('DELETE')
                         <!-- Hidden inputs for each selected ID -->
@@ -163,7 +172,10 @@
                                             Ajaib
                                         </button>
                                     </form>
-                                    <form action="{{ route('settings.users.generate', $user->id) }}" method="POST" onsubmit="return confirm('Generate ulang akun ini? Password lama akan hilang.')">
+                                    <form action="{{ route('settings.users.generate', $user->id) }}" method="POST"
+                                          data-confirm-delete="true"
+                                          data-title="Generate Ulang Akun?"
+                                          data-message="Password lama akan hilang dan diganti baru.">
                                         @csrf
                                         <button type="submit" class="px-3 py-1.5 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg text-xs font-bold flex items-center gap-1 transition-colors">
                                             <span class="material-symbols-outlined text-[16px]">vpn_key</span> Generate

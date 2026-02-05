@@ -17,7 +17,13 @@
                 <span class="material-symbols-outlined text-[18px]">calendar_month</span>
                 {{ $activeYear->nama }}
             </div>
-             <form action="{{ route('settings.year.regenerate', $activeYear->id) }}" method="POST" onsubmit="return confirm('Generate ulang periode default (Cawu/Semester) untuk tahun aktif ini?')">
+             <form action="{{ route('settings.year.regenerate', $activeYear->id) }}" method="POST"
+                   data-confirm-delete="true"
+                   data-title="Fix Periode?"
+                   data-message="Generate ulang periode default (Cawu/Semester) untuk tahun aktif ini?"
+                   data-confirm-text="Ya, Fix!"
+                   data-confirm-color="#ca8a04"
+                   data-icon="question">
                  @csrf
                  <button type="submit" class="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 p-1.5 rounded-lg shadow-sm transition-all flex items-center justify-center" title="Fix Periode">
                      <span class="material-symbols-outlined text-[20px]">build</span>
@@ -616,7 +622,12 @@
                                         </td>
                                         <td class="p-2 text-green-600 font-bold">{{ \Carbon\Carbon::parse($item->valid_until)->format('d M H:i') }}</td>
                                         <td class="p-2 text-right">
-                                            <form action="{{ route('settings.deadline.whitelist.remove', $item->id) }}" method="POST" onsubmit="return confirm('Cabut akses?');">
+                                            <form action="{{ route('settings.deadline.whitelist.remove', $item->id) }}" method="POST"
+                                                  data-confirm-delete="true"
+                                                  data-title="Cabut Akses?"
+                                                  data-message="Guru tidak akan bisa input nilai lagi."
+                                                  data-confirm-text="Ya, Cabut!"
+                                                  data-confirm-color="#ef4444">
                                                 @csrf @method('DELETE')
                                                 <button type="submit" class="text-red-500 hover:text-red-700 font-bold">Hapus</button>
                                             </form>
@@ -770,7 +781,13 @@
                                 <b>Solusi:</b> Hapus semua hasil kenaikan, hapus kelas tahun depan yang rusak, dan kembalikan ke tahun ini.
                             </p>
                         </div>
-                        <form action="{{ route('settings.maintenance.reset-promotion') }}" method="POST" onsubmit="return confirm('⚠️ BAHAYA: RESET TOTAL? ⚠️\n\nData kenaikan kelas akan DIHAPUS. Anda harus ulang dari awal.\nKetik OK untuk lanjut.')">
+                        <form action="{{ route('settings.maintenance.reset-promotion') }}" method="POST"
+                              data-confirm-delete="true"
+                              data-title="RESET Kenaikan Kelas?"
+                              data-message="BAHAYA: Data kenaikan kelas akan DIHAPUS TOTAL. Anda harus mengulang proses dari awal."
+                              data-confirm-text="Ya, Reset Total!"
+                              data-confirm-color="#ef4444"
+                              data-icon="warning">
                             @csrf
                             <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
                                 <span class="material-symbols-outlined">delete_forever</span> OBATI KENAIKAN KELAS
@@ -793,7 +810,13 @@
                                 <b>Solusi:</b> Scan dan hapus data nilai/anggota yang induknya (Siswa/Kelas) sudah tidak ada.
                             </p>
                         </div>
-                        <form action="{{ route('settings.maintenance.fix-orphans') }}" method="POST" onsubmit="return confirm('Bersihkan data sampah (orphans)?')">
+                        <form action="{{ route('settings.maintenance.fix-orphans') }}" method="POST"
+                              data-confirm-delete="true"
+                              data-title="Bersihkan Data Sampah?"
+                              data-message="Scan dan hapus data nilai/anggota yang tidak punya induk (orphans)."
+                              data-confirm-text="Ya, Bersihkan!"
+                              data-confirm-color="#f97316"
+                              data-icon="info">
                             @csrf
                             <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
                                 <span class="material-symbols-outlined">delete_sweep</span> SAPU BERSIH SAMPAH
@@ -816,7 +839,13 @@
                                 <b>Solusi:</b> Cari duplikat, pertahankan data yang paling baru di-update, hapus sisanya.
                             </p>
                         </div>
-                        <form action="{{ route('settings.maintenance.deduplicate-grades') }}" method="POST" onsubmit="return confirm('Cari dan hapus nilai ganda?')">
+                        <form action="{{ route('settings.maintenance.deduplicate-grades') }}" method="POST"
+                              data-confirm-delete="true"
+                              data-title="Hapus Nilai Ganda?"
+                              data-message="Cari duplikat nilai mapel yang sama dan pertahankan yang terbaru."
+                              data-confirm-text="Ya, Hapus Duplikat!"
+                              data-confirm-color="#3b82f6"
+                              data-icon="info">
                             @csrf
                             <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
                                 <span class="material-symbols-outlined">filter_list_off</span> HAPUS DUPLIKAT
@@ -841,7 +870,13 @@
                                 <i>*Mendukung rumus (Tugas+THB)/2 jika bobot diatur 50:50.</i>
                             </p>
                         </div>
-                        <form action="{{ route('settings.maintenance.force-calcs') }}" method="POST" onsubmit="return confirm('Mulai perhitungan ulang massal (mungkin memakan waktu)?')">
+                        <form action="{{ route('settings.maintenance.force-calcs') }}" method="POST"
+                              data-confirm-delete="true"
+                              data-title="Hitung Ulang Total?"
+                              data-message="Mulai perhitungan ulang nilai Rapor massal. Proses mungkin memakan waktu."
+                              data-confirm-text="Ya, Hitung Ulang!"
+                              data-confirm-color="#14b8a6"
+                              data-icon="question">
                             @csrf
                             <button type="submit" class="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
                                 <span class="material-symbols-outlined">calculate</span> HITUNG ULANG TOTAL
@@ -864,7 +899,13 @@
                                 <b>Solusi:</b> Cek otomatis kehadiran di kelas tahun ini. <br>Ada Kelas = <b>Aktif</b>. Tidak Ada = <b>Non-Aktif</b>.
                             </p>
                         </div>
-                        <form action="{{ route('settings.maintenance.fix-student-status') }}" method="POST" onsubmit="return confirm('Sinkronisasi status Aktif/Non-Aktif semua siswa?')">
+                        <form action="{{ route('settings.maintenance.fix-student-status') }}" method="POST"
+                              data-confirm-delete="true"
+                              data-title="Sinkronisasi Status?"
+                              data-message="Set status Aktif/Non-Aktif siswa berdasarkan keanggotaan kelas tahun ini."
+                              data-confirm-text="Ya, Sinkronisasi!"
+                              data-confirm-color="#6366f1"
+                              data-icon="question">
                             @csrf
                             <button type="submit" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
                                 <span class="material-symbols-outlined">person_search</span> OBATI STATUS GALAU
@@ -887,7 +928,13 @@
                                 <b>Solusi:</b> Buatkan akun otomatis untuk semua yang belum punya. <br>User: NIP/NIS, Pass: <b>guru123 / siswa123</b>.
                             </p>
                         </div>
-                        <form action="{{ route('settings.maintenance.generate-accounts') }}" method="POST" onsubmit="return confirm('Buatkan akun untuk user yang belum punya?')">
+                        <form action="{{ route('settings.maintenance.generate-accounts') }}" method="POST"
+                              data-confirm-delete="true"
+                              data-title="Generate Akun User?"
+                              data-message="Buatkan akun untuk semua guru/siswa yang belum punya (Default Pass: guru123/siswa123)."
+                              data-confirm-text="Ya, Buatkan!"
+                              data-confirm-color="#10b981"
+                              data-icon="question">
                             @csrf
                             <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
                                 <span class="material-symbols-outlined">add_reaction</span> SUNTIK VITAMIN AKUN
@@ -910,7 +957,13 @@
                                 <b>Solusi:</b> Bersihkan semua file sampah (cache) dan paksa sistem rebuild konfigurasi.
                             </p>
                         </div>
-                        <form action="{{ route('settings.maintenance.system-detox') }}" method="POST" onsubmit="return confirm('Bersihkan semua cache sistem agar lebih ringan?')">
+                        <form action="{{ route('settings.maintenance.system-detox') }}" method="POST"
+                              data-confirm-delete="true"
+                              data-title="Detox Sistem (Clear Cache)?"
+                              data-message="Bersihkan semua cache aplikasi untuk performa lebih ringan."
+                              data-confirm-text="Ya, Detox!"
+                              data-confirm-color="#ec4899"
+                              data-icon="warning">
                             @csrf
                             <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
                                 <span class="material-symbols-outlined">restart_alt</span> MINUM JAMU DETOX
@@ -933,7 +986,13 @@
                                 <b>Solusi:</b> Auto-detect dari nama kelas. <br>Kelas 1-6 = <b>MI</b>. Kelas 7-9 = <b>MTs</b>.
                             </p>
                         </div>
-                        <form action="{{ route('settings.maintenance.fix-jenjang') }}" method="POST" onsubmit="return confirm('Perbaiki identitas jenjang (MI/MTS) berdasarkan nama kelas?')">
+                        <form action="{{ route('settings.maintenance.fix-jenjang') }}" method="POST"
+                              data-confirm-delete="true"
+                              data-title="Perbaiki Jenjang?"
+                              data-message="Update otomatis jenjang (MI/MTS) pada kelas berdasarkan nama kelasnya."
+                              data-confirm-text="Ya, Perbaiki!"
+                              data-confirm-color="#8b5cf6"
+                              data-icon="info">
                             @csrf
                             <button type="submit" class="w-full bg-violet-500 hover:bg-violet-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
                                 <span class="material-symbols-outlined">healing</span> TERAPI JENJANG
@@ -956,7 +1015,13 @@
                                 <b>Solusi:</b> Potong semua spasi berlebih di depan/belakang Nama, NIS, dan NIP.
                             </p>
                         </div>
-                        <form action="{{ route('settings.maintenance.trim-data') }}" method="POST" onsubmit="return confirm('Rapikan spasi pada semua nama dan nomor induk?')">
+                        <form action="{{ route('settings.maintenance.trim-data') }}" method="POST"
+                              data-confirm-delete="true"
+                              data-title="Trim Data Spasi?"
+                              data-message="Hapus spasi berlebih di awal/akhir nama dan nomor induk."
+                              data-confirm-text="Ya, Rapikan!"
+                              data-confirm-color="#06b6d4"
+                              data-icon="info">
                             @csrf
                             <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
                                 <span class="material-symbols-outlined">cut</span> BEDAH PLASTIK
@@ -979,7 +1044,13 @@
                                 <b>Solusi:</b> Kosongkan file log agar penyimpanan kembali lega.
                             </p>
                         </div>
-                        <form action="{{ route('settings.maintenance.clear-logs') }}" method="POST" onsubmit="return confirm('Kosongkan file log sistem?')">
+                        <form action="{{ route('settings.maintenance.clear-logs') }}" method="POST"
+                              data-confirm-delete="true"
+                              data-title="Bersihkan Log?"
+                              data-message="File log (laravel.log) akan dikosongkan."
+                              data-confirm-text="Ya, Bersihkan!"
+                              data-confirm-color="#64748b"
+                              data-icon="warning">
                             @csrf
                             <button type="submit" class="w-full bg-slate-500 hover:bg-slate-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
                                 <span class="material-symbols-outlined">recycling</span> BERSIHKAN LOG

@@ -48,7 +48,10 @@
                         <button @click="$dispatch('edit-menu', { id: {{ $menu->id }}, title: '{{ $menu->title }}', icon: '{{ $menu->icon }}', route: '{{ $menu->route }}', url: '{{ $menu->url }}', order: {{ $menu->order }}, roles: {{ $menu->roles->pluck('role') }} })" class="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-slate-500 transition-colors">
                             <span class="material-symbols-outlined text-lg">edit</span>
                         </button>
-                        <form action="{{ route('settings.menus.destroy', $menu->id) }}" method="POST" onsubmit="return confirm('Hapus menu ini?')">
+                        <form action="{{ route('settings.menus.destroy', $menu->id) }}" method="POST"
+                              data-confirm-delete="true"
+                              data-title="Hapus Menu?"
+                              data-message="Menu ini akan hilang dari sidebar.">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg text-slate-400 hover:text-red-500 transition-colors">
@@ -85,7 +88,10 @@
                                 <button @click="$dispatch('edit-menu', { id: {{ $child->id }}, parent_id: {{ $menu->id }}, title: '{{ $child->title }}', icon: '{{ $child->icon }}', route: '{{ $child->route }}', url: '{{ $child->url }}', order: {{ $child->order }}, roles: {{ $child->roles->pluck('role') }} })" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-slate-500">
                                     <span class="material-symbols-outlined text-base">edit</span>
                                 </button>
-                                <form action="{{ route('settings.menus.destroy', $child->id) }}" method="POST" onsubmit="return confirm('Hapus submenu ini?')">
+                                <form action="{{ route('settings.menus.destroy', $child->id) }}" method="POST"
+                                      data-confirm-delete="true"
+                                      data-title="Hapus Submenu?"
+                                      data-message="Submenu ini akan hilang.">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="p-1 hover:bg-red-100 dark:hover:bg-red-900/30 rounded text-slate-400 hover:text-red-500">
