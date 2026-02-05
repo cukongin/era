@@ -43,6 +43,21 @@
             </form>
         </div>
     </div>
+    
+    <!-- Annual Mode Info Banner -->
+    @if($isAnnual ?? false)
+    <div class="bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800 rounded-xl p-4 flex items-start gap-3">
+        <span class="material-symbols-outlined text-purple-600 dark:text-purple-400 mt-0.5">info</span>
+        <div>
+            <h3 class="font-bold text-purple-800 dark:text-purple-300 text-sm">Mode Analisa Tahunan Aktif</h3>
+            <p class="text-xs text-purple-600 dark:text-purple-400 mt-1">
+                Data yang ditampilkan adalah <strong>akumulasi dari semua periode</strong> di tahun ajaran ini.
+                <br>• <strong>Total Rata-rata:</strong> Rata-rata dari nilai akhir setiap mapel (Lintas Periode).
+                <br>• <strong>Kehadiran:</strong> Total jumlah ketidakhadiran (Sakit/Izin/Alpa) selama satu tahun penuh.
+            </p>
+        </div>
+    </div>
+    @endif
 
 
     <!-- 2. Podium Section (Top 3) -->
