@@ -341,7 +341,8 @@
                         </td>
                         <td class="px-6 py-4 text-center">
                             @if(!empty($data['insight']))
-                                <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border max-w-[200px] leading-tight
+                                <div onclick="showAnalyticsModal('insight', 'Detail Predikat Siswa', '{{ $data['insight'] }}', 'Total Nilai: {{ number_format($data['total'], 2) }} • Rata-rata: {{ number_format($data['avg'], 2) }} • Absen: {{ $data['absence'] }} Hari')"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border max-w-[200px] leading-tight cursor-pointer hover:scale-105 transition-transform shadow-sm select-none
                                     {{ str_contains($data['insight'], 'Kalah') || str_contains($data['insight'], 'Perhatian')
                                         ? 'bg-red-50 text-red-700 border-red-200' 
                                         : (str_contains($data['insight'], 'Menang') || str_contains($data['insight'], 'Juara') || str_contains($data['insight'], 'Sempurna')
