@@ -19,9 +19,9 @@
             </div>
              <form action="{{ route('settings.year.regenerate', $activeYear->id) }}" method="POST"
                    data-confirm-delete="true"
-                   data-title="Fix Periode?"
+                   data-title="Perbaiki Periode?"
                    data-message="Generate ulang periode default (Cawu/Semester) untuk tahun aktif ini?"
-                   data-confirm-text="Ya, Fix!"
+                   data-confirm-text="Ya, Perbaiki!"
                    data-confirm-color="#ca8a04"
                    data-icon="question">
                  @csrf
@@ -959,9 +959,9 @@
                         </div>
                         <form action="{{ route('settings.maintenance.system-detox') }}" method="POST"
                               data-confirm-delete="true"
-                              data-title="Detox Sistem (Clear Cache)?"
+                              data-title="Bersihkan Cache Sistem?"
                               data-message="Bersihkan semua cache aplikasi untuk performa lebih ringan."
-                              data-confirm-text="Ya, Detox!"
+                              data-confirm-text="Ya, Bersihkan!"
                               data-confirm-color="#ec4899"
                               data-icon="warning">
                             @csrf
@@ -1017,7 +1017,7 @@
                         </div>
                         <form action="{{ route('settings.maintenance.trim-data') }}" method="POST"
                               data-confirm-delete="true"
-                              data-title="Trim Data Spasi?"
+                              data-title="Rapikan Data Spasi?"
                               data-message="Hapus spasi berlebih di awal/akhir nama dan nomor induk."
                               data-confirm-text="Ya, Rapikan!"
                               data-confirm-color="#06b6d4"

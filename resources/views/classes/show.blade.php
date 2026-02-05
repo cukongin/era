@@ -138,9 +138,9 @@
                 <div class="flex items-center gap-2">
                     <form action="{{ route('classes.auto-assign-subjects', $class->id) }}" method="POST"
                           data-confirm-delete="true"
-                          data-title="Generate Paket Mapel?"
+                          data-title="Buat Paket Mapel?"
                           data-message="Sistem akan otomatis menambahkan mapel sesuai jenjang. Mapel yang sudah ada tidak diduplikasi."
-                          data-confirm-text="Ya, Generate!"
+                          data-confirm-text="Ya, Buatkan!"
                           data-confirm-color="#3b82f6"
                           data-icon="info">
                         @csrf
