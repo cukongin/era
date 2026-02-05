@@ -1100,7 +1100,7 @@ class ReportController extends Controller
                      $mapelAvgs[] = $mGrades->avg('nilai_akhir');
                 }
                 
-                $totalScore = array_sum($mapelAvgs); // Total of Averages
+                $totalScore = round(array_sum($mapelAvgs), 2); // Round to 2 decimals to allow Ties
                 $count = count($mapelAvgs);
                 $avgScore = $count > 0 ? $totalScore / $count : 0;
                 $gradeCount = $count; // Count of Mapels
@@ -1156,46 +1156,31 @@ class ReportController extends Controller
                 
                 if ($scoreTie) {
                     if ($prevData['absence'] < $data['absence']) {
-                        $prevData['tie_reason'] = "Menang di Kehadiran (Lebih Rajin)";
+                        $prevData['tie_reason'] = "Menang di Kehadiran";
                         $data['tie_reason'] = "Kalah di Kehadiran";
                     } elseif ($prevData['absence'] == $data['absence']) {
-                         $data['tie_reason'] = "Seri Mutlak (Urut Abjad)";
+                         $data['tie_reason'] = "Seri Mutlak (Abjad)";
                     }
                 }
             }
             
-            // 2. Performance Insight (Available for all)
+            // 2. Performance Insight (Only Critical Ones)
             if ($data['rank'] == 1) {
                 $insight[] = "🏆 Juara Umum";
             }
             
-            // Attendance Insight
+            // Only Show Extremes (No "Cukup" or "Baik")
             if ($data['absence'] == 0) {
-                $insight[] = "Kehadiran Sempurna (0 Absen)";
-            } elseif ($data['absence'] <= 3) {
-                $insight[] = "Kehadiran Sangat Baik";
-            } elseif ($data['absence'] <= 9) {
-                $insight[] = "Kehadiran Cukup";
-            } elseif ($data['absence'] >= 10) {
-                $insight[] = "Perlu Perhatian (10+ Absen)";
+                $insight[] = "Kehadiran Sempurna";
+            } elseif ($data['absence'] >= 15) {
+                $insight[] = "Perlu Perhatian (Absen Tinggi)";
             }
             
-            // Academic Insight
-            if ($data['avg'] >= 90) {
-                $insight[] = "Nilai Sangat Memuaskan";
-            } elseif ($data['avg'] >= 80) {
-                $insight[] = "Nilai Baik";
-            } elseif ($data['avg'] >= 75) {
-                $insight[] = "Nilai Cukup";
-            } else {
-                 $insight[] = "Perlu Ditingkatkan";
-            }
-
-            // Merge Logic: Tie Reason overrides/prepends if exists
+            // Merge Logic
             if ($data['tie_reason']) {
                 $data['insight'] = $data['tie_reason'];
             } else {
-                $data['insight'] = implode(" • ", $insight);
+                $data['insight'] = implode(" ", $insight);
             }
 
             $prevData = &$data; 
