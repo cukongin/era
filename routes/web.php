@@ -365,6 +365,8 @@ Route::middleware(['auth'])->group(function () {
         
         // Student Analytics
         Route::get('/student/{student}/analytics', [App\Http\Controllers\ReportController::class, 'studentAnalytics'])->name('reports.student.analytics');
+        // Class Analytics (Advanced Ranking)
+        Route::get('/class/{classId}/analytics', [App\Http\Controllers\ReportController::class, 'classAnalytics'])->name('reports.class.analytics');
         
         Route::get('/', [App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
         Route::get('/print/{student}', [App\Http\Controllers\ReportController::class, 'printRapor'])->name('reports.print');
