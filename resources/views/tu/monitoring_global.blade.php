@@ -3,81 +3,83 @@
 @section('title', 'Global Monitoring Nilai')
 
 @section('content')
-<div class="flex flex-col h-full overflow-hidden relative">
+<div class="space-y-6">
     
     <!-- Header & Filters -->
-    <div class="px-8 py-5 bg-white dark:bg-[#1a2e22] border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-0 z-30">
-        <div>
-            <h1 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <span class="material-symbols-outlined text-indigo-600">travel_explore</span>
-                Global Monitoring
-            </h1>
-            <p class="text-xs text-slate-500 mt-1">Pantau progress penginputan nilai seluruh kelas.</p>
-        </div>
-
-        <!-- Unified Filter -->
-        <form action="{{ route('tu.monitoring.global') }}" method="GET" class="w-full md:w-auto flex flex-col md:flex-row items-stretch md:items-center gap-3">
-            <input type="hidden" name="year_id" value="{{ $activeYear->id }}">
-            
-            <!-- Jenjang Selector -->
-            <div class="relative group w-full md:w-auto">
-                <select name="jenjang" class="w-full appearance-none bg-none pl-9 pr-8 h-[40px] text-sm font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:border-primary/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 cursor-pointer shadow-sm transition-all md:min-w-[140px]" onchange="this.form.submit()">
-                    <option value="" {{ empty(request('jenjang')) ? 'selected' : '' }}>Semua Jenjang</option>
-                    @foreach(['MI', 'MTS'] as $j)
-                        <option value="{{ $j }}" {{ request('jenjang') == $j ? 'selected' : '' }}>{{ $j }}</option>
-                    @endforeach
-                </select>
-                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 text-slate-400 group-hover:text-primary transition-colors">
-                    <span class="material-symbols-outlined text-[18px]">school</span>
-                </div>
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
-                    <span class="material-symbols-outlined text-[18px]">expand_more</span>
-                </div>
+    <div class="bg-white dark:bg-[#1a2e22] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+                <h1 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <span class="material-symbols-outlined text-indigo-600">travel_explore</span>
+                    Global Monitoring
+                </h1>
+                <p class="text-xs text-slate-500 mt-1">Pantau progress penginputan nilai seluruh kelas.</p>
             </div>
 
-            <!-- Class Selector -->
-            <div class="relative group w-full md:w-auto md:min-w-[200px]">
-                <select name="kelas_id" class="w-full appearance-none bg-none pl-9 pr-8 h-[40px] text-sm font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:border-primary/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 cursor-pointer shadow-sm transition-all" onchange="this.form.submit()">
-                    <option value="">Semua Kelas</option>
-                    @if(isset($allClasses))
-                        @foreach($allClasses as $kls)
-                            <option value="{{ $kls->id }}" {{ request('kelas_id') == $kls->id ? 'selected' : '' }}>
-                                {{ $kls->nama_kelas }}
+            <!-- Unified Filter -->
+            <form action="{{ route('tu.monitoring.global') }}" method="GET" class="w-full md:w-auto flex flex-col md:flex-row items-stretch md:items-center gap-3">
+                <input type="hidden" name="year_id" value="{{ $activeYear->id }}">
+                
+                <!-- Jenjang Selector -->
+                <div class="relative group w-full md:w-auto">
+                    <select name="jenjang" class="w-full appearance-none bg-none pl-9 pr-8 h-[40px] text-sm font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:border-primary/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 cursor-pointer shadow-sm transition-all md:min-w-[140px]" onchange="this.form.submit()">
+                        <option value="" {{ empty(request('jenjang')) ? 'selected' : '' }}>Semua Jenjang</option>
+                        @foreach(['MI', 'MTS'] as $j)
+                            <option value="{{ $j }}" {{ request('jenjang') == $j ? 'selected' : '' }}>{{ $j }}</option>
+                        @endforeach
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 text-slate-400 group-hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">school</span>
+                    </div>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
+                        <span class="material-symbols-outlined text-[18px]">expand_more</span>
+                    </div>
+                </div>
+
+                <!-- Class Selector -->
+                <div class="relative group w-full md:w-auto md:min-w-[200px]">
+                    <select name="kelas_id" class="w-full appearance-none bg-none pl-9 pr-8 h-[40px] text-sm font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:border-primary/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 cursor-pointer shadow-sm transition-all" onchange="this.form.submit()">
+                        <option value="">Semua Kelas</option>
+                        @if(isset($allClasses))
+                            @foreach($allClasses as $kls)
+                                <option value="{{ $kls->id }}" {{ request('kelas_id') == $kls->id ? 'selected' : '' }}>
+                                    {{ $kls->nama_kelas }}
+                                </option>
+                            @endforeach
+                        @endif
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 text-slate-400 group-hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">class</span>
+                    </div>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
+                         <span class="material-symbols-outlined text-[18px]">expand_more</span>
+                    </div>
+                </div>
+
+                <!-- Period Selector -->
+                <div class="relative group w-full md:w-auto">
+                    <select name="period_id" class="w-full appearance-none bg-none pl-9 pr-8 h-[40px] text-sm font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:border-primary/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 cursor-pointer shadow-sm transition-all md:min-w-[160px]" onchange="this.form.submit()">
+                        <option value="all" {{ $selectedPeriodId == 'all' ? 'selected' : '' }}>Semua Periode</option>
+                        @foreach($periods as $p)
+                            <option value="{{ $p->id }}" {{ ($currentPeriod && $currentPeriod->id == $p->id) ? 'selected' : '' }}>
+                                {{ $p->nama_periode }}
                             </option>
                         @endforeach
-                    @endif
-                </select>
-                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 text-slate-400 group-hover:text-primary transition-colors">
-                    <span class="material-symbols-outlined text-[18px]">class</span>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 text-slate-400 group-hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                    </div>
+                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
+                         <span class="material-symbols-outlined text-[18px]">expand_more</span>
+                    </div>
                 </div>
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
-                     <span class="material-symbols-outlined text-[18px]">expand_more</span>
-                </div>
-            </div>
 
-            <!-- Period Selector -->
-            <div class="relative group w-full md:w-auto">
-                <select name="period_id" class="w-full appearance-none bg-none pl-9 pr-8 h-[40px] text-sm font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:border-primary/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 cursor-pointer shadow-sm transition-all md:min-w-[160px]" onchange="this.form.submit()">
-                    <option value="all" {{ $selectedPeriodId == 'all' ? 'selected' : '' }}>Semua Periode</option>
-                    @foreach($periods as $p)
-                        <option value="{{ $p->id }}" {{ ($currentPeriod && $currentPeriod->id == $p->id) ? 'selected' : '' }}>
-                            {{ $p->nama_periode }}
-                        </option>
-                    @endforeach
-                </select>
-                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 text-slate-400 group-hover:text-primary transition-colors">
-                    <span class="material-symbols-outlined text-[18px]">calendar_month</span>
-                </div>
-                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
-                     <span class="material-symbols-outlined text-[18px]">expand_more</span>
-                </div>
-            </div>
-
-        </form>
+            </form>
+        </div>
     </div>
 
     <!-- Content -->
-    <div class="flex-1 overflow-y-auto px-8 py-6 bg-slate-50 dark:bg-[#121c16]">
+    <div class="">
         
         @if(count($monitoringData) > 0)
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
