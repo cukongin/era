@@ -249,7 +249,87 @@
              @endif
         </div>
         
-        <div class="overflow-x-auto">
+        <!-- Mobile Card View (Visible only on mobile) -->
+        <div class="md:hidden space-y-3 p-4 bg-slate-50 dark:bg-[#1e2837] border-b border-slate-100 dark:border-[#2a3441]">
+             <h3 class="font-bold text-slate-700 dark:text-slate-300 mb-2">Daftar Peringkat {{ ($isAnnual ?? false) ? 'Tahunan' : 'Periode' }}</h3>
+             
+             @foreach($rankingData as $data)
+             <div class="bg-white dark:bg-[#1f2937] p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 relative overflow-hidden">
+                <div class="flex justify-between items-start">
+                    <div class="flex gap-3">
+                         <!-- Rank Badge -->
+                        <div class="flex flex-col items-center gap-1">
+                             <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-sm border-2 border-white dark:border-slate-700
+                                {{ $data['rank'] == 1 ? 'bg-amber-500' : ($data['rank'] == 2 ? 'bg-slate-500' : ($data['rank'] == 3 ? 'bg-orange-600' : 'bg-indigo-500')) }}">
+                                #{{ $data['rank'] }}
+                            </div>
+                            
+                             <!-- Mobile Trend Indicator -->
+                            @if(isset($data['trend_status']))
+                                @if($data['trend_status'] == 'rising')
+                                    <button onclick="showAnalyticsModal('rising', 'Rocket Star 🚀', '{{ $data['student']->nama_lengkap }} melesat naik {{ $data['trend_diff'] }} peringkat!', 'Dari Ranking #{{ $data['prev_rank'] }} ke #{{ $data['rank'] }}')" 
+                                        class="material-symbols-outlined text-emerald-500 text-lg animate-bounce">rocket_launch</button>
+                                @elseif($data['trend_status'] == 'falling')
+                                    <button onclick="showAnalyticsModal('falling', 'Perlu Evaluasi 📉', '{{ $data['student']->nama_lengkap }} turun {{ abs($data['trend_diff']) }} peringkat!', 'Dari Ranking #{{ $data['prev_rank'] }} anjlok ke #{{ $data['rank'] }}')" 
+                                        class="material-symbols-outlined text-rose-500 text-lg">trending_down</button>
+                                @elseif($data['trend_status'] == 'comeback')
+                                    <button onclick="showAnalyticsModal('rising', 'Raja Comeback 👑', '{{ $data['student']->nama_lengkap }} berhasil bangkit!', 'Awal: Rank #{{ $data['start_rank'] }} ➔ Akhir: Rank #{{ $data['end_rank'] }}')" 
+                                        class="material-symbols-outlined text-purple-500 text-lg animate-pulse">crown</button>
+                                @elseif($data['trend_status'] == 'dropped')
+                                    <button onclick="showAnalyticsModal('falling', 'Early Bird 📉', '{{ $data['student']->nama_lengkap }} turun di akhir.', 'Awal: Rank #{{ $data['start_rank'] }} ➔ Akhir: Rank #{{ $data['end_rank'] }}')" 
+                                        class="material-symbols-outlined text-orange-500 text-lg">history_toggle_off</button>
+                                @endif
+                            @endif
+                        </div>
+                        
+                        <!-- Details -->
+                        <div>
+                            <div class="font-bold text-slate-800 dark:text-white line-clamp-1">{{ $data['student']->nama_lengkap }}</div>
+                            <div class="text-xs text-slate-400 mb-1">{{ $data['student']->nis_lokal }}</div>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="bg-indigo-50 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded border border-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-800">
+                                    {{ number_format($data['total'], 2) }} Poin
+                                </span>
+                                <span class="text-xs text-slate-500">Avg: {{ number_format($data['avg'], 2) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Insight Badge (Full Width on Mobile) -->
+                 @if(!empty($data['insight']))
+                 <div class="mt-3 pt-3 border-t border-slate-50 dark:border-slate-800">
+                     <div onclick="showAnalyticsModal('insight', 'Detail Predikat Siswa', '{{ $data['insight'] }}', 'Total Nilai: {{ number_format($data['total'], 2) }} • Rata-rata: {{ number_format($data['avg'], 2) }} • Absen: {{ $data['absence'] }} Hari')"
+                        class="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold border cursor-pointer hover:brightness-95 transition-all
+                        {{ str_contains($data['insight'], 'Kalah') || str_contains($data['insight'], 'Perhatian')
+                            ? 'bg-red-50 text-red-700 border-red-200' 
+                            : (str_contains($data['insight'], 'Menang') || str_contains($data['insight'], 'Juara') || str_contains($data['insight'], 'Sempurna') || str_contains($data['insight'], 'Raja') || str_contains($data['insight'], 'Dewa')
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                : 'bg-blue-50 text-blue-700 border-blue-200') }}">
+                        @if(str_contains($data['insight'], 'Menang') || str_contains($data['insight'], 'Juara') || str_contains($data['insight'], 'Sempurna'))
+                            <span class="material-symbols-outlined text-[16px]">verified</span>
+                        @elseif(str_contains($data['insight'], 'Kalah') || str_contains($data['insight'], 'Perhatian'))
+                            <span class="material-symbols-outlined text-[16px]">warning</span>
+                        @else
+                            <span class="material-symbols-outlined text-[16px]">auto_awesome</span>
+                        @endif
+                        {{ $data['insight'] }}
+                    </div>
+                 </div>
+                 @endif
+                 
+                 <!-- Absence Indicator (Absolute or inline) -->
+                 @if($data['absence'] > 0)
+                 <div class="absolute top-2 right-2 flex items-center gap-1 text-[10px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
+                     <span class="material-symbols-outlined text-[10px]">cancel</span> {{ $data['absence'] }}
+                 </div>
+                 @endif
+             </div>
+             @endforeach
+        </div>
+
+        <!-- Desktop Table (Hidden on Mobile) -->
+        <div class="hidden md:block overflow-x-auto">
             <table class="w-full text-sm text-left">
                 <thead class="text-xs text-slate-500 uppercase bg-slate-50 dark:bg-[#1e2837] dark:text-slate-400 border-b border-slate-100 dark:border-[#2a3441]">
                     <tr>
