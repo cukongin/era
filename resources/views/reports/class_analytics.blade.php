@@ -212,7 +212,8 @@
             </h3>
             <div class="space-y-2">
                 @foreach($anomalies as $badStudent)
-                <div class="bg-white/80 dark:bg-[#121c16]/50 p-2 rounded-lg border border-amber-200/50 flex justify-between items-center">
+                <div onclick="showAnalyticsModal('anomaly', 'Deteksi Paradoks ⚠️', '{{ $badStudent['student']->nama_lengkap }} ada di Top 5 tapi Absen Tinggi.', 'Rank #{{ $badStudent['rank'] }} dengan {{ $badStudent['absence'] }} hari tidak masuk. Cek kondisi siswa!')"
+                     class="bg-white/80 dark:bg-[#121c16]/50 p-2 rounded-lg border border-amber-200/50 flex justify-between items-center cursor-pointer hover:bg-amber-100 transition-colors">
                     <div>
                         <div class="font-bold text-slate-800 dark:text-white text-sm">
                              Rank #{{ $badStudent['rank'] }} - {{ $badStudent['student']->nama_lengkap }}
@@ -222,7 +223,7 @@
                         </div>
                     </div>
                     <!-- Action or Icon -->
-                     <span class="material-symbols-outlined text-amber-500 animate-pulse" title="Perlu Diselidiki">priority_high</span>
+                     <span class="material-symbols-outlined text-amber-500 animate-pulse">priority_high</span>
                 </div>
                 @endforeach
             </div>
@@ -272,9 +273,13 @@
                                 <!-- Trend Indicator -->
                                 @if(isset($data['trend_status']))
                                     @if($data['trend_status'] == 'rising')
-                                        <span class="material-symbols-outlined text-emerald-500 text-lg animate-bounce" title="Melesat Naik {{ $data['trend_diff'] }} Peringkat">rocket_launch</span>
+                                        <button onclick="showAnalyticsModal('rising', 'Rocket Star 🚀', '{{ $data['student']->nama_lengkap }} melesat naik {{ $data['trend_diff'] }} peringkat!', 'Dari Ranking #{{ $data['prev_rank'] }} ke #{{ $data['rank'] }}')" 
+                                            class="material-symbols-outlined text-emerald-500 text-lg animate-bounce cursor-pointer hover:scale-125 transition-transform" 
+                                            title="Klik untuk detail">rocket_launch</button>
                                     @elseif($data['trend_status'] == 'falling')
-                                        <span class="material-symbols-outlined text-rose-500 text-lg" title="Turun {{ abs($data['trend_diff']) }} Peringkat">trending_down</span>
+                                        <button onclick="showAnalyticsModal('falling', 'Perlu Evaluasi 📉', '{{ $data['student']->nama_lengkap }} turun {{ abs($data['trend_diff']) }} peringkat.', 'Dari Ranking #{{ $data['prev_rank'] }} anjlok ke #{{ $data['rank'] }}')" 
+                                            class="material-symbols-outlined text-rose-500 text-lg cursor-pointer hover:scale-125 transition-transform" 
+                                            title="Klik untuk detail">trending_down</button>
                                     @elseif($data['trend_status'] == 'up')
                                         <span class="material-symbols-outlined text-emerald-400 text-base" title="Naik {{ $data['trend_diff'] }} Peringkat">arrow_upward</span>
                                     @elseif($data['trend_status'] == 'down')
@@ -336,3 +341,64 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    function showAnalyticsModal(type, title, message, subtext = '') {
+        const modal = document.getElementById('analyticsModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalIcon = document.getElementById('modalIcon');
+        
+        // Reset Classes
+        modalIcon.className = 'material-symbols-outlined text-4xl mb-2';
+        
+        // Content
+        modalTitle.innerText = title;
+        modalBody.innerHTML = `<p class="font-bold text-lg">${message}</p><p class="text-slate-500 text-sm mt-1">${subtext}</p>`;
+        
+        // Styling based on Type
+        if (type === 'rising') {
+            modalIcon.classList.add('text-emerald-500');
+            modalIcon.innerText = 'rocket_launch';
+        } else if (type === 'falling') {
+            modalIcon.classList.add('text-rose-500');
+            modalIcon.innerText = 'trending_down';
+        } else if (type === 'anomaly') {
+            modalIcon.classList.add('text-amber-500');
+            modalIcon.innerText = 'warning';
+        }
+        
+        // Show
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeAnalyticsModal() {
+        const modal = document.getElementById('analyticsModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+</script>
+@endpush
+
+<!-- Analytics Detail Modal -->
+<div id="analyticsModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm p-4 transition-all">
+    <div class="bg-white dark:bg-[#1f2937] rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center transform scale-100 transition-transform relative">
+        <button onclick="closeAnalyticsModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        
+        <div class="flex flex-col items-center">
+            <span id="modalIcon" class="material-symbols-outlined text-4xl mb-2">info</span>
+            <h3 id="modalTitle" class="text-xl font-black text-slate-800 dark:text-white mb-2">Detail Analisa</h3>
+            <div id="modalBody" class="text-slate-600 dark:text-slate-300">
+                <!-- Content -->
+            </div>
+            
+            <button onclick="closeAnalyticsModal()" class="mt-6 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200 font-bold py-2 px-6 rounded-full hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
+                Tutup
+            </button>
+        </div>
+    </div>
+</div>
