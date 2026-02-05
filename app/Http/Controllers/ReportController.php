@@ -1160,8 +1160,20 @@ class ReportController extends Controller
                 $gradeCount = $count;
             }
             
-            // Calculate Absence (Sum across periods)
+            // Calculate Absence & Personality (Latest Period)
             $absenceCount = 0;
+            $personality = '-';
+            
+            // Get last attendance record for personality (most recent)
+            $lastAtt = $sAttRecords->last();
+            if ($lastAtt) {
+                 // Combine Kelakuan & Kerajinan if available
+                 $pParts = [];
+                 if (!empty($lastAtt->kelakuan) && $lastAtt->kelakuan != '-') $pParts[] = $lastAtt->kelakuan;
+                 if (!empty($lastAtt->kerajinan) && $lastAtt->kerajinan != '-') $pParts[] = $lastAtt->kerajinan;
+                 $personality = !empty($pParts) ? implode(', ', $pParts) : '-';
+            }
+
             foreach ($sAttRecords as $att) {
                 $absenceCount += ($att->sakit ?? 0) + ($att->izin ?? 0) + ($att->tanpa_keterangan ?? 0);
             }
@@ -1171,6 +1183,7 @@ class ReportController extends Controller
                 'total' => $totalScore,
                 'avg' => $avgScore,
                 'absence' => $absenceCount,
+                'personality' => $personality,
                 'grades_count' => $gradeCount,
                 'tie_reason' => null,
                 'prev_rank' => $previousRanks[$ak->siswa->id] ?? null,
@@ -1184,7 +1197,7 @@ class ReportController extends Controller
             if (abs($a['total'] - $b['total']) > 0.01) {
                 return $b['total'] <=> $a['total'];
             }
-            // 2. Absence Count (Asc)
+            // 2. Absence Count (Asc) - LEAST ABSENCE WIN
             if ($a['absence'] !== $b['absence']) {
                 return $a['absence'] <=> $b['absence'];
             }
@@ -1217,21 +1230,25 @@ class ReportController extends Controller
             // 2. Behavioral Insights (The "Details" User wants)
             // Logic: Combine Academic vs Attendance to create a "Profile"
             
-            $isSmart = $data['avg'] >= 80;
+            $isSmart = $data['avg'] >= 85; // Raised bar for "Smart"
             $isDiligent = $data['absence'] <= 3;
             $isLazy = $data['absence'] >= 10;
             $isLowScore = $data['avg'] < 75;
+            $isTopRank = $data['rank'] <= 3;
+            $isLowRank = $data['rank'] > (count($rankingData) * 0.7); // Bottom 30%
 
             if ($data['rank'] == 1) {
                  $insight[] = "🏆 Juara Umum";
             } else {
-                if ($isSmart && $isDiligent) {
+                if ($isTopRank && $isDiligent) {
                     $insight[] = "🌟 Siswa Teladan (Pintar & Rajin)";
-                } elseif ($isSmart && $isLazy) {
-                    $insight[] = "💡 Potensi Besar (Tapi Sering Absen)";
-                } elseif ($isLowScore && $isDiligent) {
-                    $insight[] = "💪 Sangat Rajin (Perlu Bimbingan Akademik)";
-                } elseif ($isLowScore && $isLazy) {
+                } elseif ($isTopRank && $isLazy) {
+                    // "Anomali" logic
+                    $insight[] = "💡 Cerdas tapi Sering Absen";
+                } elseif ($isLowRank && $isDiligent) {
+                    // "Rajin tapi Kurang" logic
+                    $insight[] = "💪 Rajin tapi Nilai Kalah Bersaing";
+                } elseif ($isLowRank && $isLazy) {
                     $insight[] = "⚠️ Perlu Perhatian Khusus (Akademik & Absen)";
                 } elseif ($isLowScore) {
                     $insight[] = "Perlu Remedial";
@@ -1241,7 +1258,7 @@ class ReportController extends Controller
             }
 
             // High Absence Warning (Always show if critical)
-            if ($data['absence'] >= 15 && !$isLazy) { // Avoid double tag if caught by isLazy above
+            if ($data['absence'] >= 10 && !$isLazy) { // Avoid double tag if caught by isLazy above
                  $insight[] = "⚠️ Awas: Absen Tinggi (" . $data['absence'] . ")";
             }
             
