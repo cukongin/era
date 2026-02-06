@@ -568,4 +568,28 @@ class MaintenanceController extends Controller
             return back()->with('error', "GAGAL RESET: " . $e->getMessage());
         }
     }
+    /**
+     * HEALTH CHECK 12: EXECUTE MIGRATION (DB STRUCTURE UPDATE)
+     * Runs 'php artisan migrate' to ensure database tables are up to date.
+     */
+    public function migrateDatabase(Request $request)
+    {
+        if (auth()->user()->role !== 'admin') {
+            return back()->with('error', 'Unauthorized.');
+        }
+
+        try {
+            \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+            $output = \Illuminate\Support\Facades\Artisan::output();
+            
+            if (empty(trim($output))) {
+                return back()->with('success', "Database sudah Up-to-Date. Tidak ada perubahan struktur.");
+            }
+
+            return back()->with('success', "Update Struktur Database Berhasil! Log: " . $output);
+
+        } catch (\Exception $e) {
+            return back()->with('error', "Gagal Update Struktur: " . $e->getMessage());
+        }
+    }
 }

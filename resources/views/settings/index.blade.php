@@ -369,6 +369,29 @@
                                 @endif
                              </div>
 
+                            <!-- Card: Update Struktur Database -->
+                            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:border-blue-400 transition group">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-lg group-hover:scale-110 transition">
+                                        <span class="material-symbols-outlined">dataset</span>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-bold text-slate-700 dark:text-slate-200 text-sm">Update Struktur Database</h5>
+                                        <p class="text-[10px] text-slate-500">Buat tabel baru jika ada update fitur.</p>
+                                    </div>
+                                </div>
+                                <form action="{{ route('settings.maintenance.migrate-db') }}" method="POST"
+                                      data-confirm-delete="true"
+                                      data-confirm-text="Ya, Update DB!"
+                                      data-confirm-color="#3b82f6"
+                                      data-icon="info">
+                                    @csrf
+                                    <button type="submit" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 rounded-lg text-xs font-bold transition">
+                                        Jalankan Migrasi
+                                    </button>
+                                </form>
+                            </div>
+
                         </div>
                     </div>
                 </form>

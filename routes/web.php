@@ -251,6 +251,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/fix-jenjang', [App\Http\Controllers\MaintenanceController::class, 'fixClassLevel'])->name('settings.maintenance.fix-jenjang');
             Route::post('/trim-data', [App\Http\Controllers\MaintenanceController::class, 'trimData'])->name('settings.maintenance.trim-data');
             Route::post('/clear-logs', [App\Http\Controllers\MaintenanceController::class, 'clearLogs'])->name('settings.maintenance.clear-logs');
+            Route::post('/migrate-db', [App\Http\Controllers\MaintenanceController::class, 'migrateDatabase'])->name('settings.maintenance.migrate-db'); // NEW
             
             // IJAZAH / DKN ROUTES
             Route::prefix('ijazah')->name('ijazah.')->group(function() {
