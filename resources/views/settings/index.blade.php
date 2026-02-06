@@ -369,28 +369,7 @@
                                 @endif
                              </div>
 
-                            <!-- Card: Update Struktur Database -->
-                            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:border-blue-400 transition group">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <div class="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-lg group-hover:scale-110 transition">
-                                        <span class="material-symbols-outlined">dataset</span>
-                                    </div>
-                                    <div>
-                                        <h5 class="font-bold text-slate-700 dark:text-slate-200 text-sm">Update Struktur Database</h5>
-                                        <p class="text-[10px] text-slate-500">Buat tabel baru jika ada update fitur.</p>
-                                    </div>
-                                </div>
-                                <form action="{{ route('settings.maintenance.migrate-db') }}" method="POST"
-                                      data-confirm-delete="true"
-                                      data-confirm-text="Ya, Update DB!"
-                                      data-confirm-color="#3b82f6"
-                                      data-icon="info">
-                                    @csrf
-                                    <button type="submit" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 rounded-lg text-xs font-bold transition">
-                                        Jalankan Migrasi
-                                    </button>
-                                </form>
-                            </div>
+
 
                         </div>
                     </div>
@@ -1174,6 +1153,33 @@
                             @csrf
                             <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
                                 <span class="material-symbols-outlined">sync</span> TARIK RIWAYAT
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- CARD 13: UPDATE STRUKTUR DATABASE -->
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-blue-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-3 opacity-10">
+                              <span class="material-symbols-outlined text-6xl text-blue-500">dataset</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
+                                <span class="material-symbols-outlined text-blue-500">dataset</span> Update Struktur Database
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-4">
+                                <b>Masalah:</b> Fitur baru error (500) karena tabel belum dibuat.
+                                <br><br>
+                                <b>Solusi:</b> Jalankan migrasi database otomatis.
+                            </p>
+                        </div>
+                        <form action="{{ route('settings.maintenance.migrate-db') }}" method="POST"
+                              data-confirm-delete="true"
+                              data-confirm-text="Ya, Update DB!"
+                              data-confirm-color="#3b82f6"
+                              data-icon="info">
+                            @csrf
+                            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined">upgrade</span> JALANKAN MIGRASI
                             </button>
                         </form>
                     </div>
