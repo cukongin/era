@@ -15,10 +15,6 @@ use App\Models\ReportTemplate;
 use App\Models\Mapel;
 use App\Models\KkmMapel;
 use App\Models\IdentitasSekolah;
-use App\Models\GradingFormula;
-use App\Models\Absensi;
-use App\Models\NilaiEkskul;
-use App\Services\FormulaEngine;
 
 class ReportController extends Controller
 {
@@ -200,21 +196,6 @@ class ReportController extends Controller
              ->where('jenjang_target', $kelas->jenjang->kode) 
              ->pluck('nilai_kkm', 'id_mapel');
 
-        // Fetch Active Formulas
-        $rankingFormula = GradingFormula::where('context', 'ranking_score')->where('is_active', true)->first();
-        $totalFormula = GradingFormula::where('context', 'total_score')->where('is_active', true)->first();
-
-        // Fetch Additional Data for Formulas (Absensi & Ekskul)
-        $absensiData = Absensi::where('id_kelas', $kelas->id)
-            ->where('id_periode', $periode->id)
-            ->get()
-            ->keyBy('id_siswa');
-            
-        $ekskulData = NilaiEkskul::where('id_kelas', $kelas->id)
-            ->where('id_periode', $periode->id)
-            ->get()
-            ->groupBy('id_siswa'); // One student can have multiple ekskuls
-
         // Calculate Stats for Ranking
         $studentStats = [];
         foreach($students as $student) {
@@ -223,7 +204,6 @@ class ReportController extends Controller
             // Calculate Total based on SHOW ORIGINAL preference
             $total = 0;
             $count = 0;
-            $allScores = [];
             
             if ($showOriginal) {
                 // Re-calculate total from Original Grades
@@ -232,7 +212,6 @@ class ReportController extends Controller
                     if ($g) {
                         $val = $g->nilai_akhir_asli ?? $g->nilai_akhir;
                         $total += $val;
-                        $allScores[] = $val;
                         $count++;
                     }
                 }
@@ -240,57 +219,17 @@ class ReportController extends Controller
                 // Use Final Grades (Default)
                 $total = $sGrades->sum('nilai_akhir');
                 $count = $sGrades->count();
-                $allScores = $sGrades->pluck('nilai_akhir')->toArray();
-            }
-
-            // Custom Total Calculation (if formula exists)
-            if ($totalFormula && !empty($totalFormula->formula)) {
-                // Special case for SUM, handled by Engine or Manual?
-                // Engine::aggregate supports sum([Nilai_Mapel])
-                $customTotal = FormulaEngine::aggregate($totalFormula->formula, $allScores);
-                if ($customTotal > 0) $total = $customTotal;
-            }
-
-            $avg = $count > 0 ? $total / $count : 0;
-            
-            // Prepare Variables for Ranking
-            $absensi = $absensiData[$student->id_siswa] ?? null;
-            $hadirCount = $absensi ? ($absensi->sakit + $absensi->izin + $absensi->tanpa_keterangan) : 0;
-            $kehadiranPct = 100; // Default perfect
-            // Simple logic: 100 - (alpha * something)? Or just use 'Hadir' field if exists?
-            // Usually Absensi table has S, I, A. Total effective days is needed.
-            // Let's assume generic logic or existing calculation.
-            // For now, let's use a simple mockup variable for safety.
-            $hadirVal = 100; // Placeholder until strict logic defined
-            
-            // Ekskul Average
-            $myEkskuls = $ekskulData[$student->id_siswa] ?? collect([]);
-            $ekskulAvg = $myEkskuls->count() > 0 ? $myEkskuls->avg('nilai') : 0; // Assuming 'nilai' is numeric 0-100 or A/B/C?
-            // If Ekskul is A/B/C, we need mapping. But FormulaEngine expects numbers.
-            // Let's assume numeric for now or 0.
-
-            $rankingVars = [
-                '[Rata_Rata_Nilai]' => $avg,
-                '[Absensi_Hadir]' => $hadirVal,
-                '[Nilai_Ekstrakurikuler]' => $ekskulAvg,
-                '[Poin_Pelanggaran]' => 0 // Placeholder
-            ];
-
-            $rankScore = $avg; // Default
-            if ($rankingFormula) {
-                $rankScore = FormulaEngine::calculate($rankingFormula->formula, $rankingVars);
             }
 
             $studentStats[$student->id_siswa] = [
                 'total' => $total,
-                'avg' => $avg,
-                'rank_score' => $rankScore,
+                'avg' => $count > 0 ? $total / $count : 0,
                 'rank' => 0
             ];
         }
 
         // Apply Ranking
-        $statsCollection = collect($studentStats)->sortByDesc('rank_score');
+        $statsCollection = collect($studentStats)->sortByDesc('avg');
         $rank = 1;
         foreach ($statsCollection as $sid => $stat) {
              $studentStats[$sid]['rank'] = $rank++;

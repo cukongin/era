@@ -46,55 +46,11 @@ class GradingFormulaSeeder extends Seeder
                 'description' => 'Rumus Kenaikan Kelas (Rata-rata 3 Cawu).'
             ],
             [
-                'name' => 'Full Ujian (100%)',
-                'context' => 'rapor_mts',
-                'formula' => '[Nilai_PAS]',
-                'is_active' => false,
-                'description' => 'Nilai rapor diambil 100% dari Ujian Akhir (PAS) saja.'
-            ],
-            [
-                'name' => 'Project Based (Kurmer)',
-                'context' => 'rapor_mts',
-                'formula' => '([Rata_PH] * 0.7) + ([Nilai_PAS] * 0.3)',
-                'is_active' => false,
-                'description' => 'Menitikberatkan pada proses (Harian/Proyek) sebesar 70%.'
-            ],
-            [
-                'name' => 'Ijazah 50:50',
-                'context' => 'ijazah_mi',
-                'formula' => '([Rata_Rapor_MI] * 0.5) + ([Nilai_Ujian] * 0.5)',
-                'is_active' => false,
-                'description' => 'Bobot seimbang antara Rapor dan Ujian.'
-            ],
-            [
                 'name' => 'Akhir Tahun MTs (Semester)',
                 'context' => 'rapor_mts',
                 'formula' => '([Nilai_Sem_1] + [Nilai_Sem_2]) / 2',
                 'is_active' => false,
                 'description' => 'Rumus Kenaikan Kelas (Rata-rata 2 Semester).'
-            ]
-
-
-            [
-                'name' => 'Ranking Juara Umum',
-                'context' => 'ranking_score',
-                'formula' => '[Rata_Rata_Nilai] + ([Absensi_Hadir] * 0.1) + ([Nilai_Ekstrakurikuler] * 0.2)',
-                'is_active' => false,
-                'description' => 'Ranking ditentukan oleh Rata-rata + Kehadiran + Ekskul.'
-            ],
-            [
-                'name' => 'Ranking Akademik Murni',
-                'context' => 'ranking_score',
-                'formula' => '[Rata_Rata_Nilai]',
-                'is_active' => true,
-                'description' => 'Ranking hanya berdasarkan rata-rata nilai akademik.'
-            ],
-            [
-                'name' => 'Total Nilai (Standard)',
-                'context' => 'total_score',
-                'formula' => 'sum([Nilai_Mapel])',
-                'is_active' => true,
-                'description' => 'Total adalah penjumlahan semua nilai mapel.'
             ]
         ];
 

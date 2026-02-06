@@ -45,13 +45,11 @@
             <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden" x-show="context !== 'current_active'">
                 <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
                     <h3 class="font-bold text-slate-700">Template Tersimpan</h3>
-                    <span class="text-xs text-slate-400" x-text="context"></span>
                 </div>
                 <div class="divide-y divide-slate-100 max-h-[60vh] overflow-y-auto">
                     @foreach($formulas as $f)
-                    <!-- Filter logic: Show if context matches exactly OR matches category prefix -->
                     <div class="p-4 hover:bg-slate-50 transition cursor-pointer" 
-                         x-show="context === '{{ $f->context }}' || (context.includes('rapor') && '{{ $f->context }}'.includes('rapor')) || (context.includes('ijazah') && '{{ $f->context }}'.includes('ijazah'))"
+                         x-show="(context.includes('rapor') && '{{ $f->context }}'.includes('rapor')) || (context.includes('ijazah') && '{{ $f->context }}'.includes('ijazah'))"
                          @click="loadFormula('{{ $f->formula }}', '{{ $f->name }}')">
                         <div class="flex items-center justify-between mb-1">
                             <span class="font-bold text-slate-800 text-sm">{{ $f->name }}</span>
@@ -136,67 +134,6 @@
                                     ([Rata_Rapor_MTS] × {{ $wIjazahRapor }}%) + ([Nilai_Ujian] × {{ $wIjazahUjian }}%)
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- GROUP 3: LOGIKA PERINGKAT & AGGREGAT (NEW) -->
-                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden" x-data="{ open: false }">
-                        <button @click="open = !open" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700/50 flex items-center justify-between hover:bg-slate-100 transition">
-                            <span class="font-bold text-sm text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                                <span class="material-symbols-outlined text-amber-500 text-sm">leaderboard</span>
-                                LOGIKA PERINGKAT & AGGREGAT
-                            </span>
-                            <span class="material-symbols-outlined text-slate-400 text-sm transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
-                        </button>
-                        <div x-show="open" class="p-4 bg-white dark:bg-slate-800">
-                             <p class="text-xs text-slate-500 mb-3">Klik tombol di Header Tabel (Total / Ranking) untuk edit rumusnya.</p>
-                             
-                             <!-- MINI LEGER TABLE -->
-                             <div class="overflow-x-auto border rounded-lg">
-                                <table class="w-full text-xs text-left">
-                                    <thead class="bg-slate-100 text-slate-500 uppercase font-bold">
-                                        <tr>
-                                            <th class="px-2 py-2">No</th>
-                                            <th class="px-2 py-2">Nama</th>
-                                            <th class="px-2 py-2 text-center">Matematika</th>
-                                            <th class="px-2 py-2 text-center">IPA</th>
-                                            <!-- EDITABLE HEADERS -->
-                                            <th class="px-2 py-2 text-center bg-blue-50 text-blue-700 cursor-pointer hover:bg-blue-100 border-l border-blue-200" @click="setContext('total_score')" title="Klik untuk edit Rumus Total">
-                                                TOTAL <span class="material-symbols-outlined text-[10px] align-middle">edit</span>
-                                            </th>
-                                            <th class="px-2 py-2 text-center bg-green-50 text-green-700 cursor-pointer hover:bg-green-100 border-l border-green-200" @click="setContext('ranking_score')" title="Klik untuk edit Rumus Peringkat">
-                                                RANKING <span class="material-symbols-outlined text-[10px] align-middle">edit</span>
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-100">
-                                        <tr>
-                                            <td class="px-2 py-1">1</td>
-                                            <td class="px-2 py-1 font-bold">Ahmad</td>
-                                            <td class="px-2 py-1 text-center">80</td>
-                                            <td class="px-2 py-1 text-center">90</td>
-                                            <td class="px-2 py-1 text-center font-bold text-blue-600">170</td>
-                                            <td class="px-2 py-1 text-center font-bold text-green-600">#2</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="px-2 py-1">2</td>
-                                            <td class="px-2 py-1 font-bold">Budi</td>
-                                            <td class="px-2 py-1 text-center">95</td>
-                                            <td class="px-2 py-1 text-center">95</td>
-                                            <td class="px-2 py-1 text-center font-bold text-blue-600">190</td>
-                                            <td class="px-2 py-1 text-center font-bold text-green-600">#1 <span class="text-[8px] bg-yellow-200 text-yellow-800 px-1 rounded">JUARA</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="px-2 py-1">3</td>
-                                            <td class="px-2 py-1 font-bold">Cici</td>
-                                            <td class="px-2 py-1 text-center">70</td>
-                                            <td class="px-2 py-1 text-center">75</td>
-                                            <td class="px-2 py-1 text-center font-bold text-blue-600">145</td>
-                                            <td class="px-2 py-1 text-center font-bold text-green-600">#3</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                             </div>
                         </div>
                     </div>
 
@@ -388,17 +325,6 @@
                     { code: '[Rata_Rapor_MTS]', label: 'Rata Rapor MTs', desc: 'Rata-rata nilai rapor Kls 7, 8, 9' },
                     { code: '[Rata_Rapor_MI]', label: 'Rata Rapor MI', desc: 'Rata-rata nilai rapor Kls 4, 5, 6' },
                     { code: '[Nilai_Ujian]', label: 'Ujian Madrasah', desc: 'Nilai Murni Ujian Madrasah' }
-                ];
-                if (ctx === 'ranking_score') return [
-                    { code: '[Rata_Rata_Nilai]', label: 'Rata-rata Nilai', desc: 'Rata-rata seluruh mapel (akademik).' },
-                    { code: '[Absensi_Hadir]', label: '% Kehadiran', desc: 'Persentase kehadiran siswa (0-100).' },
-                    { code: '[Nilai_Ekstrakurikuler]', label: 'Nilai Ekskul', desc: 'Rata-rata nilai kegiatan ekstrakurikuler.' },
-                    { code: '[Poin_Pelanggaran]', label: 'Poin Sanksi', desc: 'Total poin pelanggaran siswa (jika ada).' }
-                ];
-                if (ctx === 'total_score') return [
-                    { code: 'sum([Nilai_Mapel])', label: 'Sum All Mapel', desc: 'Penjumlahan otomatis semua mapel.' },
-                    { code: '[Nilai_Agama]', label: 'Nilai Agama', desc: 'Spesifik: Nilai Mapel PAI/Agama.' },
-                    { code: '[Nilai_Umum]', label: 'Nilai Umum', desc: 'Spesifik: Nilai Mapel Umum.' }
                 ];
                 return [];
             },
