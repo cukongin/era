@@ -1157,32 +1157,7 @@
                         </form>
                     </div>
 
-                    <!-- CARD 13: UPDATE STRUKTUR DATABASE -->
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-blue-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-3 opacity-10">
-                              <span class="material-symbols-outlined text-6xl text-blue-500">dataset</span>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
-                                <span class="material-symbols-outlined text-blue-500">dataset</span> Update Struktur Database
-                            </h4>
-                            <p class="text-xs text-slate-500 mb-4">
-                                <b>Masalah:</b> Fitur baru error (500) karena tabel belum dibuat.
-                                <br><br>
-                                <b>Solusi:</b> Jalankan migrasi database otomatis.
-                            </p>
-                        </div>
-                        <form action="{{ route('settings.maintenance.migrate-db') }}" method="POST"
-                              data-confirm-delete="true"
-                              data-confirm-text="Ya, Update DB!"
-                              data-confirm-color="#3b82f6"
-                              data-icon="info">
-                            @csrf
-                            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined">upgrade</span> JALANKAN MIGRASI
-                            </button>
-                        </form>
-                    </div>
+
 
                     <!-- CARD 12: FACTORY RESET (DANGER ZONE) -->
                     <div class="bg-red-50 dark:bg-red-900/10 p-6 rounded-xl border-2 border-red-500 flex flex-col items-center text-center gap-4 mt-8 col-span-full">
