@@ -63,12 +63,6 @@
                 Aturan Penilaian
             </button>
 
-            <a href="{{ route('settings.formula.index') }}"
-                class="group inline-flex items-center py-4 px-1 border-b-2 border-transparent font-medium text-sm transition-all text-slate-500 hover:text-indigo-600 hover:border-indigo-300">
-                <span class="material-symbols-outlined mr-2 text-slate-400 group-hover:text-indigo-500">calculate</span>
-                Formula Builder
-            </a>
-
             <button @click="activeTab = 'kkm'"
                 :class="activeTab === 'kkm' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
                 class="group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm transition-all">

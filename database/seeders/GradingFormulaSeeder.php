@@ -72,7 +72,7 @@ class GradingFormulaSeeder extends Seeder
                 'formula' => '([Nilai_Sem_1] + [Nilai_Sem_2]) / 2',
                 'is_active' => false,
                 'description' => 'Rumus Kenaikan Kelas (Rata-rata 2 Semester).'
-            ],
+            ]
 
 
             [
