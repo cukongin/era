@@ -75,51 +75,68 @@
             <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 sm:p-6" x-show="context === 'current_active'">
                 <h3 class="font-bold text-slate-800 mb-4">Logika Sistem Saat Ini</h3>
                 
-                <div class="space-y-4">
+                <div class="space-y-3">
                     
-                    <!-- 1. RAPOR MI -->
-                    <div class="p-3 bg-white border border-indigo-100 rounded-lg shadow-sm">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700">RAPOR MI</span>
-                            <span class="text-xs text-slate-500">(Sistem Cawu)</span>
-                        </div>
-                        <div class="font-mono text-xs sm:text-sm text-slate-700 bg-slate-50 p-2 rounded border border-slate-100 break-all">
-                             ([Rata_PH] × {{ $bobotMI->bobot_harian }}%) + ([Nilai_PTS] × {{ $bobotMI->bobot_uts_cawu }}%) + ([Nilai_PAS] × {{ $bobotMI->bobot_uas }}%)
-                        </div>
-                    </div>
-
-                    <!-- 2. RAPOR MTs -->
-                    <div class="p-3 bg-white border border-purple-100 rounded-lg shadow-sm">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-700">RAPOR MTs</span>
-                            <span class="text-xs text-slate-500">(Sistem Semester)</span>
-                        </div>
-                        <div class="font-mono text-xs sm:text-sm text-slate-700 bg-slate-50 p-2 rounded border border-slate-100 break-all">
-                             ([Rata_PH] × {{ $bobotMTS->bobot_harian }}%) + ([Nilai_PTS] × {{ $bobotMTS->bobot_uts_cawu }}%) + ([Nilai_PAS] × {{ $bobotMTS->bobot_uas }}%)
-                        </div>
-                    </div>
-
-                    <!-- 3. IJAZAH MI -->
-                    <div class="p-3 bg-white border border-emerald-100 rounded-lg shadow-sm">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700">IJAZAH MI</span>
-                            <span class="text-xs text-slate-500">(Kelulusan)</span>
-                        </div>
-                        <div class="font-mono text-xs sm:text-sm text-slate-700 bg-slate-50 p-2 rounded border border-slate-100 break-all">
-                            ([Rata_Rapor_MI] × {{ $wIjazahRapor }}%) + ([Nilai_Ujian] × {{ $wIjazahUjian }}%)
+                    <!-- GROUP 1: RAPOR LOGIC -->
+                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden" x-data="{ open: true }">
+                        <button @click="open = !open" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700/50 flex items-center justify-between hover:bg-slate-100 transition">
+                            <span class="font-bold text-sm text-slate-700 dark:text-slate-300">LOGIKA RAPOR (MI & MTs)</span>
+                            <span class="material-symbols-outlined text-slate-400 text-sm transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
+                        </button>
+                        <div x-show="open" class="p-4 space-y-4 bg-white dark:bg-slate-800">
+                             <!-- 1. RAPOR MI -->
+                            <div class="p-3 border border-indigo-100 rounded-lg shadow-sm bg-indigo-50/20">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700">RAPOR MI</span>
+                                    <span class="text-xs text-slate-500">(Sistem Cawu)</span>
+                                </div>
+                                <div class="font-mono text-xs text-slate-600 bg-white p-2 rounded border border-indigo-50 break-all">
+                                    ([Rata_PH] × {{ $bobotMI->bobot_harian }}%) + ([Nilai_PTS] × {{ $bobotMI->bobot_uts_cawu }}%) + ([Nilai_PAS] × {{ $bobotMI->bobot_uas }}%)
+                                </div>
+                            </div>
+                            <!-- 2. RAPOR MTs -->
+                            <div class="p-3 border border-purple-100 rounded-lg shadow-sm bg-purple-50/20">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-700">RAPOR MTs</span>
+                                    <span class="text-xs text-slate-500">(Sistem Semester)</span>
+                                </div>
+                                <div class="font-mono text-xs text-slate-600 bg-white p-2 rounded border border-purple-50 break-all">
+                                    ([Rata_PH] × {{ $bobotMTS->bobot_harian }}%) + ([Nilai_PTS] × {{ $bobotMTS->bobot_uts_cawu }}%) + ([Nilai_PAS] × {{ $bobotMTS->bobot_uas }}%)
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- 4. IJAZAH MTs -->
-                    <div class="p-3 bg-white border border-emerald-100 rounded-lg shadow-sm">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700">IJAZAH MTs</span>
-                            <span class="text-xs text-slate-500">(Kelulusan)</span>
-                        </div>
-                        <div class="font-mono text-xs sm:text-sm text-slate-700 bg-slate-50 p-2 rounded border border-slate-100 break-all">
-                            ([Rata_Rapor_MTS] × {{ $wIjazahRapor }}%) + ([Nilai_Ujian] × {{ $wIjazahUjian }}%)
+                    <!-- GROUP 2: IJAZAH LOGIC -->
+                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden" x-data="{ open: false }">
+                        <button @click="open = !open" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700/50 flex items-center justify-between hover:bg-slate-100 transition">
+                            <span class="font-bold text-sm text-slate-700 dark:text-slate-300">LOGIKA IJAZAH (MI & MTs)</span>
+                            <span class="material-symbols-outlined text-slate-400 text-sm transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
+                        </button>
+                        <div x-show="open" class="p-4 space-y-4 bg-white dark:bg-slate-800">
+                             <!-- 3. IJAZAH MI -->
+                            <div class="p-3 border border-emerald-100 rounded-lg shadow-sm bg-emerald-50/20">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700">IJAZAH MI</span>
+                                    <span class="text-xs text-slate-500">(Kelulusan)</span>
+                                </div>
+                                <div class="font-mono text-xs text-slate-600 bg-white p-2 rounded border border-emerald-50 break-all">
+                                    ([Rata_Rapor_MI] × {{ $wIjazahRapor }}%) + ([Nilai_Ujian] × {{ $wIjazahUjian }}%)
+                                </div>
+                            </div>
+                            <!-- 4. IJAZAH MTs -->
+                            <div class="p-3 border border-emerald-100 rounded-lg shadow-sm bg-emerald-50/20">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700">IJAZAH MTs</span>
+                                    <span class="text-xs text-slate-500">(Kelulusan)</span>
+                                </div>
+                                <div class="font-mono text-xs text-slate-600 bg-white p-2 rounded border border-emerald-50 break-all">
+                                    ([Rata_Rapor_MTS] × {{ $wIjazahRapor }}%) + ([Nilai_Ujian] × {{ $wIjazahUjian }}%)
+                                </div>
+                            </div>
                         </div>
                     </div>
+
                 </div>
                 
                 <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-xs text-center">
@@ -179,11 +196,15 @@
 
                 <!-- Variables Toolbar & Legend -->
                 <div class="mb-6">
-                    <p class="text-xs font-bold text-slate-500 uppercase mb-3 text-center sm:text-left">Kamus Variabel (Tap untuk Pakai)</p>
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs font-bold text-slate-500 uppercase">Kamus Variabel (Tap)</p>
+                        <span class="text-[10px] text-slate-400 sm:hidden">Geser &rarr;</span>
+                    </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3">
+                    <!-- Mobile: Horizontal Scroll, Desktop: Grid -->
+                    <div class="flex overflow-x-auto pb-4 gap-2 sm:grid sm:grid-cols-2 sm:gap-3 sm:pb-0 snap-x">
                         <template x-for="v in variables" :key="v.code">
-                            <button @click="insertVar(v.code)" class="flex items-center gap-3 p-3 text-left border rounded-lg hover:bg-indigo-50 hover:border-indigo-300 transition group bg-slate-50 dark:bg-slate-700 dark:border-slate-600 shadow-sm active:scale-95 duration-100">
+                            <button @click="insertVar(v.code)" class="shrink-0 w-64 sm:w-auto snap-center flex items-center gap-3 p-3 text-left border rounded-lg hover:bg-indigo-50 hover:border-indigo-300 transition group bg-slate-50 dark:bg-slate-700 dark:border-slate-600 shadow-sm active:scale-95 duration-100">
                                 <div class="shrink-0 font-mono text-xs font-bold bg-indigo-100 text-indigo-700 px-2 py-1 rounded group-hover:bg-indigo-200" x-text="v.code"></div>
                                 <div>
                                     <div class="text-sm font-bold text-slate-700 dark:text-slate-200" x-text="v.label"></div>
@@ -191,7 +212,7 @@
                                 </div>
                             </button>
                         </template> 
-                        <span x-show="variables.length === 0" class="text-gray-400 text-sm italic col-span-2 text-center">Pilih kategori di atas dulu...</span>
+                        <span x-show="variables.length === 0" class="text-gray-400 text-sm italic col-span-2 text-center w-full">Pilih kategori di atas dulu...</span>
                     </div>
                 </div>
 
@@ -232,22 +253,30 @@
             </div>
             
             <!-- SIMULATOR -->
-            <div class="bg-slate-900 rounded-xl shadow-lg p-4 sm:p-6 text-white">
-                 <h2 class="font-bold text-lg mb-4 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-emerald-400">play_circle</span>
-                    Simulator Area
-                </h2>
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4">
-                    <template x-for="v in variables" :key="v.code">
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 mb-1" x-text="v.label"></label>
-                            <input type="number" x-model="inputs[v.code]" @input="simulate()" class="w-full bg-slate-700 border-slate-600 rounded text-white text-base px-2 py-2 sm:py-1">
+            <div class="bg-slate-900 rounded-xl shadow-lg border border-slate-700 overflow-hidden" x-data="{ showSim: false }">
+                 <button @click="showSim = !showSim" class="w-full p-4 sm:p-6 flex items-center justify-between text-left hover:bg-slate-800 transition">
+                     <h2 class="font-bold text-lg text-white flex items-center gap-2">
+                        <span class="material-symbols-outlined text-emerald-400">play_circle</span>
+                        Simulasi Rumus
+                    </h2>
+                    <span class="material-symbols-outlined text-slate-400 transition-transform duration-300" :class="showSim ? 'rotate-180' : ''">expand_more</span>
+                 </button>
+                 
+                <div x-show="showSim" x-collapse>
+                    <div class="p-4 sm:p-6 border-t border-slate-800">
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4">
+                            <template x-for="v in variables" :key="v.code">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 mb-1" x-text="v.label"></label>
+                                    <input type="number" x-model="inputs[v.code]" @input="simulate()" class="w-full bg-slate-700 border-slate-600 rounded text-white text-base px-2 py-2 sm:py-1 focus:ring-emerald-500 focus:border-emerald-500">
+                                </div>
+                            </template>
                         </div>
-                    </template>
-                </div>
-                <div class="flex flex-col sm:flex-row items-center justify-between border-t border-slate-700 pt-4 gap-2">
-                    <span class="text-sm text-slate-400">Hasil Akhir:</span>
-                    <span class="text-3xl font-mono font-bold text-emerald-400" x-text="result"></span>
+                        <div class="flex flex-col sm:flex-row items-center justify-between border-t border-slate-700 pt-4 gap-2">
+                            <span class="text-sm text-slate-400">Hasil Akhir:</span>
+                            <span class="text-3xl font-mono font-bold text-emerald-400" x-text="result"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
