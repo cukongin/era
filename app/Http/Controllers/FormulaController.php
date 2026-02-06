@@ -120,13 +120,27 @@ class FormulaController extends Controller
     private function validateFormula($formula, $variables)
     {
         try {
-            $language = new ExpressionLanguage();
-            // Create dummy values for all variables
-            $values = array_fill_keys($variables, 10); 
-            $language->evaluate($formula, $values);
+            // Simple validation without external libraries
+            $parsed = $formula;
+            // Replace variables with dummy number 10
+            foreach ($variables as $var) {
+                 $parsed = str_replace($var, '10', $parsed); // Plain variable replacement
+                 $parsed = str_replace("[$var]", '10', $parsed); // Bracket variable replacement check
+            }
+            
+            // Clean up any remaining brackets (optional variables)
+            $parsed = preg_replace('/\[.*?\]/', '10', $parsed);
+
+            // Security: Only allow math characters
+            if (preg_match('/[^0-9\.\+\-\*\/\(\)\s]/', $parsed)) {
+                return false;
+            }
+
+            // Test Eval
+            @eval('$result = ' . $parsed . ';');
             return true;
         } catch (\Exception $e) {
-            return false;
+             return false;
         }
     }
 
