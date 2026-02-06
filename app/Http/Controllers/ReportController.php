@@ -914,12 +914,20 @@ class ReportController extends Controller
         $statusNaik = null; 
         
         if ($promotion) {
-            if ($promotion->final_decision === 'promoted') {
+            if ($promotion->final_decision === 'promoted' || $promotion->final_decision === 'graduated') {
                 $statusNaik = true;
-                $currentLevel = (int) filter_var($class->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
-                $nextLevel = $currentLevel + 1;
-                $decisionText = "Naik ke Kelas " . $nextLevel; 
+                $currentLevel = $class->tingkat_kelas ?? (int) filter_var($class->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
                 
+                // Final Year Logic Check
+                $isFinal = in_array($currentLevel, [6, 9, 12]);
+                
+                if ($isFinal || $promotion->final_decision === 'graduated') {
+                     $decisionText = "LULUS";
+                } else {
+                     $nextLevel = $currentLevel + 1;
+                     $decisionText = "Naik ke Kelas " . $nextLevel; 
+                }
+
                 // Check probation note
                 $activePeriod = $allPeriods->firstWhere('status', 'aktif') ?? $allPeriods->last();
                 $pId = $activePeriod->id ?? 0;
@@ -928,15 +936,16 @@ class ReportController extends Controller
                     $decisionText .= " (Percobaan)";
                 }
 
-            } elseif ($promotion->final_decision === 'retained') {
+            } elseif ($promotion->final_decision === 'retained' || $promotion->final_decision === 'not_graduated') {
                 $statusNaik = false;
-                $decisionText = "Tinggal di Kelas " . $class->nama_kelas;
-            } elseif ($promotion->final_decision === 'graduated') {
-                $statusNaik = true;
-                $decisionText = "LULUS";
-            } elseif ($promotion->final_decision === 'not_graduated') {
-                $statusNaik = false;
-                $decisionText = "TIDAK LULUS";
+                $currentLevel = $class->tingkat_kelas ?? (int) filter_var($class->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
+                $isFinal = in_array($currentLevel, [6, 9, 12]);
+                
+                if ($isFinal || $promotion->final_decision === 'not_graduated') {
+                    $decisionText = "TIDAK LULUS";
+                } else {
+                    $decisionText = "Tinggal di Kelas " . $class->nama_kelas;
+                }
             }
         } else {
             // FALLBACK: Use Historical AnggotaKelas Status
