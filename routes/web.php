@@ -169,6 +169,14 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/input-nilai/process-import', [App\Http\Controllers\TeacherDashboardController::class, 'processImportGrades'])->name('teacher.input-nilai.process');
     });
 
+    // Formula Builder Routes
+    Route::get('/settings/formula', [App\Http\Controllers\FormulaController::class, 'index'])->name('settings.formula.index');
+    Route::post('/settings/formula', [App\Http\Controllers\FormulaController::class, 'store'])->name('settings.formula.store');
+    Route::put('/settings/formula/{id}', [App\Http\Controllers\FormulaController::class, 'update'])->name('settings.formula.update');
+    Route::delete('/settings/formula/{id}', [App\Http\Controllers\FormulaController::class, 'destroy'])->name('settings.formula.destroy');
+    Route::post('/settings/formula/simulate', [App\Http\Controllers\FormulaController::class, 'simulate'])->name('settings.formula.simulate');
+    Route::post('/settings/formula/restore', [App\Http\Controllers\FormulaController::class, 'restoreDefault'])->name('settings.formula.restore');
+
     // TU Area (New)
     // Updated to allow teacher access for Global Monitoring (Filtered Scope)
     Route::middleware(['role:staff_tu,admin,teacher'])->prefix('tu')->group(function () {
