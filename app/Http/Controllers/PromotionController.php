@@ -255,8 +255,13 @@ class PromotionController extends Controller
             }
             
             // Check Graduation (Is Final Year?)
-            $gradeLevel = (int) filter_var($kelas->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
-            $isFinalYear = ($jenjang == 'MI' && $gradeLevel == 6) || ($jenjang == 'MTS' && $gradeLevel == 9);
+            // Use 'tingkat_kelas' from DB if available, else fallback safely
+            $gradeLevel = $kelas->tingkat_kelas ?? (int) filter_var($kelas->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
+            
+            // Adjust Logic: MI (6), MTS (9 or 3 if using relative), MA (12)
+            $isFinalYear = ($jenjang == 'MI' && $gradeLevel == 6) || 
+                           ($jenjang == 'MTS' && ($gradeLevel == 9 || $gradeLevel == 3)) ||
+                           ($jenjang == 'MA' && ($gradeLevel == 12 || $gradeLevel == 3));
 
             if ($isFinalYear) {
                 if ($recommendation == 'promoted' || $recommendation == 'conditional') {

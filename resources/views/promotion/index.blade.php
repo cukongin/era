@@ -158,11 +158,26 @@
                                     </span>
                                     <span class="text-[10px] text-amber-600 dark:text-amber-400 pl-1">{{ $st->notes }}</span>
                                 </div>
+                             @elseif($st->system_recommendation == 'graduated')
+                                <div class="flex flex-col gap-1">
+                                    <span class="inline-flex w-fit items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                        LULUS
+                                    </span>
+                                </div>
+                             @elseif($st->system_recommendation == 'not_graduated')
+                                <div class="flex flex-col gap-1">
+                                    <span class="inline-flex w-fit items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                                        TIDAK LULUS
+                                    </span>
+                                    <span class="text-[10px] text-red-600 dark:text-red-400 pl-1">{{ $st->notes }}</span>
+                                </div>
                              @else
                                 <div class="flex flex-col gap-1">
                                     <span class="inline-flex w-fit items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800">
                                         <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                                        Tidak Naik
+                                        Tinggal Kelas
                                     </span>
                                     <span class="text-[10px] text-red-600 dark:text-red-400 pl-1">{{ $st->notes }}</span>
                                 </div>
@@ -178,6 +193,8 @@
                                 <option value="promoted" {{ $st->final_decision == 'promoted' ? 'selected' : '' }}>Naik Kelas</option>
                                 <option value="conditional" {{ $st->final_decision == 'conditional' ? 'selected' : '' }}>Naik Bersyarat</option>
                                 <option value="retained" {{ $st->final_decision == 'retained' ? 'selected' : '' }}>Tinggal Kelas</option>
+                                <option value="graduated" {{ $st->final_decision == 'graduated' ? 'selected' : '' }}>LULUS</option>
+                                <option value="not_graduated" {{ $st->final_decision == 'not_graduated' ? 'selected' : '' }}>TIDAK LULUS</option>
                                 <option value="pending" {{ $st->final_decision == 'pending' ? 'selected' : '' }}>Ditangguhkan</option>
                             </select>
                         </td>
