@@ -107,6 +107,16 @@ class FormulaController extends Controller
         }
     }
 
+    public function restoreDefault(Request $request) 
+    {
+        $context = $request->input('context');
+        if ($context) {
+             GradingFormula::where('context', $context)->update(['is_active' => false]);
+             return back()->with('success', "Logika Custom untuk $context dinonaktifkan. Sistem kembali ke mode Bawaan (Hardcode).");
+        }
+        return back();
+    }
+
     private function validateFormula($formula, $variables)
     {
         try {
