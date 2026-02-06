@@ -17,7 +17,15 @@ echo "<p>Menjalankan 'php artisan migrate'...</p>";
 try {
     Artisan::call('migrate', ['--force' => true]);
     echo "<pre style='background:#f0f0f0; padding:15px; border:1px solid #ddd;'>" . Artisan::output() . "</pre>";
-    echo "<h2 style='color:green'>SUCCESS! Database Updated.</h2>";
+
+    // Auto Seed Formulas if empty
+    if (\App\Models\GradingFormula::count() === 0) {
+        echo "<p>Seeding Default Formulas...</p>";
+        Artisan::call('db:seed', ['--class' => 'Database\\Seeders\\GradingFormulaSeeder', '--force' => true]);
+        echo "<pre style='background:#e6fffa; padding:15px; border:1px solid #b2f5ea;'>" . Artisan::output() . "</pre>";
+    }
+
+    echo "<h2 style='color:green'>SUCCESS! Database Updated & Seeded.</h2>";
     echo "<p>Silakan <a href='/settings/formula'>Kembali ke Menu Formula</a></p>";
 } catch (\Exception $e) {
     echo "<h2 style='color:red'>ERROR: " . $e->getMessage() . "</h2>";
