@@ -255,8 +255,8 @@ class PromotionController extends Controller
             }
             
             // Check Graduation (Is Final Year?)
-            // Use 'tingkat_kelas' from DB if available, else fallback safely
-            $gradeLevel = $kelas->tingkat_kelas ?? (int) filter_var($kelas->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
+            // Robust Level Detection (Roman Friendly)
+            $gradeLevel = $this->parseGradeLevel($kelas);
             
             // Adjust Logic: MI (6), MTS (9 or 3 if using relative), MA (12)
             $isFinalYear = ($jenjang == 'MI' && $gradeLevel == 6) || 
@@ -388,5 +388,37 @@ class PromotionController extends Controller
 
         // If Old Year & Lock is ON -> Block
         return false;
+    }
+
+    // Helper for Roman Numerals
+    private function parseGradeLevel($kelas) {
+        // 1. Try DB Column
+        if (!empty($kelas->tingkat_kelas)) {
+            return (int) $kelas->tingkat_kelas;
+        }
+
+        // 2. Try Standard Number Extract
+        $num = (int) filter_var($kelas->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
+        if ($num > 0) return $num;
+
+        // 3. Try Roman Numerals (Common in MTS)
+        $romans = [
+            'XII' => 12, 'XI' => 11, 'X' => 10,
+            'IX' => 9, 'VIII' => 8, 'VII' => 7,
+            'VI' => 6, 'V' => 5, 'IV' => 4,
+            'III' => 3, 'II' => 2, 'I' => 1
+        ];
+
+        $upperName = strtoupper($kelas->nama_kelas);
+        foreach ($romans as $key => $val) {
+            // Check if name START with Roman (e.g. "IX A")
+            // Use word boundary check to avoid partial matches (e.g. "VI" in "DAVID")
+            // But usually class names are simple.
+            if (str_starts_with($upperName, $key . ' ') || $upperName === $key) {
+                return $val;
+            }
+        }
+
+        return 0; // Unknown
     }
 }

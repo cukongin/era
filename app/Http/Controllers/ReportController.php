@@ -916,10 +916,24 @@ class ReportController extends Controller
         if ($promotion) {
             if ($promotion->final_decision === 'promoted' || $promotion->final_decision === 'graduated') {
                 $statusNaik = true;
-                $currentLevel = $class->tingkat_kelas ?? (int) filter_var($class->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
                 
+                // ROBUST LEVEL DETECTION (Duplicate Logic for Safety)
+                $currentLevel = $class->tingkat_kelas ?? 0;
+                if ($currentLevel == 0) {
+                    $num = (int) filter_var($class->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
+                    if ($num > 0) $currentLevel = $num;
+                    else {
+                        // ROMAN PARSER
+                        $romans = ['XII'=>12, 'XI'=>11, 'X'=>10, 'IX'=>9, 'VIII'=>8, 'VII'=>7, 'VI'=>6, 'V'=>5, 'IV'=>4, 'III'=>3, 'II'=>2, 'I'=>1];
+                        $parts = explode(' ', strtoupper($class->nama_kelas)); // Split "IX A" -> "IX"
+                        if (isset($romans[$parts[0]])) {
+                            $currentLevel = $romans[$parts[0]];
+                        }
+                    }
+                }
+
                 // Final Year Logic Check
-                $isFinal = in_array($currentLevel, [6, 9, 12]);
+                $isFinal = in_array($currentLevel, [6, 9, 12, 3]); // Added 3 for relative MTS numbering
                 
                 if ($isFinal || $promotion->final_decision === 'graduated') {
                      $decisionText = "LULUS";
@@ -938,8 +952,23 @@ class ReportController extends Controller
 
             } elseif ($promotion->final_decision === 'retained' || $promotion->final_decision === 'not_graduated') {
                 $statusNaik = false;
-                $currentLevel = $class->tingkat_kelas ?? (int) filter_var($class->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
-                $isFinal = in_array($currentLevel, [6, 9, 12]);
+                
+                // ROBUST LEVEL DETECTION (Duplicate Logic for Safety)
+                $currentLevel = $class->tingkat_kelas ?? 0;
+                if ($currentLevel == 0) {
+                    $num = (int) filter_var($class->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
+                    if ($num > 0) $currentLevel = $num;
+                    else {
+                        // ROMAN PARSER
+                        $romans = ['XII'=>12, 'XI'=>11, 'X'=>10, 'IX'=>9, 'VIII'=>8, 'VII'=>7, 'VI'=>6, 'V'=>5, 'IV'=>4, 'III'=>3, 'II'=>2, 'I'=>1];
+                        $parts = explode(' ', strtoupper($class->nama_kelas)); // Split "IX A" -> "IX"
+                        if (isset($romans[$parts[0]])) {
+                            $currentLevel = $romans[$parts[0]];
+                        }
+                    }
+                }
+
+                $isFinal = in_array($currentLevel, [6, 9, 12, 3]);
                 
                 if ($isFinal || $promotion->final_decision === 'not_graduated') {
                     $decisionText = "TIDAK LULUS";
