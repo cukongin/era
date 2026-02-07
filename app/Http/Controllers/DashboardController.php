@@ -30,7 +30,7 @@ class DashboardController extends Controller
 
         $activeYear = TahunAjaran::where('status', 'aktif')->first();
         if (!$activeYear) {
-            return view('dashboard.error', ['message' => 'Tidak ada Tahun Ajaran Aktif']);
+            return view('errors.no-active-year', ['message' => 'Tidak ada Tahun Ajaran Aktif']);
         }
 
         // --- 1. General Stats ---
