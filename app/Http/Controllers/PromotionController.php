@@ -42,8 +42,8 @@ class PromotionController extends Controller
                 ->get();
 
             $metrics['total'] = $students->count();
-            $metrics['promoted'] = $students->where('system_recommendation', 'promoted')->count();
-            $metrics['retained'] = $students->where('system_recommendation', 'retained')->count();
+            $metrics['promoted'] = $students->whereIn('system_recommendation', ['promoted', 'graduated', 'conditional'])->count();
+            $metrics['retained'] = $students->whereIn('system_recommendation', ['retained', 'not_graduated'])->count();
         }
 
         // Calculate Lock Status
@@ -397,7 +397,7 @@ class PromotionController extends Controller
             return (int) $kelas->tingkat_kelas;
         }
 
-        // 2. Try Standard Number Extract
+        // 2. Try Standard Number Extract (e.g. "9A" -> 9)
         $num = (int) filter_var($kelas->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
         if ($num > 0) return $num;
 
@@ -409,7 +409,10 @@ class PromotionController extends Controller
             'III' => 3, 'II' => 2, 'I' => 1
         ];
 
-        $upperName = strtoupper($kelas->nama_kelas);
+        // Clean Name: Remove "KELAS" word if present
+        $cleanName = trim(str_replace(['KELAS', 'Kelas', 'kelas'], '', $kelas->nama_kelas));
+        $upperName = strtoupper($cleanName);
+        
         foreach ($romans as $key => $val) {
             // Check if name START with Roman (e.g. "IX A")
             // Use word boundary check to avoid partial matches (e.g. "VI" in "DAVID")

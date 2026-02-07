@@ -923,11 +923,16 @@ class ReportController extends Controller
                     $num = (int) filter_var($class->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
                     if ($num > 0) $currentLevel = $num;
                     else {
-                        // ROMAN PARSER
+                        // ROMAN PARSER (Robust)
                         $romans = ['XII'=>12, 'XI'=>11, 'X'=>10, 'IX'=>9, 'VIII'=>8, 'VII'=>7, 'VI'=>6, 'V'=>5, 'IV'=>4, 'III'=>3, 'II'=>2, 'I'=>1];
-                        $parts = explode(' ', strtoupper($class->nama_kelas)); // Split "IX A" -> "IX"
-                        if (isset($romans[$parts[0]])) {
-                            $currentLevel = $romans[$parts[0]];
+                        $cleanName = trim(str_replace(['KELAS', 'Kelas', 'kelas'], '', $class->nama_kelas));
+                        $upperName = strtoupper($cleanName);
+                        
+                        foreach ($romans as $key => $val) {
+                            if (str_starts_with($upperName, $key . ' ') || $upperName === $key) {
+                                $currentLevel = $val;
+                                break;
+                            }
                         }
                     }
                 }
@@ -959,11 +964,16 @@ class ReportController extends Controller
                     $num = (int) filter_var($class->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
                     if ($num > 0) $currentLevel = $num;
                     else {
-                        // ROMAN PARSER
+                        // ROMAN PARSER (Robust)
                         $romans = ['XII'=>12, 'XI'=>11, 'X'=>10, 'IX'=>9, 'VIII'=>8, 'VII'=>7, 'VI'=>6, 'V'=>5, 'IV'=>4, 'III'=>3, 'II'=>2, 'I'=>1];
-                        $parts = explode(' ', strtoupper($class->nama_kelas)); // Split "IX A" -> "IX"
-                        if (isset($romans[$parts[0]])) {
-                            $currentLevel = $romans[$parts[0]];
+                        $cleanName = trim(str_replace(['KELAS', 'Kelas', 'kelas'], '', $class->nama_kelas));
+                        $upperName = strtoupper($cleanName);
+                        
+                        foreach ($romans as $key => $val) {
+                            if (str_starts_with($upperName, $key . ' ') || $upperName === $key) {
+                                $currentLevel = $val;
+                                break;
+                            }
                         }
                     }
                 }
