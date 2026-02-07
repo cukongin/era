@@ -80,6 +80,7 @@ class PromotionController extends Controller
             $metrics['promoted'] = $students->whereIn('system_recommendation', ['promoted', 'graduated', 'conditional'])->count();
             $metrics['retained'] = $students->whereIn('system_recommendation', ['retained', 'not_graduated'])->count();
 
+
             // --- REVAMPED FINAL YEAR LOGIC WITH LOGGING ---
             $debugLog = [];
             
@@ -341,14 +342,15 @@ class PromotionController extends Controller
             $jenjangCode = strtoupper(trim(optional($kelas->jenjang)->kode));
 
             // Check Graduation (Is Final Year?)
-            $gradeLevel = (int) filter_var($kelas->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
+            // Robust Level Detection (Roman Friendly)
+            // Function exists at bottom of file from Remote merge
+            $gradeLevel = $this->parseGradeLevel($kelas);
             
             // NEW: Configurable Final Year
             $finalGradeMI = (int) \App\Models\GlobalSetting::val('final_grade_mi', 6);
             $finalGradeMTS = (int) \App\Models\GlobalSetting::val('final_grade_mts', 9);
 
             // Standardize: MI 6, MTS 9 (or 3 if using 1-3 format)
-            // Fix: Check for exact 3 or 9
             $isMts = $jenjangCode == 'MTS' || stripos($kelas->nama_kelas, 'mts') !== false;
             $isMi = $jenjangCode == 'MI' || stripos($kelas->nama_kelas, 'mi') !== false || stripos($kelas->nama_kelas, 'ibtidaiyah') !== false;
 
@@ -480,5 +482,40 @@ class PromotionController extends Controller
 
         // If Old Year & Lock is ON -> Block
         return false;
+    }
+
+    // Helper for Roman Numerals
+    private function parseGradeLevel($kelas) {
+        // 1. Try DB Column
+        if (!empty($kelas->tingkat_kelas)) {
+            return (int) $kelas->tingkat_kelas;
+        }
+
+        // 2. Try Standard Number Extract (e.g. "9A" -> 9)
+        $num = (int) filter_var($kelas->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
+        if ($num > 0) return $num;
+
+        // 3. Try Roman Numerals (Common in MTS)
+        $romans = [
+            'XII' => 12, 'XI' => 11, 'X' => 10,
+            'IX' => 9, 'VIII' => 8, 'VII' => 7,
+            'VI' => 6, 'V' => 5, 'IV' => 4,
+            'III' => 3, 'II' => 2, 'I' => 1
+        ];
+
+        // Clean Name: Remove "KELAS" word if present
+        $cleanName = trim(str_replace(['KELAS', 'Kelas', 'kelas'], '', $kelas->nama_kelas));
+        $upperName = strtoupper($cleanName);
+        
+        foreach ($romans as $key => $val) {
+            // Check if name START with Roman (e.g. "IX A")
+            // Use word boundary check to avoid partial matches (e.g. "VI" in "DAVID")
+            // But usually class names are simple.
+            if (str_starts_with($upperName, $key . ' ') || $upperName === $key) {
+                return $val;
+            }
+        }
+
+        return 0; // Unknown
     }
 }

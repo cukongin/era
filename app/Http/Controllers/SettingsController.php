@@ -1104,6 +1104,25 @@ class SettingsController extends Controller
             
             $log .= "Cache Cleared Successfully.\n";
 
+            // 3. Run Migrations (Safe Mode)
+            try {
+                \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+                $log .= "Migrate Output: " . \Illuminate\Support\Facades\Artisan::output() . "\n";
+            } catch (\Exception $migErr) {
+                $log .= "Migrate Skipped/Error: " . $migErr->getMessage() . "\n";
+            }
+
+            // 4. Run Specific Seeders (If needed)
+            // Formulas
+            if (\App\Models\GradingFormula::count() === 0) {
+                 try {
+                    \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'Database\\Seeders\\GradingFormulaSeeder', '--force' => true]);
+                    $log .= "Seeder Output: " . \Illuminate\Support\Facades\Artisan::output() . "\n";
+                 } catch (\Exception $seedErr) {
+                    $log .= "Seeder Error: " . $seedErr->getMessage() . "\n";
+                 }
+            }
+
             return back()->with('success', "Update Berhasil! Sistem via Git (Proc Open).\nLog:\n" . $log);
 
         } catch (\Throwable $e) {

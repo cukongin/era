@@ -61,6 +61,15 @@
                             {{ $f->formula }}
                         </div>
                         <div class="mt-2 flex items-center gap-2 justify-end">
+                            @if(!$f->is_active)
+                            <form action="{{ route('settings.formula.update', $f->id) }}" method="POST">
+                                @csrf @method('PUT')
+                                <input type="hidden" name="is_active" value="1">
+                                <button type="submit" class="text-xs text-blue-600 hover:text-blue-800 hover:underline">Gunakan</button>
+                            </form>
+                            <span class="text-slate-300">|</span>
+                            @endif
+
                              <form action="{{ route('settings.formula.destroy', $f->id) }}" method="POST" onsubmit="return confirm('Hapus rumus ini?');">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="text-xs text-red-500 hover:text-red-700 underline">Hapus</button>

@@ -15,6 +15,8 @@ use App\Models\ReportTemplate;
 use App\Models\Mapel;
 use App\Models\KkmMapel;
 use App\Models\IdentitasSekolah;
+use App\Models\GradingFormula; // Ensure Import
+use App\Services\FormulaEngine; // Ensure Import
 
 class ReportController extends Controller
 {
@@ -186,10 +188,35 @@ class ReportController extends Controller
             ->get();
             
         // Grades
-        $grades = NilaiSiswa::where('id_kelas', $kelas->id)
+        // Grades
+        $allRawGrades = NilaiSiswa::where('id_kelas', $kelas->id)
             ->where('id_periode', $periode->id)
-            ->get()
-            ->groupBy('id_siswa');
+            ->get();
+
+        // [MOD] Apply Custom Formula (If Active, and NOT showing original)
+        if (!$showOriginal) {
+            $jenjang = strtolower($kelas->jenjang->kode ?? 'mi');
+            $context = ($jenjang === 'mts') ? 'rapor_mts' : 'rapor_mi';
+            $activeFormula = GradingFormula::where('context', $context)->where('is_active', true)->first();
+
+            if ($activeFormula) {
+                foreach ($allRawGrades as $grade) {
+                    $vars = [
+                        '[Rata_PH]' => $grade->rata_ph ?? 0,
+                        '[Nilai_PTS]' => $grade->nilai_pts ?? 0,
+                        '[Nilai_PAS]' => $grade->nilai_pas ?? 0,
+                        '[Nilai_Sem_1]' => 0, 
+                        '[Nilai_Sem_2]' => 0,
+                    ];
+                    $newScore = FormulaEngine::calculate($activeFormula->formula, $vars);
+                    if ($newScore > 0) {
+                        $grade->nilai_akhir = round($newScore);
+                    }
+                }
+            }
+        }
+
+        $grades = $allRawGrades->groupBy('id_siswa');
             
         // KKM
         $kkm = KkmMapel::where('id_tahun_ajaran', $selectedYear->id)
@@ -727,6 +754,36 @@ class ReportController extends Controller
             ->where('id_kelas', $class->id)
             ->whereIn('id_periode', $allPeriods->pluck('id'))
             ->get();
+
+    // [MOD] Apply Custom Formula (If Active)
+    $jenjang = strtolower($class->jenjang->kode ?? 'mi');
+    $context = ($jenjang === 'mts') ? 'rapor_mts' : 'rapor_mi';
+    $activeFormula = GradingFormula::where('context', $context)->where('is_active', true)->first();
+
+    if ($activeFormula) {
+        foreach ($rawGrades as $grade) {
+            // Prepare vars (Mapping from DB columns to Formula Variables)
+            $vars = [
+                '[Rata_PH]' => $grade->rata_ph ?? 0,
+                '[Nilai_PTS]' => $grade->nilai_pts ?? 0,
+                '[Nilai_PAS]' => $grade->nilai_pas ?? 0,
+                '[Nilai_Sem_1]' => 0, // Not available in single period context usually, or fetch if needed
+                '[Nilai_Sem_2]' => 0,
+                // Add more if needed. For now, standard Rapor vars.
+            ];
+            
+            // Recalculate
+            $newScore = FormulaEngine::calculate($activeFormula->formula, $vars);
+            
+            // Override object property (InMemory)
+            if ($newScore > 0) {
+                // Round to 0 decimal for Rapor usually? Or 2? 
+                // Let's keep existing precision or clean integer if user enforced.
+                // Assuming Rapor uses integer usually.
+                $grade->nilai_akhir = round($newScore);
+            }
+        }
+    }
             
         $cumulativeGrades = [];
         foreach ($rawGrades as $g) {
@@ -857,27 +914,43 @@ class ReportController extends Controller
         $statusNaik = null; 
         
         if ($promotion) {
-            if ($promotion->final_decision === 'promoted') {
-                $statusNaik = true;
-                $currentLevel = (int) filter_var($class->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
-                $jenjangCode = optional($class->jenjang)->kode;
+            // 1. Determine Current Level (Robust: Numeric or Roman)
+            $currentLevel = 0;
+            $num = (int) filter_var($class->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
+            if ($num > 0) {
+                $currentLevel = $num;
+            } else {
+                // Roman Parser
+                $romans = ['XII'=>12, 'XI'=>11, 'X'=>10, 'IX'=>9, 'VIII'=>8, 'VII'=>7, 'VI'=>6, 'V'=>5, 'IV'=>4, 'III'=>3, 'II'=>2, 'I'=>1];
+                $cleanName = trim(str_replace(['KELAS', 'Kelas', 'kelas'], '', $class->nama_kelas));
+                $upperName = strtoupper($cleanName);
                 
-                // NEW: Configurable Final Year
-                $finalGradeMI = (int) \App\Models\GlobalSetting::val('final_grade_mi', 6);
-                $finalGradeMTS = (int) \App\Models\GlobalSetting::val('final_grade_mts', 9);
+                foreach ($romans as $key => $val) {
+                    if (str_starts_with($upperName, $key . ' ') || $upperName === $key) {
+                        $currentLevel = $val;
+                        break;
+                    }
+                }
+            }
 
-                // Correction for Final Year (Configurable)
-                // Logic: MATCH Config OR Legacy 3 for MTS if Default 9
-                $isFinalYear = ($jenjangCode == 'MI' && $currentLevel == $finalGradeMI) || 
-                               ($jenjangCode == 'MTS' && ($currentLevel == $finalGradeMTS || ($finalGradeMTS == 9 && $currentLevel == 3)));
+            // 2. Determine Final Year Status (Configurable)
+            $jenjangCode = optional($class->jenjang)->kode ?? 'MI';
+            $finalGradeMI = (int) \App\Models\GlobalSetting::val('final_grade_mi', 6);
+            $finalGradeMTS = (int) \App\Models\GlobalSetting::val('final_grade_mts', 9);
+            
+            $isFinalYear = ($jenjangCode == 'MI' && $currentLevel == $finalGradeMI) || 
+                           ($jenjangCode == 'MTS' && ($currentLevel == $finalGradeMTS || ($finalGradeMTS == 9 && $currentLevel == 3)));
 
-                if ($isFinalYear) {
-                     // Treat as Final Year
+            // 3. Status Logic
+            if ($promotion->final_decision === 'promoted' || $promotion->final_decision === 'graduated') {
+                $statusNaik = true;
+
+                if ($isFinalYear || $promotion->final_decision === 'graduated') {
                      $decisionText = "LULUS";
                 } else {
                     $nextLevel = $currentLevel + 1;
                     $decisionText = "Naik ke Kelas " . $nextLevel; 
-                } 
+                }
                 
                 // Check probation note
                 $activePeriod = $allPeriods->firstWhere('status', 'aktif') ?? $allPeriods->last();
@@ -887,15 +960,14 @@ class ReportController extends Controller
                     $decisionText .= " (Percobaan)";
                 }
 
-            } elseif ($promotion->final_decision === 'retained') {
+            } elseif ($promotion->final_decision === 'retained' || $promotion->final_decision === 'not_graduated') {
                 $statusNaik = false;
-                $decisionText = "Tinggal di Kelas " . $class->nama_kelas;
-            } elseif ($promotion->final_decision === 'graduated') {
-                $statusNaik = true;
-                $decisionText = "LULUS";
-            } elseif ($promotion->final_decision === 'not_graduated') {
-                $statusNaik = false;
-                $decisionText = "TIDAK LULUS";
+                
+                if ($isFinalYear || $promotion->final_decision === 'not_graduated') {
+                    $decisionText = "TIDAK LULUS";
+                } else {
+                    $decisionText = "Tinggal di Kelas " . $class->nama_kelas;
+                }
             }
         } else {
             // FALLBACK: Use Historical AnggotaKelas Status
@@ -907,13 +979,17 @@ class ReportController extends Controller
             if ($enrollment) {
                 if ($enrollment->status === 'naik_kelas') {
                     $statusNaik = true;
+                    // Note: Ideally re-run level detection here if needed, but for fallback keep simple or use same logic?
+                    // Let's use simple logic for fallback to allow data to just show.
+                    // Or copy the new Unified Logic? 
+                    // To keep it safe, let's just stick to standard text unless we really need dynamic next class.
+                    // But wait, "Naik ke Kelas X" requires X.
+                    
+                    // RE-USE LEVEL LOGIC (Quick copy for safety in fallback)
                     $currentLevel = (int) filter_var($class->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
                     $jenjangCode = optional($class->jenjang)->kode;
-                    
-                    // NEW: Configurable Final Year Fallback
                     $finalGradeMI = (int) \App\Models\GlobalSetting::val('final_grade_mi', 6);
                     $finalGradeMTS = (int) \App\Models\GlobalSetting::val('final_grade_mts', 9);
-    
                     $isFinalYear = ($jenjangCode == 'MI' && $currentLevel == $finalGradeMI) || 
                                    ($jenjangCode == 'MTS' && ($currentLevel == $finalGradeMTS || ($finalGradeMTS == 9 && $currentLevel == 3)));
 
