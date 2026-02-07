@@ -278,7 +278,7 @@ class WaliKelasController extends Controller
 
     public function inputAbsensi()
     {
-        list($kelas, $periode) = $this->getWaliKelasInfo();
+        list($kelas, $periode, $activeYear) = $this->getWaliKelasInfo();
         if (!$kelas || !$periode) return back()->with('error', 'Akes ditolak atau periode belum aktif.');
 
         // Eager load CatatanKehadiran (relation name inferred: catatan_kehadiran)
@@ -828,7 +828,9 @@ class WaliKelasController extends Controller
         // ==========================================
         // ACCESS CONTROL: FINAL PERIOD CHECK
         // ==========================================
+        // Fix: Filter by Jenjang to prevent picking up other Jenjang's active period (e.g. MI Cawu 3 vs MTs Ganjil)
         $periods = Periode::where('id_tahun_ajaran', $activeYear->id)
+               ->where('lingkup_jenjang', $kelas->jenjang->kode)
                ->orderBy('id', 'asc')
                ->get();
         
@@ -846,6 +848,12 @@ class WaliKelasController extends Controller
             if (str_contains($name, 'cawu 3') || str_contains($name, 'semester 2') || str_contains($name, 'genap')) {
                 $isFinalPeriod = true;
             }
+            
+            // 3. EXPLICIT OVERRIDE: If Name contains "Ganjil" or "Semester 1", it is NOT Final.
+            // This prevents "Kelulusan" appearing in Semester 1 even if it's the only period.
+            if (str_contains($name, 'ganjil') || str_contains($name, 'semester 1') || str_contains($name, 'cawu 1') || str_contains($name, 'cawu 2')) {
+                $isFinalPeriod = false;
+            }
         }
 
         $user = Auth::user();
@@ -861,10 +869,8 @@ class WaliKelasController extends Controller
         ];
 
         if (!$isFinalPeriod) {
-            if (!$isAdmin) {
-                 return back()->with('error', '⛔ AKSES DITOLAK: Halaman Kenaikan Kelas hanya aktif di Periode Akhir (Semester 2 / Cawu 3).');
-            }
-            $warningMessage = "⚠️ PERINGATAN: Periode saat ini (" . ($activeP->nama_periode ?? '-') . ") BUKAN periode akhir.";
+            // WARN: Just a warning, don't block.
+            $warningMessage = "⚠️ PERINGATAN: Periode saat ini (" . ($activeP->nama_periode ?? '-') . ") BUKAN periode akhir (Semester Genap). Fitur Kenaikan/Kelulusan mungkin tidak relevan.";
         }
         // ==========================================
 
@@ -1098,13 +1104,72 @@ class WaliKelasController extends Controller
         $isLocked = false;
         $latestYear = TahunAjaran::orderBy('id', 'desc')->first();
         
+        // --- REVAMPED FINAL YEAR LOGIC (Ported from PromotionController) ---
+        if (!$kelas->relationLoaded('jenjang')) {
+            $kelas->load('jenjang');
+        }
+        $jenjangCode = optional($kelas->jenjang)->kode;
+        if (!$jenjangCode) {
+            if (stripos($kelas->nama_kelas, 'MTs') !== false) $jenjangCode = 'MTS';
+            elseif (stripos($kelas->nama_kelas, 'MI') !== false) $jenjangCode = 'MI';
+        }
+        $jenjangCode = strtoupper($jenjangCode ?? '');
+        
+        $grade = (int) filter_var($kelas->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
+        $finalGradeMI = (int) \App\Models\GlobalSetting::val('final_grade_mi', 6);
+        $finalGradeMTS = (int) \App\Models\GlobalSetting::val('final_grade_mts', 9);
+
+        // Strict Logic
+        $isFinalYear = false;
+        
+        // Ensure we are in the Final Period (Semester Genap) for Graduation
+        // $isFinalPeriod is calculated at the top of this function
+        if (isset($isFinalPeriod) && $isFinalPeriod) {
+            if ($jenjangCode === 'MI') {
+                if ($grade == $finalGradeMI) $isFinalYear = true;
+            } elseif ($jenjangCode === 'MTS') {
+                    if ($grade == $finalGradeMTS) $isFinalYear = true; 
+                    elseif ($finalGradeMTS == 9 && $grade == 3) $isFinalYear = true; // Legacy
+            }
+        }
+
+        $pageContext = [
+            'type' => 'promotion',
+            'title' => 'Kenaikan Kelas',
+            'success_label' => 'Naik Kelas',
+            'fail_label' => 'Tinggal Kelas',
+            'success_badge' => 'Naik Kelas',
+            'fail_badge' => 'Tinggal Kelas'
+        ];
+
+        if ($isFinalYear) {
+            $pageContext = [
+                'type' => 'graduation',
+                'title' => 'Kelulusan Akhir',
+                'success_label' => 'LULUS',
+                'fail_label' => 'TIDAK LULUS',
+                'success_badge' => 'LULUS',
+                'fail_badge' => 'TIDAK LULUS'
+            ];
+        }
+
         if ($activeYear && $latestYear && $activeYear->id !== $latestYear->id) {
             if (!\App\Models\GlobalSetting::val('allow_edit_past_data', 0)) {
                 $isLocked = true;
             }
         }
 
-        return view('wali-kelas.kenaikan-kelas', compact('kelas', 'studentStats', 'summary', 'isFinalYear', 'allClasses', 'isLocked'));
+        // BRUTAL DEBUG 2.0
+        return view('wali-kelas.kenaikan-kelas', compact(
+            'kelas', 
+            'studentStats', 
+            'summary', 
+            'isFinalYear', 
+            'allClasses', 
+            'isLocked',
+            'pageContext', // Passing the context
+            'debugInfo'
+        ));
     }
 
     public function storeKenaikanKelas(Request $request)

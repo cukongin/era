@@ -36,7 +36,7 @@
             @endif
             
             <!-- Backup Button -->
-            <a href="{{ route('backup.download') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-bold shadow-lg transition-all flex items-center gap-2 text-sm">
+            <a href="{{ route('backup.store') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-bold shadow-lg transition-all flex items-center gap-2 text-sm">
                 <span class="material-symbols-outlined text-[18px]">cloud_download</span> Backup DB
             </a>
             
@@ -86,6 +86,13 @@
 
             <!-- MAINTENANCE TAB -->
             @if(auth()->user()->role === 'admin')
+            <button @click="activeTab = 'backup'"
+                :class="activeTab === 'backup' ? 'border-blue-500 text-blue-600' : 'border-transparent text-slate-500 hover:text-blue-600 hover:border-blue-300'"
+                class="group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm transition-all">
+                <span class="material-symbols-outlined mr-2" :class="activeTab === 'backup' ? 'text-blue-600' : 'text-slate-400 group-hover:text-blue-500'">cloud_sync</span>
+                Backup & Restore
+            </button>
+
             <button @click="activeTab = 'maintenance'"
                 :class="activeTab === 'maintenance' ? 'border-red-500 text-red-600' : 'border-transparent text-slate-500 hover:text-red-600 hover:border-red-300'"
                 class="group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm transition-all">
@@ -352,6 +359,29 @@
                                              <span class="absolute right-3 top-2 text-slate-400 material-symbols-outlined text-[18px]">calendar_today</span>
                                         </div>
                                         <p class="text-[10px] text-slate-400 mt-1">Tanggal pembagian rapor.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card: Pengaturan Tingkat Akhir (Moved to Standalone Card) -->
+                            <div class="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl shadow-sm border border-indigo-200 dark:border-indigo-800 p-5 mt-6">
+                                <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm mb-4">
+                                    <span class="material-symbols-outlined text-indigo-600 text-sm">school</span> Pengaturan Tingkat Akhir (Kelulusan)
+                                </h4>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Kelas Akhir MI</label>
+                                        <input type="number" name="final_grade_mi" 
+                                            value="{{ \App\Models\GlobalSetting::val('final_grade_mi', 6) }}" 
+                                            class="w-full font-bold rounded-lg border-indigo-200 focus:ring-indigo-500 text-indigo-700 text-sm" placeholder="6">
+                                        <p class="text-[10px] text-slate-400 mt-1">Siswa kelas ini akan dianggap LULUS jika naik.</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Kelas Akhir MTs</label>
+                                        <input type="number" name="final_grade_mts" 
+                                            value="{{ \App\Models\GlobalSetting::val('final_grade_mts', 9) }}" 
+                                            class="w-full font-bold rounded-lg border-indigo-200 focus:ring-indigo-500 text-indigo-700 text-sm" placeholder="9 (atau 3)">
+                                        <p class="text-[10px] text-slate-400 mt-1">Siswa kelas ini akan dianggap LULUS.</p>
                                     </div>
                                 </div>
                             </div>
@@ -724,6 +754,109 @@
                  </div>
 
              </div>
+        </div>
+
+        <!-- TAB: BACKUP & RESTORE -->
+        <div x-show="activeTab === 'backup'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
+            <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+                
+                <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-blue-600">cloud_sync</span> Backup & Restore Database
+                </h3>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <!-- Create Backup -->
+                    <div class="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-xl border border-blue-200 dark:border-blue-800 flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-blue-800 dark:text-blue-300 text-lg mb-2">Buat Backup Baru</h4>
+                            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                                Sistem akan membuat file `.sql` lengkap dari database saat ini. 
+                                File akan disimpan di server dan bisa didownload.
+                            </p>
+                        </div>
+                        <a href="{{ route('backup.store') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg text-center shadow-lg transition-transform hover:scale-105 flex items-center justify-center gap-2">
+                             <span class="material-symbols-outlined">save</span> Proses Backup Sekarang
+                        </a>
+                    </div>
+
+                    <!-- Upload Restore -->
+                    <div class="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-xl border border-slate-200 dark:border-slate-700">
+                        <h4 class="font-bold text-slate-800 dark:text-slate-300 text-lg mb-2">Restore dari File</h4>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                            Upload file `.sql` dari komputer Anda untuk mengembalikan database.
+                            <br><b class="text-red-500">PERHATIAN:</b> Data saat ini akan ditimpa!
+                        </p>
+                        <form action="{{ route('backup.restore') }}" method="POST" enctype="multipart/form-data" class="flex gap-2">
+                            @csrf
+                            <input type="file" name="backup_file" accept=".sql" required class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 border border-slate-300 rounded-lg">
+                            <button type="submit" onclick="return confirm('Yakin ingin merestore database? Data saat ini akan hilang!')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold px-4 py-2 rounded-lg shadow-md">
+                                Restore
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Backup List -->
+                <div class="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700">
+                    <div class="bg-slate-50 dark:bg-slate-800 px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+                        <h4 class="font-bold text-slate-700 dark:text-slate-300">Riwayat Backup di Server</h4>
+                    </div>
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-white dark:bg-slate-800 text-xs uppercase font-bold text-slate-500 border-b border-slate-100 dark:border-slate-700">
+                            <tr>
+                                <th class="px-6 py-3">Nama File</th>
+                                <th class="px-6 py-3">Tanggal</th>
+                                <th class="px-6 py-3">Ukuran</th>
+                                <th class="px-6 py-3 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 dark:divide-slate-700 bg-white dark:bg-[#1a2e22]">
+                            @forelse($backups as $backup)
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                <td class="px-6 py-3 font-medium text-slate-700 dark:text-slate-200">
+                                    {{ $backup->filename }}
+                                </td>
+                                <td class="px-6 py-3 text-slate-500">
+                                    {{ $backup->created_at->format('d M Y H:i') }}
+                                    <span class="text-xs text-slate-400 block">{{ $backup->created_at->diffForHumans() }}</span>
+                                </td>
+                                <td class="px-6 py-3 text-slate-500 font-mono text-xs">
+                                    {{ $backup->size }}
+                                </td>
+                                <td class="px-6 py-3 text-right flex justify-end gap-2">
+                                    <form action="{{ route('backup.restore-local', $backup->filename) }}" method="POST"
+                                          onsubmit="return confirm('Yakin ingin restore dari file ini? Data saat ini akan hilang!')">
+                                        @csrf
+                                        <button type="submit" class="text-xs font-bold text-amber-600 bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded border border-amber-200 flex items-center gap-1" title="Restore">
+                                            <span class="material-symbols-outlined text-[16px]">history</span> Restore
+                                        </button>
+                                    </form>
+                                    
+                                    <a href="{{ route('backup.download', $backup->filename) }}" class="text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded border border-blue-200 flex items-center gap-1" title="Download">
+                                        <span class="material-symbols-outlined text-[16px]">download</span> Download
+                                    </a>
+
+                                    <form action="{{ route('backup.destroy', $backup->filename) }}" method="POST"
+                                          onsubmit="return confirm('Hapus file backup ini?')">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded border border-red-200 flex items-center gap-1" title="Hapus">
+                                            <span class="material-symbols-outlined text-[16px]">delete</span> Hapus
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="4" class="px-6 py-8 text-center text-slate-400 italic">
+                                    Belum ada file backup tersimpan.
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
         </div>
 
         <!-- TAB 4: SYSTEM HEALTH DASHBOARD -->

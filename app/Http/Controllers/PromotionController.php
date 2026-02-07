@@ -15,96 +15,178 @@ class PromotionController extends Controller
 {
     public function index(Request $request)
     {
-        $activeYear = TahunAjaran::where('status', 'aktif')->firstOrFail();
-        
-        // 1. Filter Classes by Active Year
-        $allClasses = Kelas::where('id_tahun_ajaran', $activeYear->id)->orderBy('nama_kelas')->get();
-        $kelasId = $request->kelas_id;
-        
-        if (!$kelasId && $allClasses->count() > 0) {
-            $kelasId = $allClasses->first()->id;
+        // 1. Initial Checks
+        if (!$this->checkActiveYear()) {
+             return redirect()->back()->with('error', '⚠️ AKSES DITOLAK: Periode terkunci atau bukan tahun aktif.');
         }
 
-        $selectedClass = Kelas::find($kelasId);
-        $students = [];
-        $metrics = ['total' => 0, 'promoted' => 0, 'retained' => 0];
+        $activeYear = TahunAjaran::where('status', 'aktif')->firstOrFail();
+        
+        // 2. Class Selection
+        $userId = Auth::id();
+        $user = Auth::user();
+        
+        // Admin Access
+        if ($user->role === 'admin' || $userId == 1 || $user->isStaffTu()) {
+            $allClasses = Kelas::where('id_tahun_ajaran', $activeYear->id)->orderBy('nama_kelas')->get();
+        } else {
+            // Wali Kelas Access
+            $allClasses = Kelas::where('id_tahun_ajaran', $activeYear->id)
+                ->where('id_wali', $userId)
+                ->orderBy('nama_kelas')
+                ->get();
+        }
 
+        $selectedClass = $allClasses->first();
+        if ($request->has('class_id')) {
+            $selectedClass = $allClasses->where('id', $request->class_id)->first() ?? $selectedClass;
+        }
+
+        $students = collect([]);
+        $metrics = ['total' => 0, 'promoted' => 0, 'retained' => 0];
+        $isLocked = false;
+        $isFinalYear = false;
+        $pageContext = [
+            'type' => 'promotion',
+            'title' => 'Kenaikan Kelas',
+            'success_label' => 'Naik Kelas',
+            'fail_label' => 'Tinggal Kelas',
+            'success_badge' => 'Naik Kelas',
+            'fail_badge' => 'Tinggal Kelas'
+        ];
+
+        // 3. Logic Engine
         if ($selectedClass) {
-            // Ensure Calculation is Run/Updated
+            // Check Lock (Manual Override Logic)
+            $isLocked = DB::table('promotion_decisions')
+                ->where('id_kelas', $selectedClass->id)
+                ->where('id_tahun_ajaran', $activeYear->id)
+                ->whereNotNull('override_by')
+                ->exists();
+
+            // Run Calculation
             $this->calculate($selectedClass->id);
 
+            // Fetch Results
             $students = DB::table('promotion_decisions')
                 ->join('siswa', 'promotion_decisions.id_siswa', '=', 'siswa.id')
                 ->where('promotion_decisions.id_kelas', $selectedClass->id)
                 ->where('promotion_decisions.id_tahun_ajaran', $activeYear->id)
-                ->select('promotion_decisions.*', 'siswa.nama_lengkap', 'siswa.nis_lokal as nis')
-                ->orderBy('siswa.nama_lengkap')
+                ->select('siswa.nama_siswa', 'siswa.nis', 'promotion_decisions.*')
+                ->orderBy('siswa.nama_siswa')
                 ->get();
 
             $metrics['total'] = $students->count();
-            $metrics['promoted'] = $students->where('system_recommendation', 'promoted')->count();
-            $metrics['retained'] = $students->where('system_recommendation', 'retained')->count();
-        }
+            $metrics['promoted'] = $students->whereIn('system_recommendation', ['promoted', 'graduated', 'conditional'])->count();
+            $metrics['retained'] = $students->whereIn('system_recommendation', ['retained', 'not_graduated'])->count();
 
-        // Calculate Lock Status
-        $activeYear = TahunAjaran::where('status', 'aktif')->first();
-        $latestYear = TahunAjaran::orderBy('id', 'desc')->first();
-        $isLocked = false;
-        
-        if ($activeYear && $latestYear && $activeYear->id !== $latestYear->id) {
-            if (!\App\Models\GlobalSetting::val('allow_edit_past_data', 0)) {
-                $isLocked = true;
+            // --- REVAMPED FINAL YEAR LOGIC WITH LOGGING ---
+            $debugLog = [];
+            
+            // 1. Force Load Jenjang
+            if (!$selectedClass->relationLoaded('jenjang')) {
+                $selectedClass->load('jenjang');
+            }
+            
+            $jenjangCode = optional($selectedClass->jenjang)->kode;
+            $debugLog[] = "Raw Jenjang: " . ($jenjangCode ?? 'NULL');
+            
+            if (!$jenjangCode) {
+                // Fallback: Guess from name
+                if (stripos($selectedClass->nama_kelas, 'MTs') !== false) {
+                    $jenjangCode = 'MTS';
+                    $debugLog[] = "Fallback Jenjang: MTS (from name)";
+                } elseif (stripos($selectedClass->nama_kelas, 'MI') !== false) {
+                    $jenjangCode = 'MI';
+                    $debugLog[] = "Fallback Jenjang: MI (from name)";
+                } else {
+                    $debugLog[] = "Fallback Jenjang: Failed";
+                }
+            }
+            $jenjangCode = strtoupper($jenjangCode);
+            $debugLog[] = "Normalized Jenjang: $jenjangCode";
+            
+            $grade = (int) filter_var($selectedClass->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
+            $debugLog[] = "Grade Level: $grade";
+            
+            $finalGradeMI = (int) \App\Models\GlobalSetting::val('final_grade_mi', 6);
+            $finalGradeMTS = (int) \App\Models\GlobalSetting::val('final_grade_mts', 9);
+            $debugLog[] = "Config MI: $finalGradeMI, MTS: $finalGradeMTS";
+
+            // Strict Logic
+            if ($jenjangCode === 'MI') {
+                if ($grade == $finalGradeMI) {
+                    $isFinalYear = true;
+                    $debugLog[] = "DECISION: FINAL YEAR (MI Match)";
+                } else {
+                    $debugLog[] = "DECISION: NOT FINAL (MI mismatch $grade != $finalGradeMI)";
+                }
+            } elseif ($jenjangCode === 'MTS') {
+                 if ($grade == $finalGradeMTS) {
+                     $isFinalYear = true; // Config match
+                     $debugLog[] = "DECISION: FINAL YEAR (MTS Config Match)";
+                 } elseif ($finalGradeMTS == 9 && $grade == 3) {
+                     $isFinalYear = true; // Legacy support (Class 3 MTs)
+                     $debugLog[] = "DECISION: FINAL YEAR (MTS Legacy 3==9 Match)";
+                 } else {
+                     $debugLog[] = "DECISION: NOT FINAL (MTS mismatch Grade $grade != $finalGradeMTS)";
+                 }
+            } else {
+                $debugLog[] = "DECISION: NOT FINAL (Unknown Jenjang '$jenjangCode')";
+            }
+
+            // --- FINAL PERIOD VALIDATION ---
+            // Even if it's the final year grade, we must be in the final semester/cawu
+            if ($isFinalYear) {
+                 $activePeriodVal = \App\Models\Periode::where('status', 'aktif')->first();
+                 if ($activePeriodVal) {
+                     $pName = strtolower($activePeriodVal->nama_periode);
+                     // If explicit Odd Semester -> Revoke Graduation Status
+                     if (str_contains($pName, 'ganjil') || str_contains($pName, 'semester 1') || str_contains($pName, 'cawu 1') || str_contains($pName, 'cawu 2')) {
+                         $isFinalYear = false;
+                         $debugLog[] = "DECISION: FINAL YEAR REVOKED (Period '$pName' is not final)";
+                     }
+                 }
+            }
+
+            if ($isFinalYear) {
+                $pageContext = [
+                    'type' => 'graduation',
+                    'title' => 'Kelulusan Akhir',
+                    'success_label' => 'LULUS',
+                    'fail_label' => 'TIDAK LULUS',
+                    'success_badge' => 'LULUS',
+                    'fail_badge' => 'TIDAK LULUS'
+                ];
             }
         }
 
-        // 5. Access Control (Final Period Check)
-        $periods = Periode::where('id_tahun_ajaran', $activeYear->id)
-               ->orderBy('id', 'asc')
-               ->get();
-        
+        // 4. Access Control (Period Check)
+        $periods = Periode::where('id_tahun_ajaran', $activeYear->id)->get();
         $activePeriod = $periods->firstWhere('status', 'aktif');
-        $lastPeriod = $periods->last();
-
-        $isFinalPeriod = false;
-        
-        // Logical Check (ID or Name)
-        if ($activePeriod && $lastPeriod && $activePeriod->id === $lastPeriod->id) {
-             $isFinalPeriod = true;
-        }
-
-        // Additional Name Check (To be sure)
-        if ($activePeriod) {
-            $name = strtolower($activePeriod->nama_periode);
-            if (str_contains($name, 'cawu 3') || str_contains($name, 'semester 2') || str_contains($name, 'genap')) {
-                $isFinalPeriod = true;
-            }
-        }
-
-        // Restriction Logic
-        $user = Auth::user();
-        $isAdmin = $user->role === 'admin' || $user->id === 1 || $user->isStaffTu(); 
         $warningMessage = null;
 
-        // DEBUGGING ARSENAL
-        $debugInfo = [
-            'User' => $user->name . ' (' . $user->role . ') ID: ' . $user->id,
-            'IsAdmin' => $isAdmin ? 'YES' : 'NO',
-            'ActivePeriod' => $activePeriod ? $activePeriod->nama_periode . ' (ID: '.$activePeriod->id.')' : 'NONE',
-            'LastPeriod' => $lastPeriod ? $lastPeriod->nama_periode . ' (ID: '.$lastPeriod->id.')' : 'NONE',
-            'IsFinalPeriod' => $isFinalPeriod ? 'YES' : 'NO',
-            'DetectionMethod' => 'Name Check + ID Match'
-        ];
-
-        if (!$isFinalPeriod) {
-            if (!$isAdmin) {
-                 // Force Block for Non-Admins
-                 return redirect()->route('dashboard')->with('error', '⛔ AKSES DITOLAK: Halaman Kenaikan Kelas hanya aktif di Periode Akhir. (Debug: Period matches '.$debugInfo['ActivePeriod'].')');
+        if ($activePeriod) {
+            $isLast = $periods->last() && $activePeriod->id === $periods->last()->id;
+            if (!$isLast && !$user->role === 'admin') {
+                return redirect()->route('dashboard')->with('error', 'Halaman ini hanya aktif di periode akhir.');
             }
-            // Admin Warning
-            $warningMessage = "⚠️ PERINGATAN: Periode saat ini (" . ($activePeriod->nama_periode ?? '-') . ") BUKAN periode akhir.";
+            if (!$isLast) {
+                 $warningMessage = "⚠️ PERINGATAN: Periode saat ini ({$activePeriod->nama_periode}) BUKAN periode akhir.";
+            }
         }
 
-        return view('promotion.index', compact('allClasses', 'selectedClass', 'students', 'metrics', 'isLocked', 'warningMessage', 'debugInfo'));
+        return view('promotion.index', compact(
+            'allClasses', 
+            'selectedClass', 
+            'students', 
+            'metrics', 
+            'isLocked', 
+            'warningMessage', 
+            'isFinalYear',
+            'pageContext',
+            'debugLog'
+        ));
     }
 
     // THE LOGIC ENGINE
@@ -254,9 +336,24 @@ class PromotionController extends Controller
                 $recommendation = 'promoted';
             }
             
+            // RELOAD Jenjang to be sure (avoid lazy load issues)
+            $kelas->load('jenjang');
+            $jenjangCode = strtoupper(trim(optional($kelas->jenjang)->kode));
+
             // Check Graduation (Is Final Year?)
             $gradeLevel = (int) filter_var($kelas->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
-            $isFinalYear = ($jenjang == 'MI' && $gradeLevel == 6) || ($jenjang == 'MTS' && $gradeLevel == 9);
+            
+            // NEW: Configurable Final Year
+            $finalGradeMI = (int) \App\Models\GlobalSetting::val('final_grade_mi', 6);
+            $finalGradeMTS = (int) \App\Models\GlobalSetting::val('final_grade_mts', 9);
+
+            // Standardize: MI 6, MTS 9 (or 3 if using 1-3 format)
+            // Fix: Check for exact 3 or 9
+            $isMts = $jenjangCode == 'MTS' || stripos($kelas->nama_kelas, 'mts') !== false;
+            $isMi = $jenjangCode == 'MI' || stripos($kelas->nama_kelas, 'mi') !== false || stripos($kelas->nama_kelas, 'ibtidaiyah') !== false;
+
+            $isFinalYear = ($isMi && $gradeLevel == $finalGradeMI) || 
+                           ($isMts && ($gradeLevel == $finalGradeMTS || ($finalGradeMTS == 9 && $gradeLevel == 3)));
 
             if ($isFinalYear) {
                 if ($recommendation == 'promoted' || $recommendation == 'conditional') {

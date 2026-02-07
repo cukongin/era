@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Kalkulasi Kenaikan Kelas')
+@section('title', $pageContext['title'])
 
 @section('content')
 <div class="space-y-6">
@@ -41,9 +41,14 @@
     <!-- Header -->
     <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Kalkulasi Kenaikan Kelas</h1>
+            <h1 class="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                @if($pageContext['type'] == 'graduation')
+                    <span class="material-symbols-outlined text-indigo-600">school</span>
+                @endif
+                {{ $pageContext['title'] }}
+            </h1>
             <p class="text-sm text-slate-500">
-                Sistem otomatis menghitung rekomendasi kenaikan kelas berdasarkan aturan penilaian.
+                Sistem otomatis menghitung rekomendasi {{ strtolower($pageContext['title']) }} berdasarkan aturan penilaian.
                 <br>Kelas: <span class="font-bold text-indigo-600">{{ $kelas->nama_kelas }}</span>
                 @if(isset($isLocked) && $isLocked)
                     <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800">
@@ -68,7 +73,7 @@
             @endif
 
             @if(isset($debugInfo))
-            <div class="mt-4 bg-slate-800 text-green-400 p-4 rounded-lg font-mono text-xs overflow-auto border border-slate-700">
+            <div class="mt-4 bg-slate-800 text-green-400 p-4 rounded-lg font-mono text-xs overflow-auto border border-slate-700 hidden">
                 <p class="font-bold text-white border-b border-slate-600 pb-2 mb-2">🕵️ DEBUG MODE ACTIVATED</p>
                 <div class="grid grid-cols-2 gap-2">
                     @foreach($debugInfo as $k => $v)
@@ -118,7 +123,7 @@
         <!-- Siap Naik/Lulus -->
         <div class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 flex justify-between items-center">
             <div>
-                <p class="text-sm font-medium text-slate-500">{{ $isFinalYear ? 'Siap Lulus' : 'Siap Naik Kelas' }}</p>
+                <p class="text-sm font-medium text-slate-500">Siap {{ $pageContext['success_label'] }}</p>
                 <h3 class="text-3xl font-bold text-emerald-600 mt-1">{{ $summary['promote'] }}</h3>
                 <p class="text-xs text-emerald-500 mt-1">Memenuhi syarat</p>
             </div>
@@ -130,7 +135,7 @@
         <!-- Perlu Peninjauan/Tidak Naik -->
         <div class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 flex justify-between items-center">
             <div>
-                <p class="text-sm font-medium text-slate-500">Perlu Peninjauan / Tinggal</p>
+                <p class="text-sm font-medium text-slate-500">Perlu Peninjauan / {{ $isFinalYear ? 'Tidak Lulus' : 'Tinggal' }}</p>
                 <h3 class="text-3xl font-bold text-amber-500 mt-1">{{ $summary['review'] + $summary['retain'] }}</h3>
                 <p class="text-xs text-amber-500 mt-1">Tidak memenuhi syarat</p>
             </div>
@@ -145,7 +150,7 @@
         <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
             <h2 class="font-bold flex items-center gap-2">
                 <span class="material-symbols-outlined text-indigo-600">table_chart</span>
-                Daftar Rekomendasi Kenaikan
+                Daftar Rekomendasi {{ $pageContext['title'] }}
             </h2>
             <div class="relative">
                 <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-sm">search</span>
@@ -226,13 +231,13 @@
                                 @if($stat->system_status == 'promote' || $stat->system_status == 'graduate')
                                     <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold border border-emerald-200">
                                         <span class="material-symbols-outlined text-[10px] mr-1">check</span> 
-                                        {{ $stat->recommendation }}
+                                        {{ $isFinalYear ? 'LULUS' : 'Naik Kelas' }}
                                     </span>
                                 @else
                                     <div class="flex flex-col items-center gap-1">
                                         <span class="{{ $stat->system_status == 'review' ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-red-100 text-red-700 border-red-200' }} px-3 py-1 rounded-full text-xs font-bold border flex items-center">
                                             <span class="material-symbols-outlined text-[10px] mr-1">{{ $stat->system_status == 'review' ? 'warning' : 'close' }}</span>
-                                            {{ $stat->recommendation }}
+                                            {{ $isFinalYear ? 'TIDAK LULUS' : 'Tinggal Kelas' }}
                                         </span>
                                         @if(!empty($stat->fail_reasons))
                                             <div class="text-[10px] text-red-600 text-center w-full px-1 leading-tight mt-1">

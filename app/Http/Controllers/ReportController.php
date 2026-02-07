@@ -860,8 +860,24 @@ class ReportController extends Controller
             if ($promotion->final_decision === 'promoted') {
                 $statusNaik = true;
                 $currentLevel = (int) filter_var($class->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
-                $nextLevel = $currentLevel + 1;
-                $decisionText = "Naik ke Kelas " . $nextLevel; 
+                $jenjangCode = optional($class->jenjang)->kode;
+                
+                // NEW: Configurable Final Year
+                $finalGradeMI = (int) \App\Models\GlobalSetting::val('final_grade_mi', 6);
+                $finalGradeMTS = (int) \App\Models\GlobalSetting::val('final_grade_mts', 9);
+
+                // Correction for Final Year (Configurable)
+                // Logic: MATCH Config OR Legacy 3 for MTS if Default 9
+                $isFinalYear = ($jenjangCode == 'MI' && $currentLevel == $finalGradeMI) || 
+                               ($jenjangCode == 'MTS' && ($currentLevel == $finalGradeMTS || ($finalGradeMTS == 9 && $currentLevel == 3)));
+
+                if ($isFinalYear) {
+                     // Treat as Final Year
+                     $decisionText = "LULUS";
+                } else {
+                    $nextLevel = $currentLevel + 1;
+                    $decisionText = "Naik ke Kelas " . $nextLevel; 
+                } 
                 
                 // Check probation note
                 $activePeriod = $allPeriods->firstWhere('status', 'aktif') ?? $allPeriods->last();
@@ -892,8 +908,21 @@ class ReportController extends Controller
                 if ($enrollment->status === 'naik_kelas') {
                     $statusNaik = true;
                     $currentLevel = (int) filter_var($class->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
-                    $nextLevel = $currentLevel + 1;
-                    $decisionText = "Naik ke Kelas " . $nextLevel;
+                    $jenjangCode = optional($class->jenjang)->kode;
+                    
+                    // NEW: Configurable Final Year Fallback
+                    $finalGradeMI = (int) \App\Models\GlobalSetting::val('final_grade_mi', 6);
+                    $finalGradeMTS = (int) \App\Models\GlobalSetting::val('final_grade_mts', 9);
+    
+                    $isFinalYear = ($jenjangCode == 'MI' && $currentLevel == $finalGradeMI) || 
+                                   ($jenjangCode == 'MTS' && ($currentLevel == $finalGradeMTS || ($finalGradeMTS == 9 && $currentLevel == 3)));
+
+                    if ($isFinalYear) {
+                         $decisionText = "LULUS";
+                    } else {
+                        $nextLevel = $currentLevel + 1;
+                        $decisionText = "Naik ke Kelas " . $nextLevel;
+                    }
                 } elseif ($enrollment->status === 'tinggal_kelas') {
                      $statusNaik = false;
                      $decisionText = "Tinggal di Kelas " . $class->nama_kelas;

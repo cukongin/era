@@ -142,6 +142,25 @@ class SettingsController extends Controller
             $school = \App\Models\IdentitasSekolah::where('jenjang', $jenjang)->firstOrNew(['jenjang' => $jenjang]);
         }
 
+        // 9. Backups (For Backup Tab)
+        $backupPath = 'backups';
+        if (!\Illuminate\Support\Facades\Storage::exists($backupPath)) {
+            \Illuminate\Support\Facades\Storage::makeDirectory($backupPath);
+        }
+        $files = \Illuminate\Support\Facades\Storage::files($backupPath);
+        $backups = [];
+        foreach ($files as $file) {
+            $backups[] = (object) [
+                'filename' => basename($file),
+                'size' => round(\Illuminate\Support\Facades\Storage::size($file) / 1024, 2) . ' KB',
+                'created_at' => \Carbon\Carbon::createFromTimestamp(\Illuminate\Support\Facades\Storage::lastModified($file)),
+            ];
+        }
+        // Sort by newest
+        usort($backups, function($a, $b) {
+            return $b->created_at <=> $a->created_at;
+        });
+
         return view('settings.index', compact(
             'activeYear', 
             'archivedYears', 
@@ -158,7 +177,8 @@ class SettingsController extends Controller
             'predicates',
             'gradingSettings',
             'activeBobot',
-            'school' // Pass school identity
+            'school', // Pass school identity
+            'backups' // Pass backups
         ));
     }
 
@@ -388,7 +408,8 @@ class SettingsController extends Controller
             'kkm_default', 'rounding_enable', 'promotion_max_kkm_failure', 
             'promotion_min_attendance', 'promotion_min_attitude', 'total_effective_days', 'scale_type', 'promotion_requires_all_periods',
             'titimangsa_mi', 'titimangsa_mts',
-            'titimangsa_tempat_mi', 'titimangsa_tempat_mts'
+            'titimangsa_tempat_mi', 'titimangsa_tempat_mts',
+            'final_grade_mi', 'final_grade_mts'
         ];
 
         foreach ($settingsToSave as $key) {
@@ -975,6 +996,9 @@ class SettingsController extends Controller
             return response()->json(['message' => 'Gagal Simpan: ' . $e->getMessage(), 'trace' => $e->getTraceAsString()], 500);
         }
     }
+
+
+
 
 
 

@@ -56,8 +56,12 @@ Route::middleware(['auth'])->group(function () {
         Route::post('settings/migration/import', [App\Http\Controllers\MigrationController::class, 'import'])->name('settings.migration.import');
 
         // Database Backup
-        Route::get('settings/backup/download', [App\Http\Controllers\BackupController::class, 'download'])->name('backup.download');
-        
+        // Database Backup
+        Route::get('settings/backup/download/{filename}', [App\Http\Controllers\BackupController::class, 'download'])->name('backup.download');
+        Route::get('settings/backup/create', [App\Http\Controllers\BackupController::class, 'store'])->name('backup.store');
+        Route::delete('settings/backup/delete/{filename}', [App\Http\Controllers\BackupController::class, 'destroy'])->name('backup.destroy');
+        Route::post('settings/backup/restore', [App\Http\Controllers\BackupController::class, 'restore'])->name('backup.restore');
+        Route::post('settings/backup/restore-local/{filename}', [App\Http\Controllers\BackupController::class, 'restoreFromLocal'])->name('backup.restore-local');
         // Role Update
         Route::patch('settings/users/{id}/role', [App\Http\Controllers\SettingsController::class, 'updateRole'])->name('settings.users.role');
         Route::post('settings/users/permissions', [App\Http\Controllers\SettingsController::class, 'updatePermissions'])->name('settings.users.permissions');
@@ -218,18 +222,12 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:teacher,admin'])->prefix('wali-kelas')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\WaliKelasController::class, 'dashboard'])->name('walikelas.dashboard');
         Route::get('/absensi', [App\Http\Controllers\WaliKelasController::class, 'inputAbsensi'])->name('walikelas.absensi');
-        Route::post('/absensi', [App\Http\Controllers\WaliKelasController::class, 'storeAbsensi'])->name('walikelas.absensi.store');
-        Route::get('/absensi/template', [App\Http\Controllers\WaliKelasController::class, 'downloadAbsensiTemplate'])->name('walikelas.absensi.template');
-        Route::post('/absensi/import', [App\Http\Controllers\WaliKelasController::class, 'importAbsensi'])->name('walikelas.absensi.import');
-        
+
         // Unified Import (Leger)
-        Route::get('/unified-import/{kelas}', [App\Http\Controllers\UnifiedImportController::class, 'index'])->name('unified.import.index');
-        Route::get('/unified-import/{kelas}/template', [App\Http\Controllers\UnifiedImportController::class, 'downloadTemplate'])->name('unified.import.template');
-        Route::post('/unified-import/{kelas}/process', [App\Http\Controllers\UnifiedImportController::class, 'processImport'])->name('unified.import.process');
+        // Route::get('/unified-import/{kelas}', [App\Http\Controllers\UnifiedImportController::class, 'index'])->name('unified.import.index');
+        // Route::get('/unified-import/{kelas}/template', [App\Http\Controllers\UnifiedImportController::class, 'downloadTemplate'])->name('unified.import.template');
+        // Route::post('/unified-import/{kelas}/process', [App\Http\Controllers\UnifiedImportController::class, 'processImport'])->name('unified.import.process');
         // Settings (TU)
-        Route::get('/settings', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
-        Route::post('/settings/year', [App\Http\Controllers\SettingsController::class, 'storeYear'])->name('settings.year.store');
-        Route::post('/settings/year/{id}/toggle', [App\Http\Controllers\SettingsController::class, 'toggleYear'])->name('settings.year.toggle');
         Route::post('/settings/period/{id}/update', [App\Http\Controllers\SettingsController::class, 'updatePeriod'])->name('settings.period.update');
         Route::post('/settings/year/{id}/regenerate', [App\Http\Controllers\SettingsController::class, 'regeneratePeriods'])->name('settings.year.regenerate');
         // Identity
@@ -296,9 +294,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/leger', [App\Http\Controllers\WaliKelasController::class, 'leger'])->name('walikelas.leger');
         
         // Promotion (Kenaikan Kelas) - Accessed by Wali Kelas
-        Route::get('/promotion', [App\Http\Controllers\PromotionController::class, 'index'])->name('promotion.index');
-        Route::post('/promotion/update', [App\Http\Controllers\PromotionController::class, 'updateDecision'])->name('promotion.update');
-        Route::post('/promotion/process', [App\Http\Controllers\PromotionController::class, 'processPromotion'])->name('promotion.process');
+
 
         // Katrol Nilai (Grade Adjustment)
         Route::get('/katrol', [App\Http\Controllers\GradeAdjustmentController::class, 'index'])->name('walikelas.katrol.index');
