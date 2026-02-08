@@ -13,6 +13,7 @@ use App\Models\Periode;
 use Illuminate\Support\Facades\DB;
 
 class MaintenanceController extends Controller
+{
     /**
      * HEALTH CHECK: MAGIC FIX (The "Tombol Ajaib")
      * Runs multiple maintenance tasks in sequence:
@@ -37,7 +38,7 @@ class MaintenanceController extends Controller
 
              // 2. Trim Data
              DB::statement("UPDATE siswa SET nama_lengkap = TRIM(nama_lengkap), nis_lokal = TRIM(nis_lokal), nisn = TRIM(nisn)");
-             DB::statement("UPDATE data_guru SET nip = TRIM(nip), nuptk = TRIM(nuptk)");
+             // DB::statement("UPDATE data_guru SET nip = TRIM(nip), nuptk = TRIM(nuptk)"); // Columns removed
              DB::statement("UPDATE users SET name = TRIM(name), email = TRIM(email)");
              $log[] = "Spasi nama/NIS dirapikan.";
 

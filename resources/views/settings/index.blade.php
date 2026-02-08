@@ -1051,36 +1051,35 @@
                     </form>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto text-left">
+                <!-- GRID CONTAINER FOR TOOLS -->
+                <div class="max-w-6xl mx-auto space-y-6">
                     
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto text-left">
-                    
-                    <!-- CARD 1: MAGIC FIX (ALL IN ONE) - CLEAN & PROFESSIONAL -->
-                    <div class="bg-white dark:bg-slate-800 rounded-xl border-l-4 border-emerald-500 shadow-lg relative overflow-hidden text-slate-800 dark:text-white col-span-1 md:col-span-2 p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <!-- CARD 1: MAGIC FIX (Full Width) -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl border-l-4 border-emerald-500 shadow-lg relative overflow-hidden text-slate-800 dark:text-white p-6 flex flex-col md:flex-row items-center justify-between gap-6">
                         
                         <!-- Icon & Text -->
                         <div class="flex items-start gap-4 flex-1">
-                            <div class="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400">
-                                <span class="material-symbols-outlined text-3xl">auto_fix_high</span>
+                            <div class="p-4 bg-emerald-100 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 shrink-0">
+                                <span class="material-symbols-outlined text-4xl">auto_fix_high</span>
                             </div>
                             <div>
                                 <h4 class="font-bold text-xl text-slate-800 dark:text-white mb-2">
                                     Perbaikan Sistem Otomatis
                                 </h4>
-                                <p class="text-slate-500 text-sm mb-3">
-                                    Satu klik untuk membereskan masalah umum:
+                                <p class="text-slate-500 text-sm mb-3 max-w-2xl">
+                                    Satu klik untuk membereskan masalah umum seperti data sampah, format nama yang salah, dan cache sistem yang menumpuk.
                                 </p>
-                                <ul class="text-xs text-slate-500 space-y-1 grid grid-cols-1 md:grid-cols-2 gap-x-4">
-                                    <li class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Bersihkan Cache & Log</li>
-                                    <li class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Hapus Data Sampah (Orphan)</li>
-                                    <li class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Perbaiki Jenjang Kelas</li>
-                                    <li class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Rapikan Format Nama</li>
+                                <ul class="text-sm text-slate-500 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
+                                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Bersihkan Cache & Log</li>
+                                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Hapus Data Sampah (Orphan)</li>
+                                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Perbaiki Jenjang Kelas</li>
+                                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Rapikan Format Nama</li>
                                 </ul>
                             </div>
                         </div>
 
                         <!-- Action Button -->
-                        <div class="shrink-0">
+                        <div class="shrink-0 w-full md:w-auto">
                             <form action="{{ route('settings.maintenance.magic-fix') }}" method="POST"
                                   data-confirm-delete="true"
                                   data-title="Jalankan Perbaikan?"
@@ -1089,7 +1088,7 @@
                                   data-confirm-color="#10b981"
                                   data-icon="question">
                                 @csrf
-                                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center gap-2 group">
+                                <button type="submit" class="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 group">
                                     <span class="material-symbols-outlined group-hover:rotate-12 transition-transform">auto_fix</span>
                                     <span>Jalankan Magic Fix</span>
                                 </button>
@@ -1097,59 +1096,63 @@
                         </div>
                     </div>
 
-                    <!-- CARD 2: FORCE RECALCULATE (Important) -->
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-amber-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-3 opacity-10">
-                             <span class="material-symbols-outlined text-6xl text-amber-500">calculate</span>
+                    <!-- GRID FOR SECONDARY TOOLS -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- CARD 2: FORCE RECALCULATE -->
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-amber-200 shadow-sm flex flex-col justify-between relative overflow-hidden hover:shadow-md transition-shadow">
+                            <div class="absolute top-0 right-0 p-3 opacity-10">
+                                 <span class="material-symbols-outlined text-6xl text-amber-500">calculate</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-amber-500">update</span> Hitung Ulang Nilai
+                                </h4>
+                                <p class="text-sm text-slate-500 mb-4 pr-12">
+                                    Gunakan ini jika nilai Rapor tidak berubah setelah mengedit bobot atau rumus.
+                                </p>
+                            </div>
+                            <form action="{{ route('settings.maintenance.force-calcs') }}" method="POST"
+                                  data-confirm-delete="true"
+                                  data-title="Hitung Ulang Total?"
+                                  data-message="Mulai perhitungan ulang nilai Rapor massal."
+                                  data-confirm-text="Ya, Hitung Ulang!"
+                                  data-confirm-color="#f59e0b"
+                                  data-icon="question">
+                                @csrf
+                                <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
+                                    <span class="material-symbols-outlined">refresh</span> HITUNG ULANG
+                                </button>
+                            </form>
                         </div>
-                        <div>
-                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
-                                <span class="material-symbols-outlined text-amber-500">update</span> Hitung Ulang Nilai
-                            </h4>
-                            <p class="text-xs text-slate-500 mb-4">
-                                Gunakan ini jika Anda baru saja mengubah <b>Bobot Nilai</b> atau Rumus, tapi nilai di Rapor belum berubah.
-                            </p>
-                        </div>
-                        <form action="{{ route('settings.maintenance.force-calcs') }}" method="POST"
-                              data-confirm-delete="true"
-                              data-title="Hitung Ulang Total?"
-                              data-message="Mulai perhitungan ulang nilai Rapor massal."
-                              data-confirm-text="Ya, Hitung Ulang!"
-                              data-confirm-color="#f59e0b"
-                              data-icon="question">
-                            @csrf
-                            <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined">refresh</span> HITUNG ULANG
-                            </button>
-                        </form>
-                    </div>
 
-                    <!-- CARD 3: RESET PROMOTION (Critical/Danger) -->
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-red-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-3 opacity-10">
-                             <span class="material-symbols-outlined text-6xl text-red-500">restart_alt</span>
+                        <!-- CARD 3: RESET PROMOTION -->
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-red-200 shadow-sm flex flex-col justify-between relative overflow-hidden hover:shadow-md transition-shadow">
+                            <div class="absolute top-0 right-0 p-3 opacity-10">
+                                 <span class="material-symbols-outlined text-6xl text-red-500">restart_alt</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-red-500">warning</span> Reset Kenaikan Kelas
+                                </h4>
+                                <p class="text-sm text-slate-500 mb-4 pr-12">
+                                    Kembalikan semua siswa ke <b>Kelas Asal</b>. Gunakan hanya jika terjadi kesalahan fatal.
+                                </p>
+                            </div>
+                            <form action="{{ route('settings.maintenance.reset-promotion') }}" method="POST"
+                                  data-confirm-delete="true"
+                                  data-title="RESET Kenaikan Kelas?"
+                                  data-message="BAHAYA: Data kenaikan kelas akan DIHAPUS TOTAL. Siswa kembali ke kelas lama."
+                                  data-confirm-text="Ya, Reset Total!"
+                                  data-confirm-color="#ef4444"
+                                  data-icon="warning">
+                                @csrf
+                                <button type="submit" class="w-full bg-red-50 hover:bg-red-100 text-red-700 hover:text-red-800 font-bold py-3 px-4 rounded-lg shadow-sm border border-red-200 transition-colors flex items-center justify-center gap-2">
+                                    <span class="material-symbols-outlined">history</span> RESET KENAIKAN
+                                </button>
+                            </form>
                         </div>
-                        <div>
-                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
-                                <span class="material-symbols-outlined text-red-500">warning</span> Reset Kenaikan Kelas
-                            </h4>
-                            <p class="text-xs text-slate-500 mb-4">
-                                <b>BAHAYA:</b> Membatalkan semua proses kenaikan kelas. Siswa akan dikembalikan ke kelas asal. Gunakan jika terjadi kesalahan fatal saat naik kelas.
-                            </p>
-                        </div>
-                        <form action="{{ route('settings.maintenance.reset-promotion') }}" method="POST"
-                              data-confirm-delete="true"
-                              data-title="RESET Kenaikan Kelas?"
-                              data-message="BAHAYA: Data kenaikan kelas akan DIHAPUS TOTAL. Siswa kembali ke kelas lama."
-                              data-confirm-text="Ya, Reset Total!"
-                              data-confirm-color="#ef4444"
-                              data-icon="warning">
-                            @csrf
-                            <button type="submit" class="w-full bg-red-100 hover:bg-red-200 text-red-700 font-bold py-3 px-4 rounded-lg shadow-sm border border-red-300 transition-colors flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined">history</span> RESET KENAIKAN
-                            </button>
-                        </form>
                     </div>
+                </div>
 
 
 

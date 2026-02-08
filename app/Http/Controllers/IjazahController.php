@@ -10,9 +10,8 @@ use App\Models\Siswa;
 use App\Models\Mapel;
 use App\Models\TahunAjaran;
 use App\Models\NilaiIjazah;
-use App\Models\SchoolIdentity;
-use App\Models\GradingFormula; // [MOD]
-use App\Services\FormulaEngine; // [MOD]
+use App\Models\IdentitasSekolah;
+
 
 class IjazahController extends Controller
 {
@@ -285,26 +284,11 @@ class IjazahController extends Controller
                 );
                 
                 // Recalculate Final if Ujian exists (Dynamic)
-                // [MOD] Use Hybrid Formula
-                $jenjang = strtolower($kelas->jenjang->kode ?? ($kelas->tingkat_kelas <= 6 ? 'mi' : 'mts'));
-                $context = ($jenjang === 'mts') ? 'ijazah_mts' : 'ijazah_mi';
-                $activeFormula = GradingFormula::where('context', $context)->where('is_active', true)->first();
-
+                // Recalculate Final if Ujian exists (Dynamic)
                 if ($entry->rata_rata_rapor !== null && $entry->nilai_ujian_madrasah !== null) {
-                    $final = 0;
-                    if ($activeFormula) {
-                        $vars = [
-                            '[Rata_Rapor_MTS]' => $entry->rata_rata_rapor,
-                            '[Rata_Rapor_MI]' => $entry->rata_rata_rapor, // Alias
-                            '[Nilai_Ujian]' => $entry->nilai_ujian_madrasah
-                        ];
-                        $final = FormulaEngine::calculate($activeFormula->formula, $vars);
-                    } else {
-                        // Fallback: Hardcode Logic
-                        $bRapor = \App\Models\GlobalSetting::val('ijazah_bobot_rapor', 60);
-                        $bUjian = \App\Models\GlobalSetting::val('ijazah_bobot_ujian', 40);
-                        $final = ($entry->rata_rata_rapor * ($bRapor/100)) + ($entry->nilai_ujian_madrasah * ($bUjian/100));
-                    }
+                    $bRapor = \App\Models\GlobalSetting::val('ijazah_bobot_rapor', 60);
+                    $bUjian = \App\Models\GlobalSetting::val('ijazah_bobot_ujian', 40);
+                    $final = ($entry->rata_rata_rapor * ($bRapor/100)) + ($entry->nilai_ujian_madrasah * ($bUjian/100));
                     
                     $entry->nilai_ijazah = round($final, 2);
                     $entry->save();
@@ -344,7 +328,7 @@ class IjazahController extends Controller
             ->get()
             ->groupBy('id_siswa');
 
-        $school = SchoolIdentity::first();
+        $school = IdentitasSekolah::where('jenjang', $kelas->jenjang->kode)->first() ?? IdentitasSekolah::first();
 
         return view('ijazah.print_dkn', compact('kelas', 'mapels', 'students', 'grades', 'school'));
     }

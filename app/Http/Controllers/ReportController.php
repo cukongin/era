@@ -15,8 +15,7 @@ use App\Models\ReportTemplate;
 use App\Models\Mapel;
 use App\Models\KkmMapel;
 use App\Models\IdentitasSekolah;
-use App\Models\GradingFormula; // Ensure Import
-use App\Services\FormulaEngine; // Ensure Import
+
 
 class ReportController extends Controller
 {
@@ -193,28 +192,7 @@ class ReportController extends Controller
             ->where('id_periode', $periode->id)
             ->get();
 
-        // [MOD] Apply Custom Formula (If Active, and NOT showing original)
-        if (!$showOriginal) {
-            $jenjang = strtolower($kelas->jenjang->kode ?? 'mi');
-            $context = ($jenjang === 'mts') ? 'rapor_mts' : 'rapor_mi';
-            $activeFormula = GradingFormula::where('context', $context)->where('is_active', true)->first();
 
-            if ($activeFormula) {
-                foreach ($allRawGrades as $grade) {
-                    $vars = [
-                        '[Rata_PH]' => $grade->rata_ph ?? 0,
-                        '[Nilai_PTS]' => $grade->nilai_pts ?? 0,
-                        '[Nilai_PAS]' => $grade->nilai_pas ?? 0,
-                        '[Nilai_Sem_1]' => 0, 
-                        '[Nilai_Sem_2]' => 0,
-                    ];
-                    $newScore = FormulaEngine::calculate($activeFormula->formula, $vars);
-                    if ($newScore > 0) {
-                        $grade->nilai_akhir = round($newScore);
-                    }
-                }
-            }
-        }
 
         $grades = $allRawGrades->groupBy('id_siswa');
             
@@ -512,7 +490,7 @@ class ReportController extends Controller
         }
         
         // 3. Determine Active/Historical Class Member
-        $school = IdentitasSekolah::first();
+        // Removed premature School Identity fetch here
         
         $classMember = $student->anggota_kelas->filter(function($ak) use ($year) {
             return $ak->kelas->id_tahun_ajaran == $year->id;
@@ -755,35 +733,7 @@ class ReportController extends Controller
             ->whereIn('id_periode', $allPeriods->pluck('id'))
             ->get();
 
-    // [MOD] Apply Custom Formula (If Active)
-    $jenjang = strtolower($class->jenjang->kode ?? 'mi');
-    $context = ($jenjang === 'mts') ? 'rapor_mts' : 'rapor_mi';
-    $activeFormula = GradingFormula::where('context', $context)->where('is_active', true)->first();
 
-    if ($activeFormula) {
-        foreach ($rawGrades as $grade) {
-            // Prepare vars (Mapping from DB columns to Formula Variables)
-            $vars = [
-                '[Rata_PH]' => $grade->rata_ph ?? 0,
-                '[Nilai_PTS]' => $grade->nilai_pts ?? 0,
-                '[Nilai_PAS]' => $grade->nilai_pas ?? 0,
-                '[Nilai_Sem_1]' => 0, // Not available in single period context usually, or fetch if needed
-                '[Nilai_Sem_2]' => 0,
-                // Add more if needed. For now, standard Rapor vars.
-            ];
-            
-            // Recalculate
-            $newScore = FormulaEngine::calculate($activeFormula->formula, $vars);
-            
-            // Override object property (InMemory)
-            if ($newScore > 0) {
-                // Round to 0 decimal for Rapor usually? Or 2? 
-                // Let's keep existing precision or clean integer if user enforced.
-                // Assuming Rapor uses integer usually.
-                $grade->nilai_akhir = round($newScore);
-            }
-        }
-    }
             
         $cumulativeGrades = [];
         foreach ($rawGrades as $g) {
@@ -828,15 +778,15 @@ class ReportController extends Controller
 
         // 8. School Identity (Fetch by Jenjang)
     $targetJenjang = $class->jenjang->kode ?? 'MI';
-    $school = \App\Models\SchoolIdentity::where('jenjang', $targetJenjang)->first();
+    $school = IdentitasSekolah::where('jenjang', $targetJenjang)->first();
     
     // Fallback to default (MI) if specific jenjang config not found
     if (!$school) {
-        $school = \App\Models\SchoolIdentity::first();
+        $school = IdentitasSekolah::first();
     }
 
     if (!$school) {
-         $school = new \App\Models\SchoolIdentity([
+         $school = new IdentitasSekolah([
             'nama_sekolah' => '[DATA SEKOLAH BELUM DIISI]',
             'alamat' => '-',
          ]);
@@ -1135,9 +1085,15 @@ class ReportController extends Controller
         $class = $activeClassMember->kelas;
         
         // 3. School Identity
-        $school = \App\Models\SchoolIdentity::first();
+        $targetJenjang = $class->jenjang->kode ?? 'MI';
+        $school = IdentitasSekolah::where('jenjang', $targetJenjang)->first();
+        
         if (!$school) {
-             $school = new \App\Models\SchoolIdentity([
+             $school = IdentitasSekolah::first();
+        }
+
+        if (!$school) {
+             $school = new IdentitasSekolah([
                 'nama_sekolah' => 'MADRASAH CONTOH',
                 'alamat' => 'Alamat Belum Diisi',
             ]);

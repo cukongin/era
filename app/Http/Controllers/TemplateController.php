@@ -95,9 +95,19 @@ class TemplateController extends Controller
             $student = \App\Models\Siswa::with('anggota_kelas.kelas')->first();
         }
 
-        $school = \App\Models\SchoolIdentity::first();
-        
-        $school = \App\Models\SchoolIdentity::first();
+        // Determine Jenjang from Student/Class if found
+        $jenjang = 'MI';
+        if ($student) {
+             $activeClassMember = $student->anggota_kelas->filter(function($ak) use ($activeYear) {
+                 return $ak->kelas->id_tahun_ajaran == $activeYear->id;
+             })->first();
+             $kelasObj = $activeClassMember ? $activeClassMember->kelas : ($student->anggota_kelas->first()->kelas ?? null);
+             if ($kelasObj) {
+                 $jenjang = $kelasObj->jenjang->kode ?? 'MI';
+             }
+        }
+
+        $school = \App\Models\IdentitasSekolah::where('jenjang', $jenjang)->first() ?? \App\Models\IdentitasSekolah::first();
         
         // Initialize placeholders (Empty or warning)
         $namaSiswa = '[SISWA TIDAK DITEMUKAN]';

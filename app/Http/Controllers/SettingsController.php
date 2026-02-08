@@ -1117,28 +1117,73 @@ class SettingsController extends Controller
     }
     public function updateIdentity(Request $request)
     {
-        // 1. App Info
+        // 1. App Info (Global Settings Only)
         if ($request->has('app_name')) \App\Models\GlobalSetting::set('app_name', $request->app_name);
         if ($request->has('app_tagline')) \App\Models\GlobalSetting::set('app_tagline', $request->app_tagline);
         
-        // 2. Headmasters
-        if ($request->has('hm_name_mi')) \App\Models\GlobalSetting::set('hm_name_mi', $request->hm_name_mi);
-        if ($request->has('hm_nip_mi')) \App\Models\GlobalSetting::set('hm_nip_mi', $request->hm_nip_mi);
+        // 2. Headmasters (Sync GlobalSetting AND IdentitasSekolah Table)
         
-        if ($request->has('hm_name_mts')) \App\Models\GlobalSetting::set('hm_name_mts', $request->hm_name_mts);
-        if ($request->has('hm_nip_mts')) \App\Models\GlobalSetting::set('hm_nip_mts', $request->hm_nip_mts);
+        // MI
+        if ($request->has('hm_name_mi')) {
+            \App\Models\GlobalSetting::set('hm_name_mi', $request->hm_name_mi);
+            IdentitasSekolah::updateOrCreate(
+                ['jenjang' => 'MI'], 
+                ['kepala_madrasah' => $request->hm_name_mi]
+            );
+        }
+        if ($request->has('hm_nip_mi')) {
+            \App\Models\GlobalSetting::set('hm_nip_mi', $request->hm_nip_mi);
+            IdentitasSekolah::updateOrCreate(
+                ['jenjang' => 'MI'], 
+                ['nip_kepala_madrasah' => $request->hm_nip_mi]
+            );
+        }
         
-        if ($request->has('hm_name_ma')) \App\Models\GlobalSetting::set('hm_name_ma', $request->hm_name_ma);
-        if ($request->has('hm_nip_ma')) \App\Models\GlobalSetting::set('hm_nip_ma', $request->hm_nip_ma);
+        // MTS
+        if ($request->has('hm_name_mts')) {
+            \App\Models\GlobalSetting::set('hm_name_mts', $request->hm_name_mts);
+            IdentitasSekolah::updateOrCreate(
+                ['jenjang' => 'MTS'], 
+                ['kepala_madrasah' => $request->hm_name_mts]
+            );
+        }
+        if ($request->has('hm_nip_mts')) {
+            \App\Models\GlobalSetting::set('hm_nip_mts', $request->hm_nip_mts);
+            IdentitasSekolah::updateOrCreate(
+                ['jenjang' => 'MTS'], 
+                ['nip_kepala_madrasah' => $request->hm_nip_mts]
+            );
+        }
+        
+        // MA
+        if ($request->has('hm_name_ma')) {
+            \App\Models\GlobalSetting::set('hm_name_ma', $request->hm_name_ma);
+            IdentitasSekolah::updateOrCreate(
+                ['jenjang' => 'MA'], 
+                ['kepala_madrasah' => $request->hm_name_ma]
+            );
+        }
+        if ($request->has('hm_nip_ma')) {
+            \App\Models\GlobalSetting::set('hm_nip_ma', $request->hm_nip_ma);
+            IdentitasSekolah::updateOrCreate(
+                ['jenjang' => 'MA'], 
+                ['nip_kepala_madrasah' => $request->hm_nip_ma]
+            );
+        }
 
-        // 3. Logo Upload
+        // 3. Logo Upload (Sync All)
         if ($request->hasFile('app_logo')) {
             $file = $request->file('app_logo');
             $filename = 'logo_' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('public/uploads'), $filename); // Ensure public/uploads
-            \App\Models\GlobalSetting::set('app_logo', 'uploads/' . $filename);
+            $file->move(public_path('uploads'), $filename); // Fixed path: public/uploads (no double public)
+            
+            $logoPath = 'uploads/' . $filename;
+            \App\Models\GlobalSetting::set('app_logo', $logoPath);
+
+            // Update All Identitas Sekolah rows with this logo
+            IdentitasSekolah::query()->update(['logo' => $logoPath]);
         }
 
-        return back()->with('success', 'Identitas Sekolah & Aplikasi berhasil diperbarui.');
+        return back()->with('success', 'Identitas Sekolah & Aplikasi berhasil diperbarui (Disinkronkan ke Database Rapor).');
     }
 }

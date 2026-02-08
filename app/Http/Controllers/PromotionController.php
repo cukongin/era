@@ -191,6 +191,7 @@ class PromotionController extends Controller
     }
 
     // THE LOGIC ENGINE
+    // THE LOGIC ENGINE
     public function calculate($kelasId)
     {
         $activeYear = TahunAjaran::where('status', 'aktif')->firstOrFail();
@@ -219,8 +220,9 @@ class PromotionController extends Controller
         $periodIds = $periods->pluck('id');
 
         // EAGER LOADING / BULK FETCH
-        // 1. Grades
-        $allGrades = NilaiSiswa::whereIn('id_siswa', $studentIds)
+        // 1. Grades (WITH MAPEL NAME)
+        $allGrades = NilaiSiswa::with('mapel')
+            ->whereIn('id_siswa', $studentIds)
             ->where('id_kelas', $kelasId)
             ->whereIn('id_periode', $periodIds)
             ->get()
@@ -239,17 +241,11 @@ class PromotionController extends Controller
             ->get()
             ->groupBy('id_siswa');
 
-        // 4. Weights (Bobot)
+        // 4. Weights (Bobot) - Kept for reference though unused here
         $weights = \App\Models\BobotPenilaian::where('id_tahun_ajaran', $activeYear->id)
             ->where('jenjang', $jenjang)
             ->first();
         
-        $weightConfig = [
-            'harian' => $weights ? $weights->bobot_harian : 60,
-            'uts' => $weights ? $weights->bobot_uts : 20,
-            'uas' => $weights ? $weights->bobot_uas : 20
-        ];
-
         // 5. Ijazah Grades (For Final Year Logic - INFO ONLY)
         $allIjazah = DB::table('nilai_ijazah')
             ->whereIn('id_siswa', $studentIds)
@@ -257,27 +253,25 @@ class PromotionController extends Controller
             ->groupBy('id_siswa');
             
         $minLulusIjazah = (float) \App\Models\GlobalSetting::val('ijazah_min_lulus', 60);
-
         $totalDays = \App\Models\GlobalSetting::val('total_effective_days', 220); 
         if ($totalDays <= 0) $totalDays = 220;
-
 
         foreach ($students as $student) {
             $report = []; 
             $fail = false;
             $sid = $student->id_siswa;
 
-            // Get Student Grades from Collection
+            // Get Student Grades
             $studentGrades = $allGrades[$sid] ?? collect([]);
             $mapelGrades = $studentGrades->groupBy('id_mapel');
             
             $kkmFailures = 0;
             $totalScore = 0;
             $mapelCount = 0;
+            $failedMapels = [];
 
             foreach ($mapelGrades as $mapelId => $vals) {
-                // REVERTED: Use 'nilai_akhir' directly from DB. 
-                // Assumes Admin has run "Hitung Ulang" to ensure data is fresh/pure.
+                // Determine Average
                 $avgMapel = $vals->avg('nilai_akhir');
                 
                 $totalScore += $avgMapel;
@@ -288,6 +282,10 @@ class PromotionController extends Controller
 
                 if ($avgMapel < $kkmVal) {
                     $kkmFailures++;
+                    // Get Mapel Name safely
+                    $mapelName = optional($vals->first()->mapel)->nama_mapel ?? 'Mapel Unknown';
+                    // Shorten name if too long? No, full detail is better for Sidang.
+                    $failedMapels[] = "$mapelName (" . round($avgMapel) . ")";
                 }
             }
 
@@ -297,71 +295,68 @@ class PromotionController extends Controller
             // LOGIC CHECK KKM
             if ($kkmFailures > $settings->promotion_max_kkm_failure) {
                 $fail = true;
-                $report[] = "Gagal KKM pd $kkmFailures Mapel (> {$settings->promotion_max_kkm_failure})";
+                $report[] = "Gagal KKM ($kkmFailures): " . implode(', ', $failedMapels);
             } elseif ($kkmFailures == $settings->promotion_max_kkm_failure) {
                 $isConditional = true;
-                $report[] = "Perhatian: $kkmFailures Mapel < KKM (Batas Maksimal)";
+                $report[] = "Perhatian Batas KKM: " . implode(', ', $failedMapels);
             }
 
             // Attendance Logic
             $studentAttendance = $allAttendance[$sid] ?? collect([]);
+            $totalSakit = $studentAttendance->sum('sakit');
+            $totalIzin = $studentAttendance->sum('izin');
             $totalAlpa = $studentAttendance->sum('tanpa_keterangan');
+            
+            // Recalculate Total
             $attendance = round((($totalDays - $totalAlpa) / $totalDays) * 100);
 
             if ($attendance < $settings->promotion_min_attendance) {
                 $fail = true;
-                $report[] = "Kehadiran {$attendance}% (< {$settings->promotion_min_attendance}%) - Alpa: $totalAlpa hari";
+                $report[] = "Kehadiran {$attendance}% (A: $totalAlpa, S: $totalSakit, I: $totalIzin)";
             } elseif ($attendance >= $settings->promotion_min_attendance && $attendance < ($settings->promotion_min_attendance + 5)) {
-                $isConditional = true;
-                $report[] = "Perhatian: Kehadiran {$attendance}% (Mepet KKM)";
+                $isConditional = true; // Still pass but warn
+                $report[] = "Perhatian Absensi: A: $totalAlpa, S: $totalSakit, I: $totalIzin";
             }
 
             // Attitude Logic
             $attitude = 'B';
-            $hasKurang = false;
+            $badAttitudes = [];
             foreach ($studentAttendance as $rec) {
-                if ($rec->kelakuan === 'Kurang' || $rec->kerajinan === 'Kurang' || $rec->kebersihan === 'Kurang') {
-                    $hasKurang = true;
-                }
+                if ($rec->kelakuan === 'Kurang') $badAttitudes[] = 'Kelakuan';
+                if ($rec->kerajinan === 'Kurang') $badAttitudes[] = 'Kerajinan';
+                if ($rec->kebersihan === 'Kurang') $badAttitudes[] = 'Kebersihan';
             }
-            if ($hasKurang) $attitude = 'C';
+            if (!empty($badAttitudes)) $attitude = 'C';
 
             // Attitude Check
             $gradesOrder = ['A', 'B', 'C', 'D'];
             $minIdx = array_search($settings->promotion_min_attitude, $gradesOrder);
             $currIdx = array_search($attitude, $gradesOrder);
+            
             if ($currIdx > $minIdx) {
                 $fail = true;
-                $report[] = "Sikap {$attitude} (Min {$settings->promotion_min_attitude})";
+                $report[] = "Sikap {$attitude} (Kurang: " . implode(', ', array_unique($badAttitudes)) . ")";
             }
-
+ 
             // DECISION
             if ($fail) {
                 $recommendation = 'retained';
             } elseif ($isConditional) {
-                // Conditional currently maps to Promoted usually, unless specific logic
                 $recommendation = 'conditional';
             } else {
                 $recommendation = 'promoted';
             }
             
-            // RELOAD Jenjang to be sure (avoid lazy load issues)
-            $kelas->load('jenjang');
+            // RELOAD Jenjang
+            if (!$kelas->relationLoaded('jenjang')) $kelas->load('jenjang');
             $jenjangCode = strtoupper(trim(optional($kelas->jenjang)->kode));
 
             // Check Graduation (Is Final Year?)
-            // Robust Level Detection (Roman Friendly)
-            // Function exists at bottom of file from Remote merge
             $gradeLevel = $this->parseGradeLevel($kelas);
-            
-            // NEW: Configurable Final Year
             $finalGradeMI = (int) \App\Models\GlobalSetting::val('final_grade_mi', 6);
             $finalGradeMTS = (int) \App\Models\GlobalSetting::val('final_grade_mts', 9);
-
-            // Standardize: MI 6, MTS 9 (or 3 if using 1-3 format)
             $isMts = $jenjangCode == 'MTS' || stripos($kelas->nama_kelas, 'mts') !== false;
             $isMi = $jenjangCode == 'MI' || stripos($kelas->nama_kelas, 'mi') !== false || stripos($kelas->nama_kelas, 'ibtidaiyah') !== false;
-
             $isFinalYear = ($isMi && $gradeLevel == $finalGradeMI) || 
                            ($isMts && ($gradeLevel == $finalGradeMTS || ($finalGradeMTS == 9 && $gradeLevel == 3)));
 
@@ -372,30 +367,41 @@ class PromotionController extends Controller
                     $recommendation = 'not_graduated';
                 }
 
-                // --- INFO: IJAZAH STATUS ---
-                // Add note about Ijazah status without overriding logic
-                $ijazahGrades = $allIjazah[$sid] ?? collect([]);
-                $ijazahSum = 0;
-                $ijazahCount = 0;
-                
-                foreach ($ijazahGrades as $g) {
-                    if ($g->nilai_ijazah > 0) {
-                        $ijazahSum += $g->nilai_ijazah;
-                        $ijazahCount++;
+                // --- INFO: IJAZAH STATUS (conditionally show) ---
+                $currPeriod = \App\Models\Periode::where('id', $activeYear->id)->where('status', 'aktif')->value('nama_periode'); 
+                if (!$currPeriod) $currPeriod = \App\Models\Periode::where('status', 'aktif')->value('nama_periode');
+
+                $isFinalPeriod = false;
+                if ($currPeriod) {
+                    $pName = strtolower($currPeriod);
+                    if (str_contains($pName, 'genap') || str_contains($pName, 'semester 2') || str_contains($pName, 'cawu 3')) {
+                        $isFinalPeriod = true;
                     }
                 }
-                
-                if ($ijazahCount > 0) {
-                    $ijazahAvg = $ijazahSum / $ijazahCount;
-                    if ($ijazahAvg >= $minLulusIjazah) {
-                        $report[] = "Info: Ijazah LULUS (Rata-rata: " . round($ijazahAvg, 2) . ")";
-                    } else {
-                        $report[] = "PERHATIAN: Ijazah TIDAK LULUS (Rata-rata: " . round($ijazahAvg, 2) . " < $minLulusIjazah)";
+
+                if ($isFinalPeriod) {
+                    $ijazahGrades = $allIjazah[$sid] ?? collect([]);
+                    $ijazahSum = 0;
+                    $ijazahCount = 0;
+                    foreach ($ijazahGrades as $g) {
+                        if ($g->nilai_ijazah > 0) {
+                            $ijazahSum += $g->nilai_ijazah;
+                            $ijazahCount++;
+                        }
+                    }
+                    
+                    if ($ijazahCount > 0) {
+                        $ijazahAvg = $ijazahSum / $ijazahCount;
+                        if ($ijazahAvg >= $minLulusIjazah) {
+                            $report[] = "Info: Ijazah LULUS (Avg: " . round($ijazahAvg, 2) . ")";
+                        } else {
+                            $report[] = "PERHATIAN: Ijazah TIDAK LULUS (Avg: " . round($ijazahAvg, 2) . " < $minLulusIjazah)";
+                        }
                     }
                 }
             }
             
-            $reason = count($report) > 0 ? implode(', ', $report) : 'Memenuhi semua syarat.';
+            $reason = count($report) > 0 ? implode(' | ', $report) : 'Memenuhi semua syarat.'; // Separator changed to pipe for clarity
 
             // UPSERT DECISION
             DB::table('promotion_decisions')->updateOrInsert(
@@ -415,7 +421,7 @@ class PromotionController extends Controller
                 ]
             );
             
-            // Auto-Sync if NOT Overridden manually
+            // Auto-Sync Override Logic
             $existing = DB::table('promotion_decisions')
                 ->where('id_siswa', $sid)
                 ->where('id_kelas', $kelasId)

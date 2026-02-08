@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\AcademicSettingController;
+
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MasterMapelController;
@@ -68,8 +68,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('settings/users/sync-teacher', [App\Http\Controllers\SettingsController::class, 'syncTeacherAccount'])->name('settings.users.sync-teacher');
 
         Route::get('/settings', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
-        Route::get('/settings/school', [App\Http\Controllers\SchoolSettingController::class, 'index'])->name('settings.school');
-        Route::post('/settings/school', [App\Http\Controllers\SchoolSettingController::class, 'update'])->name('settings.school.update');
+
         
         // Monitoring (Moved to Shared Group)
 
@@ -90,7 +89,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::post('/settings/grading-rules/recalculate', [App\Http\Controllers\SettingsController::class, 'recalculateGrades'])->name('settings.grading-rules.recalculate');
 
-        Route::post('/settings/academic/update-weights', [AcademicSettingController::class, 'updateWeights'])->name('settings.academic.update-weights');
+
         
         // Deadline & Locking
         Route::get('/settings/deadline', [App\Http\Controllers\DeadlineController::class, 'index'])->name('settings.deadline.index');
@@ -105,7 +104,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/settings/deadline/whitelist/{id}', [App\Http\Controllers\DeadlineController::class, 'removeWhitelist'])->name('settings.deadline.whitelist.remove');
 
         // Grading Rules (Deprecated / Duplicate removed to use SettingsController)
-        Route::get('/settings/grading-rules', [App\Http\Controllers\GradingRuleController::class, 'index'])->name('settings.grading');
+
         // Route::get('/settings/grading-rules/json/{jenjang}', [App\Http\Controllers\GradingRuleController::class, 'getRules'])->name('settings.grading-rules.json');
         // Route::post('/settings/grading-rules', [App\Http\Controllers\GradingRuleController::class, 'updateAll'])->name('settings.grading-rules.update');
 
@@ -174,13 +173,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/input-nilai/process-import', [App\Http\Controllers\TeacherDashboardController::class, 'processImportGrades'])->name('teacher.input-nilai.process');
     });
 
-    // Formula Builder Routes
-    Route::get('/settings/formula', [App\Http\Controllers\FormulaController::class, 'index'])->name('settings.formula.index');
-    Route::post('/settings/formula', [App\Http\Controllers\FormulaController::class, 'store'])->name('settings.formula.store');
-    Route::put('/settings/formula/{id}', [App\Http\Controllers\FormulaController::class, 'update'])->name('settings.formula.update');
-    Route::delete('/settings/formula/{id}', [App\Http\Controllers\FormulaController::class, 'destroy'])->name('settings.formula.destroy');
-    Route::post('/settings/formula/simulate', [App\Http\Controllers\FormulaController::class, 'simulate'])->name('settings.formula.simulate');
-    Route::post('/settings/formula/restore', [App\Http\Controllers\FormulaController::class, 'restoreDefault'])->name('settings.formula.restore');
+    // Formula Builder Routes (REMOVED)
+    // Removed per request for cleaner system.
 
     // TU Area (New)
     // Updated to allow teacher access for Global Monitoring (Filtered Scope)
@@ -301,8 +295,7 @@ Route::middleware(['auth'])->group(function () {
 
 
         // Katrol Nilai (Grade Adjustment)
-        Route::get('/katrol', [App\Http\Controllers\GradeAdjustmentController::class, 'index'])->name('walikelas.katrol.index');
-        Route::post('/katrol', [App\Http\Controllers\GradeAdjustmentController::class, 'store'])->name('walikelas.katrol.store');
+
 
         // Monitoring Access for Wali Kelas
         Route::get('/monitoring', [App\Http\Controllers\WaliKelasController::class, 'monitoring'])->name('walikelas.monitoring');
