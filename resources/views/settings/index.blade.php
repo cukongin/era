@@ -1055,38 +1055,43 @@
                     
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto text-left">
                     
-                    <!-- CARD 1: MAGIC FIX (ALL IN ONE) - NEW -->
-                    <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all relative overflow-hidden text-white col-span-1 md:col-span-2">
-                        <div class="absolute top-0 right-0 p-4 opacity-20">
-                             <span class="material-symbols-outlined text-9xl">auto_fix_high</span>
-                        </div>
-                        <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-                            <div class="flex-1">
-                                <h4 class="font-bold text-2xl flex items-center gap-2 mb-2">
-                                    <span class="material-symbols-outlined">healing</span> PERBAIKI SEMUA MASALAH
-                                </h4>
-                                <p class="text-emerald-100 text-sm opacity-90">
-                                    Satu tombol untuk membereskan semua masalah ringan:
-                                    <br>✅ Bersihkan Cache & Log
-                                    <br>✅ Hapus Data Sampah (Orphan) & Duplikat
-                                    <br>✅ Perbaiki Jenjang Kelas & Status Siswa
-                                    <br>✅ Rapikan Nama (Trim Spasi)
-                                </p>
+                    <!-- CARD 1: MAGIC FIX (ALL IN ONE) - CLEAN & PROFESSIONAL -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl border-l-4 border-emerald-500 shadow-lg relative overflow-hidden text-slate-800 dark:text-white col-span-1 md:col-span-2 p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+                        
+                        <!-- Icon & Text -->
+                        <div class="flex items-start gap-4 flex-1">
+                            <div class="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400">
+                                <span class="material-symbols-outlined text-3xl">auto_fix_high</span>
                             </div>
+                            <div>
+                                <h4 class="font-bold text-xl text-slate-800 dark:text-white mb-2">
+                                    Perbaikan Sistem Otomatis
+                                </h4>
+                                <p class="text-slate-500 text-sm mb-3">
+                                    Satu klik untuk membereskan masalah umum:
+                                </p>
+                                <ul class="text-xs text-slate-500 space-y-1 grid grid-cols-1 md:grid-cols-2 gap-x-4">
+                                    <li class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Bersihkan Cache & Log</li>
+                                    <li class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Hapus Data Sampah (Orphan)</li>
+                                    <li class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Perbaiki Jenjang Kelas</li>
+                                    <li class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Rapikan Format Nama</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Action Button -->
+                        <div class="shrink-0">
                             <form action="{{ route('settings.maintenance.magic-fix') }}" method="POST"
                                   data-confirm-delete="true"
-                                  data-title="Jalankan Perbaikan Otomatis?"
-                                  data-message="Sistem akan mendiagnosa dan memperbaiki masalah umum secara otomatis. Proses ini aman."
-                                  data-confirm-text="Ya, Perbaiki Sekarang!"
+                                  data-title="Jalankan Perbaikan?"
+                                  data-message="Sistem akan mendiagnosa dan memperbaiki masalah secara otomatis."
+                                  data-confirm-text="Ya, Jalankan!"
                                   data-confirm-color="#10b981"
-                                  data-icon="success">
+                                  data-icon="question">
                                 @csrf
-                                <button type="submit" class="bg-white text-emerald-700 hover:bg-emerald-50 font-bold py-4 px-8 rounded-xl shadow-lg transition-transform hover:scale-105 flex items-center gap-3">
-                                    <span class="material-symbols-outlined text-3xl">auto_fix</span>
-                                    <span class="text-left leading-tight">
-                                        <span class="block text-sm font-normal">Klik Disini</span>
-                                        <span class="block text-lg">AUTO FIX</span>
-                                    </span>
+                                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center gap-2 group">
+                                    <span class="material-symbols-outlined group-hover:rotate-12 transition-transform">auto_fix</span>
+                                    <span>Jalankan Magic Fix</span>
                                 </button>
                             </form>
                         </div>
