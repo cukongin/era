@@ -100,9 +100,11 @@
                     <span class="material-symbols-outlined">verified_user</span> Keputusan Final
                 </div>
             @else
+                @if(isset($isFinalPeriod) && $isFinalPeriod)
                 <button onclick="document.getElementById('form-kenaikan').submit()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold shadow hover:bg-indigo-700 transition-all flex items-center gap-2">
                     <span class="material-symbols-outlined">save</span> Simpan Keputusan
                 </button>
+                @endif
             @endif
         </div>
     </div>
@@ -172,112 +174,124 @@
                             <th class="px-6 py-4 text-center">Mapel<br>< KKM</th>
                             <th class="px-6 py-4 text-center">Nilai<br>Sikap</th>
                             <th class="px-6 py-4 text-center">Kehadiran<br>(%)</th>
-                            <th class="px-6 py-4 text-center">Rekomendasi<br>Sistem</th>
-                            <th class="px-6 py-4 text-left w-64">Catatan<br>Sistem</th>
-                            <th class="px-6 py-4 text-center w-48">Status Akhir</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
-                        @foreach($studentStats as $index => $stat)
-                        <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xs">
-                                        {{ $index + 1 }}
-                                    </div>
-                                    <div>
-                                        <div class="font-bold text-slate-900 dark:text-white">{{ $stat->student->nama_lengkap }}</div>
-                                        <div class="text-xs text-slate-500">NIS: {{ $stat->student->nis_lokal ?? '-' }}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-center font-bold text-slate-700">
-                                <span onclick="showGradeDetails(this)" 
-                                      data-grades="{{ json_encode($stat->grades_detail) }}"
-                                      data-student="{{ $stat->student->nama_lengkap }}"
-                                      data-avg="{{ $stat->avg_yearly }}"
-                                      class="cursor-pointer border-b border-dashed border-slate-400 hover:text-indigo-600 transition-colors"
-                                      title="Klik untuk lihat detail nilai">
-                                    {{ $stat->avg_yearly }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-center">
-                                @if($stat->under_kkm > 0)
-                                    <span onclick="showFailDetails(this)"
-                                          data-grades="{{ json_encode($stat->grades_detail) }}"
-                                          data-student="{{ $stat->student->nama_lengkap }}"
-                                          class="cursor-pointer bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold hover:bg-red-200 transition-colors"
-                                          title="Klik untuk lihat mapel yang belum tuntas">
-                                        {{ $stat->under_kkm }} Mapel
-                                    </span>
-                                @else
-                                    <span class="text-slate-400">0</span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 text-center">
-                                <span onclick="showAttitudeDetails('{{ $stat->attitude_detail->kelakuan }}', '{{ $stat->attitude_detail->kerajinan }}', '{{ $stat->attitude_detail->kebersihan }}')"
-                                      class="cursor-pointer border-b border-dashed border-slate-400 hover:text-indigo-600 transition-colors font-bold {{ $stat->attitude == 'A' ? 'text-emerald-600' : ($stat->attitude == 'C' ? 'text-red-600' : 'text-slate-700') }}"
-                                      title="Klik untuk detail sikap">
-                                    {{ $stat->attitude }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-center">
-                                <span onclick="showAttendanceDetails({{ $stat->effective_days }}, {{ $stat->total_absent }}, {{ $stat->attendance_pct }})" 
-                                      class="cursor-pointer border-b border-dashed border-slate-400 hover:text-indigo-600 transition-colors {{ $stat->attendance_pct < $stat->effective_days ? '' : '' }} {{ $stat->attendance_pct < 85 ? 'text-red-600 font-bold' : 'text-slate-700' }}"
-                                      title="Klik untuk lihat detail perhitungan">
-                                    {{ $stat->attendance_pct }}%
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-center">
-                                @if($stat->system_status == 'promote' || $stat->system_status == 'graduate')
-                                    <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold border border-emerald-200">
-                                        <span class="material-symbols-outlined text-[10px] mr-1">check</span> 
-                                        {{ $isFinalYear ? 'LULUS' : 'Naik Kelas' }}
-                                    </span>
-                                @else
-                                    <div class="flex flex-col items-center gap-1">
-                                        <span class="{{ $stat->system_status == 'review' ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-red-100 text-red-700 border-red-200' }} px-3 py-1 rounded-full text-xs font-bold border flex items-center">
-                                            <span class="material-symbols-outlined text-[10px] mr-1">{{ $stat->system_status == 'review' ? 'warning' : 'close' }}</span>
-                                            {{ $isFinalYear ? 'TIDAK LULUS' : 'Tinggal Kelas' }}
-                                        </span>
-                                        @if(!empty($stat->fail_reasons))
-                                            <div class="text-[10px] text-red-600 text-center w-full px-1 leading-tight mt-1">
-                                                @foreach($stat->fail_reasons as $reason)
-                                                    <div>{{ $reason }}</div>
-                                                @endforeach
-                                            </div>
-                                        @endif
-                                    </div>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 text-xs text-slate-500 leading-snug break-words">
-                                @if(isset($stat->ijazah_note) && $stat->ijazah_note)
-                                    <div class="font-bold mb-1 {{ $stat->ijazah_class ?? (str_contains($stat->ijazah_note, 'TIDAK') ? 'text-red-600' : 'text-emerald-600') }}">
-                                        {{ $stat->ijazah_note }}
-                                    </div>
-                                @endif
-                                @if(isset($stat->manual_note) && $stat->manual_note)
-                                    <div class="italic">"{{ $stat->manual_note }}"</div>
-                                @endif
-                                @if(empty($stat->ijazah_note) && empty($stat->manual_note))
-                                    -
-                                @endif
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="relative">
-                                    <select name="decisions[{{ $stat->student->id }}]" 
-                                        class="w-full text-sm border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 {{ $stat->final_status == 'pending' ? 'border-amber-400 bg-amber-50' : '' }} disabled:opacity-75 disabled:bg-slate-100 disabled:cursor-not-allowed"
-                                        {{ (isset($isLocked) && $isLocked) || ($stat->is_locked && !auth()->user()->isAdmin() && !auth()->user()->isTu()) ? 'disabled' : '' }}>
-                                        @if($isFinalYear)
-                                            <option value="graduated" {{ $stat->final_status == 'graduated' ? 'selected' : '' }}>Lulus</option>
-                                            <option value="not_graduated" {{ $stat->final_status == 'not_graduated' ? 'selected' : '' }}>Tidak Lulus</option>
-                                            <option value="pending" {{ $stat->final_status == 'pending' ? 'selected' : '' }}>Ditangguhkan</option>
-                                        @else
-                                            <option value="promoted" {{ $stat->final_status == 'promoted' ? 'selected' : '' }}>Naik Kelas</option>
-                                            <option value="retained" {{ $stat->final_status == 'retained' ? 'selected' : '' }}>Tinggal Kelas</option>
-                                            <option value="pending" {{ $stat->final_status == 'pending' ? 'selected' : '' }}>Ditangguhkan</option>
-                                        @endif
-                                    </select>
+            <th class="px-6 py-4 text-center">Rekomendasi<br>Sistem</th>
+            <th class="px-6 py-4 text-left w-64">Catatan<br>Sistem</th>
+            @if(isset($isFinalPeriod) && $isFinalPeriod)
+            <th class="px-6 py-4 text-center w-48">Status Akhir</th>
+            @endif
+        </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+        @foreach($studentStats as $index => $stat)
+        <tr class="hover:bg-slate-50 transition-colors">
+            <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xs">
+                        {{ $index + 1 }}
+                    </div>
+                    <div>
+                        <div class="font-bold text-slate-900 dark:text-white">{{ $stat->student->nama_lengkap }}</div>
+                        <div class="text-xs text-slate-500">NIS: {{ $stat->student->nis_lokal ?? '-' }}</div>
+                    </div>
+                </div>
+            </td>
+            <td class="px-6 py-4 text-center font-bold text-slate-700">
+                <span onclick="showGradeDetails(this)" 
+                      data-grades="{{ json_encode($stat->grades_detail) }}"
+                      data-student="{{ $stat->student->nama_lengkap }}"
+                      data-avg="{{ $stat->avg_yearly }}"
+                      class="cursor-pointer border-b border-dashed border-slate-400 hover:text-indigo-600 transition-colors"
+                      title="Klik untuk lihat detail nilai">
+                    {{ $stat->avg_yearly }}
+                </span>
+            </td>
+            <td class="px-6 py-4 text-center">
+                @if($stat->under_kkm > 0)
+                    <span onclick="showFailDetails(this)"
+                          data-grades="{{ json_encode($stat->grades_detail) }}"
+                          data-student="{{ $stat->student->nama_lengkap }}"
+                          class="cursor-pointer bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold hover:bg-red-200 transition-colors"
+                          title="Klik untuk lihat mapel yang belum tuntas">
+                        {{ $stat->under_kkm }} Mapel
+                    </span>
+                @else
+                    <span class="text-slate-400">0</span>
+                @endif
+            </td>
+            <td class="px-6 py-4 text-center">
+                <span onclick="showAttitudeDetails('{{ $stat->attitude_detail->kelakuan }}', '{{ $stat->attitude_detail->kerajinan }}', '{{ $stat->attitude_detail->kebersihan }}')"
+                      class="cursor-pointer border-b border-dashed border-slate-400 hover:text-indigo-600 transition-colors font-bold {{ $stat->attitude == 'A' ? 'text-emerald-600' : ($stat->attitude == 'C' ? 'text-red-600' : 'text-slate-700') }}"
+                      title="Klik untuk detail sikap">
+                    {{ $stat->attitude }}
+                </span>
+            </td>
+            <td class="px-6 py-4 text-center">
+                <span onclick="showAttendanceDetails({{ $stat->effective_days }}, {{ $stat->total_absent }}, {{ $stat->attendance_pct }})" 
+                      class="cursor-pointer border-b border-dashed border-slate-400 hover:text-indigo-600 transition-colors {{ $stat->attendance_pct < $stat->effective_days ? '' : '' }} {{ $stat->attendance_pct < 85 ? 'text-red-600 font-bold' : 'text-slate-700' }}"
+                      title="Klik untuk lihat detail perhitungan">
+                    {{ $stat->attendance_pct }}%
+                </span>
+            </td>
+            
+            <td class="px-6 py-4 text-center">
+                @if($stat->system_status == 'promote' || $stat->system_status == 'graduate')
+                    <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold border border-emerald-200">
+                        <span class="material-symbols-outlined text-[10px] mr-1">check</span> 
+                        {{ $stat->recommendation }}
+                    </span>
+                @else
+                    <div class="flex flex-col items-center gap-1">
+                        <span class="{{ $stat->system_status == 'review' ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-red-100 text-red-700 border-red-200' }} px-3 py-1 rounded-full text-xs font-bold border flex items-center">
+                            <span class="material-symbols-outlined text-[10px] mr-1">{{ $stat->system_status == 'review' ? 'warning' : 'close' }}</span>
+                            {{ $stat->recommendation }}
+                        </span>
+                    </div>
+                @endif
+            </td>
+            
+            <td class="px-6 py-4 text-xs text-slate-500 leading-snug break-words">
+                @if(!empty($stat->fail_reasons))
+                    <div class="text-xs text-red-600 mb-2">
+                        @foreach($stat->fail_reasons as $reason)
+                            <div class="flex items-start gap-1 mb-1">
+                                <span class="material-symbols-outlined text-[10px] mt-0.5">error</span>
+                                <span>{{ $reason }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+
+                @if(isset($stat->ijazah_note) && $stat->ijazah_note)
+                    <div class="font-bold mb-1 {{ $stat->ijazah_class ?? (str_contains($stat->ijazah_note, 'TIDAK') ? 'text-red-600' : 'text-emerald-600') }}">
+                        {{ $stat->ijazah_note }}
+                    </div>
+                @endif
+                
+                @if(isset($stat->manual_note) && $stat->manual_note)
+                    <div class="italic">"{{ $stat->manual_note }}"</div>
+                @endif
+                
+                @if(empty($stat->fail_reasons) && empty($stat->ijazah_note) && empty($stat->manual_note))
+                    <span class="text-slate-400">-</span>
+                @endif
+            </td>
+            
+            @if(isset($isFinalPeriod) && $isFinalPeriod)
+            <td class="px-6 py-4">
+                <div class="relative">
+                    <select name="decisions[{{ $stat->student->id }}]" 
+                        class="w-full text-sm border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 {{ $stat->final_status == 'pending' ? 'border-amber-400 bg-amber-50' : '' }} disabled:opacity-75 disabled:bg-slate-100 disabled:cursor-not-allowed"
+                        {{ (isset($isLocked) && $isLocked) || ($stat->is_locked && !auth()->user()->isAdmin() && !auth()->user()->isTu()) ? 'disabled' : '' }}>
+                        @if($isFinalYear)
+                            <option value="graduated" {{ $stat->final_status == 'graduated' ? 'selected' : '' }}>Lulus</option>
+                            <option value="not_graduated" {{ $stat->final_status == 'not_graduated' ? 'selected' : '' }}>Tidak Lulus</option>
+                            <option value="pending" {{ $stat->final_status == 'pending' ? 'selected' : '' }}>Ditangguhkan</option>
+                        @else
+                            <option value="promoted" {{ $stat->final_status == 'promoted' ? 'selected' : '' }}>Naik Kelas</option>
+                            <option value="retained" {{ $stat->final_status == 'retained' ? 'selected' : '' }}>Tinggal Kelas</option>
+                            <option value="pending" {{ $stat->final_status == 'pending' ? 'selected' : '' }}>Ditangguhkan</option>
+                        @endif
+                    </select>
                                     @if($stat->is_locked)
                                         <div class="absolute right-8 top-2.5" title="Keputusan Permanen (Terkunci)">
                                             <span class="material-symbols-outlined text-xs text-slate-500">lock</span>
@@ -290,6 +304,7 @@
                                        class="mt-2 w-full text-xs border-slate-300 rounded-lg focus:ring-red-500 focus:border-red-500 placeholder-slate-400 disabled:bg-slate-100 disabled:text-slate-400"
                                        {{ isset($isLocked) && $isLocked ? 'readonly' : '' }}>
                             </td>
+                            @endif
                         </tr>
                         @endforeach
                     </tbody>
@@ -313,6 +328,7 @@
                         </div>
                         
                         <!-- System Recommendation Badge (Compact) -->
+                        <!-- System Recommendation Badge (Compact) -->
                         <div class="flex items-center gap-2">
                              <span class="text-xs font-bold text-right {{ $stat->system_status == 'promote' || $stat->system_status == 'graduate' ? 'text-emerald-600' : ($stat->system_status == 'review' ? 'text-amber-600' : 'text-red-600') }}">
                                 {{ $stat->recommendation }}
@@ -335,16 +351,10 @@
                         <div class="bg-white p-2 rounded-lg border border-slate-200">
                              <div class="text-[10px] text-slate-400 uppercase font-bold">Rata2</div>
                              <div class="font-bold text-slate-800 text-sm cursor-pointer hover:text-indigo-600" 
-                                  onclick="showGradeDetails({
-                                      getAttribute: (name) => {
-                                          const data = {
-                                              'data-grades': '{{ json_encode($stat->grades_detail) }}',
-                                              'data-student': '{{ $stat->student->nama_lengkap }}',
-                                              'data-avg': '{{ $stat->avg_yearly }}'
-                                          };
-                                          return data[name];
-                                      }
-                                  })">
+                                  onclick="showGradeDetails(this)"
+                                  data-grades="{{ json_encode($stat->grades_detail) }}"
+                                  data-student="{{ $stat->student->nama_lengkap }}"
+                                  data-avg="{{ $stat->avg_yearly }}">
                                  {{ $stat->avg_yearly }}
                              </div>
                         </div>
@@ -352,12 +362,9 @@
                              <div class="text-[10px] text-slate-400 uppercase font-bold">< KKM</div>
                              @if($stat->under_kkm > 0)
                                 <div class="font-bold text-red-600 text-sm cursor-pointer hover:underline"
-                                     onclick="showFailDetails({
-                                          getAttribute: (name) => { 
-                                            const data = { 'data-grades': '{{ json_encode($stat->grades_detail) }}', 'data-student': '{{ $stat->student->nama_lengkap }}' };
-                                            return data[name];
-                                          }
-                                     })">
+                                     onclick="showFailDetails(this)"
+                                     data-grades="{{ json_encode($stat->grades_detail) }}"
+                                     data-student="{{ $stat->student->nama_lengkap }}">
                                     {{ $stat->under_kkm }}
                                 </div>
                              @else
@@ -381,7 +388,7 @@
                     </div>
                     
                     @if(!empty($stat->fail_reasons))
-                         <div class="bg-red-50 p-2 rounded-lg text-[11px] text-red-700 border border-red-100">
+                         <div class="bg-red-50 p-2 rounded-lg text-[11px] text-red-700 border border-red-100 mb-2">
                             <strong>Alasan:</strong>
                             <ul class="list-disc list-inside">
                                 @foreach($stat->fail_reasons as $reason)
@@ -391,6 +398,17 @@
                         </div>
                     @endif
 
+                    @if(isset($stat->ijazah_note) && $stat->ijazah_note)
+                        <div class="font-bold text-xs mb-1 {{ $stat->ijazah_class ?? (str_contains($stat->ijazah_note, 'TIDAK') ? 'text-red-600' : 'text-emerald-600') }}">
+                            {{ $stat->ijazah_note }}
+                        </div>
+                    @endif
+                    
+                    @if(isset($stat->manual_note) && $stat->manual_note)
+                        <div class="italic text-xs text-slate-500 mb-2">"{{ $stat->manual_note }}"</div>
+                    @endif
+
+                    @if(isset($isFinalPeriod) && $isFinalPeriod)
                     <!-- Action Footer -->
                     <div class="pt-2 border-t border-slate-200 dark:border-slate-700">
                          <select name="decisions[{{ $stat->student->id }}]" 
@@ -412,17 +430,23 @@
                                class="w-full text-xs border-slate-300 rounded-lg focus:ring-slate-500 focus:border-slate-500 bg-slate-50"
                                {{ isset($isLocked) && $isLocked ? 'readonly' : '' }}>
                     </div>
+                    @endif
                  </div>
                  @endforeach
             </div>
             
             <!-- Summary Verification -->
-            <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 rounded-b-xl">
+            @if(isset($isFinalPeriod) && $isFinalPeriod)
+            <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 rounded-b-xl flex justify-between items-center">
                  <div class="flex items-center gap-4 text-sm text-slate-600 dark:text-slate-400">
                     <span class="material-symbols-outlined">info</span>
                     <p>Pastikan semua keputusan telah sesuai sebelum menyimpan. Data ini akan digunakan untuk mencetak Rapor.</p>
                  </div>
+                 <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center" {{ isset($isLocked) && $isLocked ? 'disabled' : '' }}>
+                    <span class="material-symbols-outlined mr-2 text-[18px]">save</span> Simpan Keputusan
+                </button>
             </div>
+            @endif
         </form>
     </div>
 </div>

@@ -408,6 +408,23 @@ class SettingsController extends Controller
             );
         }
 
+        // CRITICAL FIX: Also update the 'grading_settings' table which is used by WaliKelasController
+        // Map generic keys to table columns
+        $gradingTableUpdate = [
+            'updated_at' => now()
+        ];
+        
+        if ($request->has('promotion_min_attendance')) $gradingTableUpdate['promotion_min_attendance'] = $request->promotion_min_attendance;
+        if ($request->has('promotion_min_attitude')) $gradingTableUpdate['promotion_min_attitude'] = $request->promotion_min_attitude;
+        if ($request->has('promotion_max_kkm_failure')) $gradingTableUpdate['promotion_max_kkm_failure'] = $request->promotion_max_kkm_failure;
+        if ($request->has('promotion_requires_all_periods')) $gradingTableUpdate['promotion_requires_all_periods'] = $request->has('promotion_requires_all_periods') ? 1 : 0; // Checkbox
+        if ($request->has('total_effective_days')) $gradingTableUpdate['effective_days_year'] = $request->total_effective_days; // Column name mapping
+
+        \Illuminate\Support\Facades\DB::table('grading_settings')->updateOrInsert(
+            ['jenjang' => $jenjang],
+            $gradingTableUpdate
+        );
+
 
         return redirect()->route('settings.index', ['tab' => 'grading', 'jenjang' => $jenjang])->with('success', "Konfigurasi Penilaian ($jenjang) berhasil disimpan!");
     }

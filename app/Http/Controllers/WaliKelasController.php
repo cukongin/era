@@ -860,12 +860,32 @@ class WaliKelasController extends Controller
         $isAdmin = $user->isAdmin() || $user->isTu() || $user->id === 1;
         $warningMessage = null;
 
+        // 7. Get Grading Settings (Syarat Kenaikan)
+        if (!$kelas->relationLoaded('jenjang')) {
+             $kelas->load('jenjang');
+        }
+        $gradingSettings = DB::table('grading_settings')
+            ->where('jenjang', $kelas->jenjang->kode) // Matches 'MI' or 'MTs'
+            ->first();
+
+        // Defaults if settings missing
+        $maxKkmFailure = $gradingSettings->promotion_max_kkm_failure ?? 3;
+        $minAttendance = $gradingSettings->promotion_min_attendance ?? 75; // Percent
+        $minAttitude   = $gradingSettings->promotion_min_attitude ?? 'B'; // Minimum 'B' means 'C' fails
+
+        // Helper for Attitude Comparison (A > B > C > D)
+        $attRank = ['A' => 4, 'B' => 3, 'C' => 2, 'D' => 1];
+        $minAttRank = $attRank[$minAttitude] ?? 3; // Default B
+
         // DEBUG INFO (For View)
         $debugInfo = [
             'User' => $user->name . ' (' . $user->role . ')',
             'ActivePeriod' => $activeP ? $activeP->nama_periode : 'None',
+            'ActivePeriodID' => $activeP ? $activeP->id : 'NULL',
             'IsFinalPeriod' => $isFinalPeriod ? 'YES' : 'NO',
-            'IsAdmin' => $isAdmin ? 'YES' : 'NO'
+            'IsAdmin' => $isAdmin ? 'YES' : 'NO',
+            'MinAttendanceSetting' => $minAttendance,
+            'EffectiveDaysSetting' => \App\Models\GlobalSetting::val('total_effective_days', 220)
         ];
 
         if (!$isFinalPeriod) {
@@ -884,7 +904,7 @@ class WaliKelasController extends Controller
             ->where('lingkup_jenjang', $kelas->jenjang->kode)
             ->get();
         
-        // 3. Get All Grades for Active Year
+        // 3. Get All Grades for Active Year (Strict Class Filter)
         $allGrades = NilaiSiswa::where('id_kelas', $kelas->id)
             ->whereIn('id_periode', $periods->pluck('id'))
             ->get();
@@ -894,7 +914,7 @@ class WaliKelasController extends Controller
              ->where('jenjang_target', $kelas->jenjang->kode) 
              ->pluck('nilai_kkm', 'id_mapel');
         
-        // 5. Get Attendance (All Periods)
+        // 5. Get Attendance (Strict Class Filter)
         $allAttendance = CatatanKehadiran::where('id_kelas', $kelas->id)
             ->whereIn('id_periode', $periods->pluck('id'))
             ->get();
@@ -906,19 +926,7 @@ class WaliKelasController extends Controller
             ->get()
             ->keyBy('id_siswa'); // Key by Student ID
 
-        // 7. Get Grading Settings (Syarat Kenaikan)
-        $gradingSettings = DB::table('grading_settings')
-            ->where('jenjang', $kelas->jenjang->kode) // Matches 'MI' or 'MTs'
-            ->first();
-
-        // Defaults if settings missing
-        $maxKkmFailure = $gradingSettings->promotion_max_kkm_failure ?? 3;
-        $minAttendance = $gradingSettings->promotion_min_attendance ?? 75; // Percent
-        $minAttitude   = $gradingSettings->promotion_min_attitude ?? 'B'; // Minimum 'B' means 'C' fails
-
-        // Helper for Attitude Comparison (A > B > C > D)
-        $attRank = ['A' => 4, 'B' => 3, 'C' => 2, 'D' => 1];
-        $minAttRank = $attRank[$minAttitude] ?? 3; // Default B
+        // 7. Get Grading Settings (MOVED TO TOP)
 
         // 8. Calculate Stats per Student
         $studentStats = [];
@@ -981,30 +989,38 @@ class WaliKelasController extends Controller
 
             foreach ($assignedMapels as $mapel) {
                 $mId = $mapel->id;
-                // Get grades for this mapel (Yearly avg derived from all periods)
-                // Filter $sGrades (which is all grades for this student)
-                $theseGrades = $sGrades->where('id_mapel', $mId);
-                
-                if ($theseGrades->count() > 0) {
-                    $yearlyMapelAvg = $theseGrades->avg('nilai_akhir');
+                $finalMapelScore = 0;
+                $kkm = $kkmMapel[$mId] ?? 70; // Default KKM
+
+                if (!$isFinalPeriod && isset($activeP)) {
+                     // NON-FINAL: Use Active Period Grade
+                     // Ensure we look at $sGrades which contains ALL period grades
+                     $pGrade = $sGrades->where('id_mapel', $mId)->where('id_periode', $activeP->id)->first();
+                     $finalMapelScore = $pGrade ? $pGrade->nilai_akhir : 0;
                 } else {
-                    $yearlyMapelAvg = 0; // Missing grade = 0
+                    // FINAL: Use Yearly Average
+                    $theseGrades = $sGrades->where('id_mapel', $mId);
+                    if ($theseGrades->count() > 0) {
+                        $finalMapelScore = $theseGrades->avg('nilai_akhir');
+                    } else {
+                        $finalMapelScore = 0;
+                    }
                 }
 
-                $kkm = $kkmMapel[$mId] ?? 70; // Default KKM
-                if ($yearlyMapelAvg < $kkm) {
+                if ($finalMapelScore < $kkm) {
                     $underKkmCount++;
+                    // Optional: Track specific mapels
                 }
                 
-                $yearlySum += $yearlyMapelAvg;
+                $yearlySum += $finalMapelScore;
                 $mapelCount++;
 
                 // Add to details
                 $gradesDetail[] = [
                     'mapel' => $mapel->nama_mapel,
                     'kkm' => $kkm,
-                    'nilai' => round($yearlyMapelAvg, 0),
-                    'is_under' => ($yearlyMapelAvg < $kkm)
+                    'nilai' => round($finalMapelScore, 0),
+                    'is_under' => ($finalMapelScore < $kkm)
                 ];
             }
 
@@ -1012,7 +1028,12 @@ class WaliKelasController extends Controller
 
             // Attitude & Attendance
             // Get latest attitude
-            $lastAttitude = $allAttendance->where('id_siswa', $sId)->sortByDesc('id_periode')->first();
+            if (!$isFinalPeriod && isset($activeP)) {
+                $lastAttitude = $allAttendance->where('id_siswa', $sId)->where('id_periode', $activeP->id)->first();
+            } else {
+                $lastAttitude = $allAttendance->where('id_siswa', $sId)->sortByDesc('id_periode')->first();
+            }
+            
             $attitudeCode = 'B'; // Default
             if ($lastAttitude) {
                 $attMap = ['Baik' => 'A', 'Cukup' => 'B', 'Kurang' => 'C'];
@@ -1021,22 +1042,43 @@ class WaliKelasController extends Controller
             $currentAttRank = $attRank[$attitudeCode] ?? 3;
 
             // Attendance % Logic
-            $sAtt = $allAttendance->where('id_siswa', $sId);
-            
+            $periodCount = $periods->count();
+            // Default Yearly Effective Days
             $effectiveDays = \App\Models\GlobalSetting::val('total_effective_days', 220);
             if ($effectiveDays <= 0) $effectiveDays = 220;
+
+            if (!$isFinalPeriod && isset($activeP)) {
+                 // NON-FINAL: Use Active Period Only
+                 $sAtt = $allAttendance->where('id_siswa', $sId)->where('id_periode', $activeP->id);
+                 
+                 // Adjust Effective Days for this Period (Approximate)
+                 if ($periodCount > 0) {
+                     $effectiveDays = round($effectiveDays / $periodCount);
+                 }
+            } else {
+                 // FINAL: Use All Attendance (Yearly)
+                 $sAtt = $allAttendance->where('id_siswa', $sId);
+            }
 
             // Only count Alpa (Unexcused) as requested
             $totalAbsent = $sAtt->sum('tanpa_keterangan'); 
             
-            $attPercentage = round((($effectiveDays - $totalAbsent) / $effectiveDays) * 100);
+            $attPercentage = ($effectiveDays > 0) ? round((($effectiveDays - $totalAbsent) / $effectiveDays) * 100) : 0;
             $attPercentage = max(0, min(100, $attPercentage));
 
             // System Recommendation Logic
             // ... (Logic logic is same) ...
             // $isFinalYear calculated at top
-            $defaultPromote = $isFinalYear ? 'Lulus' : 'Naik Kelas';
-            $defaultRetain = $isFinalYear ? 'Tidak Lulus' : 'Tinggal Kelas';
+            
+            if (!$isFinalPeriod) {
+                // Non-Final Period: Use Tuntas / Belum Tuntas
+                $defaultPromote = 'Tuntas';
+                $defaultRetain = 'Belum Tuntas';
+            } else {
+                // Final Period: Use Naik Kelas / Lulus
+                $defaultPromote = $isFinalYear ? 'Lulus' : 'Naik Kelas';
+                $defaultRetain = $isFinalYear ? 'Tidak Lulus' : 'Tinggal Kelas';
+            }
             
             $recommendation = $defaultPromote;
             $systemStatus = 'promote'; 
@@ -1044,9 +1086,10 @@ class WaliKelasController extends Controller
             $failConditions = [];
 
             // CHECK: Must participate in ALL Periods (If Enabled in Settings)
+            // ONLY RELEVANT FOR FINAL PERIOD
             $requiresAllPeriods = isset($gradingSettings->promotion_requires_all_periods) ? (bool)$gradingSettings->promotion_requires_all_periods : true;
             
-            if ($requiresAllPeriods) {
+            if ($isFinalPeriod && $requiresAllPeriods) {
                 // We check if student has at least one grade entry in each period
                 $attendedPeriodIds = $sGrades->pluck('id_periode')->unique();
                 $missingPeriods = $periods->filter(function($p) use ($attendedPeriodIds) {
@@ -1062,7 +1105,16 @@ class WaliKelasController extends Controller
             
             if ($underKkmCount > $maxKkmFailure) $failConditions[] = "Mapel < KKM ($underKkmCount > $maxKkmFailure)";
             if ($currentAttRank < $minAttRank) $failConditions[] = "Sikap ($attitudeCode < $minAttitude)";
-            if ($attPercentage < $minAttendance) $failConditions[] = "Kehadiran ($attPercentage% < $minAttendance%)";
+            
+            // Add detailed counts
+            $totalSakit = $sAtt->sum('sakit');
+            $totalIzin = $sAtt->sum('izin');
+
+            // Format match PromotionController
+            if ($attPercentage < $minAttendance) {
+                 $periodLabel = $isFinalPeriod ? 'Setahun' : 'Periode Ini';
+                 $failConditions[] = "Kehadiran $periodLabel $attPercentage% < $minAttendance% (A: $totalAbsent)";
+            }
 
             if (count($failConditions) > 0) {
                  // STRICT: If any failure condition is met -> Automatically RETAIN
@@ -1101,13 +1153,32 @@ class WaliKelasController extends Controller
                      $minLulusIjazah = (float) \App\Models\GlobalSetting::val('ijazah_min_lulus', 60);
 
                      if ($iAvg >= $minLulusIjazah) {
-                         // Check for Rapor Conflict (System recommends RETAIN/FAIL due to KKM/Attitude)
+                         // Check for Rapor Conflict
                          if ($systemStatus == 'retain') {
-                             $ijazahNote = "⚠️ PERHATIAN: Nilai Ijazah CUKUP (" . round($iAvg, 2) . "), tapi Nilai Rapor Masih Merah! Wajib Remedial.";
-                             $ijazahClass = "text-amber-600 font-bold";
+                             // Determine WHY they are retained
+                             if ($underKkmCount > $maxKkmFailure) {
+                                  $ijazahNote = "⚠️ PERHATIAN: Nilai Ijazah CUKUP (" . round($iAvg, 2) . "), tapi Gagal $underKkmCount Mapel (Max: $maxKkmFailure)! Wajib Remedial.";
+                                  $ijazahClass = "text-red-600 font-bold";
+                             } elseif ($currentAttRank < $minAttRank) {
+                                  $ijazahNote = "⚠️ PERHATIAN: Nilai Ijazah CUKUP (" . round($iAvg, 2) . "), tapi Sikap Kurang ($attitudeCode)!";
+                                  $ijazahClass = "text-amber-600 font-bold";
+                             } elseif ($attPercentage < $minAttendance) {
+                                  $ijazahNote = "⚠️ PERHATIAN: Nilai Ijazah CUKUP (" . round($iAvg, 2) . "), tapi Kehadiran Kurang ($attPercentage%)!";
+                                  $ijazahClass = "text-amber-600 font-bold";
+                             } else {
+                                  // Fallback for generic retain
+                                  $ijazahNote = "⚠️ PERHATIAN: Nilai Ijazah CUKUP (" . round($iAvg, 2) . "), tapi status Tidak Lulus.";
+                                  $ijazahClass = "text-amber-600 font-bold";
+                             }
                          } else {
-                             $ijazahNote = "Info: Ijazah LULUS (Rata-rata: " . round($iAvg, 2) . ")";
-                             $ijazahClass = "text-emerald-600 font-bold";
+                             // Promoting/Graduating but maybe has some bad subjects?
+                             if ($underKkmCount > 0) {
+                                  $ijazahNote = "Info: Ijazah LULUS (Rata-rata: " . round($iAvg, 2) . "). Ada $underKkmCount Mapel < KKM (Disarankan Perbaikan).";
+                                  $ijazahClass = "text-emerald-700 font-bold";
+                             } else {
+                                  $ijazahNote = "Info: Ijazah LULUS (Rata-rata: " . round($iAvg, 2) . ")";
+                                  $ijazahClass = "text-emerald-600 font-bold";
+                             }
                          }
                      } else {
                          $ijazahNote = "PERHATIAN: Ijazah TIDAK LULUS (Rata-rata: " . round($iAvg, 2) . " < $minLulusIjazah)";
@@ -1165,8 +1236,9 @@ class WaliKelasController extends Controller
                 'recommendation' => $recommendation,
                 'system_status' => $systemStatus,
                 'final_status' => $finalStatus,
+                'final_status' => $finalStatus,
                 'is_locked' => $isDecisionLocked, // PASS LOCK STATUS
-                'manual_note' => $manualNote,
+                'manual_note' => ($manualNote && !str_starts_with($manualNote, 'Perhatian') && !str_starts_with($manualNote, 'Sikap') && !str_starts_with($manualNote, 'Kehadiran') && !str_starts_with($manualNote, 'Mapel')) ? $manualNote : null, // Filter out legacy system notes
                 'ijazah_note' => $ijazahNote, // NEW
                 'ijazah_class' => $ijazahClass, // NEW
                 'fail_reasons' => $failConditions 
@@ -1219,6 +1291,16 @@ class WaliKelasController extends Controller
                 'success_badge' => 'LULUS',
                 'fail_badge' => 'TIDAK LULUS'
             ];
+        } elseif (!$isFinalPeriod) {
+            // Non-Final Period Context
+            $pageContext = [
+                'type' => 'evaluation',
+                'title' => 'Monitoring Akademik',
+                'success_label' => 'Tuntas',
+                'fail_label' => 'Belum Tuntas',
+                'success_badge' => 'Tuntas',
+                'fail_badge' => 'Belum Tuntas'
+            ];
         }
 
         if ($activeYear && $latestYear && $activeYear->id !== $latestYear->id) {
@@ -1233,6 +1315,7 @@ class WaliKelasController extends Controller
             'studentStats', 
             'summary', 
             'isFinalYear', 
+            'isFinalPeriod', // CRITICAL: Must pass this!
             'allClasses', 
             'isLocked',
             'pageContext', // Passing the context

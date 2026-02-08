@@ -234,9 +234,10 @@ class PromotionController extends Controller
             ->get()
             ->keyBy('id_mapel'); 
 
-        // 3. Attendance
+        // 3. Attendance (Strict Class Filter)
         $allAttendance = DB::table('catatan_kehadiran')
             ->whereIn('id_siswa', $studentIds)
+            ->where('id_kelas', $kelasId) // STRICT FILTER
             ->whereIn('id_periode', $periodIds)
             ->get()
             ->groupBy('id_siswa');
