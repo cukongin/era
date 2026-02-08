@@ -331,8 +331,6 @@
                                         @endforeach
                                     </tbody>
                                 </table>
-                                    </tbody>
-                                </table>
                              </div>
 
                              <!-- Card: Pengaturan Titimangsa -->
@@ -601,6 +599,7 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
                     <!-- Action Button -->
                 <div class="flex justify-end pt-4 border-t border-slate-200 dark:border-slate-700" x-show="!isLocked">
