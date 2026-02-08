@@ -26,7 +26,7 @@ use App\Http\Controllers\SettingsController;
 // Auth Routes (Public)
 // SECURITY: Login URL changed from /login to /portal-masuk
 Route::get('/portal-masuk', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/portal-masuk', [AuthController::class, 'login'])->middleware('throttle:5,1')->name('login.post'); // Max 5 attempts/min
+Route::post('/portal-masuk', [AuthController::class, 'login'])->middleware('throttle:60,1')->name('login.post'); // Relaxed for Localhost
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Protected Routes (Login Required)
@@ -98,6 +98,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/settings/deadline/toggle/{id}', [App\Http\Controllers\DeadlineController::class, 'toggleLock'])->name('settings.deadline.toggle');
         Route::post('/settings/deadline/update', [SettingsController::class, 'updateDeadline'])->name('settings.deadline.update');
         Route::post('/settings/maintenance/force-calcs', [SettingsController::class, 'recalculateGrades'])->name('settings.maintenance.force-calcs');
+        Route::post('/settings/maintenance/magic-fix', [App\Http\Controllers\MaintenanceController::class, 'magicFix'])->name('settings.maintenance.magic-fix'); // NEW MAGIC FIX
         Route::post('/settings/maintenance/update-app', [SettingsController::class, 'updateApplication'])->name('settings.maintenance.update-app');
         Route::get('/settings/deadline/whitelist-remove/{id}', [SettingsController::class, 'removeWhitelist'])->name('settings.deadline.whitelist.remove');
         Route::post('/settings/deadline/whitelist', [App\Http\Controllers\DeadlineController::class, 'storeWhitelist'])->name('settings.deadline.whitelist.store');

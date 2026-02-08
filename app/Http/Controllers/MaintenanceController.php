@@ -13,7 +13,97 @@ use App\Models\Periode;
 use Illuminate\Support\Facades\DB;
 
 class MaintenanceController extends Controller
-{
+    /**
+     * HEALTH CHECK: MAGIC FIX (The "Tombol Ajaib")
+     * Runs multiple maintenance tasks in sequence:
+     * 1. Clear Cache/Logs
+     * 2. Cleanup Orphans
+     * 3. Deduplicate
+     * 4. Fix Class Level
+     * 5. Trim Data
+     * 6. Sync Student Status
+     */
+    public function magicFix(Request $request)
+    {
+         if (auth()->user()->role !== 'admin') return back()->with('error', 'Unauthorized.');
+
+         try {
+             $log = [];
+
+             // 1. Clear Logs
+             $logFile = storage_path('logs/laravel.log');
+             if (file_exists($logFile)) file_put_contents($logFile, '');
+             $log[] = "Log Error dibersihkan.";
+
+             // 2. Trim Data
+             DB::statement("UPDATE siswa SET nama_lengkap = TRIM(nama_lengkap), nis_lokal = TRIM(nis_lokal), nisn = TRIM(nisn)");
+             DB::statement("UPDATE data_guru SET nip = TRIM(nip), nuptk = TRIM(nuptk)");
+             DB::statement("UPDATE users SET name = TRIM(name), email = TRIM(email)");
+             $log[] = "Spasi nama/NIS dirapikan.";
+
+             // 3. Fix Class Level (Jenjang)
+             $miId = DB::table('jenjang')->where('kode', 'MI')->value('id');
+             $mtsId = DB::table('jenjang')->where('kode', 'MTS')->value('id') ?? DB::table('jenjang')->where('kode', 'MTs')->value('id');
+             
+             if ($miId && $mtsId) {
+                  $classes = Kelas::all();
+                  $fixedCount = 0;
+                  foreach ($classes as $c) {
+                      $firstChar = substr(trim($c->nama_kelas), 0, 1);
+                      if (in_array($firstChar, ['1','2','3','4','5','6']) && $c->id_jenjang != $miId) {
+                          $c->update(['id_jenjang' => $miId]); $fixedCount++;
+                      } elseif (in_array($firstChar, ['7','8','9']) && $c->id_jenjang != $mtsId) {
+                          $c->update(['id_jenjang' => $mtsId]); $fixedCount++;
+                      }
+                  }
+                  if ($fixedCount > 0) $log[] = "$fixedCount jenjang kelas diperbaiki.";
+             }
+
+             // 4. Cleanup Orphans
+             // Members
+             $orphMembers = DB::table('anggota_kelas')
+                ->leftJoin('siswa', 'anggota_kelas.id_siswa', '=', 'siswa.id')
+                ->leftJoin('kelas', 'anggota_kelas.id_kelas', '=', 'kelas.id')
+                ->whereNull('siswa.id')->orWhereNull('kelas.id')->pluck('anggota_kelas.id');
+             if ($orphMembers->isNotEmpty()) {
+                 DB::table('anggota_kelas')->whereIn('id', $orphMembers)->delete();
+                 $log[] = $orphMembers->count() . " anggota kelas hantu dihapus.";
+             }
+             
+             // Grades
+             $orphGrades = DB::table('nilai_siswa')
+                ->leftJoin('siswa', 'nilai_siswa.id_siswa', '=', 'siswa.id')
+                ->whereNull('siswa.id')->pluck('nilai_siswa.id');
+             if ($orphGrades->isNotEmpty()) {
+                 DB::table('nilai_siswa')->whereIn('id', $orphGrades)->delete();
+                 $log[] = $orphGrades->count() . " nilai hantu dihapus.";
+             }
+
+             // 5. Sync Student Status (Active/Non-Active)
+             $activeYear = TahunAjaran::where('status', 'aktif')->first();
+             if ($activeYear) {
+                 $enrolled = DB::table('anggota_kelas')
+                    ->join('kelas', 'anggota_kelas.id_kelas', '=', 'kelas.id')
+                    ->where('kelas.id_tahun_ajaran', $activeYear->id)
+                    ->pluck('anggota_kelas.id_siswa')->unique();
+                 
+                 Siswa::whereIn('id', $enrolled)->where('status_siswa', '!=', 'aktif')->update(['status_siswa' => 'aktif']);
+                 Siswa::whereNotIn('id', $enrolled)->where('status_siswa', 'aktif')->update(['status_siswa' => 'non-aktif']);
+                 $log[] = "Status Aktif/Non-Aktif siswa disinkronkan.";
+             }
+
+             // 6. Clear Cache (Final)
+              \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+              \Illuminate\Support\Facades\Artisan::call('view:clear');
+
+             return back()->with('success', "MAGIC FIX SELESAI! 🪄✨ " . implode(' ', $log));
+
+         } catch (\Exception $e) {
+             return back()->with('error', "Magic Fix Gagal: " . $e->getMessage());
+         }
+    }
+
+
     /**
      * HEALTH CHECK 1: RESET KENAIKAN KELAS
      * Reverts the system state if a promotion event went wrong.

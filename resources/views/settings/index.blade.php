@@ -1053,7 +1053,73 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto text-left">
                     
-                    <!-- CARD 1: RESET PROMOTION (Critical) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto text-left">
+                    
+                    <!-- CARD 1: MAGIC FIX (ALL IN ONE) - NEW -->
+                    <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all relative overflow-hidden text-white col-span-1 md:col-span-2">
+                        <div class="absolute top-0 right-0 p-4 opacity-20">
+                             <span class="material-symbols-outlined text-9xl">auto_fix_high</span>
+                        </div>
+                        <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div class="flex-1">
+                                <h4 class="font-bold text-2xl flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined">healing</span> PERBAIKI SEMUA MASALAH
+                                </h4>
+                                <p class="text-emerald-100 text-sm opacity-90">
+                                    Satu tombol untuk membereskan semua masalah ringan:
+                                    <br>✅ Bersihkan Cache & Log
+                                    <br>✅ Hapus Data Sampah (Orphan) & Duplikat
+                                    <br>✅ Perbaiki Jenjang Kelas & Status Siswa
+                                    <br>✅ Rapikan Nama (Trim Spasi)
+                                </p>
+                            </div>
+                            <form action="{{ route('settings.maintenance.magic-fix') }}" method="POST"
+                                  data-confirm-delete="true"
+                                  data-title="Jalankan Perbaikan Otomatis?"
+                                  data-message="Sistem akan mendiagnosa dan memperbaiki masalah umum secara otomatis. Proses ini aman."
+                                  data-confirm-text="Ya, Perbaiki Sekarang!"
+                                  data-confirm-color="#10b981"
+                                  data-icon="success">
+                                @csrf
+                                <button type="submit" class="bg-white text-emerald-700 hover:bg-emerald-50 font-bold py-4 px-8 rounded-xl shadow-lg transition-transform hover:scale-105 flex items-center gap-3">
+                                    <span class="material-symbols-outlined text-3xl">auto_fix</span>
+                                    <span class="text-left leading-tight">
+                                        <span class="block text-sm font-normal">Klik Disini</span>
+                                        <span class="block text-lg">AUTO FIX</span>
+                                    </span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- CARD 2: FORCE RECALCULATE (Important) -->
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-amber-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-3 opacity-10">
+                             <span class="material-symbols-outlined text-6xl text-amber-500">calculate</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
+                                <span class="material-symbols-outlined text-amber-500">update</span> Hitung Ulang Nilai
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-4">
+                                Gunakan ini jika Anda baru saja mengubah <b>Bobot Nilai</b> atau Rumus, tapi nilai di Rapor belum berubah.
+                            </p>
+                        </div>
+                        <form action="{{ route('settings.maintenance.force-calcs') }}" method="POST"
+                              data-confirm-delete="true"
+                              data-title="Hitung Ulang Total?"
+                              data-message="Mulai perhitungan ulang nilai Rapor massal."
+                              data-confirm-text="Ya, Hitung Ulang!"
+                              data-confirm-color="#f59e0b"
+                              data-icon="question">
+                            @csrf
+                            <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined">refresh</span> HITUNG ULANG
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- CARD 3: RESET PROMOTION (Critical/Danger) -->
                     <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-red-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
                         <div class="absolute top-0 right-0 p-3 opacity-10">
                              <span class="material-symbols-outlined text-6xl text-red-500">restart_alt</span>
@@ -1063,310 +1129,19 @@
                                 <span class="material-symbols-outlined text-red-500">warning</span> Reset Kenaikan Kelas
                             </h4>
                             <p class="text-xs text-slate-500 mb-4">
-                                <b>Masalah:</b> Setelah proses naik kelas, siswa menumpuk di satu kelas atau salah masuk kelas (seperti kasus 37 siswa).
-                                <br><br>
-                                <b>Solusi:</b> Hapus semua hasil kenaikan, hapus kelas tahun depan yang rusak, dan kembalikan ke tahun ini.
+                                <b>BAHAYA:</b> Membatalkan semua proses kenaikan kelas. Siswa akan dikembalikan ke kelas asal. Gunakan jika terjadi kesalahan fatal saat naik kelas.
                             </p>
                         </div>
                         <form action="{{ route('settings.maintenance.reset-promotion') }}" method="POST"
                               data-confirm-delete="true"
                               data-title="RESET Kenaikan Kelas?"
-                              data-message="BAHAYA: Data kenaikan kelas akan DIHAPUS TOTAL. Anda harus mengulang proses dari awal."
+                              data-message="BAHAYA: Data kenaikan kelas akan DIHAPUS TOTAL. Siswa kembali ke kelas lama."
                               data-confirm-text="Ya, Reset Total!"
                               data-confirm-color="#ef4444"
                               data-icon="warning">
                             @csrf
-                            <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined">delete_forever</span> OBATI KENAIKAN KELAS
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- CARD 2: CLEAN ORPHANS -->
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-orange-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-3 opacity-10">
-                             <span class="material-symbols-outlined text-6xl text-orange-500">cleaning_services</span>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
-                                <span class="material-symbols-outlined text-orange-500">recycling</span> Bersihkan Data Sampah
-                            </h4>
-                            <p class="text-xs text-slate-500 mb-4">
-                                <b>Masalah:</b> Ada nilai siswa yang sudah keluar, atau siswa ada di dua kelas yang berbeda, atau data "yatim piatu" sisa penghapusan manual.
-                                <br><br>
-                                <b>Solusi:</b> Scan dan hapus data nilai/anggota yang induknya (Siswa/Kelas) sudah tidak ada.
-                            </p>
-                        </div>
-                        <form action="{{ route('settings.maintenance.fix-orphans') }}" method="POST"
-                              data-confirm-delete="true"
-                              data-title="Bersihkan Data Sampah?"
-                              data-message="Scan dan hapus data nilai/anggota yang tidak punya induk (orphans)."
-                              data-confirm-text="Ya, Bersihkan!"
-                              data-confirm-color="#f97316"
-                              data-icon="info">
-                            @csrf
-                            <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined">delete_sweep</span> SAPU BERSIH SAMPAH
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- CARD 3: DEDUPLICATE -->
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-blue-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-3 opacity-10">
-                             <span class="material-symbols-outlined text-6xl text-blue-500">content_copy</span>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
-                                <span class="material-symbols-outlined text-blue-500">difference</span> Hapus Nilai Ganda
-                            </h4>
-                            <p class="text-xs text-slate-500 mb-4">
-                                <b>Masalah:</b> Satu siswa punya 2 nilai untuk mapel yang sama. Biasanya terjadi karena import Excel berulang kali.
-                                <br><br>
-                                <b>Solusi:</b> Cari duplikat, pertahankan data yang paling baru di-update, hapus sisanya.
-                            </p>
-                        </div>
-                        <form action="{{ route('settings.maintenance.deduplicate-grades') }}" method="POST"
-                              data-confirm-delete="true"
-                              data-title="Hapus Nilai Ganda?"
-                              data-message="Cari duplikat nilai mapel yang sama dan pertahankan yang terbaru."
-                              data-confirm-text="Ya, Hapus Duplikat!"
-                              data-confirm-color="#3b82f6"
-                              data-icon="info">
-                            @csrf
-                            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined">filter_list_off</span> HAPUS DUPLIKAT
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- CARD 4: FORCE SYNC -->
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-teal-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
-                         <div class="absolute top-0 right-0 p-3 opacity-10">
-                             <span class="material-symbols-outlined text-6xl text-teal-500">sync_lock</span>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
-                                <span class="material-symbols-outlined text-teal-500">update</span> Paksa Hitung Ulang
-                            </h4>
-                            <p class="text-xs text-slate-500 mb-4">
-                                <b>Masalah:</b> Anda baru saja mengubah "Bobot Nilai" (Misal: Harian 50%, UAS 50%), tapi nilai akhir siswa belum berubah.
-                                <br><br>
-                                <b>Solusi:</b> Paksa sistem menghitung ulang semua nilai Rapor (Semester/Cawu) berdasarkan rumus bobot terbaru.
-                                <br>
-                                <i>*Mendukung rumus (Tugas+THB)/2 jika bobot diatur 50:50.</i>
-                            </p>
-                        </div>
-                        <form action="{{ route('settings.maintenance.force-calcs') }}" method="POST"
-                              data-confirm-delete="true"
-                              data-title="Hitung Ulang Total?"
-                              data-message="Mulai perhitungan ulang nilai Rapor massal. Proses mungkin memakan waktu."
-                              data-confirm-text="Ya, Hitung Ulang!"
-                              data-confirm-color="#14b8a6"
-                              data-icon="question">
-                            @csrf
-                            <button type="submit" class="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined">calculate</span> HITUNG ULANG TOTAL
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- CARD 5: SYNC STUDENT STATUS -->
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-indigo-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-3 opacity-10">
-                             <span class="material-symbols-outlined text-6xl text-indigo-500">manage_accounts</span>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
-                                <span class="material-symbols-outlined text-indigo-500">sync_alt</span> Sinkronisasi Status Siswa
-                            </h4>
-                            <p class="text-xs text-slate-500 mb-4">
-                                <b>Masalah:</b> Siswa "Aktif" tapi tidak punya kelas, atau siswa masuk kelas tapi statusnya "Non-Aktif".
-                                <br><br>
-                                <b>Solusi:</b> Cek otomatis kehadiran di kelas tahun ini. <br>Ada Kelas = <b>Aktif</b>. Tidak Ada = <b>Non-Aktif</b>.
-                            </p>
-                        </div>
-                        <form action="{{ route('settings.maintenance.fix-student-status') }}" method="POST"
-                              data-confirm-delete="true"
-                              data-title="Sinkronisasi Status?"
-                              data-message="Set status Aktif/Non-Aktif siswa berdasarkan keanggotaan kelas tahun ini."
-                              data-confirm-text="Ya, Sinkronisasi!"
-                              data-confirm-color="#6366f1"
-                              data-icon="question">
-                            @csrf
-                            <button type="submit" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined">person_search</span> OBATI STATUS GALAU
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- CARD 6: GENERATE ACCOUNTS -->
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-emerald-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-3 opacity-10">
-                             <span class="material-symbols-outlined text-6xl text-emerald-500">key</span>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
-                                <span class="material-symbols-outlined text-emerald-500">vpn_key</span> Generate Akun Massal
-                            </h4>
-                            <p class="text-xs text-slate-500 mb-4">
-                                <b>Masalah:</b> Guru atau Siswa baru belum bisa login karena belum dibuatkan usernamenya.
-                                <br><br>
-                                <b>Solusi:</b> Buatkan akun otomatis untuk semua yang belum punya. <br>User: NIP/NIS, Pass: <b>guru123 / siswa123</b>.
-                            </p>
-                        </div>
-                        <form action="{{ route('settings.maintenance.generate-accounts') }}" method="POST"
-                              data-confirm-delete="true"
-                              data-title="Generate Akun User?"
-                              data-message="Buatkan akun untuk semua guru/siswa yang belum punya (Default Pass: guru123/siswa123)."
-                              data-confirm-text="Ya, Buatkan!"
-                              data-confirm-color="#10b981"
-                              data-icon="question">
-                            @csrf
-                            <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined">add_reaction</span> SUNTIK VITAMIN AKUN
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- CARD 7: SYSTEM DETOX -->
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-pink-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-3 opacity-10">
-                             <span class="material-symbols-outlined text-6xl text-pink-500">cleaning_bucket</span>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
-                                <span class="material-symbols-outlined text-pink-500">mop</span> Detox Sistem (Clear Cache)
-                            </h4>
-                            <p class="text-xs text-slate-500 mb-4">
-                                <b>Masalah:</b> Aplikasi terasa berat, lambat, atau perubahan setting tidak langsung muncul.
-                                <br><br>
-                                <b>Solusi:</b> Bersihkan semua file sampah (cache) dan paksa sistem rebuild konfigurasi.
-                            </p>
-                        </div>
-                        <form action="{{ route('settings.maintenance.system-detox') }}" method="POST"
-                              data-confirm-delete="true"
-                              data-title="Bersihkan Cache Sistem?"
-                              data-message="Bersihkan semua cache aplikasi untuk performa lebih ringan."
-                              data-confirm-text="Ya, Bersihkan!"
-                              data-confirm-color="#ec4899"
-                              data-icon="warning">
-                            @csrf
-                            <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined">restart_alt</span> MINUM JAMU DETOX
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- CARD 8: FIX JENJANG -->
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-violet-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-3 opacity-10">
-                             <span class="material-symbols-outlined text-6xl text-violet-500">school</span>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
-                                <span class="material-symbols-outlined text-violet-500">auto_fix_high</span> Terapi Identitas Kelas
-                            </h4>
-                            <p class="text-xs text-slate-500 mb-4">
-                                <b>Masalah:</b> Salah set jenjang (misal Kelas 7 tapi jenjang MI).
-                                <br><br>
-                                <b>Solusi:</b> Auto-detect dari nama kelas. <br>Kelas 1-6 = <b>MI</b>. Kelas 7-9 = <b>MTs</b>.
-                            </p>
-                        </div>
-                        <form action="{{ route('settings.maintenance.fix-jenjang') }}" method="POST"
-                              data-confirm-delete="true"
-                              data-title="Perbaiki Jenjang?"
-                              data-message="Update otomatis jenjang (MI/MTS) pada kelas berdasarkan nama kelasnya."
-                              data-confirm-text="Ya, Perbaiki!"
-                              data-confirm-color="#8b5cf6"
-                              data-icon="info">
-                            @csrf
-                            <button type="submit" class="w-full bg-violet-500 hover:bg-violet-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined">healing</span> TERAPI JENJANG
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- CARD 9: TRIM DATA -->
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-cyan-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-3 opacity-10">
-                             <span class="material-symbols-outlined text-6xl text-cyan-500">content_cut</span>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
-                                <span class="material-symbols-outlined text-cyan-500">face_retouching_natural</span> Operasi Plastik (Trim Data)
-                            </h4>
-                            <p class="text-xs text-slate-500 mb-4">
-                                <b>Masalah:</b> Nama " Ahmad" (pakai spasi) tidak ketemu saat dicari "Ahmad".
-                                <br><br>
-                                <b>Solusi:</b> Potong semua spasi berlebih di depan/belakang Nama, NIS, dan NIP.
-                            </p>
-                        </div>
-                        <form action="{{ route('settings.maintenance.trim-data') }}" method="POST"
-                              data-confirm-delete="true"
-                              data-title="Rapikan Data Spasi?"
-                              data-message="Hapus spasi berlebih di awal/akhir nama dan nomor induk."
-                              data-confirm-text="Ya, Rapikan!"
-                              data-confirm-color="#06b6d4"
-                              data-icon="info">
-                            @csrf
-                            <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined">cut</span> BEDAH PLASTIK
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- CARD 10: LOG CLEANER -->
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-3 opacity-10">
-                             <span class="material-symbols-outlined text-6xl text-slate-500">delete_sweep</span>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
-                                <span class="material-symbols-outlined text-slate-500">soap</span> Luluran Sistem (Log Cleaner)
-                            </h4>
-                            <p class="text-xs text-slate-500 mb-4">
-                                <b>Masalah:</b> File log error menumpuk (laravel.log) menghabiskan penyimpanan server.
-                                <br><br>
-                                <b>Solusi:</b> Kosongkan file log agar penyimpanan kembali lega.
-                            </p>
-                        </div>
-                        <form action="{{ route('settings.maintenance.clear-logs') }}" method="POST"
-                              data-confirm-delete="true"
-                              data-title="Bersihkan Log?"
-                              data-message="File log (laravel.log) akan dikosongkan."
-                              data-confirm-text="Ya, Bersihkan!"
-                              data-confirm-color="#64748b"
-                              data-icon="warning">
-                            @csrf
-                            <button type="submit" class="w-full bg-slate-500 hover:bg-slate-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined">recycling</span> BERSIHKAN LOG
-                            </button>
-                        </form>
-                    </div>
-                    
-                    <!-- CARD 11: SYNC HISTORY (Request User) -->
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-amber-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-3 opacity-10">
-                             <span class="material-symbols-outlined text-6xl text-amber-500">restore_page</span>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-2">
-                                <span class="material-symbols-outlined text-amber-500">history</span> Sinkronisasi Riwayat
-                            </h4>
-                            <p class="text-xs text-slate-500 mb-4">
-                                <b>Masalah:</b> Data kenaikan kelas/riwayat nilai di Rapor kosong atau hilang.
-                                <br><br>
-                                <b>Solusi:</b> Tarik ulang semua status (Naik/Lulus/Tinggal) dari riwayat Anggota Kelas tahun-tahun sebelumnya.
-                            </p>
-                        </div>
-                        <form action="{{ route('settings.maintenance.sync-history') }}" method="POST" 
-                              data-confirm-delete="true"
-                              data-title="Tarik Riwayat Kenaikan?"
-                              data-message="Proses ini akan melengkapi data status kenaikan yang hilang dari tahun sebelumnya.">
-                            @csrf
-                            <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined">sync</span> TARIK RIWAYAT
+                            <button type="submit" class="w-full bg-red-100 hover:bg-red-200 text-red-700 font-bold py-3 px-4 rounded-lg shadow-sm border border-red-300 transition-colors flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined">history</span> RESET KENAIKAN
                             </button>
                         </form>
                     </div>
