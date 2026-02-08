@@ -222,6 +222,9 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:teacher,admin'])->prefix('wali-kelas')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\WaliKelasController::class, 'dashboard'])->name('walikelas.dashboard');
         Route::get('/absensi', [App\Http\Controllers\WaliKelasController::class, 'inputAbsensi'])->name('walikelas.absensi');
+        Route::post('/absensi', [App\Http\Controllers\WaliKelasController::class, 'storeAbsensi'])->name('walikelas.absensi.store');
+        Route::get('/absensi/template', [App\Http\Controllers\WaliKelasController::class, 'downloadAbsensiTemplate'])->name('walikelas.absensi.template');
+        Route::post('/absensi/import', [App\Http\Controllers\WaliKelasController::class, 'importAbsensi'])->name('walikelas.absensi.import');
 
         // Unified Import (Leger)
         // Route::get('/unified-import/{kelas}', [App\Http\Controllers\UnifiedImportController::class, 'index'])->name('unified.import.index');

@@ -23,7 +23,7 @@
                  <div class="bg-purple-100 text-purple-700 p-2 rounded-lg">
                     <span class="material-symbols-outlined">school</span>
                  </div>
-                 <h2 class="text-lg font-bold text-slate-800 dark:text-white">Daftar Kelas Akhir (Kelas 6 / Kelas 9)</h2>
+                 <h2 class="text-lg font-bold text-slate-800 dark:text-white">Daftar Kelas Akhir (MI 6 / MTs 9 / MA 12)</h2>
             </div>
 
             @if($finalClasses->isEmpty())
@@ -33,7 +33,7 @@
                     </div>
                     <h3 class="text-lg font-bold text-slate-800 dark:text-white">Tidak Ada Kelas Akhir Ditemukan</h3>
                     <p class="text-slate-500 text-center max-w-md mt-2">
-                        System tidak menemukan kelas dengan nama "Kelas 6" (MI) atau "Kelas 9" (MTs) pada Tahun Ajaran aktif ini.
+                        System tidak menemukan kelas akhir (6, 9, 12, atau 3) pada Tahun Ajaran aktif ini.
                     </p>
                 </div>
             @else

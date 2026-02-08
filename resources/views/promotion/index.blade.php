@@ -172,6 +172,7 @@
                         <th scope="col" class="px-6 py-3 text-center border-b border-slate-200">Sikap</th>
                         <th scope="col" class="px-6 py-3 text-center border-b border-slate-200">Kehadiran</th>
                         <th scope="col" class="px-6 py-3 text-center border-b border-slate-200">Rekomendasi</th>
+                        <th scope="col" class="px-6 py-3 text-left border-b border-slate-200 w-64">Catatan</th>
                         <th scope="col" class="px-6 py-3 text-right border-b border-slate-200 w-48">Status Akhir</th>
                     </tr>
                 </thead>
@@ -220,6 +221,9 @@
                                     {{ $pageContext['fail_badge'] }}
                                 </span>
                             @endif
+                        </td>
+                        <td class="px-6 py-4 text-xs text-slate-500 leading-snug break-words">
+                            {{ $st->notes }}
                         </td>
                         <td class="px-6 py-4 text-right">
                             <div class="flex flex-col items-end gap-2">

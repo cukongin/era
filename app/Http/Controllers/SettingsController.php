@@ -304,28 +304,7 @@ class SettingsController extends Controller
     }
 
     // --- App Identity Logic ---
-    public function updateIdentity(Request $request)
-    {
-        try {
-            $request->validate([
-                'app_name' => 'required|string|max:50',
-                'app_tagline' => 'nullable|string|max:100',
-                'app_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            ]);
-            
-            \App\Models\GlobalSetting::updateOrCreate(['key' => 'app_name'], ['value' => $request->app_name]);
-            if($request->has('app_tagline')) \App\Models\GlobalSetting::updateOrCreate(['key' => 'app_tagline'], ['value' => $request->app_tagline]);
-            
-            if ($request->hasFile('app_logo')) {
-                $path = $request->file('app_logo')->store('settings', 'public');
-                \App\Models\GlobalSetting::updateOrCreate(['key' => 'app_logo'], ['value' => $path]);
-            }
 
-            return back()->with('success', 'Identitas aplikasi berhasil diperbarui.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Gagal menyimpan identitas: ' . $e->getMessage());
-        }
-    }
 
     public function updateGeneral(Request $request)
     {
@@ -409,7 +388,8 @@ class SettingsController extends Controller
             'promotion_min_attendance', 'promotion_min_attitude', 'total_effective_days', 'scale_type', 'promotion_requires_all_periods',
             'titimangsa_mi', 'titimangsa_mts',
             'titimangsa_tempat_mi', 'titimangsa_tempat_mts',
-            'final_grade_mi', 'final_grade_mts'
+            'final_grade_mi', 'final_grade_mts',
+            'ijazah_range_mi', 'ijazah_range_mts', 'ijazah_range_ma'
         ];
 
         foreach ($settingsToSave as $key) {
@@ -1134,5 +1114,31 @@ class SettingsController extends Controller
              
              return back()->with('error', "Update Gagal (System Error):\n" . $errorLog);
         }
+    }
+    public function updateIdentity(Request $request)
+    {
+        // 1. App Info
+        if ($request->has('app_name')) \App\Models\GlobalSetting::set('app_name', $request->app_name);
+        if ($request->has('app_tagline')) \App\Models\GlobalSetting::set('app_tagline', $request->app_tagline);
+        
+        // 2. Headmasters
+        if ($request->has('hm_name_mi')) \App\Models\GlobalSetting::set('hm_name_mi', $request->hm_name_mi);
+        if ($request->has('hm_nip_mi')) \App\Models\GlobalSetting::set('hm_nip_mi', $request->hm_nip_mi);
+        
+        if ($request->has('hm_name_mts')) \App\Models\GlobalSetting::set('hm_name_mts', $request->hm_name_mts);
+        if ($request->has('hm_nip_mts')) \App\Models\GlobalSetting::set('hm_nip_mts', $request->hm_nip_mts);
+        
+        if ($request->has('hm_name_ma')) \App\Models\GlobalSetting::set('hm_name_ma', $request->hm_name_ma);
+        if ($request->has('hm_nip_ma')) \App\Models\GlobalSetting::set('hm_nip_ma', $request->hm_nip_ma);
+
+        // 3. Logo Upload
+        if ($request->hasFile('app_logo')) {
+            $file = $request->file('app_logo');
+            $filename = 'logo_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('public/uploads'), $filename); // Ensure public/uploads
+            \App\Models\GlobalSetting::set('app_logo', 'uploads/' . $filename);
+        }
+
+        return back()->with('success', 'Identitas Sekolah & Aplikasi berhasil diperbarui.');
     }
 }

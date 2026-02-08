@@ -101,7 +101,70 @@ class IjazahController extends Controller
             ->where('id_tahun_ajaran', $activeYear->id)
             ->pluck('nilai_kkm', 'id_mapel');
 
-        return view('ijazah.index', compact('kelas', 'activeYear', 'students', 'mapels', 'grades', 'kkm'));
+        // --- Calculate Summary Stats ---
+        $highestScore = 0; $highestStudent = null;
+        $lowestScore = 100; $lowestStudent = null;
+        $totalClassScore = 0;
+        $studentCountWithGrades = 0;
+        $passCount = 0;
+        $failCount = 0;
+        
+        $minLulus = \App\Models\GlobalSetting::val('ijazah_min_lulus', 60);
+
+        foreach ($students as $s) {
+            $studentGrades = $grades->get($s->id_siswa);
+            if (!$studentGrades || $studentGrades->isEmpty()) {
+                // Treat as 0 or skip? If skipped, they are not part of stats.
+                // Usually for graduation stats, we count everyone.
+                // But for Average Score, 0 might drag it down if they just haven't entered data.
+                // Let's count them as Fail but skip score calc?
+                $failCount++;
+                continue;
+            }
+
+            $sumNA = 0;
+            $countMapel = 0;
+            foreach ($studentGrades as $g) {
+                if (is_numeric($g->nilai_ijazah) && $g->nilai_ijazah > 0) {
+                    $sumNA += $g->nilai_ijazah;
+                    $countMapel++;
+                }
+            }
+
+            $avgNA = $countMapel > 0 ? $sumNA / $countMapel : 0;
+            
+            if ($countMapel > 0) {
+                // Update High/Low
+                if ($avgNA > $highestScore) { $highestScore = $avgNA; $highestStudent = $s->siswa->nama_lengkap; }
+                if ($avgNA < $lowestScore) { $lowestScore = $avgNA; $lowestStudent = $s->siswa->nama_lengkap; }
+                
+                $totalClassScore += $avgNA;
+                $studentCountWithGrades++;
+            }
+
+            // Check Pass/Fail
+            if ($avgNA >= $minLulus && $countMapel > 0) {
+                $passCount++;
+            } else {
+                $failCount++;
+            }
+        }
+        
+        // Handle Edge Case: No grades at all
+        if ($lowestScore == 100 && $studentCountWithGrades == 0) $lowestScore = 0;
+
+        $classAverage = $studentCountWithGrades > 0 ? $totalClassScore / $studentCountWithGrades : 0;
+        
+        $stats = [
+            'highest' => ['score' => round($highestScore, 2), 'student' => $highestStudent ?? '-'],
+            'lowest' => ['score' => round($lowestScore, 2), 'student' => $lowestStudent ?? '-'],
+            'average' => round($classAverage, 2),
+            'pass' => $passCount,
+            'fail' => $failCount,
+            'total' => $students->count()
+        ];
+
+        return view('ijazah.index', compact('kelas', 'activeYear', 'students', 'mapels', 'grades', 'kkm', 'stats'));
     }
 
     public function store(Request $request)

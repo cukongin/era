@@ -173,6 +173,7 @@
                             <th class="px-6 py-4 text-center">Nilai<br>Sikap</th>
                             <th class="px-6 py-4 text-center">Kehadiran<br>(%)</th>
                             <th class="px-6 py-4 text-center">Rekomendasi<br>Sistem</th>
+                            <th class="px-6 py-4 text-left w-64">Catatan<br>Sistem</th>
                             <th class="px-6 py-4 text-center w-48">Status Akhir</th>
                         </tr>
                     </thead>
@@ -247,6 +248,19 @@
                                             </div>
                                         @endif
                                     </div>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 text-xs text-slate-500 leading-snug break-words">
+                                @if(isset($stat->ijazah_note) && $stat->ijazah_note)
+                                    <div class="font-bold mb-1 {{ $stat->ijazah_class ?? (str_contains($stat->ijazah_note, 'TIDAK') ? 'text-red-600' : 'text-emerald-600') }}">
+                                        {{ $stat->ijazah_note }}
+                                    </div>
+                                @endif
+                                @if(isset($stat->manual_note) && $stat->manual_note)
+                                    <div class="italic">"{{ $stat->manual_note }}"</div>
+                                @endif
+                                @if(empty($stat->ijazah_note) && empty($stat->manual_note))
+                                    -
                                 @endif
                             </td>
                             <td class="px-6 py-4">

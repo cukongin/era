@@ -933,6 +933,42 @@ class WaliKelasController extends Controller
         $assignedMapelIds = \App\Models\PengajarMapel::where('id_kelas', $kelas->id)->pluck('id_mapel');
         $assignedMapels = Mapel::whereIn('id', $assignedMapelIds)->get();
 
+        // --- FINAL YEAR LOGIC (MOVED TO TOP) ---
+        if (!$kelas->relationLoaded('jenjang')) {
+            $kelas->load('jenjang');
+        }
+        $jenjangCode = optional($kelas->jenjang)->kode;
+        if (!$jenjangCode) {
+            if (stripos($kelas->nama_kelas, 'MTs') !== false) $jenjangCode = 'MTS';
+            elseif (stripos($kelas->nama_kelas, 'MI') !== false) $jenjangCode = 'MI';
+        }
+        $jenjangCode = strtoupper($jenjangCode ?? '');
+        
+        $grade = (int) filter_var($kelas->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
+        $finalGradeMI = (int) \App\Models\GlobalSetting::val('final_grade_mi', 6);
+        $finalGradeMTS = (int) \App\Models\GlobalSetting::val('final_grade_mts', 9);
+
+        // Strict Logic
+        $isFinalYear = false;
+        
+        // Ensure we are in the Final Period (Semester Genap) for Graduation
+        // $isFinalPeriod is calculated at the top of this function
+        if (isset($isFinalPeriod) && $isFinalPeriod) {
+            if ($jenjangCode === 'MI') {
+                if ($grade == $finalGradeMI) $isFinalYear = true;
+            } elseif ($jenjangCode === 'MTS') {
+                    if ($grade == $finalGradeMTS) $isFinalYear = true; 
+                    elseif ($finalGradeMTS == 9 && $grade == 3) $isFinalYear = true; // Legacy
+            }
+        }
+        // --------------------------------
+
+        // 7b. Get Ijazah Grades (for Final Year Sync)
+        $allIjazah = DB::table('nilai_ijazah')
+            ->whereIn('id_siswa', $students->pluck('id_siswa'))
+            ->get()
+            ->groupBy('id_siswa');
+
         foreach ($students as $student) {
             $sId = $student->id_siswa;
             $sGrades = $allGrades->where('id_siswa', $sId);
@@ -998,7 +1034,7 @@ class WaliKelasController extends Controller
 
             // System Recommendation Logic
             // ... (Logic logic is same) ...
-            $isFinalYear = str_contains($kelas->nama_kelas, '6') || str_contains($kelas->nama_kelas, '9') || str_contains($kelas->nama_kelas, '12');
+            // $isFinalYear calculated at top
             $defaultPromote = $isFinalYear ? 'Lulus' : 'Naik Kelas';
             $defaultRetain = $isFinalYear ? 'Tidak Lulus' : 'Tinggal Kelas';
             
@@ -1051,6 +1087,63 @@ class WaliKelasController extends Controller
             // Manual Note
             $manualNote = $decisionObj ? $decisionObj->notes : null;
 
+            // Ijazah Info Logic (On-the-fly)
+            $ijazahNote = null;
+            $ijazahClass = null;
+            
+            if ($isFinalYear) {
+                 $sIjazah = $allIjazah[$sId] ?? collect([]);
+                 $iCount = $sIjazah->where('nilai_ijazah', '>', 0)->count();
+                 $iSum = $sIjazah->where('nilai_ijazah', '>', 0)->sum('nilai_ijazah');
+                 
+                 if ($iCount > 0) {
+                     $iAvg = $iSum / $iCount;
+                     $minLulusIjazah = (float) \App\Models\GlobalSetting::val('ijazah_min_lulus', 60);
+
+                     if ($iAvg >= $minLulusIjazah) {
+                         // Check for Rapor Conflict (System recommends RETAIN/FAIL due to KKM/Attitude)
+                         if ($systemStatus == 'retain') {
+                             $ijazahNote = "⚠️ PERHATIAN: Nilai Ijazah CUKUP (" . round($iAvg, 2) . "), tapi Nilai Rapor Masih Merah! Wajib Remedial.";
+                             $ijazahClass = "text-amber-600 font-bold";
+                         } else {
+                             $ijazahNote = "Info: Ijazah LULUS (Rata-rata: " . round($iAvg, 2) . ")";
+                             $ijazahClass = "text-emerald-600 font-bold";
+                         }
+                     } else {
+                         $ijazahNote = "PERHATIAN: Ijazah TIDAK LULUS (Rata-rata: " . round($iAvg, 2) . " < $minLulusIjazah)";
+                         $ijazahClass = "text-red-600 font-bold";
+                     }
+                 }
+            } else {
+                 // --- Regular Class Logic ---
+                 // User Request: "tidak sampai KKM juga harus ada info"
+                 
+                 // Get Failed Mapels (if any)
+                 $failedMapels = collect($gradesDetail)->where('is_under', true)->pluck('mapel');
+                 
+                 if ($underKkmCount > 0) {
+                     $count = $failedMapels->count();
+                     $names = $failedMapels->take(3)->implode(', ');
+                     if ($count > 3) $names .= ", dll";
+                     
+                     $ijazahNote = "Remedial ($count): $names";
+                     $ijazahClass = "text-red-600 font-bold";
+                 } else {
+                     // Check Attitude/Absence Failures
+                     if ($currentAttRank < $minAttRank) {
+                         $ijazahNote = "Sikap Kurang ($attitudeCode)";
+                         $ijazahClass = "text-amber-600 font-bold";
+                     } elseif ($attPercentage < $minAttendance) {
+                         $ijazahNote = "Kehadiran Kurang ($attPercentage%)";
+                         $ijazahClass = "text-amber-600 font-bold";
+                     } else {
+                         // Clean
+                         $ijazahNote = "Tuntas. Rata-rata: $avgYearly";
+                         $ijazahClass = "text-slate-500 italic"; // Neutral
+                     }
+                 }
+            }
+
             if ($finalStatus == 'review') $summary['review']++;
             elseif ($finalStatus == 'promote' || $finalStatus == 'graduate') $summary['promote']++;
             else $summary['retain']++; // Retain counts as review/fail bucket for visual
@@ -1074,6 +1167,8 @@ class WaliKelasController extends Controller
                 'final_status' => $finalStatus,
                 'is_locked' => $isDecisionLocked, // PASS LOCK STATUS
                 'manual_note' => $manualNote,
+                'ijazah_note' => $ijazahNote, // NEW
+                'ijazah_class' => $ijazahClass, // NEW
                 'fail_reasons' => $failConditions 
             ];
         }
@@ -1104,34 +1199,7 @@ class WaliKelasController extends Controller
         $isLocked = false;
         $latestYear = TahunAjaran::orderBy('id', 'desc')->first();
         
-        // --- REVAMPED FINAL YEAR LOGIC (Ported from PromotionController) ---
-        if (!$kelas->relationLoaded('jenjang')) {
-            $kelas->load('jenjang');
-        }
-        $jenjangCode = optional($kelas->jenjang)->kode;
-        if (!$jenjangCode) {
-            if (stripos($kelas->nama_kelas, 'MTs') !== false) $jenjangCode = 'MTS';
-            elseif (stripos($kelas->nama_kelas, 'MI') !== false) $jenjangCode = 'MI';
-        }
-        $jenjangCode = strtoupper($jenjangCode ?? '');
-        
-        $grade = (int) filter_var($kelas->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
-        $finalGradeMI = (int) \App\Models\GlobalSetting::val('final_grade_mi', 6);
-        $finalGradeMTS = (int) \App\Models\GlobalSetting::val('final_grade_mts', 9);
-
-        // Strict Logic
-        $isFinalYear = false;
-        
-        // Ensure we are in the Final Period (Semester Genap) for Graduation
-        // $isFinalPeriod is calculated at the top of this function
-        if (isset($isFinalPeriod) && $isFinalPeriod) {
-            if ($jenjangCode === 'MI') {
-                if ($grade == $finalGradeMI) $isFinalYear = true;
-            } elseif ($jenjangCode === 'MTS') {
-                    if ($grade == $finalGradeMTS) $isFinalYear = true; 
-                    elseif ($finalGradeMTS == 9 && $grade == 3) $isFinalYear = true; // Legacy
-            }
-        }
+        // Final Year Logic moved to top
 
         $pageContext = [
             'type' => 'promotion',

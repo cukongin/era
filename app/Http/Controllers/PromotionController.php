@@ -250,6 +250,14 @@ class PromotionController extends Controller
             'uas' => $weights ? $weights->bobot_uas : 20
         ];
 
+        // 5. Ijazah Grades (For Final Year Logic - INFO ONLY)
+        $allIjazah = DB::table('nilai_ijazah')
+            ->whereIn('id_siswa', $studentIds)
+            ->get()
+            ->groupBy('id_siswa');
+            
+        $minLulusIjazah = (float) \App\Models\GlobalSetting::val('ijazah_min_lulus', 60);
+
         $totalDays = \App\Models\GlobalSetting::val('total_effective_days', 220); 
         if ($totalDays <= 0) $totalDays = 220;
 
@@ -363,6 +371,28 @@ class PromotionController extends Controller
                 } elseif ($recommendation == 'retained') {
                     $recommendation = 'not_graduated';
                 }
+
+                // --- INFO: IJAZAH STATUS ---
+                // Add note about Ijazah status without overriding logic
+                $ijazahGrades = $allIjazah[$sid] ?? collect([]);
+                $ijazahSum = 0;
+                $ijazahCount = 0;
+                
+                foreach ($ijazahGrades as $g) {
+                    if ($g->nilai_ijazah > 0) {
+                        $ijazahSum += $g->nilai_ijazah;
+                        $ijazahCount++;
+                    }
+                }
+                
+                if ($ijazahCount > 0) {
+                    $ijazahAvg = $ijazahSum / $ijazahCount;
+                    if ($ijazahAvg >= $minLulusIjazah) {
+                        $report[] = "Info: Ijazah LULUS (Rata-rata: " . round($ijazahAvg, 2) . ")";
+                    } else {
+                        $report[] = "PERHATIAN: Ijazah TIDAK LULUS (Rata-rata: " . round($ijazahAvg, 2) . " < $minLulusIjazah)";
+                    }
+                }
             }
             
             $reason = count($report) > 0 ? implode(', ', $report) : 'Memenuhi semua syarat.';
@@ -382,20 +412,20 @@ class PromotionController extends Controller
                     'system_recommendation' => $recommendation,
                     'notes' => $reason,
                     'updated_at' => now()
-                 ]
+                ]
             );
             
             // Auto-Sync if NOT Overridden manually
             $existing = DB::table('promotion_decisions')
-                 ->where('id_siswa', $sid)
-                 ->where('id_kelas', $kelasId)
-                 ->where('id_tahun_ajaran', $activeYear->id)
-                 ->first();
+                ->where('id_siswa', $sid)
+                ->where('id_kelas', $kelasId)
+                ->where('id_tahun_ajaran', $activeYear->id)
+                ->first();
                  
             if ($existing && is_null($existing->override_by)) {
-                 DB::table('promotion_decisions')
-                     ->where('id', $existing->id)
-                     ->update(['final_decision' => $recommendation]);
+                DB::table('promotion_decisions')
+                    ->where('id', $existing->id)
+                    ->update(['final_decision' => $recommendation]);
             }
         }
     }

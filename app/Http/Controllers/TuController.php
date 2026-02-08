@@ -54,8 +54,8 @@ class TuController extends Controller
         if ($cohortStudentIds->isEmpty()) {
             // Fallback: If no cohort found (maybe user selected a future year or empty year), show zeros or try simpler query
             // Attempt: Just show school average for those years if cohort is empty to avoid broken chart
-             foreach($futureYears as $yr) {
-                $chartLabels[] = $yr->nama_tahun . " (Thn ke-" . ($loop->iteration) . ")";
+             foreach($futureYears as $index => $yr) {
+                $chartLabels[] = $yr->nama_tahun . " (Thn ke-" . ($index + 1) . ")";
                 $chartData[] = 0;
              }
              $cohortDescription .= " (Data Siswa Tidak Ditemukan)";
@@ -223,10 +223,17 @@ class TuController extends Controller
         $activeYear = TahunAjaran::where('status', 'aktif')->first();
         
         // Cari kelas akhir (Kelas 6 MI or Kelas 9 MTs)
+        // Cari kelas akhir (Kelas 6 MI, Kelas 9/3 MTs, Kelas 12/3 MA)
         $finalClasses = Kelas::where('id_tahun_ajaran', $activeYear->id)
             ->where(function($q) {
-                $q->where('nama_kelas', 'LIKE', '%6%') // MI Class 6
-                  ->orWhere('nama_kelas', 'LIKE', '%9%'); // MTs Class 9
+                $q->where('nama_kelas', 'LIKE', '%6%')   // MI Class 6
+                  ->orWhere('nama_kelas', 'LIKE', '%9%') // MTs Class 9
+                  ->orWhere('nama_kelas', 'LIKE', '%12%') // MA Class 12
+                  ->orWhere('nama_kelas', 'LIKE', '%3%')  // MTs/MA Class 3 (Relative)
+                  ->orWhere('nama_kelas', 'LIKE', '%XII%') // Roman 12
+                  ->orWhere('nama_kelas', 'LIKE', '%IX%')  // Roman 9
+                  ->orWhere('nama_kelas', 'LIKE', '%VI%')  // Roman 6
+                  ->orWhere('nama_kelas', 'LIKE', '%III%'); // Roman 3
             })->get();
 
         return view('tu.dkn-selector', compact('finalClasses'));
@@ -263,27 +270,54 @@ class TuController extends Controller
                 'data' => [] // Changed from 'levels' to 'data' to match View
             ];
 
-            // Organize by Level (Tingkat) -> Periode
-            for ($lvl = 1; $lvl <= 6; $lvl++) {
-                $studentData['data'][$lvl] = []; // Changed to 'data'
-                $lvlGrades = $sGrades->filter(fn($g) => $g->kelas && $g->kelas->tingkat_kelas == $lvl);
+            // Determine Range based on Jenjang
+            $jenjang = $kelas->jenjang->kode ?? ($kelas->tingkat_kelas > 6 ? 'MTS' : 'MI');
+            
+            if ($jenjang === 'MTS') {
+                $startLvl = 7; $endLvl = 9; $periods = [1, 2];
+            } elseif ($jenjang === 'MA') {
+                $startLvl = 10; $endLvl = 12; $periods = [1, 2];
+            } else {
+                $startLvl = 1; $endLvl = 6; $periods = [1, 2, 3];
+            }
 
-                // Use Integer 1, 2, 3 for Keys
-                foreach ([1, 2, 3] as $p) {
-                    $pName = "Cawu $p"; // Search term
-                    // Fallback for Semesters if Cawu not found?
-                    // Ideally we check if period->nama_periode contains number $p.
-                    
-                    $pGrades = $lvlGrades->filter(function($g) use ($p) {
+            // Organize by Level (Tingkat) -> Periode
+            for ($lvl = $startLvl; $lvl <= $endLvl; $lvl++) {
+                $studentData['data'][$lvl] = [];
+                
+                // Fetch grades matching this Level
+                // NOTE: If MTS data is stored as Levels 1-3 (Relative), we must check that too.
+                // But usually `tingkat_kelas` in database is calculated or stored absolutely (7,8,9).
+                // If it IS stored relatively, we might need an OR condition or fallback.
+                // For now, assume strict matching to what's in DB.
+                $lvlGrades = $sGrades->filter(fn($g) => $g->kelas && $g->kelas->tingkat_kelas == $lvl);
+                
+                // Fallback: If no grades found at absolute level (e.g. 7), try relative level (e.g. 1) IF user uses relative classes
+                if ($lvlGrades->isEmpty() && ($jenjang === 'MTS' || $jenjang === 'MA')) {
+                     $relativeLvl = $lvl - ($jenjang === 'MTS' ? 6 : 9);
+                     $lvlGrades = $sGrades->filter(fn($g) => $g->kelas && $g->kelas->tingkat_kelas == $relativeLvl);
+                }
+
+                foreach ($periods as $p) {
+                     // Check for Period Number in Name (e.g. "Ganjil", "Genap", "1", "2")
+                     // Simple check: does name contain the number?
+                     $pGrades = $lvlGrades->filter(function($g) use ($p) {
                         if (!$g->periode) return false;
-                        // Robust check: contains "Cawu $p" OR "Semester $p" OR just ends with " $p"?
-                        // Let's allow loose matching for number
-                        return stripos($g->periode->nama_periode, (string)$p) !== false; 
+                        // Semester 1/Ganjil maps to 1? Semester 2/Genap maps to 2?
+                        // Let's assume standard numbering or "Ganjil"/"Genap"
+                        $pName = $g->periode->nama_periode;
+                        if (stripos($pName, (string)$p) !== false) return true;
+                        
+                        // Map Ganjil->1, Genap->2
+                        if ($p == 1 && stripos($pName, 'Ganjil') !== false) return true;
+                        if ($p == 2 && stripos($pName, 'Genap') !== false) return true;
+                        
+                        return false;
                     });
                     
                     $mapelScores = [];
                     foreach ($mapels as $m) {
-                        $val = $pGrades->where('id_mapel', $m->id)->sortByDesc('updated_at')->first(); // Get latest
+                        $val = $pGrades->where('id_mapel', $m->id)->sortByDesc('updated_at')->first(); 
                         $mapelScores[$m->id] = $val ? $val->nilai_akhir : null;
                     }
                     $studentData['data'][$lvl][$p] = $mapelScores;
@@ -292,7 +326,15 @@ class TuController extends Controller
 
             // Calculate Summary
             $jenjang = $kelas->jenjang->kode ?? ($kelas->tingkat_kelas <= 6 ? 'MI' : 'MTS');
-            $summary = $this->calculateSummary($sGrades, $mapels, $sIjazah, $jenjang);
+            
+            // Dynamic Levels
+            $levelKey = ($jenjang === 'MTS') ? 'ijazah_range_mts' : (($jenjang === 'MA') ? 'ijazah_range_ma' : 'ijazah_range_mi');
+            $defaultLevels = ($jenjang === 'MTS') ? '7,8,9' : (($jenjang === 'MA') ? '10,11,12' : '4,5,6');
+            
+            $targetLevelsStr = \App\Models\GlobalSetting::val($levelKey, $defaultLevels);
+            $targetLevels = array_map('intval', explode(',', $targetLevelsStr));
+
+            $summary = $this->calculateSummary($sGrades, $mapels, $sIjazah, $jenjang, $targetLevels);
             $studentData['summary'] = $summary;
 
             $dknData[] = $studentData;
@@ -333,7 +375,15 @@ class TuController extends Controller
             $sIjazah = $ijazahGrades->where('id_siswa', $ak->id_siswa); // Collection for this student
 
             $jenjang = $kelas->jenjang->kode ?? ($kelas->tingkat_kelas <= 6 ? 'MI' : 'MTS');
-            $summary = $this->calculateSummary($sGrades, $mapels, $sIjazah, $jenjang);
+            
+            // Dynamic Levels
+            $levelKey = ($jenjang === 'MTS') ? 'ijazah_range_mts' : (($jenjang === 'MA') ? 'ijazah_range_ma' : 'ijazah_range_mi');
+            $defaultLevels = ($jenjang === 'MTS') ? '7,8,9' : (($jenjang === 'MA') ? '10,11,12' : '4,5,6');
+            
+            $targetLevelsStr = \App\Models\GlobalSetting::val($levelKey, $defaultLevels);
+            $targetLevels = array_map('intval', explode(',', $targetLevelsStr));
+
+            $summary = $this->calculateSummary($sGrades, $mapels, $sIjazah, $jenjang, $targetLevels);
             
             $dknData[] = [
                 'student' => $ak->siswa,
@@ -341,54 +391,65 @@ class TuController extends Controller
             ];
         }
 
-        return view('tu.dkn-simple', compact('kelas', 'mapels', 'dknData'));
-    }
-
-    private function calculateSummary($grades, $mapels, $sIjazah, $jenjang = 'MI')
-    {
-        $summary = ['rr' => [], 'um' => [], 'na' => []];
+        // --- Calculate Summary Stats (Mirroring IjazahController) ---
+        $highestScore = 0; $highestStudent = '-';
+        $lowestScore = 100; $lowestStudent = '-';
+        $totalClassScore = 0;
+        $studentCountWithGrades = 0;
+        $passCount = 0;
+        $failCount = 0;
         
-        // Fetch Settings
-        $bRapor = \App\Models\GlobalSetting::val('ijazah_bobot_rapor', 60);
-        $bUjian = \App\Models\GlobalSetting::val('ijazah_bobot_ujian', 40);
-        
-        $rangeKey = ($jenjang === 'MTS') ? 'ijazah_range_mts' : 'ijazah_range_mi';
-        $defaultRange = ($jenjang === 'MTS') ? [7,8,9] : [4,5,6];
-        $rangeVal = \App\Models\GlobalSetting::val($rangeKey, implode(',', $defaultRange));
-        $targetLevels = $rangeVal ? explode(',', $rangeVal) : $defaultRange;
+        $minLulus = \App\Models\GlobalSetting::val('ijazah_min_lulus', 60);
 
-        foreach ($mapels as $m) {
-            $mapelHistory = $grades->where('id_mapel', $m->id);
+        foreach ($dknData as $row) {
+            $s = $row['student'];
+            // Calculate Average NA from Summary
+            $sumNA = 0;
+            $countMapel = 0;
             
-            // Filter Range (Rata-Rata Rapor Source)
-            $filteredHistory = $mapelHistory->filter(function($g) use ($targetLevels) {
-                return $g->kelas && in_array($g->kelas->tingkat_kelas, $targetLevels);
-            });
-
-            $avgCalc = $filteredHistory->count() > 0 ? $filteredHistory->avg('nilai_akhir') : 0;
-            
-            // Check Database for Manual Override or Saved Data
-            $savedRecord = $sIjazah->where('id_mapel', $m->id)->first();
-            
-            // Priority: Manual Input > Calculated Avg
-            $rr = $savedRecord && $savedRecord->rata_rata_rapor !== null ? $savedRecord->rata_rata_rapor : round($avgCalc, 2);
-            $um = $savedRecord ? $savedRecord->nilai_ujian_madrasah : null; // Default null if not set
-            
-            // Final Calculation (Dynamic)
-            $na = null;
-            if ($rr !== null && $um !== null) {
-                $na = ($rr * ($bRapor/100)) + ($um * ($bUjian/100));
-                $na = round($na, 2);
-            } elseif ($savedRecord && $savedRecord->nilai_ijazah !== null) {
-                 $na = $savedRecord->nilai_ijazah;
+            // $row['summary']['na'] contains [mapel_id => score]
+            // We need to re-average it for the student stats
+            foreach ($row['summary']['na'] as $score) {
+                if ($score > 0) {
+                    $sumNA += $score;
+                    $countMapel++;
+                }
             }
 
-            $summary['rr'][$m->id] = $rr;
-            $summary['um'][$m->id] = $um;
-            $summary['na'][$m->id] = $na;
+            $avgNA = $countMapel > 0 ? $sumNA / $countMapel : 0;
+            
+            if ($countMapel > 0) {
+                if ($avgNA > $highestScore) { $highestScore = $avgNA; $highestStudent = $s->nama_lengkap; }
+                if ($avgNA < $lowestScore) { $lowestScore = $avgNA; $lowestStudent = $s->nama_lengkap; }
+                
+                $totalClassScore += $avgNA;
+                $studentCountWithGrades++;
+            }
+
+            // Check Pass/Fail
+            if ($avgNA >= $minLulus && $countMapel > 0) {
+                $passCount++;
+            } else {
+                $failCount++;
+            }
         }
-        return $summary;
+        
+        if ($lowestScore == 100 && $studentCountWithGrades == 0) $lowestScore = 0;
+        $classAverage = $studentCountWithGrades > 0 ? $totalClassScore / $studentCountWithGrades : 0;
+        
+        $stats = [
+            'highest' => ['score' => round($highestScore, 2), 'student' => $highestStudent],
+            'lowest' => ['score' => round($lowestScore, 2), 'student' => $lowestStudent],
+            'average' => round($classAverage, 2),
+            'pass' => $passCount,
+            'fail' => $failCount,
+            'total' => count($dknData)
+        ];
+
+        return view('tu.dkn-simple', compact('kelas', 'mapels', 'dknData', 'stats'));
     }
+
+
 
     public function storeNilaiIjazah(Request $request, Kelas $kelas)
     {
@@ -603,11 +664,48 @@ class TuController extends Controller
             ->with(['mapel', 'periode', 'kelas']) 
             ->get();
 
-        $mapelIds = $allGrades->pluck('id_mapel')->unique();
-        $mapels = Mapel::whereIn('id', $mapelIds)->orderBy('id', 'asc')->get();
+        // [MOD] Dynamic Mapel Selection based on UjianMapel Settings
+        $jenjang = $kelas->jenjang->kode ?? ($kelas->tingkat_kelas > 6 ? 'MTS' : 'MI'); 
+        $activeYearId = $kelas->id_tahun_ajaran;
+        
+        $selectedMapelIds = \App\Models\UjianMapel::where('id_tahun_ajaran', $activeYearId)
+                                ->where('jenjang', $jenjang)
+                                ->pluck('id_mapel');
+
+        if ($selectedMapelIds->isNotEmpty()) {
+             // Use only configured mapels
+             $mapelIds = $selectedMapelIds; 
+             // Also need to ensure we fetch mapels in correct order (maybe by ID or name)
+             // Or custom order if UjianMapel has it (it doesn't yet).
+        } else {
+             // Fallback to all mapels in grades or class
+             $mapelIds = $allGrades->pluck('id_mapel')->unique();
+        }
+        
+        $mapels = Mapel::whereIn('id', $mapelIds)->orderBy('kategori', 'asc')->orderBy('id', 'asc')->get();
         $ijazahGrades = \App\Models\NilaiIjazah::whereIn('id_siswa', $studentIds)->get();
         
-        $jenjang = $kelas->jenjang->kode ?? ($kelas->tingkat_kelas <= 6 ? 'MI' : 'MTS');
+        // Settings: Fetch Dynamic Levels
+        $defaultLevels = ($jenjang === 'MTS') ? '7,8,9' : '4,5,6'; // Default if not set
+        $settingKey = ($jenjang === 'MTS') ? 'ijazah_range_mts' : 'ijazah_range_mi';
+        $levelString = \App\Models\GlobalSetting::val($settingKey, $defaultLevels);
+        $targetLevels = array_map('trim', explode(',', $levelString));
+        
+        // Determine Bounds from Config
+        $startLvl = min($targetLevels);
+        $endLvl = max($targetLevels);
+        
+        // Periods & Labels
+        if ($jenjang === 'MTS' || $jenjang === 'MA') {
+            $periods = [1, 2]; // Semesters
+            $periodLabel = 'Smt';
+            $periodLabelMap = ['Ganjil', 'Genap'];
+        } else {
+            // MI
+            $periods = [1, 2, 3]; // Cawu
+            $periodLabel = 'Cawu';
+            $periodLabelMap = ['Cawu 1', 'Cawu 2', 'Cawu 3']; 
+        }
         
         // Spreadsheet Setup
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
@@ -618,22 +716,16 @@ class TuController extends Controller
         $sheet->setCellValue('A2', strtoupper($school->nama_sekolah ?? 'SEKOLAH'));
         $sheet->setCellValue('A3', 'Kelas: ' . $kelas->nama_kelas . ' | Tahun: ' . ($kelas->active_year_name ?? date('Y')));
         
-        // Merge logic moved to after column calculation
-
         // Table Header
         $row = 5;
         $sheet->setCellValue('A'.$row, 'NO');
         $sheet->setCellValue('B'.$row, 'NAMA SISWA');
-        $sheet->setCellValue('C'.$row, 'KELAS / CAWU'); // Col C width needs adjustment
+        $sheet->setCellValue('C'.$row, 'KELAS / ' . strtoupper($periodLabel));
         
         $col = 4; // D
         foreach($mapels as $mapel) {
             $colStr = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
-            $sheet->setCellValue($colStr.$row, $mapel->nama_mapel); // Top Header
-            // We can add MP code in next row if we want double header, but single is fine for now based on image
-            // Image has MP1, MP2... below. Let's try simple single header first or standard.
-            // User: "seperti ini" image has merged cells for Mapels (Name then Code). 
-            // We'll stick to Name for clarity in one row to save vertical space.
+            $sheet->setCellValue($colStr.$row, $mapel->nama_mapel); 
             $col++;
         }
         $colStrAvg = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
@@ -642,7 +734,7 @@ class TuController extends Controller
         $colStrKet = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
         $sheet->setCellValue($colStrKet.$row, 'KETERANGAN');
         
-        // Header Layout
+        // Header Style
         $lastCol = $colStrKet;
         $sheet->getColumnDimension('C')->setWidth(15);
         $sheet->getColumnDimension('B')->setWidth(25);
@@ -652,25 +744,17 @@ class TuController extends Controller
         $sheet->getStyle($headerRange)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFEEEEEE');
         $sheet->getStyle($headerRange)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
         
-        // --- FIXED HEADER MERGE & AUTOFIT ---
-        // Merge Title Rows 1-3 now that we know width
+        // Merge Title
         $sheet->mergeCells("A1:{$lastCol}1");
         $sheet->mergeCells("A2:{$lastCol}2");
         $sheet->mergeCells("A3:{$lastCol}3");
         $sheet->getStyle("A1:{$lastCol}3")->getFont()->setBold(true);
         $sheet->getStyle("A1:{$lastCol}3")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
-        // Autofit Columns
-        // A -> No, B -> Name, C -> Kelas/Cawu ... to LastCol
+        // Autofit
         $sheet->getColumnDimension('A')->setAutoSize(true);
-        // B (Name) is set to fixed 25, keep it or auto? User said "auto fit aja".
-        // Often Names need width limits or they get huge. Let's try AutoSize but maybe min/max? 
-        // Simple AutoSize for standard columns.
         $sheet->getColumnDimension('B')->setAutoSize(true);
-        // C is fixed 15? Let's Auto as requested.
         $sheet->getColumnDimension('C')->setAutoSize(true);
-        
-        $currColIndex = 4; // D onwards
         $colLimit = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($lastCol);
         for ($i = 4; $i <= $colLimit; $i++) {
             $colStr = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i);
@@ -689,38 +773,83 @@ class TuController extends Controller
             $sGrades = $allGrades->where('id_siswa', $sId);
             $sIjazah = $ijazahGrades->where('id_siswa', $sId);
             
-            // Loop Levels 1-6 (Standard for MI)
-            for ($lvl = 1; $lvl <= 6; $lvl++) {
+            // Loop Levels (Uses Dynamic targetLevels)
+            // Note: If config is 7,8,9 -> $startLvl=7, $endLvl=9.
+            // Problem: If config is non-contiguous? (e.g., 7, 9). 
+            // Better to iterate through $targetLevels array directly.
+            
+            foreach ($targetLevels as $lvl) {
+                 // Try to match level (Absolute)
                 $lvlGrades = $sGrades->filter(fn($g) => $g->kelas && $g->kelas->tingkat_kelas == $lvl);
                 
-                foreach (['Cawu 1', 'Cawu 2', 'Cawu 3'] as $pName) {
-                    // Filter grades for this Period
-                    $pGrades = $lvlGrades->filter(fn($g) => $g->periode && stripos($g->periode->nama_periode, $pName) !== false);
+                foreach ($periods as $pIndex => $pNum) {
+                    $pNameSearch = $periodLabelMap[$pIndex] ?? $pNum;
+                    $pCode = $pNum; // 1, 2, 3
                     
-                    // Row Label
-                    $sheet->setCellValue('C'.$row, "Kls $lvl | " . substr($pName, -1));
+                    // Filter grades for this Period
+                    $pGrades = $lvlGrades->filter(function($g) use ($pCode, $periodLabel) {
+                        if (!$g->periode) return false;
+                        $pn = $g->periode->nama_periode;
+                        if ($periodLabel == 'Cawu') return stripos($pn, "Cawu $pCode") !== false;
+                        if ($periodLabel == 'Smt') {
+                            if ($pCode == 1) return stripos($pn, 'Ganjil') !== false || stripos($pn, ' 1') !== false;
+                            if ($pCode == 2) return stripos($pn, 'Genap') !== false || stripos($pn, ' 2') !== false;
+                        }
+                        return false;
+                    });
+                    
+                    // Display Logic for Label
+                    $displayLvl = $lvl;
+                    // Relative Labeling Logic
+                    if ($jenjang === 'MTS') $displayLvl = $lvl - 6;
+                    if ($jenjang === 'MA') $displayLvl = $lvl - 9;
+                    $lvlSuffix = ($jenjang === 'MTS' || $jenjang === 'MA') ? (' ' . $jenjang) : '';
+                    
+                    // Check bounds to prevents silly labels if config is weird
+                    if ($displayLvl < 1) $displayLvl = $lvl; 
+                    
+                    // Row Label: "1 MTs | Smt 1"
+                    $sheet->setCellValue('C'.$row, "$displayLvl$lvlSuffix | $periodLabel $pCode");
                     
                     // Mapel Scores
                     $currCol = 4;
                     $rowSum = 0; $rowCount = 0;
                     
                     foreach ($mapels as $m) {
+                        // Priority 1: Grades found in loop
                         $val = $pGrades->where('id_mapel', $m->id)->first();
                         $score = $val ? $val->nilai_akhir : null;
                         
+                        // Priority 2: Fallback to Relative Level Data if Absolute missing (MTS case)
+                        if ($score === null && ($jenjang === 'MTS' || $jenjang === 'MA')) {
+                             $relLvl = ($jenjang === 'MTS') ? ($lvl - 6) : ($lvl - 9);
+                             // Optimization: Only query if really needed.
+                             // Re-query from collection
+                             $relLvlGrades = $sGrades->filter(fn($g) => $g->kelas && $g->kelas->tingkat_kelas == $relLvl);
+                             $relPGrades = $relLvlGrades->filter(function($g) use ($pCode, $periodLabel) {
+                                $pn = $g->periode->nama_periode ?? '';
+                                if ($periodLabel == 'Smt') {
+                                    if ($pCode == 1) return stripos($pn, 'Ganjil') !== false || stripos($pn, ' 1') !== false;
+                                    if ($pCode == 2) return stripos($pn, 'Genap') !== false || stripos($pn, ' 2') !== false;
+                                }
+                                return false;
+                             });
+                             $relVal = $relPGrades->where('id_mapel', $m->id)->first();
+                             $score = $relVal ? $relVal->nilai_akhir : null;
+                        }
+                        
                         $cStr = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($currCol);
-                        // Raw Scores: Integer (No decimals)
                         $valStr = $score !== null ? round($score) : '-';
                         $sheet->setCellValue($cStr.$row, $valStr);
                         if ($valStr === '-') {
-                             $sheet->getStyle($cStr.$row)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFEEEEEE'); // Gray
+                             $sheet->getStyle($cStr.$row)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFEEEEEE'); 
                         }
                         
                         if($score !== null) { $rowSum += $score; $rowCount++; }
                         $currCol++;
                     }
                     
-                    // Row Average: 2 Decimals (Force '0.00' format)
+                    // Row Average
                     $rowAvg = $rowCount > 0 ? $rowSum / $rowCount : 0;
                     $avgVal = $rowCount > 0 ? $rowAvg : '-';
                     $sheet->setCellValue($colStrAvg.$row, $avgVal);
@@ -735,23 +864,22 @@ class TuController extends Controller
                 }
             }
             
-            // Summaries
-            $summary = $this->calculateSummary($sGrades, $mapels, $sIjazah, $jenjang);
+            // Summaries (Pass Target Levels)
+            $summary = $this->calculateSummary($sGrades, $mapels, $sIjazah, $jenjang, $targetLevels);
             
             // RR Row
             $sheet->setCellValue('C'.$row, 'Rata-Rapor (RR)');
             $sheet->getStyle('C'.$row)->getFont()->setBold(true);
-            $sheet->getStyle("A$row:$colStrKet$row")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFFFF0E0'); // Yellowish
+            $sheet->getStyle("A$row:$colStrKet$row")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFFFF0E0');
             
             $currCol = 4;
             foreach ($mapels as $m) {
                 $cStr = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($currCol);
+                // Use MAPEL ID as key
                 $val = $summary['rr'][$m->id] ?? 0;
                 $valStr = $val != 0 ? $val : '-';
                 $sheet->setCellValue($cStr.$row, $valStr);
-                if ($valStr === '-') {
-                    $sheet->getStyle($cStr.$row)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFEEEEEE');
-                }
+                if ($valStr === '-') $sheet->getStyle($cStr.$row)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFEEEEEE');
                 if($val != 0) $sheet->getStyle($cStr.$row)->getNumberFormat()->setFormatCode('0.00');
                 $currCol++;
             }
@@ -760,7 +888,7 @@ class TuController extends Controller
             // UM Row
             $sheet->setCellValue('C'.$row, 'Ujian Mdr (UM)');
             $sheet->getStyle('C'.$row)->getFont()->setBold(true);
-            $sheet->getStyle("A$row:$colStrKet$row")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFEFF6FF'); // Blueish
+            $sheet->getStyle("A$row:$colStrKet$row")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFEFF6FF');
             
             $currCol = 4;
             foreach ($mapels as $m) {
@@ -768,9 +896,7 @@ class TuController extends Controller
                 $val = $summary['um'][$m->id] ?? 0;
                 $valStr = $val != 0 ? $val : '-';
                 $sheet->setCellValue($cStr.$row, $valStr);
-                if ($valStr === '-') {
-                    $sheet->getStyle($cStr.$row)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFEEEEEE');
-                }
+                if ($valStr === '-') $sheet->getStyle($cStr.$row)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFEEEEEE');
                 if($val != 0) $sheet->getStyle($cStr.$row)->getNumberFormat()->setFormatCode('0.00');
                 $currCol++;
             }
@@ -779,7 +905,7 @@ class TuController extends Controller
             // NA Row
             $sheet->setCellValue('C'.$row, 'Nilai Akhir (NA)');
             $sheet->getStyle('C'.$row)->getFont()->setBold(true);
-            $sheet->getStyle("A$row:$colStrKet$row")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFDCFCE7'); // Greenish
+            $sheet->getStyle("A$row:$colStrKet$row")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFDCFCE7');
             $sheet->getStyle("A$row:$colStrKet$row")->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK);
 
             $naValues = [];
@@ -789,9 +915,7 @@ class TuController extends Controller
                 $val = $summary['na'][$m->id] ?? 0;
                 $valStr = $val != 0 ? $val : '-';
                 $sheet->setCellValue($cStr.$row, $valStr);
-                if ($valStr === '-') {
-                     $sheet->getStyle($cStr.$row)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFEEEEEE');
-                }
+                if ($valStr === '-') $sheet->getStyle($cStr.$row)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFEEEEEE');
                 if($val != 0) {
                      $sheet->getStyle($cStr.$row)->getNumberFormat()->setFormatCode('0.00');
                      $naValues[] = $val;
@@ -802,12 +926,8 @@ class TuController extends Controller
             
             // Calculate Status Logic (With Veto)
             $naAvg = count($naValues) > 0 ? array_sum($naValues) / count($naValues) : 0;
-            
-            // 1. Academic Check
             $academicPass = $naAvg >= $minLulus;
             
-            // 2. Veto Check (Promotion Decision)
-            // Fetch decision for this student in this year
             $promoRecord = \Illuminate\Support\Facades\DB::table('promotion_decisions')
                 ->where('id_siswa', $ak->id_siswa)
                 ->where('id_kelas', $kelas->id)
@@ -816,7 +936,6 @@ class TuController extends Controller
             $promoDecision = $promoRecord->final_decision ?? null;
             $promoNote = $promoRecord->notes ?? '';
 
-            // Logic: If explicitly retained/not_graduated, FAIL.
             if (in_array($promoDecision, ['retained', 'not_graduated'])) {
                 $status = 'Tidak Lulus';
             } elseif ($academicPass) {
@@ -826,7 +945,7 @@ class TuController extends Controller
             }
             
             // Merge Columns for Student Info
-            $endRow = $row; // Current row is NA row
+            $endRow = $row; 
             
             $sheet->setCellValue('A'.$startRow, $no++);
             $sheet->mergeCells("A$startRow:A$endRow");
@@ -839,7 +958,6 @@ class TuController extends Controller
             $sheet->getStyle("B$startRow")->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP);
             
             // Status Column Merge
-            // Append Note if Failed
             $statusText = $status;
             if ($status === 'Tidak Lulus' && !empty($promoNote)) {
                 $statusText .= "\n(" . $promoNote . ")";
@@ -849,7 +967,7 @@ class TuController extends Controller
             $sheet->mergeCells("$colStrKet$startRow:$colStrKet$endRow");
             $sheet->getStyle("$colStrKet$startRow")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
             $sheet->getStyle("$colStrKet$startRow")->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
-            $sheet->getStyle("$colStrKet$startRow")->getAlignment()->setWrapText(true); // Allow wrap for note
+            $sheet->getStyle("$colStrKet$startRow")->getAlignment()->setWrapText(true); 
             $sheet->getStyle("$colStrKet$startRow")->getFont()->setBold(true);
             $sheet->getStyle("$colStrKet$startRow")->getFont()->setColor(
                 $status === 'Lulus' 
@@ -857,29 +975,34 @@ class TuController extends Controller
                 : new \PhpOffice\PhpSpreadsheet\Style\Color(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_RED)
             );
 
-            $row++; // Next Student
+            $row++; 
         }
         
         // Borders All
         $lastRow = $row - 1;
         $sheet->getStyle("A5:$lastCol$lastRow")->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
         
-        // Alignment: Middle Center for ALL Data
+        // Alignment
         $sheet->getStyle("A5:$lastCol$lastRow")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $sheet->getStyle("A5:$lastCol$lastRow")->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
         
-        // --- ADD LEGEND & SIGNATURE (User Request) ---
+        // --- LEGEND & SIGNATURE ---
+        // Fetch Weight Config from Settings
+        $bRapor = \App\Models\GlobalSetting::val('ijazah_bobot_rapor', 60);
+        $bUjian = \App\Models\GlobalSetting::val('ijazah_bobot_ujian', 40);
+        
         $row += 2;
         $sheet->setCellValue('A'.$row, 'Keterangan:');
         $sheet->getStyle('A'.$row)->getFont()->setBold(true);
         $row++;
         $sheet->setCellValue('A'.$row, '1. Rata-Rapor (RR) diambil dari Rata-rata Nilai Rapor semester/kelas yang ditentukan.');
         $row++;
-        $sheet->setCellValue('A'.$row, '2. Rumus Nilai Akhir: NA = (Rapor × 60%) + (Ujian × 40%).');
+        // Use Dynamic Weights in Legend
+        $sheet->setCellValue('A'.$row, "2. Rumus Nilai Akhir: NA = (Rapor × $bRapor%) + (Ujian × $bUjian%).");
         $row++;
-        $sheet->setCellValue('A'.$row, '3. Kriteria Kelulusan: Rata-rata Nilai Akhir minimal 60.00.');
+        $sheet->setCellValue('A'.$row, '3. Kriteria Kelulusan: Rata-rata Nilai Akhir minimal ' . number_format($minLulus,2));
         
-        // Signature Block (Right Aligned)
+        // Signature Block
         $lastColIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($lastCol);
         $sigStartColIndex = max(1, $lastColIndex - 6); 
         $sigCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($sigStartColIndex);
@@ -893,35 +1016,52 @@ class TuController extends Controller
         $sheet->getStyle("$sigCol$row")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         
         $row++;
-        $sheet->setCellValue($sigCol.$row, 'Kepala Madrasah,');
+        $hmTitle = 'Kepala Madrasah'; // Generic or specific
+        if ($jenjang === 'MI') $hmTitle = 'Kepala Madrasah Ibtidaiyah';
+        if ($jenjang === 'MTS') $hmTitle = 'Kepala Madrasah Tsanawiyah';
+        if ($jenjang === 'MA') $hmTitle = 'Kepala Madrasah Aliyah';
+        
+        $sheet->setCellValue($sigCol.$row, $hmTitle . ',');
         $sheet->mergeCells("$sigCol$row:$lastCol$row");
         $sheet->getStyle("$sigCol$row")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         
         $row += 4;
-        $hmName = $school->kepala_madrasah ?? '......................';
+        
+        // Dynamic Headmaster Config
+        $hmName = ''; $hmNip = '';
+        if ($jenjang === 'MI') {
+            $hmName = \App\Models\GlobalSetting::val('hm_name_mi') ?: ($school->kepala_madrasah ?? '......................');
+            $hmNip = \App\Models\GlobalSetting::val('hm_nip_mi') ?: ($school->nip_kepala ?? '-');
+        } elseif ($jenjang === 'MTS') {
+            $hmName = \App\Models\GlobalSetting::val('hm_name_mts') ?: ($school->kepala_madrasah ?? '......................');
+            $hmNip = \App\Models\GlobalSetting::val('hm_nip_mts') ?: ($school->nip_kepala ?? '-');
+        } elseif ($jenjang === 'MA') {
+            $hmName = \App\Models\GlobalSetting::val('hm_name_ma') ?: ($school->kepala_madrasah ?? '......................');
+            $hmNip = \App\Models\GlobalSetting::val('hm_nip_ma') ?: ($school->nip_kepala ?? '-');
+        } else {
+             $hmName = $school->kepala_madrasah ?? '......................';
+             $hmNip = $school->nip_kepala ?? '-';
+        }
+
         $sheet->setCellValue($sigCol.$row, $hmName);
         $sheet->mergeCells("$sigCol$row:$lastCol$row");
         $sheet->getStyle("$sigCol$row")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $sheet->getStyle("$sigCol$row")->getFont()->setBold(true)->setUnderline(true);
         
         $row++;
-        $hmNip = $school->nip_kepala ?? '-';
         $sheet->setCellValue($sigCol.$row, "NIP. $hmNip");
         $sheet->mergeCells("$sigCol$row:$lastCol$row");
         $sheet->getStyle("$sigCol$row")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);        
-        // --- PRINTING SETUP (Make it ready to print without editing) ---
+        
+        // Print Setup
         $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
         $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
         $sheet->getPageSetup()->setFitToWidth(1);
-        $sheet->getPageSetup()->setFitToHeight(0); // Infinite height
-        
-        // Margins (Narrow)
+        $sheet->getPageSetup()->setFitToHeight(0); 
         $sheet->getPageMargins()->setTop(0.5);
         $sheet->getPageMargins()->setRight(0.5);
         $sheet->getPageMargins()->setLeft(0.5);
         $sheet->getPageMargins()->setBottom(0.5);
-        
-        // Repeat Header Rows (1 to 5)
         $sheet->getPageSetup()->setRowsToRepeatAtTopByStartAndEnd(1, 5);
         
         // Output
@@ -932,5 +1072,53 @@ class TuController extends Controller
         header('Content-Disposition: attachment; filename="'. urlencode($fileName) .'"');
         $writer->save('php://output');
         exit;
+    }
+    
+    private function calculateSummary($studentGrades, $mapels, $ijazahGrades, $jenjang, $targetLevels)
+    {
+        $summary = [
+            'rr' => [], // Rata Rapor
+            'um' => [], // Ujian Madrasah
+            'na' => []  // Nilai Akhir
+        ];
+        
+        // Use Dynamic Levels passed from Main function
+        // $targetLevels already array of integers
+        
+        // Fetch configured weights
+        $bRapor = \App\Models\GlobalSetting::val('ijazah_bobot_rapor', 60);
+        $bUjian = \App\Models\GlobalSetting::val('ijazah_bobot_ujian', 40);
+
+        foreach ($mapels as $m) {
+            // 1. Calculate Rata-Rapor (RR)
+            $mapelGrades = $studentGrades->where('id_mapel', $m->id);
+            
+            // Filter by target levels
+            $relevantGrades = $mapelGrades->filter(function($g) use ($targetLevels) {
+                return $g->kelas && in_array($g->kelas->tingkat_kelas, $targetLevels);
+            });
+            
+            $count = $relevantGrades->count();
+            $sum = $relevantGrades->sum('nilai_akhir');
+            
+            $rr = $count > 0 ? round($sum / $count, 2) : 0;
+            $summary['rr'][$m->id] = $rr;
+            
+            // 2. Get Ujian Madrasah (UM)
+            $umRecord = $ijazahGrades->where('id_mapel', $m->id)->first();
+            $um = $umRecord ? $umRecord->nilai_ujian_madrasah : 0; 
+            
+            $summary['um'][$m->id] = $um;
+            
+            // 3. Calculate Nilai Akhir (NA) using Dynamic Weights
+            if ($rr > 0 || $um > 0) {
+                $na = ($rr * ($bRapor/100)) + ($um * ($bUjian/100));
+                $summary['na'][$m->id] = round($na, 2);
+            } else {
+                $summary['na'][$m->id] = 0;
+            }
+        }
+        
+        return $summary;
     }
 }

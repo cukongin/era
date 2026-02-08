@@ -4,6 +4,35 @@
 
 @section('content')
 
+@php
+    // Determine Structure based on Jenjang (Unified Logic)
+    $jenjang = $kelas->jenjang->kode ?? ($kelas->tingkat_kelas > 6 ? 'MTS' : 'MI'); 
+    
+    // Defaults for MI
+    $startLvl = 1; 
+    $endLvl = 6;
+    $periods = [1, 2, 3];
+    $periodLabel = 'Cawu';
+    $headerRange = 'Kelas 1 - 6';
+
+    if ($jenjang === 'MTS') {
+        $startLvl = 7; 
+        $endLvl = 9;
+        $periods = [1, 2]; // Semesters
+        $periodLabel = 'Smt';
+        $headerRange = 'Kelas 1 - 3 (MTS)';
+    } elseif ($jenjang === 'MA') {
+        $startLvl = 10;
+        $endLvl = 12;
+        $periods = [1, 2];
+        $periodLabel = 'Smt';
+        $headerRange = 'Kelas 1 - 3 (MA)';
+    }
+
+    // Calculate Total Rowspan (Data Rows + 3 Summary Rows)
+    $totalRowSpan = (($endLvl - $startLvl + 1) * count($periods)) + 3;
+@endphp
+
 <!-- ========================================== -->
 <!-- 1. SCREEN VIEW (Visible on Screen, Hidden on Print) -->
 <!-- ========================================== -->
@@ -18,7 +47,7 @@
                 <span>Detail DKN</span>
             </div>
             <h1 class="text-2xl font-bold text-slate-900 dark:text-white">DKN: {{ $kelas->nama_kelas }}</h1>
-            <p class="text-sm text-slate-500">Daftar Kumpulan Nilai Lengkap (Kelas 1 - 6)</p>
+            <p class="text-sm text-slate-500">Daftar Kumpulan Nilai Lengkap ({{ $headerRange }})</p>
         </div>
         <div class="flex gap-2">
             <button onclick="window.print()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold shadow hover:bg-indigo-700 transition-all flex items-center gap-2">
@@ -44,7 +73,7 @@
                     <tr>
                         <th class="px-3 py-3 border-b border-r border-slate-200 sticky left-0 bg-slate-100 z-30 w-10 text-center">NO</th>
                         <th class="px-3 py-3 border-b border-r border-slate-200 sticky left-[40px] bg-slate-100 z-30 min-w-[200px]">NAMA SISWA</th>
-                        <th class="px-3 py-3 border-b border-r border-slate-200 sticky left-[240px] bg-slate-100 z-30 min-w-[120px]">KELAS / CAWU</th>
+                        <th class="px-3 py-3 border-b border-r border-slate-200 sticky left-[240px] bg-slate-100 z-30 min-w-[120px]">KELAS / {{ strtoupper($periodLabel) }}</th>
                         @foreach($mapels as $mapel)
                         <th class="px-2 py-2 border-b border-slate-200 text-center min-w-[60px]">{{ $mapel->nama_mapel }}</th>
                         @endforeach
@@ -56,11 +85,9 @@
                     @php $no = 1; @endphp
                     @foreach($dknData as $row)
                         @php 
-                            $rowSpan = 21;
-                            $naValues = array_filter($row['summary']['na']);
-                            $naAvg = count($naValues) > 0 ? array_sum($naValues) / count($naValues) : 0;
-                            
                             // 1. Academic Status
+                             $naValues = array_filter($row['summary']['na']);
+                            $naAvg = count($naValues) > 0 ? array_sum($naValues) / count($naValues) : 0;
                             $academicStatus = $naAvg >= $minLulus;
 
                             // 2. Veto Status (From Promotion Decisions)
@@ -79,27 +106,47 @@
                             } else {
                                 $status = 'Tidak Lulus';
                             }
+
+                            $isFirst = true; 
                         @endphp
                         
                         <!-- Row 1 -->
                         <tr class="bg-white group hover:bg-slate-50 transition-colors">
-                            <td rowspan="{{ $rowSpan }}" class="px-3 py-3 border-r border-slate-200 text-center align-top font-bold sticky left-0 bg-white group-hover:bg-slate-50">{{ $no++ }}</td>
-                            <td rowspan="{{ $rowSpan }}" class="px-3 py-3 border-r border-slate-200 align-top font-bold sticky left-[40px] bg-white group-hover:bg-slate-50 w-[200px]">
+                            <td rowspan="{{ $totalRowSpan }}" class="px-3 py-3 border-r border-slate-200 text-center align-top font-bold sticky left-0 bg-white group-hover:bg-slate-50">{{ $no++ }}</td>
+                            <td rowspan="{{ $totalRowSpan }}" class="px-3 py-3 border-r border-slate-200 align-top font-bold sticky left-[40px] bg-white group-hover:bg-slate-50 w-[200px]">
                                 <div class="truncate max-w-[190px] text-slate-900">{{ $row['student']->nama_lengkap }}</div>
                                 <div class="text-[10px] font-normal text-slate-500 mt-1">NIS: {{ $row['student']->nis_lokal ?? $row['student']->nis ?? $row['student']->nisn ?? '-' }}</div>
                             </td>
                             
-                        @php $isFirst = true; @endphp
-                        @for($lvl = 1; $lvl <= 6; $lvl++)
-                            @foreach([1, 2, 3] as $period)
+                        @for($lvl = $startLvl; $lvl <= $endLvl; $lvl++)
+                            @foreach($periods as $period)
                                 @if(!$isFirst) <tr class="bg-white group hover:bg-slate-50 transition-colors"> @endif
                                 
+                                @php
+                                    // Calculate Display Label (Absolute -> Relative for MTS/MA)
+                                    $displayLvl = $lvl;
+                                    if ($jenjang === 'MTS') $displayLvl = $lvl - 6;
+                                    if ($jenjang === 'MA') $displayLvl = $lvl - 9;
+                                    
+                                    // Suffix
+                                    $lvlSuffix = ($jenjang === 'MTS' || $jenjang === 'MA') ? (' ' . $jenjang) : '';
+                                @endphp
+
                                 <td class="px-3 py-2 border-r border-slate-200 text-slate-500 text-xs whitespace-nowrap sticky left-[240px] bg-white group-hover:bg-slate-50">
-                                    <span class="font-bold text-primary">Kls {{ $lvl }}</span> <span class="text-slate-300 mx-1">|</span> {{ $period }}
+                                    <span class="font-bold text-primary">{{ $displayLvl }}{{ $lvlSuffix }}</span> <span class="text-slate-300 mx-1">|</span> {{ $periodLabel }} {{ $period }}
                                 </td>
 
                                 @foreach($mapels as $mapel)
-                                    @php $score = $row['data'][$lvl][$period][$mapel->id] ?? null; @endphp
+                                    @php 
+                                        // Try fetching with current level. 
+                                        $score = $row['data'][$lvl][$period][$mapel->id] ?? null; 
+                                        
+                                        // Fallback: If data is missing at absolute level, try relative
+                                        if ($score === null && ($jenjang === 'MTS' || $jenjang === 'MA')) {
+                                            $relativeLvl = $lvl - ($jenjang === 'MTS' ? 6 : 9);
+                                            $score = $row['data'][$relativeLvl][$period][$mapel->id] ?? null;
+                                        }
+                                    @endphp
                                     <td class="px-2 py-1 text-center text-xs text-slate-600">
                                         {{ $score ? number_format($score, 0) : '-' }}
                                     </td>
@@ -108,7 +155,13 @@
                                 @php
                                     $rowScores = [];
                                     foreach($mapels as $m) {
-                                        if(isset($row['data'][$lvl][$period][$m->id])) $rowScores[] = $row['data'][$lvl][$period][$m->id];
+                                        // Re-replicate fetch logic for Average
+                                        $sc = $row['data'][$lvl][$period][$m->id] ?? null;
+                                        if ($sc === null && ($jenjang === 'MTS' || $jenjang === 'MA')) {
+                                             $relativeLvl = $lvl - ($jenjang === 'MTS' ? 6 : 9);
+                                             $sc = $row['data'][$relativeLvl][$period][$m->id] ?? null;
+                                        }
+                                        if($sc !== null) $rowScores[] = $sc;
                                     }
                                     $rowAvg = count($rowScores) > 0 ? array_sum($rowScores) / count($rowScores) : 0;
                                 @endphp
@@ -117,7 +170,7 @@
                                 </td>
 
                                 @if($isFirst)
-                                    <td rowspan="{{ $rowSpan }}" class="px-2 py-2 text-center align-middle font-bold {{ $status == 'Lulus' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50' }}">
+                                    <td rowspan="{{ $totalRowSpan }}" class="px-2 py-2 text-center align-middle font-bold {{ $status == 'Lulus' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50' }}">
                                         {{ $status }}
                                         @if($status == 'Tidak Lulus' && !empty($promoNote))
                                             <div class="text-[9px] text-red-800 font-normal mt-1 border-t border-red-200 pt-1">
@@ -180,7 +233,7 @@
             <tr>
                 <th class="px-1 py-1 border border-black w-8">NO</th>
                 <th class="px-2 py-1 border border-black w-[100px]">NAMA SISWA</th>
-                <th class="px-2 py-1 border border-black w-[80px]">KELAS / CAWU</th>
+                <th class="px-2 py-1 border border-black w-[80px]">KELAS / PERIODE</th>
                 @foreach($mapels as $mapel)
                 <th class="px-1 py-1 border border-black min-w-[40px]">{{ $mapel->nama_mapel }}</th>
                 @endforeach
@@ -192,7 +245,7 @@
             @php $no = 1; @endphp
             @foreach($dknData as $row)
                 @php 
-                    $rowSpan = 21; 
+                    $rowSpan = $totalRowSpan; 
                     $naValues = array_filter($row['summary']['na']);
                     $naAvg = count($naValues) > 0 ? array_sum($naValues) / count($naValues) : 0;
                     
@@ -216,23 +269,39 @@
                 
                 <!-- Row 1 -->
                 <tr>
-                    <td rowspan="{{ $rowSpan }}" class="px-1 py-1 border border-black text-center align-middle font-bold">{{ $no++ }}</td>
-                    <td rowspan="{{ $rowSpan }}" class="px-2 py-1 border border-black align-middle font-bold">
+                    <td rowspan="{{ $totalRowSpan }}" class="px-1 py-1 border border-black text-center align-middle font-bold">{{ $no++ }}</td>
+                    <td rowspan="{{ $totalRowSpan }}" class="px-2 py-1 border border-black align-middle font-bold">
                         <div class="truncate max-w-[190px]">{{ $row['student']->nama_lengkap }}</div>
                         <div class="text-[9px] font-normal mt-1">NIS: {{ $row['student']->nis_lokal ?? $row['student']->nis ?? $row['student']->nisn ?? '-' }}</div>
                     </td>
                     
                 @php $isFirst = true; @endphp
-                @for($lvl = 1; $lvl <= 6; $lvl++)
-                    @foreach([1, 2, 3] as $period)
+                @for($lvl = $startLvl; $lvl <= $endLvl; $lvl++)
+                    @foreach($periods as $period)
                         @if(!$isFirst) <tr> @endif
                         
+                        @php
+                            // Calculate Display Label (Absolute -> Relative for MTS/MA)
+                            $displayLvl = $lvl;
+                            if ($jenjang === 'MTS') $displayLvl = $lvl - 6;
+                            if ($jenjang === 'MA') $displayLvl = $lvl - 9;
+                            
+                            // Suffix
+                            $lvlSuffix = ($jenjang === 'MTS' || $jenjang === 'MA') ? (' ' . $jenjang) : '';
+                        @endphp
+
                         <td class="px-2 py-1 border border-black text-[#138aec] font-bold text-[9px] whitespace-nowrap">
-                            Kls {{ $lvl }} | {{ $period }}
+                            {{ $displayLvl }}{{ $lvlSuffix }} | {{ $periodLabel }} {{ $period }}
                         </td>
 
                         @foreach($mapels as $mapel)
-                            @php $score = $row['data'][$lvl][$period][$mapel->id] ?? null; @endphp
+                            @php 
+                                $score = $row['data'][$lvl][$period][$mapel->id] ?? null; 
+                                if ($score === null && ($jenjang === 'MTS' || $jenjang === 'MA')) {
+                                    $relativeLvl = $lvl - ($jenjang === 'MTS' ? 6 : 9);
+                                    $score = $row['data'][$relativeLvl][$period][$mapel->id] ?? null;
+                                }
+                            @endphp
                             <td class="px-1 py-1 border border-black text-center text-[9px]">
                                 {{ $score ? number_format($score, 0) : '-' }}
                             </td>
@@ -241,7 +310,12 @@
                         @php
                             $rowScores = [];
                             foreach($mapels as $m) {
-                                if(isset($row['data'][$lvl][$period][$m->id])) $rowScores[] = $row['data'][$lvl][$period][$m->id];
+                                $sc = $row['data'][$lvl][$period][$m->id] ?? null;
+                                if ($sc === null && ($jenjang === 'MTS' || $jenjang === 'MA')) {
+                                     $relativeLvl = $lvl - ($jenjang === 'MTS' ? 6 : 9);
+                                     $sc = $row['data'][$relativeLvl][$period][$m->id] ?? null;
+                                }
+                                if($sc !== null) $rowScores[] = $sc;
                             }
                             $rowAvg = count($rowScores) > 0 ? array_sum($rowScores) / count($rowScores) : 0;
                         @endphp
@@ -250,7 +324,7 @@
                         </td>
 
                         @if($isFirst)
-                            <td rowspan="{{ $rowSpan }}" class="px-1 py-1 border border-black text-center align-middle font-bold {{ $status == 'Lulus' ? 'text-green-600' : 'text-red-600' }}">
+                            <td rowspan="{{ $totalRowSpan }}" class="px-1 py-1 border border-black text-center align-middle font-bold {{ $status == 'Lulus' ? 'text-green-600' : 'text-red-600' }}">
                                 {{ $status }}
                                 @if($status == 'Tidak Lulus' && !empty($promoNote))
                                     <br><span class="text-[8px] font-normal">({{ $promoNote }})</span>
@@ -304,11 +378,32 @@
         </div>
         <div class="flex justify-end pr-12">
             <div class="text-center">
+                @php
+                    $hmTitle = 'Kepala Madrasah';
+                    if ($jenjang === 'MI') $hmTitle = 'Kepala Madrasah Ibtidaiyah';
+                    if ($jenjang === 'MTS') $hmTitle = 'Kepala Madrasah Tsanawiyah';
+                    if ($jenjang === 'MA') $hmTitle = 'Kepala Madrasah Aliyah';
+
+                    $hmName = $school->kepala_madrasah ?? '......................';
+                    $hmNip = $school->nip_kepala ?? '-';
+
+                    if ($jenjang === 'MI') {
+                        $hmName = \App\Models\GlobalSetting::val('hm_name_mi') ?: $hmName;
+                        $hmNip = \App\Models\GlobalSetting::val('hm_nip_mi') ?: $hmNip;
+                    } elseif ($jenjang === 'MTS') {
+                         $hmName = \App\Models\GlobalSetting::val('hm_name_mts') ?: $hmName;
+                         $hmNip = \App\Models\GlobalSetting::val('hm_nip_mts') ?: $hmNip;
+                    } elseif ($jenjang === 'MA') {
+                         $hmName = \App\Models\GlobalSetting::val('hm_name_ma') ?: $hmName;
+                         $hmNip = \App\Models\GlobalSetting::val('hm_nip_ma') ?: $hmNip;
+                    }
+                @endphp
+                
                 <p>{{ $school->kabupaten ?? 'Kabupaten' }}, {{ date('d F Y') }}</p>
-                <p>Kepala Madrasah,</p>
+                <p>{{ $hmTitle }},</p>
                 <br><br><br>
-                <p class="font-bold underline">{{ $school->kepala_madrasah ?? '......................' }}</p>
-                <p>NIP. {{ $school->nip_kepala ?? '-' }}</p>
+                <p class="font-bold underline">{{ $hmName }}</p>
+                <p>NIP. {{ $hmNip }}</p>
             </div>
         </div>
     </div>

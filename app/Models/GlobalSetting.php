@@ -20,4 +20,15 @@ class GlobalSetting extends Model
         // Return default if setting not found OR value is null/empty
         return ($setting && !is_null($setting->value) && $setting->value !== '') ? $setting->value : $default;
     }
+
+    /**
+     * Set setting value by key
+     */
+    public static function set($key, $value)
+    {
+        return self::updateOrCreate(
+            ['key' => $key],
+            ['value' => $value]
+        );
+    }
 }

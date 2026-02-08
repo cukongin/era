@@ -368,7 +368,7 @@
                                 <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm mb-4">
                                     <span class="material-symbols-outlined text-indigo-600 text-sm">school</span> Pengaturan Tingkat Akhir (Kelulusan)
                                 </h4>
-                                <div class="grid grid-cols-2 gap-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Kelas Akhir MI</label>
                                         <input type="number" name="final_grade_mi" 
@@ -377,11 +377,40 @@
                                         <p class="text-[10px] text-slate-400 mt-1">Siswa kelas ini akan dianggap LULUS jika naik.</p>
                                     </div>
                                     <div>
-                                        <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Kelas Akhir MTs</label>
+                                        <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Kelas Akhir MTs/MA</label>
                                         <input type="number" name="final_grade_mts" 
                                             value="{{ \App\Models\GlobalSetting::val('final_grade_mts', 9) }}" 
                                             class="w-full font-bold rounded-lg border-indigo-200 focus:ring-indigo-500 text-indigo-700 text-sm" placeholder="9 (atau 3)">
                                         <p class="text-[10px] text-slate-400 mt-1">Siswa kelas ini akan dianggap LULUS.</p>
+                                    </div>
+                                    
+                                    <!-- NEW: Range Configuration -->
+                                    <div class="col-span-1 md:col-span-2 pt-4 border-t border-indigo-100 dark:border-indigo-800">
+                                        <h5 class="font-bold text-xs uppercase text-slate-500 mb-3">Rentang Kelas Perhitungan Ijazah (DKN)</h5>
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div>
+                                                <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Rentang MI</label>
+                                                <input type="text" name="ijazah_range_mi" 
+                                                    value="{{ \App\Models\GlobalSetting::val('ijazah_range_mi', '4,5,6') }}" 
+                                                    class="w-full font-mono text-xs rounded-lg border-slate-300 focus:ring-indigo-500" placeholder="4,5,6">
+                                            </div>
+                                            <div>
+                                                <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Rentang MTs</label>
+                                                <input type="text" name="ijazah_range_mts" 
+                                                    value="{{ \App\Models\GlobalSetting::val('ijazah_range_mts', '7,8,9,1,2,3') }}" 
+                                                    class="w-full font-mono text-xs rounded-lg border-slate-300 focus:ring-indigo-500" placeholder="7,8,9,1,2,3">
+                                            </div>
+                                            <div>
+                                                <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Rentang MA</label>
+                                                <input type="text" name="ijazah_range_ma" 
+                                                    value="{{ \App\Models\GlobalSetting::val('ijazah_range_ma', '10,11,12,1,2,3') }}" 
+                                                    class="w-full font-mono text-xs rounded-lg border-slate-300 focus:ring-indigo-500" placeholder="10,11,12,1,2,3">
+                                            </div>
+                                        </div>
+                                        <p class="text-[10px] text-slate-400 mt-2 italic px-1">
+                                            * Masukkan tingkat kelas yang akan diambil nilai Rapor-nya. Pisahkan dengan koma (contoh: 7,8,9).
+                                            Dukungan untuk format relatif (1,2,3) juga disertakan.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -519,6 +548,59 @@
                         </div>
 
                     </div>
+
+                    <!-- HEADMASTER CONFIGURATION (PER JENJANG) -->
+                    <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
+                        <h4 class="font-bold text-base text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+                             <span class="material-symbols-outlined text-indigo-500">supervisor_account</span> Kepala Madrasah (Tanda Tangan Rapor & DKN)
+                        </h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- MI -->
+                            <div class="bg-teal-50 dark:bg-teal-900/20 p-4 rounded-xl border border-teal-100 dark:border-teal-800">
+                                <h5 class="font-bold text-sm text-teal-800 dark:text-teal-300 mb-3 border-b border-teal-200 pb-2">Tingkat MI</h5>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Nama Kepala MI</label>
+                                        <input type="text" name="hm_name_mi" value="{{ \App\Models\GlobalSetting::val('hm_name_mi') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-teal-500 focus:border-teal-500" placeholder="Nama Lengkap & Gelar">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">NIP Kepala MI</label>
+                                        <input type="text" name="hm_nip_mi" value="{{ \App\Models\GlobalSetting::val('hm_nip_mi') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-teal-500 focus:border-teal-500" placeholder="NIP e.g. 198...">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- MTs -->
+                            <div class="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-xl border border-indigo-100 dark:border-indigo-800">
+                                <h5 class="font-bold text-sm text-indigo-800 dark:text-indigo-300 mb-3 border-b border-indigo-200 pb-2">Tingkat MTs</h5>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Nama Kepala MTs</label>
+                                        <input type="text" name="hm_name_mts" value="{{ \App\Models\GlobalSetting::val('hm_name_mts') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Nama Lengkap & Gelar">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">NIP Kepala MTs</label>
+                                        <input type="text" name="hm_nip_mts" value="{{ \App\Models\GlobalSetting::val('hm_nip_mts') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-indigo-500 focus:border-indigo-500" placeholder="NIP">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- MA -->
+                            <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-xl border border-purple-100 dark:border-purple-800">
+                                <h5 class="font-bold text-sm text-purple-800 dark:text-purple-300 mb-3 border-b border-purple-200 pb-2">Tingkat MA</h5>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Nama Kepala MA</label>
+                                        <input type="text" name="hm_name_ma" value="{{ \App\Models\GlobalSetting::val('hm_name_ma') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-purple-500 focus:border-purple-500" placeholder="Nama Lengkap & Gelar">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">NIP Kepala MA</label>
+                                        <input type="text" name="hm_nip_ma" value="{{ \App\Models\GlobalSetting::val('hm_nip_ma') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-purple-500 focus:border-purple-500" placeholder="NIP">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                     <!-- Action Button -->
                 <div class="flex justify-end pt-4 border-t border-slate-200 dark:border-slate-700" x-show="!isLocked">
