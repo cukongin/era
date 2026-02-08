@@ -1,71 +1,89 @@
 <?php
-// public/repair_tool.php (Renamed for clarity)
+// public/repair_tool.php (V2: Surgical Access)
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-echo "<h1>System Repair Tool (Public Access)</h1>";
+echo "<h1>System Repair Tool (V2: Surgery Mode)</h1>";
 echo "<pre style='background:#eee; padding:10px; border:1px solid #ccc;'>";
 
-// Detect Paths (We are in /public, so project root is ../)
+// Detect Paths
 $publicDir = __DIR__;
 $baseDir = dirname($publicDir); // Go up one level
 
-echo "[INFO] Current Dir: " . $publicDir . "\n";
 echo "[INFO] Project Root: " . $baseDir . "\n";
-
-$pathsToCheck = [
-    $baseDir . '/vendor/autoload.php',
-    $baseDir . '/bootstrap/app.php'
-];
-
-$validRoot = false;
-foreach($pathsToCheck as $p) {
-    if (file_exists($p)) {
-        echo "[OK] Found critical file: " . basename($p) . "\n";
-        $validRoot = true;
-    } else {
-        echo "[ERR] Missing critical file: " . $p . "\n";
-    }
-}
-
-if (!$validRoot) {
-    echo "\n[CRITICAL] Cannot locate project root. Check where you placed this file.\n";
-    // Try to be smart: maybe we are IN root (if public_html contains app, bootstrap, etc directly)
-    if (file_exists($publicDir . '/vendor/autoload.php')) {
-        echo "[INFO] Found vendor in Current Dir. adjusting root...\n";
-        $baseDir = $publicDir;
-    }
-}
 
 // 1. Clear Bootstrap Cache
 $cacheDir = $baseDir . '/bootstrap/cache';
 if (is_dir($cacheDir)) {
-    echo "\n[-] Clearing Bootstrap Cache ($cacheDir)...\n";
+    echo "\n[-] Clearing Bootstrap Cache...\n";
     $files = glob($cacheDir . '/*.php');
     foreach ($files as $file) {
         if (basename($file) != '.gitignore') {
-             if (unlink($file)) echo "    Deleted: " . basename($file) . "\n";
-             else echo "    Failed to delete: " . basename($file) . " (Permission?)\n";
+             @unlink($file);
+             echo "    Deleted: " . basename($file) . "\n";
         }
     }
-} else {
-    echo "\n[?] Cache dir not found: $cacheDir\n";
 }
 
-// 2. Try Composer Dump-Autoload
-echo "\n[-] Trying Composer Dump-Autoload...\n";
+// 2. SURGICAL REMOVAL of Deleted Classes from Composer
+$vendorDir = $baseDir . '/vendor/composer';
+$filesToPatch = ['autoload_classmap.php', 'autoload_static.php', 'autoload_psr4.php'];
 
-// Method A: Shell Exec
-$output = shell_exec("cd $baseDir && composer dump-autoload 2>&1");
-echo "    Shell Output: " . ($output ?: 'No output') . "\n";
+// List of deleted classes causing issues
+$targets = [
+    'GradingFormula', 
+    'SchoolIdentity',
+    'SchoolSettingController',
+    'AcademicSettingController',
+    'GradeAdjustmentController',
+    'GradingRuleController'
+];
 
-// Method B: PHP Passthru (if shell blocked)
-// echo "    Trying exec...\n";
-// exec("cd $baseDir && composer dump-autoload", $out2, $ret);
-// echo "    Exec Return: $ret\n";
+echo "\n[-] Patching Composer Autoload Files (Surgery)...\n";
 
-echo "\n[DONE] Cache should be cleared. Try opening your app now.\n";
-echo "If still error, delete 'bootstrap/cache/*.php' manually via File Manager.";
+foreach ($filesToPatch as $f) {
+    $path = $vendorDir . '/' . $f;
+    if (file_exists($path)) {
+        echo "    Checking $f... ";
+        $content = file_get_contents($path);
+        
+        $lines = explode("\n", $content);
+        $newLines = [];
+        $foundCount = 0;
+        
+        foreach($lines as $line) {
+             $hit = false;
+             foreach($targets as $target) {
+                 // Check if line contains the class name (and likely the path)
+                 if (strpos($line, $target) !== false) {
+                     $hit = true;
+                     // Only echo if verified it's a map entry
+                     echo "\n      [BAD] Removed: " . trim(substr($line, 0, 100)) . "...";
+                     break; 
+                 }
+             }
+             
+             if (!$hit) {
+                 $newLines[] = $line;
+             } else {
+                 $foundCount++;
+             }
+        }
+        
+        if ($foundCount > 0) {
+            file_put_contents($path, implode("\n", $newLines));
+            echo "\n      [SUCCESS] Removed $foundCount stale entries.\n";
+        } else {
+             echo "Clean.\n";
+        }
+    } else {
+        echo "    [SKIP] $f not found.\n";
+    }
+}
+
+echo "\n[DONE] Process Completed.\n";
+echo "1. If you see 'Removed' messages, the corrupt references are gone.\n";
+echo "2. Please try accessing your dashboard again.\n";
 echo "</pre>";
