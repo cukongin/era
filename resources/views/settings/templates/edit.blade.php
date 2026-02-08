@@ -39,6 +39,32 @@
             </div>
             
             <div class="flex items-center gap-2">
+                <!-- PRESET DROPDOWN -->
+                <div class="relative group">
+                    <button type="button" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 border border-indigo-200">
+                        <span class="material-symbols-outlined">interests</span> Load Preset
+                    </button>
+                    <div class="absolute right-0 top-full mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-xl hidden group-hover:block z-50 overflow-hidden">
+                        <div class="p-2">
+                            <h6 class="text-xs font-bold text-slate-400 px-2 py-1 uppercase">Rapor / Cover</h6>
+                            <button type="button" onclick="loadPreset('kemenag_mi')" class="w-full text-left px-2 py-1.5 text-sm hover:bg-slate-50 rounded flex items-center gap-2">
+                                <span class="material-symbols-outlined text-green-600 text-[18px]">school</span> Rapor Kemenag (MI)
+                            </button>
+                            <button type="button" onclick="loadPreset('diknas_smp')" class="w-full text-left px-2 py-1.5 text-sm hover:bg-slate-50 rounded flex items-center gap-2">
+                                <span class="material-symbols-outlined text-blue-600 text-[18px]">menu_book</span> Rapor Diknas (SMP)
+                            </button>
+                            <button type="button" onclick="loadPreset('simple')" class="w-full text-left px-2 py-1.5 text-sm hover:bg-slate-50 rounded flex items-center gap-2">
+                                <span class="material-symbols-outlined text-slate-600 text-[18px]">article</span> Rapor Simple
+                            </button>
+                            
+                            <h6 class="text-xs font-bold text-slate-400 px-2 py-1 uppercase mt-2 border-t border-slate-100">Transkip Nilai</h6>
+                            <button type="button" onclick="loadPreset('transcript_simple')" class="w-full text-left px-2 py-1.5 text-sm hover:bg-slate-50 rounded flex items-center gap-2">
+                                <span class="material-symbols-outlined text-purple-600 text-[18px]">workspace_premium</span> Transkip Nilai Simple
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 @if($template->exists && !$template->is_active)
                     <button type="submit" form="activate-form" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
                         <span class="material-symbols-outlined">check_circle</span> Aktifkan
@@ -58,16 +84,7 @@
         <script>
             function saveTemplate() {
                 const form = document.querySelector('#template-form');
-                
-                // FORCE SYNC CKEDITOR
-                for (var i in CKEDITOR.instances) {
-                    CKEDITOR.instances[i].updateElement();
-                }
-                
-                // Validate Content Length manually if needed (Optional)
-                // const content = CKEDITOR.instances.editor.getData();
-                // if (!content) { alert('Konten tidak boleh kosong!'); return; }
-                
+                for (var i in CKEDITOR.instances) CKEDITOR.instances[i].updateElement();
                 form.submit();
             }
 
@@ -75,26 +92,40 @@
                 const form = document.querySelector('#template-form');
                 const oldAction = form.action;
                 const oldTarget = form.target;
-
-                // Sync Editor
-                for (var i in CKEDITOR.instances) {
-                    CKEDITOR.instances[i].updateElement();
-                }
+                for (var i in CKEDITOR.instances) CKEDITOR.instances[i].updateElement();
                 
                 const methodInput = form.querySelector('input[name="_method"]');
-                if (methodInput) methodInput.disabled = true; // Force POST for preview
+                if (methodInput) methodInput.disabled = true; 
                 
                 form.action = "{{ route('settings.templates.preview') }}";
                 form.target = "_blank";
                 form.submit();
                 
-                // Revert
                 if (methodInput) methodInput.disabled = false;
                 form.action = oldAction;
                 form.target = oldTarget || "";
             }
 
-            // Remove previous event listener safely by not adding it again
+            function loadPreset(presetName) {
+                if (!confirm('Konten editor akan ditimpa dengan template preset. Lanjutkan?')) return;
+                
+                // Get current type
+                const typeSelect = document.querySelector('select[name="type"]');
+                const type = typeSelect ? typeSelect.value : 'rapor';
+                
+                fetch(`{{ route('settings.templates.preset') }}?preset=${presetName}&type=${type}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.content) {
+                            CKEDITOR.instances.editor.setData(data.content);
+                            // Auto-switch type if transcript
+                            if (presetName.includes('transcript')) {
+                                typeSelect.value = 'transcript';
+                            }
+                        }
+                    })
+                    .catch(err => alert('Gagal memuat preset: ' + err));
+            }
         </script>
 
 
@@ -121,6 +152,7 @@
                         <select name="type" class="w-full text-sm rounded-lg border-slate-300 focus:ring-primary">
                             <option value="rapor" {{ old('type', $template->type) == 'rapor' ? 'selected' : '' }}>Halaman Rapor (Nilai)</option>
                             <option value="cover" {{ old('type', $template->type) == 'cover' ? 'selected' : '' }}>Cover / Identitas</option>
+                            <option value="transcript" {{ old('type', $template->type) == 'transcript' ? 'selected' : '' }}>Transkip Nilai (Ijazah)</option>
                         </select>
                     </div>
                     <div>
@@ -208,18 +240,20 @@
                             </div>
                         </div>
 
-                        <!-- Tabel Akademik (Custom Loop) -->
+                        <!-- Tabel Transkip / Custom Loop -->
                         <div>
-                            <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider block border-b pb-1 mb-2">3b. Tabel Nilai (Manual)</span>
-                            <p class="text-[10px] text-slate-400 mb-2 leading-tight">Gunakan ini jika ingin membuat tabel sendiri. Letakkan variable di dalam Start & End Loop.</p>
+                            <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider block border-b pb-1 mb-2">3b. Tabel Manual / Transkip</span>
+                            <p class="text-[10px] text-slate-400 mb-2 leading-tight">Gunakan ini untuk Transkip atau tabel custom.</p>
                             <div class="grid grid-cols-1 gap-1">
                                 <button type="button" onclick="insertVar('[[LOOP_NILAI_START]]')" class="text-left text-xs bg-indigo-50 hover:bg-indigo-100 p-1.5 rounded border border-indigo-200 font-mono text-indigo-700 font-bold transition">[[LOOP_NILAI_START]] <span class="text-[10px] text-indigo-400 float-right">Awal Loop</span></button>
                                 <div class="pl-2 border-l-2 border-indigo-100 grid grid-cols-1 gap-1">
                                     <button type="button" onclick="insertVar('[[NO]]')" class="text-left text-xs p-1 hover:bg-slate-50 rounded text-slate-600 font-mono">[[NO]]</button>
                                     <button type="button" onclick="insertVar('[[MAPEL]]')" class="text-left text-xs p-1 hover:bg-slate-50 rounded text-slate-600 font-mono">[[MAPEL]]</button>
                                     <button type="button" onclick="insertVar('[[KKM]]')" class="text-left text-xs p-1 hover:bg-slate-50 rounded text-slate-600 font-mono">[[KKM]]</button>
-                                    <button type="button" onclick="insertVar('[[NILAI]]')" class="text-left text-xs p-1 hover:bg-slate-50 rounded text-slate-600 font-mono">[[NILAI]]</button>
+                                    <button type="button" onclick="insertVar('[[NILAI]]')" class="text-left text-xs p-1 hover:bg-slate-50 rounded text-slate-600 font-mono">[[NILAI]] <span class="text-[9px] text-slate-400">(Nilai Akhir)</span></button>
                                     <button type="button" onclick="insertVar('[[PREDIKAT]]')" class="text-left text-xs p-1 hover:bg-slate-50 rounded text-slate-600 font-mono">[[PREDIKAT]]</button>
+                                    <button type="button" onclick="insertVar('[[NILAI_RAPOR]]')" class="text-left text-xs p-1 hover:bg-purple-50 rounded text-purple-600 font-mono">[[NILAI_RAPOR]] <span class="text-[9px] text-purple-400">(Rata Rapor)</span></button>
+                                    <button type="button" onclick="insertVar('[[NILAI_UJIAN]]')" class="text-left text-xs p-1 hover:bg-purple-50 rounded text-purple-600 font-mono">[[NILAI_UJIAN]] <span class="text-[9px] text-purple-400">(Nilai UM)</span></button>
                                 </div>
                                 <button type="button" onclick="insertVar('[[LOOP_NILAI_END]]')" class="text-left text-xs bg-indigo-50 hover:bg-indigo-100 p-1.5 rounded border border-indigo-200 font-mono text-indigo-700 font-bold transition">[[LOOP_NILAI_END]] <span class="text-[10px] text-indigo-400 float-right">Akhir Loop</span></button>
                             </div>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Template Rapor')
+@section('title', 'Template')
 
 @section('content')
 <div class="flex flex-col gap-6">
@@ -49,7 +49,7 @@
     @endif
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        @foreach(['rapor' => 'Template Rapor', 'cover' => 'Template Cover / Identitas'] as $type => $label)
+        @foreach(['rapor' => 'Template Rapor', 'cover' => 'Template Cover / Identitas', 'transcript' => 'Template Transkip Nilai'] as $type => $label)
         <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50">
                 <h3 class="font-bold text-slate-800 dark:text-white">{{ $label }}</h3>
@@ -61,7 +61,12 @@
                 <div class="p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                     <div class="flex items-center gap-3">
                         <div class="h-10 w-10 rounded-lg flex items-center justify-center {{ $tpl->is_active ? 'bg-green-100 text-green-600' : 'bg-slate-100 text-slate-400' }}">
-                            <span class="material-symbols-outlined">{{ $type == 'cover' ? 'book' : 'description' }}</span>
+                            @php
+                                $icon = 'description';
+                                if($type == 'cover') $icon = 'book';
+                                if($type == 'transcript') $icon = 'workspace_premium';
+                            @endphp
+                            <span class="material-symbols-outlined">{{ $icon }}</span>
                         </div>
                         <div>
                             <h4 class="font-bold text-sm text-slate-900 dark:text-white">{{ $tpl->name }}</h4>
@@ -88,7 +93,6 @@
                             <span class="p-2 text-slate-400" title="Template Permanen (Tidak bisa diedit)">
                                 <span class="material-symbols-outlined text-[20px]">lock</span>
                             </span>
-                            <!-- Allow viewing code but maybe read-only? For now just hide edit to be safe as requested -->
                         @else
                             <a href="{{ route('settings.templates.edit', $tpl->id) }}" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
                                 <span class="material-symbols-outlined text-[20px]">edit</span>
@@ -96,9 +100,7 @@
                             
                             @if(!$tpl->is_active || $templates->where('type', $type)->count() > 1)
                             <form action="{{ route('settings.templates.destroy', $tpl->id) }}" method="POST"
-                                  data-confirm-delete="true"
-                                  data-title="Hapus Template?"
-                                  data-message="Template ini akan dihapus permanen.">
+                                  onsubmit="return confirm('Hapus template ini?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Hapus">
@@ -117,7 +119,7 @@
             </div>
             
             <div class="p-3 bg-slate-50 dark:bg-slate-800/30 text-center">
-                <a href="{{ route('settings.templates.create') }}?type={{ $type }}" class="text-xs font-bold text-primary hover:underline">+ Buat {{ $type == 'cover' ? 'Cover' : 'Rapor' }} Baru</a>
+                <a href="{{ route('settings.templates.create') }}?type={{ $type }}" class="text-xs font-bold text-primary hover:underline">+ Buat {{ $type == 'cover' ? 'Cover' : ($type == 'transcript' ? 'Transkip' : 'Rapor') }} Baru</a>
             </div>
         </div>
         @endforeach

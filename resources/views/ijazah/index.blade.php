@@ -74,6 +74,10 @@
                 <span class="material-symbols-outlined text-[20px]">print</span> <span class="hidden md:inline">Cetak DKN</span>
             </a>
 
+            <a href="{{ route('ijazah.print-transcript', $kelas->id) }}" target="_blank" class="bg-white hover:bg-slate-50 text-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 border border-slate-200 dark:border-slate-700 shadow-sm transition-all">
+                <span class="material-symbols-outlined text-[20px]">workspace_premium</span> <span class="hidden md:inline">Cetak Transkip</span>
+            </a>
+
             @if($isLocked)
                 <div class="px-4 py-2.5 bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-sm font-bold flex items-center gap-2">
                     <span class="material-symbols-outlined text-[20px]">lock</span> <span class="hidden md:inline">Terkunci</span>

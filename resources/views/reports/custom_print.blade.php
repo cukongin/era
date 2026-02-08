@@ -78,6 +78,7 @@
             background: white;
             color: black;
         }
+    </style>
 
 <div class="no-print sticky top-0 z-50 bg-white border-b border-[#e5e7eb] px-4 py-3 shadow-sm">
     <div class="max-w-[1200px] mx-auto flex flex-wrap items-center justify-between gap-4">

@@ -112,6 +112,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('settings/templates', [TemplateController::class, 'index'])->name('settings.templates.index');
         Route::get('settings/templates/create', [TemplateController::class, 'create'])->name('settings.templates.create');
         Route::post('settings/templates', [TemplateController::class, 'store'])->name('settings.templates.store');
+        Route::get('settings/templates/preset', [TemplateController::class, 'loadPreset'])->name('settings.templates.preset'); // NEW Preset Route
         Route::post('settings/templates/config', [App\Http\Controllers\TemplateController::class, 'updateSettings'])->name('settings.templates.config'); // NEW
         Route::post('settings/templates/preview', [TemplateController::class, 'preview'])->name('settings.templates.preview'); // NEW Preview Route
         Route::get('settings/templates/{template}/edit', [TemplateController::class, 'edit'])->name('settings.templates.edit');
@@ -257,6 +258,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('/template', [App\Http\Controllers\IjazahController::class, 'downloadTemplate'])->name('template');
                 Route::post('/import', [App\Http\Controllers\IjazahController::class, 'importGrades'])->name('import');
                 Route::get('/print-dkn/{kelasId}', [App\Http\Controllers\IjazahController::class, 'printDKN'])->name('print-dkn');
+                Route::get('/print-transcript/{kelasId}', [App\Http\Controllers\IjazahController::class, 'printTranscript'])->name('print-transcript');
             });
         });
 
