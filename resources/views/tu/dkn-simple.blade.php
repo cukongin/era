@@ -39,9 +39,9 @@
     </div>
 
     <!-- Stats Section -->
-    <div class="px-6 py-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="px-4 md:px-6 py-4 md:py-6 flex overflow-x-auto snap-x md:grid md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 pb-6 md:pb-6 no-scrollbar">
         <!-- Average Card -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+        <div class="min-w-[85%] md:min-w-0 flex-shrink-0 snap-center bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
             <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                  <span class="material-symbols-outlined text-6xl text-blue-600">analytics</span>
             </div>
@@ -56,7 +56,7 @@
         </div>
 
         <!-- Highest Card -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+        <div class="min-w-[85%] md:min-w-0 flex-shrink-0 snap-center bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
             <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                  <span class="material-symbols-outlined text-6xl text-emerald-500">emoji_events</span>
             </div>
@@ -70,7 +70,7 @@
         </div>
 
         <!-- Lowest Card -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+        <div class="min-w-[85%] md:min-w-0 flex-shrink-0 snap-center bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
             <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                  <span class="material-symbols-outlined text-6xl text-rose-500">trending_down</span>
             </div>
@@ -84,7 +84,7 @@
         </div>
 
         <!-- Pass Rate Card -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+        <div class="min-w-[85%] md:min-w-0 flex-shrink-0 snap-center bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
             <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                  <span class="material-symbols-outlined text-6xl text-purple-500">school</span>
             </div>
@@ -100,14 +100,14 @@
     </div>
 
     <!-- Table Container -->
-    <div class="flex-1 overflow-hidden px-6 pb-6" x-data>
+    <div class="flex-1 overflow-hidden px-4 pb-4 md:px-6 md:pb-6" x-data>
         <div class="border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 bg-white dark:bg-[#1a2e22] relative h-full flex flex-col overflow-hidden">
             <div class="overflow-auto flex-1 custom-scrollbar">
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-slate-50 text-slate-700 sticky top-0 z-40 shadow-sm border-b border-slate-300">
                         <tr>
-                            <th rowspan="2" class="p-3 text-center text-xs font-bold uppercase border-r border-slate-200 w-12 sticky left-0 z-50 bg-slate-50">No</th>
-                            <th rowspan="2" class="p-3 text-left text-xs font-bold uppercase border-r border-slate-200 w-64 min-w-[250px] sticky left-12 z-50 bg-slate-50 shadow-[4px_0_8px_rgba(0,0,0,0.05)]">
+                            <th rowspan="2" class="p-3 text-center text-xs font-bold uppercase border-r border-slate-200 w-12 md:sticky md:left-0 z-50 bg-slate-50">No</th>
+                            <th rowspan="2" class="p-3 text-left text-xs font-bold uppercase border-r border-slate-200 w-64 min-w-[200px] md:min-w-[250px] md:sticky md:left-12 z-50 bg-slate-50 shadow-[4px_0_8px_rgba(0,0,0,0.05)]">
                                 Peserta Didik
                             </th>
                             @foreach($mapels as $mapel)
@@ -115,8 +115,8 @@
                                     <div class="text-[11px] font-bold text-slate-700 truncate max-w-[120px]" title="{{ $mapel->nama_mapel }}">{{ $mapel->nama_mapel }}</div>
                                 </th>
                             @endforeach
-                            <th rowspan="2" class="p-3 text-center text-xs font-bold uppercase border-l border-slate-200 bg-slate-50 sticky right-[100px] z-40 min-w-[80px] shadow-[-4px_0_8px_rgba(0,0,0,0.05)]">Rata²</th>
-                            <th rowspan="2" class="p-3 text-center text-xs font-bold uppercase border-l border-slate-200 bg-slate-50 sticky right-0 z-40 min-w-[100px]">Status</th>
+                            <th rowspan="2" class="p-3 text-center text-xs font-bold uppercase border-l border-slate-200 bg-slate-50 md:sticky md:right-[100px] z-40 min-w-[80px] shadow-[-4px_0_8px_rgba(0,0,0,0.05)]">Rata²</th>
+                            <th rowspan="2" class="p-3 text-center text-xs font-bold uppercase border-l border-slate-200 bg-slate-50 md:sticky md:right-0 z-40 min-w-[100px]">Status</th>
                         </tr>
                         <tr>
                             @foreach($mapels as $mapel)
@@ -129,12 +129,12 @@
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                         @forelse($dknData as $index => $row)
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors group">
-                                <td class="p-3 text-center text-xs font-bold text-slate-500 border-r border-slate-100 dark:border-slate-700 sticky left-0 bg-white dark:bg-[#1a2e22] z-30 group-hover:bg-slate-50 dark:group-hover:bg-slate-700/30">
+                                <td class="p-3 text-center text-xs font-bold text-slate-500 border-r border-slate-100 dark:border-slate-700 md:sticky md:left-0 bg-white dark:bg-[#1a2e22] z-30 group-hover:bg-slate-50 dark:group-hover:bg-slate-700/30">
                                     {{ $index + 1 }}
                                 </td>
-                                <td class="p-3 border-r border-slate-100 dark:border-slate-700 sticky left-12 bg-white dark:bg-[#1a2e22] z-30 shadow-[4px_0_8px_rgba(0,0,0,0.03)] group-hover:bg-slate-50 dark:group-hover:bg-slate-700/30">
+                                <td class="p-3 border-r border-slate-100 dark:border-slate-700 md:sticky md:left-12 bg-white dark:bg-[#1a2e22] z-30 shadow-[4px_0_8px_rgba(0,0,0,0.03)] group-hover:bg-slate-50 dark:group-hover:bg-slate-700/30">
                                     <div class="flex flex-col">
-                                        <span class="font-bold text-sm text-slate-800 dark:text-white truncate max-w-[200px]" title="{{ $row['student']->nama_lengkap }}">
+                                        <span class="font-bold text-sm text-slate-800 dark:text-white truncate max-w-[150px] md:max-w-[200px]" title="{{ $row['student']->nama_lengkap }}">
                                             {{ $row['student']->nama_lengkap }}
                                         </span>
                                         <span class="text-[10px] text-slate-400 font-mono">{{ $row['student']->nis_lokal }}</span>
@@ -182,11 +182,11 @@
                                     $isPass = $avg >= $minLulus;
                                 @endphp
                                 
-                                <td class="p-3 text-center border-l border-indigo-100 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900/20 sticky right-[100px] z-30 font-black text-indigo-700 dark:text-indigo-300 shadow-[-4px_0_8px_rgba(0,0,0,0.03)]">
+                                <td class="p-3 text-center border-l border-indigo-100 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900/20 md:sticky md:right-[100px] z-30 font-black text-indigo-700 dark:text-indigo-300 shadow-[-4px_0_8px_rgba(0,0,0,0.03)]">
                                     {{ number_format($avg, 2) }}
                                 </td>
 
-                                <td class="p-3 text-center border-l border-slate-100 dark:border-slate-700 sticky right-0 z-30 bg-white dark:bg-[#1a2e22] group-hover:bg-slate-50 dark:group-hover:bg-slate-700/30">
+                                <td class="p-3 text-center border-l border-slate-100 dark:border-slate-700 md:sticky md:right-0 z-30 bg-white dark:bg-[#1a2e22] group-hover:bg-slate-50 dark:group-hover:bg-slate-700/30">
                                      @if($avg > 0)
                                         @if($isPass)
                                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
