@@ -1094,14 +1094,9 @@ class SettingsController extends Controller
 
             // 4. Run Specific Seeders (If needed)
             // Formulas
-            if (\App\Models\GradingFormula::count() === 0) {
-                 try {
-                    \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'Database\\Seeders\\GradingFormulaSeeder', '--force' => true]);
-                    $log .= "Seeder Output: " . \Illuminate\Support\Facades\Artisan::output() . "\n";
-                 } catch (\Exception $seedErr) {
-                    $log .= "Seeder Error: " . $seedErr->getMessage() . "\n";
-                 }
-            }
+            // 4. Run Specific Seeders (If needed)
+            // Formulas (REMOVED)
+            // if (\App\Models\GradingFormula::count() === 0) { ... }
 
             return back()->with('success', "Update Berhasil! Sistem via Git (Proc Open).\nLog:\n" . $log);
 
