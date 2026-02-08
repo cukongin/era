@@ -109,6 +109,9 @@
                                     <a href="{{ route('reports.print.biodata', ['student' => $member->siswa->id, 'year_id' => $selectedYear->id ?? null]) }}" target="_blank" class="px-2 py-1 text-xs font-bold text-slate-600 bg-slate-100 border border-slate-200 rounded hover:bg-slate-200" title="Cetak Biodata">
                                         Biodata
                                     </a>
+                                    <a href="{{ route('reports.print.transcript', ['student' => $member->siswa->id, 'year_id' => $selectedYear->id ?? null]) }}" target="_blank" class="px-2 py-1 text-xs font-bold text-purple-600 bg-purple-50 border border-purple-200 rounded hover:bg-purple-100" title="Cetak Transkip">
+                                        Transkip
+                                    </a>
                                     <a href="{{ route('reports.print', ['student' => $member->siswa->id, 'year_id' => $selectedYear->id ?? null]) }}" target="_blank" class="inline-flex items-center gap-1 px-3 py-1 text-xs font-bold text-white bg-emerald-600 rounded hover:bg-emerald-700 shadow-sm border border-emerald-700">
                                         <span class="material-symbols-outlined text-[16px]">print</span>
                                         Rapor

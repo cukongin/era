@@ -381,6 +381,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/print/{student}', [App\Http\Controllers\ReportController::class, 'printRapor'])->name('reports.print');
         Route::get('/cover/{student}', [App\Http\Controllers\ReportController::class, 'printCover'])->name('reports.print.cover');
         Route::get('/biodata/{student}', [App\Http\Controllers\ReportController::class, 'printBiodata'])->name('reports.print.biodata');
+        Route::get('/transcript/{student}', [App\Http\Controllers\ReportController::class, 'printTranscript'])->name('reports.print.transcript'); // NEW
         Route::get('/print-all/{class}', [App\Http\Controllers\ReportController::class, 'printClass'])->name('reports.print.all');
     });
 

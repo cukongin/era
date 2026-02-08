@@ -1453,4 +1453,149 @@ class ReportController extends Controller
             'mapelAnalysis', 'anomalies'
         ));
     }
+    public function printTranscript(Request $request, $studentId)
+    {
+        // 1. Get Student
+        $student = Siswa::with('anggota_kelas.kelas')->findOrFail($studentId);
+        
+        // 2. Get Active Year and Class
+        $activeYear = TahunAjaran::where('status', 'aktif')->first();
+        if ($request->year_id) $activeYear = TahunAjaran::find($request->year_id);
+        
+        $ak = $student->anggota_kelas->filter(function($ak) use ($activeYear) {
+             return $ak->kelas->id_tahun_ajaran == $activeYear->id;
+        })->first();
+        
+        if (!$ak) return back()->with('error', 'Siswa tidak memiliki kelas di tahun ajaran ini.');
+        
+        $kelas = $ak->kelas;
+        
+        // 3. Get Template
+        $template = ReportTemplate::where('type', 'transcript')->where('is_active', true)->first();
+        
+        // If no template, use default preset (Consistent with IjazahController)
+        if (!$template) {
+            $template = new ReportTemplate();
+            $template->name = 'Default Transcript';
+            $template->type = 'transcript';
+            $template->margins = ['top' => 10, 'right' => 10, 'bottom' => 10, 'left' => 10];
+            $template->orientation = 'portrait';
+            
+            $ctrl = new \App\Http\Controllers\TemplateController();
+            $contentResponse = $ctrl->loadPreset(new Request(['preset' => 'transcript_simple']));
+            $template->content = $contentResponse->getData()->content;
+        }
+
+        // 4. Data Preparation
+        $jenjang = $kelas->jenjang->kode ?? ($kelas->tingkat_kelas <= 6 ? 'MI' : 'MTS');
+        
+        // Mapels
+        $selectedMapelIds = \App\Models\UjianMapel::where('id_tahun_ajaran', $kelas->id_tahun_ajaran)
+                                ->where('jenjang', $jenjang)
+                                ->pluck('id_mapel');
+
+        if ($selectedMapelIds->isNotEmpty()) {
+             $mapelIds = $selectedMapelIds; 
+        } else {
+             $mapelIds = PengajarMapel::where('id_kelas', $kelas->id)->pluck('id_mapel');
+        }
+
+        $mapels = Mapel::whereIn('id', $mapelIds)
+            ->orderBy('kategori', 'asc')
+            ->orderBy('nama_mapel', 'asc')
+            ->get();
+            
+        // Grades
+        $sGrades = \App\Models\NilaiIjazah::where('id_siswa', $student->id)->get();
+        
+        // School Info
+        $school = IdentitasSekolah::where('jenjang', $jenjang)->first() ?? IdentitasSekolah::first();
+        $minLulus = \App\Models\GlobalSetting::val('ijazah_min_lulus', 60);
+
+        // 5. Prepare Loop Data
+        $loopGrades = [];
+        $no = 1;
+        $sumFinal = 0;
+        $countMapel = 0;
+
+        foreach ($mapels as $mapel) {
+            $g = $sGrades->where('id_mapel', $mapel->id)->first();
+            $nilaiAkhir = $g->nilai_ijazah ?? 0;
+            
+            if ($nilaiAkhir > 0) {
+                $sumFinal += $nilaiAkhir;
+                $countMapel++;
+            }
+
+            $loopGrades[] = [
+                'no' => $no++,
+                'mapel' => $mapel->nama_mapel,
+                'kkm' => 75, 
+                'nilai' => $nilaiAkhir ?: '-',
+                'predikat' => '-',
+                'rata_rapor' => $g->rata_rata_rapor ?? '-',
+                'nilai_ujian' => $g->nilai_ujian_madrasah ?? '-'
+            ];
+        }
+        
+        $avg = $countMapel > 0 ? $sumFinal / $countMapel : 0;
+        $isLulus = $avg >= $minLulus;
+        $statusLulus = $isLulus ? 'LULUS' : 'TIDAK LULUS';
+        if ($avg == 0) $statusLulus = '-';
+
+        // 6. Variables
+        $vars = [
+            '[[NAMA_SISWA]]' => strtoupper($student->nama_lengkap),
+            '[[NIS]]' => $student->nis ?? '-',
+            '[[NISN]]' => $student->nisn ?? '-',
+            '[[KELAS]]' => $kelas->nama_kelas,
+            '[[SEMESTER]]' => 'Akhir',
+            '[[TAHUN_AJARAN]]' => $activeYear->nama_tahun,
+            '[[NAMA_SEKOLAH]]' => strtoupper($school->nama_sekolah ?? 'SEKOLAH'),
+            '[[KEPALA_SEKOLAH]]' => $school->kepala_sekolah ?? '-',
+            '[[WALI_KELAS]]' => $kelas->wali_kelas->name ?? '-',
+            '[[TANGGAL_RAPOR]]' => ($school->kota ?? 'Kota') . ', ' . date('d F Y'),
+            '[[STATUS_KENAIKAN]]' => $statusLulus,
+            '[[ALAMAT_SISWA]]' => $student->alamat ?? '-',
+            '[[JUMLAH_NILAI]]' => number_format($sumFinal, 2),
+            '[[RATA_RATA]]' => number_format($avg, 2),
+            '[[PERINGKAT]]' => '-',
+            '[[TOTAL_SISWA]]' => $kelas->anggota_kelas()->count(),
+        ];
+
+        // 7. Render Content
+        $pageContent = $template->content;
+        
+        // Loop Replacement
+        if (preg_match_all('/\[\[LOOP_NILAI_START\]\](.*?)\[\[LOOP_NILAI_END\]\]/s', $pageContent, $matches)) {
+            foreach ($matches[1] as $idx => $block) {
+                $compiledRows = '';
+                foreach ($loopGrades as $lg) {
+                    $row = $block;
+                    $row = str_replace('[[NO]]', $lg['no'], $row);
+                    $row = str_replace('[[MAPEL]]', $lg['mapel'], $row);
+                    $row = str_replace('[[KKM]]', $lg['kkm'], $row);
+                    $row = str_replace('[[NILAI]]', $lg['nilai'], $row);
+                    $row = str_replace('[[PREDIKAT]]', $lg['predikat'], $row);
+                    $row = str_replace('[[NILAI_RAPOR]]', $lg['rata_rapor'], $row);
+                    $row = str_replace('[[NILAI_UJIAN]]', $lg['nilai_ujian'], $row);
+                    $compiledRows .= $row;
+                }
+                $pageContent = str_replace($matches[0][$idx], $compiledRows, $pageContent);
+            }
+        }
+
+        // Variable Replacement
+        foreach ($vars as $key => $val) {
+            $pageContent = str_replace($key, $val, $pageContent);
+        }
+        
+        // Helper: Decode Entities if CKEditor messed up
+        $pageContent = html_entity_decode($pageContent);
+
+        return view('reports.custom_print', [
+            'content' => $pageContent,
+            'template' => $template
+        ]);
+    }
 }
