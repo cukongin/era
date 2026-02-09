@@ -247,7 +247,7 @@
             </div>
             
             <div class="overflow-x-auto">
-                <div x-data="{ showStatusModal: false, editUrl: '', currentStatus: '' }">
+                <div x-data="{}">
                     <table class="w-full text-sm text-left">
                         <thead class="text-xs text-slate-500 uppercase bg-slate-50 dark:bg-slate-800 dark:text-slate-400">
                             <tr>
@@ -306,11 +306,7 @@
                                             </div>
                                         </div>
                                         
-                                        <!-- Edit Status Button -->
-                                        <button @click.stop="showStatusModal = true; editUrl = '{{ route('master.students.update-history-status', $riwayat->id) }}'; currentStatus = '{{ $riwayat->status }}'" 
-                                            class="text-slate-400 hover:text-primary p-1 rounded-full hover:bg-slate-100 transition-colors z-10" title="Edit Status Riwayat">
-                                            <span class="material-symbols-outlined text-[16px]">edit</span>
-                                        </button>
+                                        <!-- Edit Status Button REMOVED as per User Request -->
                                     </div>
                                 </td>
                             </tr>
@@ -322,30 +318,8 @@
                         </tbody>
                     </table>
 
-                     <!-- Edit Status Modal -->
-                    <div x-show="showStatusModal" class="fixed inset-0 z-[99] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-cloak style="display: none;">
-                        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-xl w-full max-w-sm p-6" @click.away="showStatusModal = false">
-                            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Edit Status Riwayat</h3>
-                            <form :action="editUrl" method="POST">
-                                @csrf
-                                <div class="mb-4">
-                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Status Kenaikan</label>
-                                    <select name="status" x-model="currentStatus" class="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-primary">
-                                        <option value="aktif">Aktif</option>
-                                        <option value="naik_kelas">Naik Kelas</option>
-                                        <option value="tinggal_kelas">Tinggal Kelas</option>
-                                        <option value="lulus">Lulus</option>
-                                        <option value="mutasi">Mutasi</option>
-                                        <option value="keluar">Keluar</option>
-                                    </select>
-                                </div>
-                                <div class="flex justify-end gap-2">
-                                    <button type="button" @click="showStatusModal = false" class="text-slate-500 hover:text-slate-700 font-bold text-sm px-4 py-2">Batal</button>
-                                    <button type="submit" class="bg-primary hover:bg-green-700 text-white font-bold text-sm px-4 py-2 rounded-lg">Simpan</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+                     <!-- Edit Status Modal REMOVED -->
+
 
                 </div>
             </div>
