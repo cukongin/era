@@ -191,7 +191,8 @@
                                 ?? \App\Models\GlobalSetting::val('titimangsa_2_' . $jenjangKey);
                 @endphp
 
-                @if(!empty($date2Raw))
+                {{-- Wrapper: Inline Block to shrink-wrap content, Left Aligned Text, Floating in the Right Box --}}
+                <div style="display: inline-block;">
                     @php
                         // Helper logic to parse dates
                         $parseDate = function($dateStr) {
@@ -209,39 +210,57 @@
                             return compact('day', 'month', 'year', 'suffix');
                         };
 
-                        $d1 = $parseDate($date1Raw);
-                        $d2 = $parseDate($date2Raw);
+                        $d1Raw = !empty($date1Raw) ? $date1Raw : '';
+                        $d2Raw = !empty($date2Raw) ? $date2Raw : '';
+                        
+                        $d1 = $parseDate($d1Raw);
+                        $d2 = $d2Raw ? $parseDate($d2Raw) : null;
                     @endphp
 
-                    {{-- Strict Table Layout --}}
-                    <div class="inline-block text-left">
-                        <table style="border-collapse: collapse; white-space: nowrap; width: 100%;">
-                            {{-- Row 1: Hijri --}}
-                            <tr class="leading-tight">
-                                <td class="pr-2 text-right" style="border: none;">{{ $place }},</td>
-                                <td class="px-1 text-center" style="border: none;">{{ $d1['day'] }}</td>
-                                <td class="px-1 text-left pl-2" style="border: none;">{{ $d1['month'] }}</td>
-                                <td class="px-1 text-center" style="border: none;">{{ $d1['year'] }}</td>
-                                <td class="pl-1 text-left" style="border: none;">{{ $d1['suffix'] }}</td>
-                            </tr>
-                            {{-- Row 2: Masehi --}}
-                            <tr class="leading-tight">
-                                <td style="border: none;"></td> {{-- Empty Place Column --}}
-                                <td class="px-1 text-center" style="border: none;">{{ $d2['day'] }}</td>
-                                <td class="px-1 text-left pl-2" style="border: none;">{{ $d2['month'] }}</td>
-                                <td class="px-1 text-center" style="border: none;">{{ $d2['year'] }}</td>
-                                <td class="pl-1 text-left" style="border: none;">{{ $d2['suffix'] }}</td>
-                            </tr>
-                        </table>
-                    </div>
-                @else
-                    {{-- Standard Single Line --}}
-                    <p>{{ $place }}, {{ $date1Raw }}</p>
-                @endif
+                    {{-- Unified Table for Alignment --}}
+                    <table style="border-collapse: collapse; white-space: nowrap;">
+                        {{-- Row 1: Hijri / Main Date --}}
+                        <tr class="leading-tight">
+                            <td class="pr-2 text-right" style="border: none; vertical-align: top;">{{ $place }},</td>
+                            <td class="px-1 text-center" style="border: none;">{{ $d1['day'] }}</td>
+                            <td class="px-1 text-left pl-2" style="border: none;">{{ $d1['month'] }}</td>
+                            <td class="px-1 text-center" style="border: none;">{{ $d1['year'] }}</td>
+                            <td class="pl-1 text-left" style="border: none;">{{ $d1['suffix'] }}</td>
+                        </tr>
+                        
+                        {{-- Row 2: Masehi (Optional) --}}
+                        @if($d2)
+                        <tr class="leading-tight">
+                            <td style="border: none;"></td> {{-- Empty Place Column --}}
+                            <td class="px-1 text-center" style="border: none;">{{ $d2['day'] }}</td>
+                            <td class="px-1 text-left pl-2" style="border: none;">{{ $d2['month'] }}</td>
+                            <td class="px-1 text-center" style="border: none;">{{ $d2['year'] }}</td>
+                            <td class="pl-1 text-left" style="border: none;">{{ $d2['suffix'] }}</td>
+                        </tr>
+                        @endif
 
-                <br><br><br><br>
-                <div style="text-align: center;">
-                    <p class="font-bold" style="text-decoration: underline; margin-bottom: 2px;">{{ strtoupper($hmName) }}</p>
+                        {{-- Spacer --}}
+                        <tr><td colspan="5" style="height: 10px;"></td></tr>
+
+                        {{-- Title --}}
+                        <tr class="leading-tight">
+                            <td style="border: none;"></td>
+                            <td colspan="4" class="text-center" style="border: none;">Mengetahui,</td>
+                        </tr>
+                        <tr class="leading-tight">
+                            <td style="border: none;"></td>
+                            <td colspan="4" class="text-center" style="border: none;">Kepala Madrasah</td>
+                        </tr>
+
+                        {{-- Signature Space --}}
+                        <tr><td colspan="5" style="height: 60px;"></td></tr>
+
+                        {{-- Name --}}
+                        <tr>
+                            <td style="border: none;"></td>
+                            <td colspan="4" class="text-center font-bold" style="border: none;">{{ strtoupper($hmName) }}</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
             <div class="clear"></div>
