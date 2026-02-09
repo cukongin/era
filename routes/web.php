@@ -297,7 +297,8 @@ Route::middleware(['auth'])->group(function () {
 
 
         // Katrol Nilai (Grade Adjustment)
-
+        Route::get('/katrol', [App\Http\Controllers\WaliKelasController::class, 'katrol'])->name('walikelas.katrol.index');
+        Route::post('/katrol', [App\Http\Controllers\WaliKelasController::class, 'storeKatrol'])->name('walikelas.katrol.store');
 
         // Monitoring Access for Wali Kelas
         Route::get('/monitoring', [App\Http\Controllers\WaliKelasController::class, 'monitoring'])->name('walikelas.monitoring');

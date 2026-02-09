@@ -1507,6 +1507,145 @@ class WaliKelasController extends Controller
 
         return view('wali-kelas.leger-rekap-export', compact('kelas', 'periods', 'students', 'mapels', 'grades', 'kkm', 'studentStats'));
     }
+    public function katrol(Request $request)
+    {
+        // 1. Get Filters
+        $waliKelasInfo = $this->getWaliKelasInfo();
+        $classes = $waliKelasInfo['classes'];
+        $kelasId = $request->kelas_id ?? ($classes->first()->id ?? null);
+        $kelas = Kelas::find($kelasId);
+
+        if (!$kelas) {
+            return redirect()->route('walikelas.dashboard')->with('error', 'Kelas tidak ditemukan.');
+        }
+
+        // Active Year
+        $activeYear = TahunAjaran::where('status', 'aktif')->firstOrFail();
+
+        // Periods
+        $allPeriods = Periode::where('id_tahun_ajaran', $activeYear->id)->orderBy('semester')->get();
+        $selectedPeriodeId = $request->periode_id ?? ($allPeriods->where('status', 'aktif')->first()->id ?? null);
+
+        // Subjects (Mapel)
+        // Better: Get mapels from NilaiSiswa to ensure we only show mapels that have grades.
+        $subjects = Mapel::whereHas('nilai_siswa', function($q) use ($kelasId, $selectedPeriodeId) {
+            $q->where('id_kelas', $kelasId)->where('id_periode', $selectedPeriodeId);
+        })->get();
+
+        if ($subjects->isEmpty()) {
+            // Fallback: Get all mapels
+             $subjects = Mapel::all();
+        }
+
+        $mapelId = $request->mapel_id ?? ($subjects->first()->id ?? null);
+
+        // 2. Fetch Grades
+        $grades = NilaiSiswa::where('id_kelas', $kelasId)
+            ->where('id_periode', $selectedPeriodeId)
+            ->where('id_mapel', $mapelId)
+            ->with('siswa')
+            ->get();
+
+        // 3. Get KKM
+        $kkmEntry = \App\Models\KkmMapel::where('id_mapel', $mapelId)
+            ->where('id_tahun_ajaran', $activeYear->id)
+            ->where('jenjang_target', $kelas->jenjang->kode ?? 'MI') 
+            ->first();
+        
+        $currentKkm = $kkmEntry->nilai_kkm ?? 70; // Default KKM
+
+        return view('wali-kelas.katrol.index', compact(
+            'kelas', 'kelasId', 'classes', 
+            'allPeriods', 'selectedPeriodeId', 
+            'subjects', 'mapelId', 
+            'grades', 'currentKkm', 'activeYear'
+        ));
+    }
+
+    public function storeKatrol(Request $request)
+    {
+        $request->validate([
+            'kelas_id' => 'required',
+            'mapel_id' => 'required',
+            'periode_id' => 'required',
+            'method_type' => 'required'
+        ]);
+
+        $grades = NilaiSiswa::where('id_kelas', $request->kelas_id)
+            ->where('id_periode', $request->periode_id)
+            ->where('id_mapel', $request->mapel_id)
+            ->get();
+
+        $count = 0;
+        $method = $request->method_type;
+
+        foreach ($grades as $grade) {
+            // Backup original score if not already backed up
+            if (is_null($grade->nilai_akhir_asli)) {
+                $grade->nilai_akhir_asli = $grade->nilai_akhir;
+            }
+
+            $original = $grade->nilai_akhir_asli ?? $grade->nilai_akhir;
+            $newScore = $original;
+            $note = '';
+
+            // RESET Logic
+            if ($method === 'reset') {
+                $newScore = $original;
+                $note = null; // Clear note
+            } 
+            // CALCULATE Logic
+            else {
+                if ($method === 'kkm') {
+                    $threshold = $request->min_threshold ?? 70;
+                    if ($original < $threshold) {
+                        $newScore = $threshold;
+                        $note = "Katrol KKM ($threshold)";
+                    }
+                } elseif ($method === 'points') {
+                    $points = $request->boost_points ?? 0;
+                    $ceiling = $request->max_ceiling ?? 100;
+                    if ($original < $ceiling) {
+                        $newScore = min($ceiling, $original + $points);
+                        $note = "Boost +$points";
+                    }
+                } elseif ($method === 'percentage') {
+                    $percent = $request->boost_percent ?? 0;
+                    $factor = 1 + ($percent / 100);
+                    $newScore = min(100, round($original * $factor));
+                    $note = "Boost {$percent}%";
+                } elseif ($method === 'linear_scale') {
+                    // Linear Interpolation
+                    $targetMin = $request->target_min;
+                    $targetMax = $request->target_max;
+                    $dataMin = $request->data_min;
+                    $dataMax = $request->data_max;
+
+                    if ($dataMax > $dataMin) {
+                        $ratio = ($original - $dataMin) / ($dataMax - $dataMin);
+                        $range = $targetMax - $targetMin;
+                        $calc = $targetMin + ($ratio * $range);
+                        $newScore = min(100, round($calc));
+                        $note = "Interpolasi ($targetMin-$targetMax)";
+                        
+                        // Prevent downgrade
+                        $newScore = max($newScore, $original);
+                    }
+                }
+            }
+
+            // Update if changed
+            if ($newScore != $grade->nilai_akhir || $grade->katrol_note != $note) {
+                $grade->nilai_akhir = $newScore;
+                $grade->katrol_note = $note;
+                $grade->save();
+                $count++;
+            }
+        }
+
+        return redirect()->back()->with('success', "Berhasil memperbarui nilai untuk $count siswa.");
+    }
+
     private function checkActiveYear() 
     {
         $activeYear = TahunAjaran::where('status', 'aktif')->first();
