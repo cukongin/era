@@ -529,10 +529,21 @@ class IjazahController extends Controller
         // School Info
         $school = IdentitasSekolah::where('jenjang', $jenkins = $kelas->jenjang->kode ?? 'MI')->first() ?? IdentitasSekolah::first();
         
-        // Global Setting for Titimangsa
-        $titimangsaDate = \App\Models\GlobalSetting::val('titimangsa_' . strtolower($jenjang)) ?? date('d F Y');
-        $titimangsaPlace = \App\Models\GlobalSetting::val('titimangsa_tempat_' . strtolower($jenjang)) ?? ($school->kota ?? 'Kota');
-        $titimangsa = $titimangsaPlace . ', ' . $titimangsaDate;
+        // Global Setting for Titimangsa (Prioritize Transcript Specific)
+        $jenjangKey = strtolower($jenjang);
+        
+        $tDate = \App\Models\GlobalSetting::val('titimangsa_transkrip_' . $jenjangKey) 
+                 ?? \App\Models\GlobalSetting::val('titimangsa_' . $jenjangKey) 
+                 ?? date('d F Y');
+                 
+        $tPlace = \App\Models\GlobalSetting::val('titimangsa_transkrip_tempat_' . $jenjangKey)
+                  ?? \App\Models\GlobalSetting::val('titimangsa_tempat_' . $jenjangKey) 
+                  ?? ($school->kota ?? 'Kota');
+                  
+        
+        // Separete Date and Place to prevent duplication in View (Table Layout)
+        $titimangsa = $tDate;
+        $titimangsaPlace = $tPlace; 
 
         // BROWSER PRINT SUPPORT (Replaces Mpdf)
         // Pass all students to the view, let the specific "Print All" view handle the looping and page breaks.
@@ -581,7 +592,7 @@ class IjazahController extends Controller
             $dataStudents[] = compact('student', 'mapelGroups', 'avgNetwork');
         }
 
-        return view('ijazah.print_transcript_bulk', compact('dataStudents', 'kelas', 'school', 'titimangsa'));
+        return view('ijazah.print_transcript_bulk', compact('dataStudents', 'kelas', 'school', 'titimangsa', 'titimangsaPlace'));
     }
 
     public function settings()

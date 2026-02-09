@@ -133,8 +133,14 @@ class SettingsController extends Controller
             $gradingSettings = \App\Models\GlobalSetting::whereIn('key', [
                 'kkm_default', 'rounding_enable', 'promotion_max_kkm_failure', 
                 'promotion_min_attendance', 'promotion_min_attitude', 'total_effective_days', 'scale_type', 'promotion_requires_all_periods',
+                // Rapor Dates
                 'titimangsa_mi', 'titimangsa_mts',
-                'titimangsa_tempat_mi', 'titimangsa_tempat_mts'
+                'titimangsa_tempat_mi', 'titimangsa_tempat_mts',
+                'titimangsa_2_mi', 'titimangsa_2_mts',
+                // Transkrip Dates
+                'titimangsa_transkrip_mi', 'titimangsa_transkrip_mts',
+                'titimangsa_transkrip_tempat_mi', 'titimangsa_transkrip_tempat_mts',
+                'titimangsa_transkrip_2_mi', 'titimangsa_transkrip_2_mts'
             ])->pluck('value', 'key')->toArray();
 
             $activeBobot = $jenjang == 'MI' ? $bobotMI : $bobotMTS;
@@ -393,6 +399,11 @@ class SettingsController extends Controller
             'titimangsa_mi', 'titimangsa_mts',
             'titimangsa_2_mi', 'titimangsa_2_mts',
             'titimangsa_tempat_mi', 'titimangsa_tempat_mts',
+            // Transkrip Dates
+            'titimangsa_transkrip_mi', 'titimangsa_transkrip_mts',
+            'titimangsa_transkrip_tempat_mi', 'titimangsa_transkrip_tempat_mts',
+            'titimangsa_transkrip_2_mi', 'titimangsa_transkrip_2_mts',
+            
             'final_grade_mi', 'final_grade_mts',
             'ijazah_range_mi', 'ijazah_range_mts', 'ijazah_range_ma'
         ];
@@ -988,6 +999,18 @@ class SettingsController extends Controller
                       \Illuminate\Support\Facades\DB::table('grading_settings')
                         ->where('jenjang', $jenjang)
                         ->update(['effective_days_year' => $dayVal, 'updated_at' => now()]);
+                }
+            }
+
+            // 4. Update Titimangsa (Rapor & Transkrip) - Dynamic
+            // Matches: titimangsa_mi, titimangsa_mts, titimangsa_2_mi, titimangsa_2_mts
+            // AND titimangsa_transkrip_mi, titimangsa_transkrip_2_mi, etc.
+            foreach ($request->all() as $key => $val) {
+                if (str_starts_with($key, 'titimangsa_')) {
+                    \App\Models\GlobalSetting::updateOrCreate(
+                        ['key' => $key],
+                        ['value' => $val]
+                    );
                 }
             }
 

@@ -373,6 +373,45 @@
                                 </div>
                             </div>
 
+                            <!-- Card: Pengaturan Titimangsa Transkrip (NEW) -->
+                            <div class="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl shadow-sm border border-indigo-200 dark:border-indigo-800 p-5 mt-6">
+                                <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm mb-4">
+                                    <span class="material-symbols-outlined text-indigo-600 text-sm">history_edu</span> Pengaturan Titimangsa Transkrip / Ijazah
+                                </h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Tempat Titimangsa</label>
+                                        <input type="text" name="titimangsa_transkrip_tempat_{{ strtolower($jenjang) }}" 
+                                               value="{{ $gradingSettings['titimangsa_transkrip_tempat_' . strtolower($jenjang)] ?? ($school->kabupaten ?? '') }}" 
+                                               placeholder="Contoh: Jakarta"
+                                               class="w-full font-bold rounded-lg border-indigo-300 focus:ring-indigo-500 text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Tanggal Transkrip (Utama)</label>
+                                        <div class="relative">
+                                            <input type="text" name="titimangsa_transkrip_{{ strtolower($jenjang) }}" 
+                                                value="{{ $gradingSettings['titimangsa_transkrip_' . strtolower($jenjang)] ?? '' }}" 
+                                                placeholder="Contoh: 20 Juli 2024"
+                                                class="w-full font-bold rounded-lg border-indigo-300 focus:ring-indigo-500 text-sm">
+                                             <span class="absolute right-3 top-2 text-indigo-400 material-symbols-outlined text-[18px]">calendar_today</span>
+                                        </div>
+                                        <p class="text-[10px] text-slate-400 mt-1">Baris 1 (Misal Hijriyah)</p>
+                                    </div>
+                                    
+                                    <div class="col-span-1 md:col-span-2">
+                                        <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Tanggal Transkrip Baris 2</label>
+                                        <div class="relative">
+                                            <input type="text" name="titimangsa_transkrip_2_{{ strtolower($jenjang) }}" 
+                                                value="{{ $gradingSettings['titimangsa_transkrip_2_' . strtolower($jenjang)] ?? '' }}" 
+                                                placeholder="Contoh: 17 Februari 2025 M."
+                                                class="w-full font-bold rounded-lg border-indigo-300 focus:ring-indigo-500 text-sm">
+                                             <span class="absolute right-3 top-2 text-indigo-400 material-symbols-outlined text-[18px]">calendar_month</span>
+                                        </div>
+                                        <p class="text-[10px] text-slate-400 mt-1">Baris 2 (Misal Masehi). Kosongkan jika ingin sama dengan Rapor.</p>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Card: Pengaturan Tingkat Akhir (Moved to Standalone Card) -->
                             <div class="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl shadow-sm border border-indigo-200 dark:border-indigo-800 p-5 mt-6">
                                 <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm mb-4">

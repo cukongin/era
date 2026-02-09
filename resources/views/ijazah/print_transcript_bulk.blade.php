@@ -175,9 +175,74 @@
 
         <div class="signature-section">
             <div class="signature-box">
-                <p>{{ $titimangsa }}</p>
+                @php
+                    $jenjangKey = strtolower($kelas->jenjang->kode ?? 'mi'); 
+                    
+                    // Priority: Variable > Setting > School > Default
+                    $place = $titimangsaPlace ?? \App\Models\GlobalSetting::val('titimangsa_transkrip_tempat_' . $jenjangKey) 
+                             ?? ($school->kabupaten ?? $school->kota ?? 'Tempat');
+                    
+                    // Date 1 (Main/Hijri)
+                    $date1Raw = !empty($titimangsa) ? $titimangsa : \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM Y');
+                    
+                    // Date 2 (Secondary/Masehi)
+                    // Checks Transkrip Specific 2nd Date, falls back to Rapor 2nd Date
+                    $date2Raw = \App\Models\GlobalSetting::val('titimangsa_transkrip_2_' . $jenjangKey)
+                                ?? \App\Models\GlobalSetting::val('titimangsa_2_' . $jenjangKey);
+                @endphp
+
+                @if(!empty($date2Raw))
+                    @php
+                        // Helper logic to parse dates
+                        $parseDate = function($dateStr) {
+                            $parts = explode(' ', trim($dateStr));
+                            if (count($parts) < 3) return ['day' => $dateStr, 'month' => '', 'year' => '', 'suffix' => ''];
+                            
+                            $day = array_shift($parts);
+                            $last = end($parts);
+                            $suffix = '';
+                            if (str_ends_with($last, '.') || strlen($last) <= 2) {
+                                $suffix = array_pop($parts);
+                            }
+                            $year = array_pop($parts);
+                            $month = implode(' ', $parts);
+                            return compact('day', 'month', 'year', 'suffix');
+                        };
+
+                        $d1 = $parseDate($date1Raw);
+                        $d2 = $parseDate($date2Raw);
+                    @endphp
+
+                    {{-- Strict Table Layout --}}
+                    <div class="inline-block text-left">
+                        <table style="border-collapse: collapse; white-space: nowrap; width: 100%;">
+                            {{-- Row 1: Hijri --}}
+                            <tr class="leading-tight">
+                                <td class="pr-2 text-right" style="border: none;">{{ $place }},</td>
+                                <td class="px-1 text-center" style="border: none;">{{ $d1['day'] }}</td>
+                                <td class="px-1 text-left pl-2" style="border: none;">{{ $d1['month'] }}</td>
+                                <td class="px-1 text-center" style="border: none;">{{ $d1['year'] }}</td>
+                                <td class="pl-1 text-left" style="border: none;">{{ $d1['suffix'] }}</td>
+                            </tr>
+                            {{-- Row 2: Masehi --}}
+                            <tr class="leading-tight">
+                                <td style="border: none;"></td> {{-- Empty Place Column --}}
+                                <td class="px-1 text-center" style="border: none;">{{ $d2['day'] }}</td>
+                                <td class="px-1 text-left pl-2" style="border: none;">{{ $d2['month'] }}</td>
+                                <td class="px-1 text-center" style="border: none;">{{ $d2['year'] }}</td>
+                                <td class="pl-1 text-left" style="border: none;">{{ $d2['suffix'] }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                @else
+                    {{-- Standard Single Line --}}
+                    <p>{{ $place }}, {{ $date1Raw }}</p>
+                @endif
+
                 <br><br><br><br>
-                <p class="font-bold" style="text-decoration: none;">{{ ucwords($hmName) }}</p>
+                <div style="text-align: center;">
+                    <p class="font-bold" style="text-decoration: underline; margin-bottom: 2px;">{{ strtoupper($hmName) }}</p>
+                </div>
             </div>
             <div class="clear"></div>
         </div>
