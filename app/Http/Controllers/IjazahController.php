@@ -246,7 +246,9 @@ class IjazahController extends Controller
         
         $kelasId = $request->kelas_id;
         $kelas = Kelas::findOrFail($kelasId);
-        $jenjang = $kelas->jenjang->kode;
+        // FORCE MTS if Grade > 6 OR Name contains "MTS"
+        $isMts = $kelas->tingkat_kelas > 6 || stripos($kelas->nama_kelas, 'mts') !== false;
+        $jenjang = $isMts ? 'MTS' : 'MI';
         
         // Determine Target Semesters/Levels
         $levels = [];
