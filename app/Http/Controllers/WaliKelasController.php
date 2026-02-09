@@ -1547,9 +1547,11 @@ class WaliKelasController extends Controller
             ->get();
 
         // 3. Get KKM
+        $jenjangCode = optional($kelas->jenjang)->kode ?? ($kelas->tingkat > 6 ? 'MTS' : 'MI');
+        
         $kkmEntry = \App\Models\KkmMapel::where('id_mapel', $mapelId)
             ->where('id_tahun_ajaran', $activeYear->id)
-            ->where('jenjang_target', $kelas->jenjang->kode ?? 'MI') 
+            ->where('jenjang_target', $jenjangCode) 
             ->first();
         
         $currentKkm = $kkmEntry->nilai_kkm ?? 70; // Default KKM
