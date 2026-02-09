@@ -112,9 +112,16 @@
 <body class="bg-background-light dark:bg-background-dark font-display text-[#111518] antialiased">
     {{-- Variable periodSlots passed from Controller --}}
      @php
-        // ROBUST JENJANG DETECTION
-        // Fixes MI/MTS Layout Mismatch
-        $isMts = $class->tingkat_kelas > 6 || stripos($class->nama_kelas, 'mts') !== false;
+        // EXPANDED ROBUST JENJANG DETECTION
+        // includes Roman Numerals and Trusting Explicit DB 'MTS'
+        $name = strtoupper($class->nama_kelas ?? '');
+        $isMts = ($class->tingkat_kelas > 6) || 
+                 (strpos($name, 'MTS') !== false) || 
+                 (strpos($name, 'VII') !== false) || 
+                 (strpos($name, 'VIII') !== false) || 
+                 (strpos($name, 'IX') !== false) ||
+                 (optional($class->jenjang)->kode === 'MTS');
+         
         $jenjang = $isMts ? 'MTS' : 'MI';
         
         if ($jenjang === 'MTS') {
