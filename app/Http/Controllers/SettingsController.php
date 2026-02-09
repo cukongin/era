@@ -159,8 +159,11 @@ class SettingsController extends Controller
         }
         // Sort by newest
         usort($backups, function($a, $b) {
-            return $b->created_at <=> $a->created_at;
+        return $b->created_at <=> $a->created_at;
         });
+
+        // Fix Undefined Variable
+        $school = \App\Models\IdentitasSekolah::first();
 
         return view('settings.index', compact(
             'activeYear', 
