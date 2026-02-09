@@ -515,7 +515,11 @@ class IjazahController extends Controller
         $students = $kelas->anggota_kelas()->with('siswa')->get()->sortBy('siswa.nama_lengkap');
         
         // Mapels Logic (Existing)
-        $jenjang = $kelas->jenjang->kode ?? ($kelas->tingkat_kelas <= 6 ? 'MI' : 'MTS');
+        // Mapels Logic (Existing)
+        // FORCE MTS if Grade > 6 OR Name contains "MTS"
+        $isMts = $kelas->tingkat_kelas > 6 || stripos($kelas->nama_kelas, 'mts') !== false;
+        $jenjang = $isMts ? 'MTS' : 'MI';
+        
         // Fetch explicit Ujian Mapels if defined, else generic
         $selectedMapelIds = \App\Models\UjianMapel::where('id_tahun_ajaran', $kelas->id_tahun_ajaran)
                                 ->where('jenjang', $jenjang)
@@ -538,7 +542,7 @@ class IjazahController extends Controller
             ->groupBy('id_siswa');
             
         // School Info
-        $school = IdentitasSekolah::where('jenjang', $jenkins = $kelas->jenjang->kode ?? 'MI')->first() ?? IdentitasSekolah::first();
+        $school = IdentitasSekolah::where('jenjang', $jenjang)->first() ?? IdentitasSekolah::first();
         
         // Global Setting for Titimangsa (Prioritize Transcript Specific)
         $jenjangKey = strtolower($jenjang);
