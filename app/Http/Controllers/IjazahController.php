@@ -67,7 +67,11 @@ class IjazahController extends Controller
         // Similar to Report Controller
         // For Ijazah, usually we need ALL mapels that appear in Ijazah
         // Filter Mapel Ujian (If Configured)
-        $jenjang = $kelas->jenjang->kode ?? ($kelas->tingkat_kelas <= 6 ? 'MI' : 'MTS');
+        // Filter Mapel Ujian (Prioritize Grade Level to avoid Jenjang Config Mismatches)
+        // If Grade > 6 OR Class Name contains "MTs", force MTS.
+        $isMts = $kelas->tingkat_kelas > 6 || stripos($kelas->nama_kelas, 'mts') !== false;
+        $jenjang = $isMts ? 'MTS' : 'MI';
+        
         $selectedMapelIds = \App\Models\UjianMapel::where('id_tahun_ajaran', $activeYear->id)
                                 ->where('jenjang', $jenjang)
                                 ->pluck('id_mapel');
@@ -348,7 +352,10 @@ class IjazahController extends Controller
         $sheet->setCellValue('D1', 'NAMA SISWA');
         
         // Filter Mapel Ujian (If Configured)
-        $jenjang = $kelas->jenjang->kode ?? ($kelas->tingkat_kelas <= 6 ? 'MI' : 'MTS');
+        // FORCE MTS if Grade > 6 OR Name contains "MTS"
+        $isMts = $kelas->tingkat_kelas > 6 || stripos($kelas->nama_kelas, 'mts') !== false;
+        $jenjang = $isMts ? 'MTS' : 'MI';
+        
         $selectedMapelIds = \App\Models\UjianMapel::where('id_tahun_ajaran', $kelas->id_tahun_ajaran)
                                 ->where('jenjang', $jenjang)
                                 ->pluck('id_mapel');
@@ -417,7 +424,9 @@ class IjazahController extends Controller
         // Fetch valid mapels for this class (Consistent with Download/Index logic)
         $kelasId = $request->kelas_id;
         $kelas = Kelas::findOrFail($kelasId);
-        $jenjang = $kelas->jenjang->kode ?? ($kelas->tingkat_kelas <= 6 ? 'MI' : 'MTS');
+        
+        // FORCE MTS if Grade > 6
+        $jenjang = ($kelas->tingkat_kelas > 6) ? 'MTS' : 'MI';
         
         $selectedMapelIds = \App\Models\UjianMapel::where('id_tahun_ajaran', $kelas->id_tahun_ajaran)
                                 ->where('jenjang', $jenjang)
