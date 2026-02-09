@@ -356,7 +356,19 @@
                                                 class="w-full font-bold rounded-lg border-slate-300 focus:ring-primary text-sm">
                                              <span class="absolute right-3 top-2 text-slate-400 material-symbols-outlined text-[18px]">calendar_today</span>
                                         </div>
-                                        <p class="text-[10px] text-slate-400 mt-1">Tanggal pembagian rapor.</p>
+                                        <p class="text-[10px] text-slate-400 mt-1">Baris 1 (Hijriyah). Contoh: 18 Sya'ban 1446 H.</p>
+                                    </div>
+                                    
+                                    <div class="col-span-1 md:col-span-2">
+                                        <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Tanggal Baris 2 (Masehi)</label>
+                                        <div class="relative">
+                                            <input type="text" name="titimangsa_2_{{ strtolower($jenjang) }}" 
+                                                value="{{ $gradingSettings['titimangsa_2_' . strtolower($jenjang)] ?? '' }}" 
+                                                placeholder="Contoh: 17 Februari 2025 M."
+                                                class="w-full font-bold rounded-lg border-slate-300 focus:ring-primary text-sm">
+                                             <span class="absolute right-3 top-2 text-slate-400 material-symbols-outlined text-[18px]">calendar_month</span>
+                                        </div>
+                                        <p class="text-[10px] text-slate-400 mt-1">Baris 2 (Masehi). Muncul di bawah tanggal Hijriyah.</p>
                                     </div>
                                 </div>
                             </div>

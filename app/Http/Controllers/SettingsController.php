@@ -388,6 +388,7 @@ class SettingsController extends Controller
             'kkm_default', 'rounding_enable', 'promotion_max_kkm_failure', 
             'promotion_min_attendance', 'promotion_min_attitude', 'total_effective_days', 'scale_type', 'promotion_requires_all_periods',
             'titimangsa_mi', 'titimangsa_mts',
+            'titimangsa_2_mi', 'titimangsa_2_mts',
             'titimangsa_tempat_mi', 'titimangsa_tempat_mts',
             'final_grade_mi', 'final_grade_mts',
             'ijazah_range_mi', 'ijazah_range_mts', 'ijazah_range_ma'

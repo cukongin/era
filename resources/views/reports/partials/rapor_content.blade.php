@@ -467,9 +467,60 @@
         <div class="text-right text-xs mt-4 mb-1">
             @php
                 $place = !empty($titimangsaTempat) ? $titimangsaTempat : ($school->kabupaten ?? $school->kota ?? 'Tempat');
-                $date = !empty($titimangsa) ? $titimangsa : \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM Y');
+                $date1Raw = !empty($titimangsa) ? $titimangsa : \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM Y');
+                
+                $jenjangKey = strtolower($class->jenjang->kode ?? 'mi'); 
+                $date2Raw = \App\Models\GlobalSetting::val('titimangsa_2_' . $jenjangKey);
             @endphp
-            <p>{{ $place }}, {{ $date }}</p>
+            
+            @if(!empty($date2Raw))
+                @php
+                    // Helper logic to parse dates (Inline to avoid redeclaration error)
+                    $parseDate = function($dateStr) {
+                        $parts = explode(' ', trim($dateStr));
+                        if (count($parts) < 3) return ['day' => $dateStr, 'month' => '', 'year' => '', 'suffix' => ''];
+                        
+                        $day = array_shift($parts);
+                        $last = end($parts);
+                        $suffix = '';
+                        // Suffix is usually H. or M. or similar short string ending in dot
+                        if (str_ends_with($last, '.') || strlen($last) <= 2) {
+                            $suffix = array_pop($parts);
+                        }
+                        $year = array_pop($parts);
+                        $month = implode(' ', $parts);
+                        return compact('day', 'month', 'year', 'suffix');
+                    };
+
+                    $d1 = $parseDate($date1Raw);
+                    $d2 = $parseDate($date2Raw);
+                @endphp
+
+                {{-- Strict Table Layout --}}
+                <div class="inline-block text-left">
+                    <table style="border-collapse: collapse; white-space: nowrap;">
+                        {{-- Row 1: Hijri --}}
+                        <tr class="leading-tight">
+                            <td class="pr-2 text-right">{{ $place }},</td>
+                            <td class="px-1 text-center">{{ $d1['day'] }}</td>
+                            <td class="px-1 text-left pl-2">{{ $d1['month'] }}</td>
+                            <td class="px-1 text-center">{{ $d1['year'] }}</td>
+                            <td class="pl-1 text-left">{{ $d1['suffix'] }}</td>
+                        </tr>
+                        {{-- Row 2: Masehi --}}
+                        <tr class="leading-tight">
+                            <td></td> {{-- Empty Place Column --}}
+                            <td class="px-1 text-center">{{ $d2['day'] }}</td>
+                            <td class="px-1 text-left pl-2">{{ $d2['month'] }}</td>
+                            <td class="px-1 text-center">{{ $d2['year'] }}</td>
+                            <td class="pl-1 text-left">{{ $d2['suffix'] }}</td>
+                        </tr>
+                    </table>
+                </div>
+            @else
+                {{-- Standard Single Line --}}
+                <p>{{ $place }}, {{ $date1Raw }}</p>
+            @endif
         </div>
 
         <div class="flex justify-between items-end text-xs pb-4 w-full cursor-default">
