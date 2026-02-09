@@ -721,9 +721,14 @@ class ReportController extends Controller
 
     private function gatherReportData($student, $class, $activeYear)
     {
+         // 2b. ROBUST JENJANG DETECTION (Fixes MI/MTS Mismatch)
+         $isMts = $class->tingkat_kelas > 6 || stripos($class->nama_kelas, 'mts') !== false;
+         $jenjangCode = $isMts ? 'MTS' : 'MI';
+
          // 3. Fetch All Periods for this Year (Sort by name or ID)
+         // Filter by ROBUST Jenjang
         $allPeriods = Periode::where('id_tahun_ajaran', $activeYear->id)
-            ->where('lingkup_jenjang', $class->jenjang->kode)
+            ->where('lingkup_jenjang', $jenjangCode)
             ->orderBy('id', 'asc') 
             ->get();
             
@@ -777,7 +782,7 @@ class ReportController extends Controller
             ->groupBy('id_periode');
 
         // 8. School Identity (Fetch by Jenjang)
-    $targetJenjang = $class->jenjang->kode ?? 'MI';
+    $targetJenjang = $jenjangCode;
     $school = IdentitasSekolah::where('jenjang', $targetJenjang)->first();
     
     // Fallback to default (MI) if specific jenjang config not found
@@ -832,10 +837,10 @@ class ReportController extends Controller
         // 10. Fetch KKM
         $kkmMapels = DB::table('kkm_mapel')
             ->where('id_tahun_ajaran', $activeYear->id)
-            ->where('jenjang_target', $class->jenjang->kode)
+            ->where('jenjang_target', $jenjangCode)
             ->pluck('nilai_kkm', 'id_mapel');
             
-        $globalKkm = DB::table('grading_settings')->where('jenjang', $class->jenjang->kode)->value('kkm_default') ?? 70;
+        $globalKkm = DB::table('grading_settings')->where('jenjang', $jenjangCode)->value('kkm_default') ?? 70;
 
         // 11. Fetch Promotion Decision (Auto-Healing)
         $promotion = DB::table('promotion_decisions')

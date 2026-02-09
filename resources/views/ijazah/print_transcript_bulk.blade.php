@@ -22,7 +22,7 @@
             text-align: center;
             margin-bottom: 20px;
             font-weight: bold;
-            text-transform: Propercase;
+            text-transform: uppercase;
         }
         .header h2 { margin: 0; font-size: 14pt; }
         .header h3 { margin: 0; font-size: 12pt; font-weight: normal; }
