@@ -118,26 +118,39 @@ class MaintenanceController extends Controller
 
         try {
             DB::beginTransaction();
+            // DISABLE FOREIGN KEY CHECKS to prevent crashes involving "Ghost Data"
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
             $activeYear = TahunAjaran::where('status', 'aktif')->first();
 
-            // 1. CLEAR DECISIONS
+            // 1. CLEAR DECISIONS (Reset Process)
             DB::table('promotion_decisions')->delete();
+            DB::table('riwayat_perubahan_nilai')->truncate(); // Also clear history
 
             // 2. DETECT & CLEAN FUTURE YEAR
             $futureYear = null;
+            $restoreYear = null;
+
             if ($activeYear) {
                 // Scenario: Active is old, Latest is new (Future)
                 $latestYear = TahunAjaran::orderBy('id', 'desc')->first();
                 
                 if ($latestYear && $latestYear->id > $activeYear->id) {
+                    // We are in OLD year, trying to wipe NEW year
                     $futureYear = $latestYear;
+                    $restoreYear = $activeYear;
                 } elseif ($latestYear && $latestYear->id == $activeYear->id) {
-                     // Scenario: Active is new (Already promoted). Return to previous.
+                     // Scenario: We are ALREADY in the new year. WIPE current, restore PREVIOUS.
                      $prevYear = TahunAjaran::where('id', '<', $activeYear->id)->orderBy('id', 'desc')->first();
+                     
                      if ($prevYear) {
+                         $futureYear = $activeYear; // Wipe this one
+                         $restoreYear = $prevYear;  // Go back to this one
+                     } else {
+                         // No previous year? Dangerous. Just wipe data but keep year active?
+                         // Better to not delete Year itself, just content.
                          $futureYear = $activeYear;
-                         $activeYear = $prevYear;
+                         $restoreYear = $activeYear; // Stay here
                      }
                 }
             }
@@ -147,27 +160,48 @@ class MaintenanceController extends Controller
                  $classIds = Kelas::where('id_tahun_ajaran', $futureYear->id)->pluck('id');
                  
                  if ($classIds->isNotEmpty()) {
+                     // CASCADE DELETE MANUALLY (Just in case)
                      DB::table('anggota_kelas')->whereIn('id_kelas', $classIds)->delete();
                      DB::table('pengajar_mapel')->whereIn('id_kelas', $classIds)->delete();
+                     DB::table('catatan_wali_kelas')->whereIn('id_kelas', $classIds)->delete();
+                     DB::table('catatan_kehadiran')->whereIn('id_kelas', $classIds)->delete();
+                     DB::table('nilai_siswa')->whereIn('id_kelas', $classIds)->delete();
                      DB::table('kelas')->whereIn('id', $classIds)->delete();
+                     
                      $deletedCount = $classIds->count();
                  }
 
+                 // Remove Any Orphan "Ghost" Data matching this Year ID 
+                 // (In case AnggotaKelas exists but Class is gone/invalid)
+                //  DB::table('anggota_kelas')
+                //      ->join('kelas', 'anggota_kelas.id_kelas', '=', 'kelas.id')
+                //      ->where('kelas.id_tahun_ajaran', $futureYear->id)
+                //      ->delete();
+
                  // Revert Active Status
-                 TahunAjaran::query()->update(['status' => 'non-aktif']);
-                 $activeYear->update(['status' => 'aktif']);
+                 if ($restoreYear && $restoreYear->id != $futureYear->id) {
+                     TahunAjaran::query()->update(['status' => 'non-aktif']);
+                     $restoreYear->update(['status' => 'aktif']);
+                     
+                     // If we moved back, we might want to delete the "Future" year definition itself?
+                     // Usually yes, if it was auto-created.
+                     // But if it was manually created, maybe keep it?
+                     // Let's Keep the Year record, just wipe the data. Unless user wants to obscure it.
+                 }
             }
 
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
             DB::commit();
             
             $msg = "RESET BERHASIL! Keputusan kenaikan telah dikosongkan.";
-            if ($futureYear) {
-                $msg .= " Data T.A. {$futureYear->nama} ({$deletedCount} kelas) telah dibersihkan. Sistem kembali ke T.A. {$activeYear->nama}.";
+            if ($futureYear && $restoreYear) {
+                $msg .= " Data Tahun {$futureYear->nama} ({$deletedCount} kelas) telah dibersihkan. Kembali ke T.A. {$restoreYear->nama}.";
             }
 
             return back()->with('success', $msg);
 
         } catch (\Exception $e) {
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;'); // Safety restore
             DB::rollBack();
             return back()->with('error', "Gagal Reset: " . $e->getMessage());
         }
