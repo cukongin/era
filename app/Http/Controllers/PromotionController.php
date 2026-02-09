@@ -499,7 +499,33 @@ class PromotionController extends Controller
                 'updated_at' => now()
             ]);
 
-        return back()->with('success', "Status Kenaikan Kelas BERHASIL DIKUNCI PERMANEN. ($affected Data Di-finalisasi). Tombol 'Hitung Semua' tidak akan mengubah data ini lagi.");
+        // --- SYNC TO ANGGOTA KELAS (BUKU INDUK CONTROL) ---
+        // Ensures 'Keterangan' in Student Profile is Automatic
+        $decisions = DB::table('promotion_decisions')
+            ->where('id_tahun_ajaran', $activeYear->id)
+            ->get();
+
+        $syncCount = 0;
+        foreach ($decisions as $dec) {
+            $status = 'aktif';
+            $final = $dec->final_decision ?? $dec->system_recommendation; // Use system if final is null? No, prefer final.
+            
+            // Map Decision to AnggotaKelas Status
+            if ($final == 'promoted' || $final == 'conditional') $status = 'naik_kelas';
+            elseif ($final == 'retained') $status = 'tinggal_kelas';
+            elseif ($final == 'graduated') $status = 'lulus';
+            elseif ($final == 'not_graduated') $status = 'tinggal_kelas'; 
+            
+            // Update AnggotaKelas
+            // We need to match precise class member record
+            $updated = AnggotaKelas::where('id_siswa', $dec->id_siswa)
+                ->where('id_kelas', $dec->id_kelas)
+                ->update(['status' => $status]);
+            
+            if ($updated) $syncCount++;
+        }
+
+        return back()->with('success', "Status Kenaikan Kelas BERHASIL DIKUNCI PERMANEN. $affected Data Di-finalisasi. $syncCount Data Riwayat/Buku Induk diperbarui otomatis.");
     }
 
     private function checkActiveYear() 

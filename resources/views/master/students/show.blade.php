@@ -291,14 +291,36 @@
                                 <td class="px-6 py-4 text-right relative">
                                     <div class="flex items-center justify-end gap-2">
                                         <div onclick="window.open('{{ route('reports.print', ['student' => $student->id, 'year_id' => $riwayat->kelas->id_tahun_ajaran]) }}', '_blank')" class="flex-1 text-right">
-                                            @if($riwayat->status == 'aktif')
+                                            @php
+                                                $displayStatus = $riwayat->status;
+                                                $isPast = $riwayat->kelas->tahun_ajaran->status == 'tidak_aktif';
+                                                
+                                                // SMART INFERENCE: Fix Old Data showing 'AKTIF'
+                                                if ($displayStatus == 'aktif' && $isPast) {
+                                                    $grade = (int) filter_var($riwayat->kelas->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
+                                                    // Detect Final Year (6, 9, 12, or 3 for old MTS naming)
+                                                    $isFinal = in_array($grade, [6, 9, 12]) || 
+                                                               ($grade == 3 && stripos($riwayat->kelas->nama_kelas, 'MTS') !== false);
+                                                    
+                                                    // If explicit student status is 'lulus' and this is their last record, safe to say LULUS
+                                                    if ($isFinal) {
+                                                        $displayStatus = 'lulus';
+                                                    } else {
+                                                        $displayStatus = 'naik_kelas';
+                                                    }
+                                                }
+                                            @endphp
+
+                                            @if($displayStatus == 'aktif')
                                                 <span class="text-xs font-bold text-blue-600 bg-blue-100 px-3 py-1 rounded-full border border-blue-200">AKTIF</span>
-                                            @elseif($riwayat->status == 'lulus' || $riwayat->status == 'naik_kelas')
+                                            @elseif($displayStatus == 'lulus')
+                                                <span class="text-xs font-bold text-green-600 bg-green-100 px-3 py-1 rounded-full border border-green-200">LULUS</span>
+                                            @elseif($displayStatus == 'naik_kelas')
                                                 <span class="text-xs font-bold text-green-600 bg-green-100 px-3 py-1 rounded-full border border-green-200">NAIK KELAS</span>
-                                            @elseif($riwayat->status == 'tinggal_kelas')
+                                            @elseif($displayStatus == 'tinggal_kelas')
                                                 <span class="text-xs font-bold text-red-600 bg-red-100 px-3 py-1 rounded-full border border-red-200">TINGGAL KELAS</span>
                                             @else
-                                                <span class="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">{{ strtoupper(str_replace('_', ' ', $riwayat->status)) }}</span>
+                                                <span class="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">{{ strtoupper(str_replace('_', ' ', $displayStatus)) }}</span>
                                             @endif
                                             
                                             <div class="mt-2 text-[10px] text-primary font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-end gap-1">
