@@ -112,7 +112,11 @@
 <body class="bg-background-light dark:bg-background-dark font-display text-[#111518] antialiased">
     {{-- Variable periodSlots passed from Controller --}}
      @php
-        $jenjang = optional($class->jenjang)->kode ?? 'MI';
+        // ROBUST JENJANG DETECTION
+        // Fixes MI/MTS Layout Mismatch
+        $isMts = $class->tingkat_kelas > 6 || stripos($class->nama_kelas, 'mts') !== false;
+        $jenjang = $isMts ? 'MTS' : 'MI';
+        
         if ($jenjang === 'MTS') {
             $periodSlots = [1, 2];
             $periodLabel = 'Semester';
