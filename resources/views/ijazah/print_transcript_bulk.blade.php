@@ -67,7 +67,9 @@
         $bUjian = \App\Models\GlobalSetting::val('ijazah_bobot_ujian', 40);
 
         // Determine Jenjang for this student/class
-        $jenjang = $kelas->jenjang->kode ?? ($kelas->tingkat_kelas > 6 ? 'MTS' : 'MI');
+        // Determine Jenjang for this student/class (Robust)
+        $isMts = $kelas->tingkat_kelas > 6 || stripos($kelas->nama_kelas, 'mts') !== false;
+        $jenjang = $isMts ? 'MTS' : 'MI';
 
         // Dynamic Headmaster Logic (Re-applied)
         $defaultHm = $school->kepala_madrasah ? trim($school->kepala_madrasah) : '';
@@ -92,7 +94,9 @@
     <div class="{{ $index < count($dataStudents) - 1 ? 'page-break' : '' }}" style="page-break-after: always; position: relative; width: 100%;">
     <div class="header">
         @php
-            $jenjang = $kelas->jenjang->kode ?? ($kelas->tingkat_kelas > 6 ? 'MTS' : 'MI');
+            // Robust Jenjang Check
+            $isMts = $kelas->tingkat_kelas > 6 || stripos($kelas->nama_kelas, 'mts') !== false;
+            $jenjang = $isMts ? 'MTS' : 'MI';
             $kopFile = ($jenjang === 'MTS') ? 'KOP TRANSKIP Mts.svg' : 'KOP TRANSKIP MI.svg';
         @endphp
         <img src="{{ asset('assets/img/' . $kopFile) }}" alt="Kop Surat" style="width: 100%; max-width: 100%; height: auto; margin-bottom: 5px;">
