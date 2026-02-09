@@ -23,7 +23,7 @@
                  <div class="bg-purple-100 text-purple-700 p-2 rounded-lg">
                     <span class="material-symbols-outlined">school</span>
                  </div>
-                 <h2 class="text-lg font-bold text-slate-800 dark:text-white">Daftar Kelas Akhir (MI 6 / MTs 9 / MA 12)</h2>
+                 <h2 class="text-lg font-bold text-slate-800 dark:text-white">Daftar Kelas Akhir (MI 6 / MTs 9)</h2>
             </div>
 
             @if($finalClasses->isEmpty())

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\TahunAjaran;
 use App\Models\Periode;
 use App\Models\BobotPenilaian;
+use App\Models\IdentitasSekolah;
 use App\Models\KkmMapel;
 use App\Models\Mapel;
 use App\Models\NilaiSiswa;
@@ -1135,53 +1136,47 @@ class SettingsController extends Controller
         
         // 2. Headmasters (Sync GlobalSetting AND IdentitasSekolah Table)
         
-        // MI
+        // 2. Headmasters & School Identity (Sync GlobalSetting AND IdentitasSekolah Table)
+        
+        // --- MI ---
         if ($request->has('hm_name_mi')) {
             \App\Models\GlobalSetting::set('hm_name_mi', $request->hm_name_mi);
-            IdentitasSekolah::updateOrCreate(
-                ['jenjang' => 'MI'], 
-                ['kepala_madrasah' => $request->hm_name_mi]
-            );
+            
+            $dataMi = ['kepala_madrasah' => $request->hm_name_mi];
+            if ($request->has('hm_nip_mi')) {
+                 \App\Models\GlobalSetting::set('hm_nip_mi', $request->hm_nip_mi);
+                 $dataMi['nip_kepala_madrasah'] = $request->hm_nip_mi;
+            }
+            // Identity Fields MI
+            if ($request->has('nama_sekolah_mi')) $dataMi['nama_sekolah'] = $request->nama_sekolah_mi;
+            if ($request->has('nsm_mi')) $dataMi['nsm'] = $request->nsm_mi;
+            if ($request->has('npsn_mi')) $dataMi['npsn'] = $request->npsn_mi;
+            if ($request->has('alamat_mi')) $dataMi['alamat'] = $request->alamat_mi;
+            if ($request->has('kabupaten_mi')) $dataMi['kabupaten'] = $request->kabupaten_mi; // For Titimangsa
+
+            IdentitasSekolah::updateOrCreate(['jenjang' => 'MI'], $dataMi);
         }
-        if ($request->has('hm_nip_mi')) {
-            \App\Models\GlobalSetting::set('hm_nip_mi', $request->hm_nip_mi);
-            IdentitasSekolah::updateOrCreate(
-                ['jenjang' => 'MI'], 
-                ['nip_kepala_madrasah' => $request->hm_nip_mi]
-            );
-        }
-        
-        // MTS
+
+        // --- MTs ---
         if ($request->has('hm_name_mts')) {
             \App\Models\GlobalSetting::set('hm_name_mts', $request->hm_name_mts);
-            IdentitasSekolah::updateOrCreate(
-                ['jenjang' => 'MTS'], 
-                ['kepala_madrasah' => $request->hm_name_mts]
-            );
-        }
-        if ($request->has('hm_nip_mts')) {
-            \App\Models\GlobalSetting::set('hm_nip_mts', $request->hm_nip_mts);
-            IdentitasSekolah::updateOrCreate(
-                ['jenjang' => 'MTS'], 
-                ['nip_kepala_madrasah' => $request->hm_nip_mts]
-            );
+            
+            $dataMts = ['kepala_madrasah' => $request->hm_name_mts];
+            if ($request->has('hm_nip_mts')) {
+                 \App\Models\GlobalSetting::set('hm_nip_mts', $request->hm_nip_mts);
+                 $dataMts['nip_kepala_madrasah'] = $request->hm_nip_mts;
+            }
+            // Identity Fields MTs
+            if ($request->has('nama_sekolah_mts')) $dataMts['nama_sekolah'] = $request->nama_sekolah_mts;
+            if ($request->has('nsm_mts')) $dataMts['nsm'] = $request->nsm_mts;
+            if ($request->has('npsn_mts')) $dataMts['npsn'] = $request->npsn_mts;
+            if ($request->has('alamat_mts')) $dataMts['alamat'] = $request->alamat_mts;
+             if ($request->has('kabupaten_mts')) $dataMts['kabupaten'] = $request->kabupaten_mts;
+
+            IdentitasSekolah::updateOrCreate(['jenjang' => 'MTS'], $dataMts);
         }
         
-        // MA
-        if ($request->has('hm_name_ma')) {
-            \App\Models\GlobalSetting::set('hm_name_ma', $request->hm_name_ma);
-            IdentitasSekolah::updateOrCreate(
-                ['jenjang' => 'MA'], 
-                ['kepala_madrasah' => $request->hm_name_ma]
-            );
-        }
-        if ($request->has('hm_nip_ma')) {
-            \App\Models\GlobalSetting::set('hm_nip_ma', $request->hm_nip_ma);
-            IdentitasSekolah::updateOrCreate(
-                ['jenjang' => 'MA'], 
-                ['nip_kepala_madrasah' => $request->hm_nip_ma]
-            );
-        }
+
 
         // 3. Logo Upload (Sync All)
         if ($request->hasFile('app_logo')) {

@@ -21,12 +21,6 @@
         $periods = [1, 2]; // Semesters
         $periodLabel = 'Smt';
         $headerRange = 'Kelas 1 - 3 (MTS)';
-    } elseif ($jenjang === 'MA') {
-        $startLvl = 10;
-        $endLvl = 12;
-        $periods = [1, 2];
-        $periodLabel = 'Smt';
-        $headerRange = 'Kelas 1 - 3 (MA)';
     }
 
     // Calculate Total Rowspan (Data Rows + 3 Summary Rows)
@@ -123,13 +117,12 @@
                                 @if(!$isFirst) <tr class="bg-white group hover:bg-slate-50 transition-colors"> @endif
                                 
                                 @php
-                                    // Calculate Display Label (Absolute -> Relative for MTS/MA)
+                                    // Calculate Display Label (Absolute -> Relative for MTS)
                                     $displayLvl = $lvl;
                                     if ($jenjang === 'MTS') $displayLvl = $lvl - 6;
-                                    if ($jenjang === 'MA') $displayLvl = $lvl - 9;
                                     
                                     // Suffix
-                                    $lvlSuffix = ($jenjang === 'MTS' || $jenjang === 'MA') ? (' ' . $jenjang) : '';
+                                    $lvlSuffix = ($jenjang === 'MTS') ? (' ' . $jenjang) : '';
                                 @endphp
 
                                 <td class="px-3 py-2 border-r border-slate-200 text-slate-500 text-xs whitespace-nowrap sticky left-[240px] bg-white group-hover:bg-slate-50">
@@ -142,8 +135,8 @@
                                         $score = $row['data'][$lvl][$period][$mapel->id] ?? null; 
                                         
                                         // Fallback: If data is missing at absolute level, try relative
-                                        if ($score === null && ($jenjang === 'MTS' || $jenjang === 'MA')) {
-                                            $relativeLvl = $lvl - ($jenjang === 'MTS' ? 6 : 9);
+                                        if ($score === null && ($jenjang === 'MTS')) {
+                                            $relativeLvl = $lvl - 6;
                                             $score = $row['data'][$relativeLvl][$period][$mapel->id] ?? null;
                                         }
                                     @endphp
@@ -157,8 +150,8 @@
                                     foreach($mapels as $m) {
                                         // Re-replicate fetch logic for Average
                                         $sc = $row['data'][$lvl][$period][$m->id] ?? null;
-                                        if ($sc === null && ($jenjang === 'MTS' || $jenjang === 'MA')) {
-                                             $relativeLvl = $lvl - ($jenjang === 'MTS' ? 6 : 9);
+                                        if ($sc === null && ($jenjang === 'MTS')) {
+                                             $relativeLvl = $lvl - 6;
                                              $sc = $row['data'][$relativeLvl][$period][$m->id] ?? null;
                                         }
                                         if($sc !== null) $rowScores[] = $sc;
@@ -281,13 +274,12 @@
                         @if(!$isFirst) <tr> @endif
                         
                         @php
-                            // Calculate Display Label (Absolute -> Relative for MTS/MA)
+                            // Calculate Display Label (Absolute -> Relative for MTS)
                             $displayLvl = $lvl;
                             if ($jenjang === 'MTS') $displayLvl = $lvl - 6;
-                            if ($jenjang === 'MA') $displayLvl = $lvl - 9;
                             
                             // Suffix
-                            $lvlSuffix = ($jenjang === 'MTS' || $jenjang === 'MA') ? (' ' . $jenjang) : '';
+                            $lvlSuffix = ($jenjang === 'MTS') ? (' ' . $jenjang) : '';
                         @endphp
 
                         <td class="px-2 py-1 border border-black text-[#138aec] font-bold text-[9px] whitespace-nowrap">
@@ -297,8 +289,8 @@
                         @foreach($mapels as $mapel)
                             @php 
                                 $score = $row['data'][$lvl][$period][$mapel->id] ?? null; 
-                                if ($score === null && ($jenjang === 'MTS' || $jenjang === 'MA')) {
-                                    $relativeLvl = $lvl - ($jenjang === 'MTS' ? 6 : 9);
+                                if ($score === null && ($jenjang === 'MTS')) {
+                                    $relativeLvl = $lvl - 6;
                                     $score = $row['data'][$relativeLvl][$period][$mapel->id] ?? null;
                                 }
                             @endphp
@@ -311,8 +303,8 @@
                             $rowScores = [];
                             foreach($mapels as $m) {
                                 $sc = $row['data'][$lvl][$period][$m->id] ?? null;
-                                if ($sc === null && ($jenjang === 'MTS' || $jenjang === 'MA')) {
-                                     $relativeLvl = $lvl - ($jenjang === 'MTS' ? 6 : 9);
+                                if ($sc === null && ($jenjang === 'MTS')) {
+                                     $relativeLvl = $lvl - 6;
                                      $sc = $row['data'][$relativeLvl][$period][$m->id] ?? null;
                                 }
                                 if($sc !== null) $rowScores[] = $sc;
@@ -382,7 +374,7 @@
                     $hmTitle = 'Kepala Madrasah';
                     if ($jenjang === 'MI') $hmTitle = 'Kepala Madrasah Ibtidaiyah';
                     if ($jenjang === 'MTS') $hmTitle = 'Kepala Madrasah Tsanawiyah';
-                    if ($jenjang === 'MA') $hmTitle = 'Kepala Madrasah Aliyah';
+                    if ($jenjang === 'MTS') $hmTitle = 'Kepala Madrasah Tsanawiyah';
 
                     $hmName = $school->kepala_madrasah ?? '......................';
                     $hmNip = $school->nip_kepala ?? '-';
@@ -393,9 +385,9 @@
                     } elseif ($jenjang === 'MTS') {
                          $hmName = \App\Models\GlobalSetting::val('hm_name_mts') ?: $hmName;
                          $hmNip = \App\Models\GlobalSetting::val('hm_nip_mts') ?: $hmNip;
-                    } elseif ($jenjang === 'MA') {
-                         $hmName = \App\Models\GlobalSetting::val('hm_name_ma') ?: $hmName;
-                         $hmNip = \App\Models\GlobalSetting::val('hm_nip_ma') ?: $hmNip;
+                    } elseif ($jenjang === 'MTS') {
+                         $hmName = \App\Models\GlobalSetting::val('hm_name_mts') ?: $hmName;
+                         $hmNip = \App\Models\GlobalSetting::val('hm_nip_mts') ?: $hmNip;
                     }
                 @endphp
                 

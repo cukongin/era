@@ -375,7 +375,7 @@
                                         <p class="text-[10px] text-slate-400 mt-1">Siswa kelas ini akan dianggap LULUS jika naik.</p>
                                     </div>
                                     <div>
-                                        <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Kelas Akhir MTs/MA</label>
+                                        <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Kelas Akhir MTs</label>
                                         <input type="number" name="final_grade_mts" 
                                             value="{{ \App\Models\GlobalSetting::val('final_grade_mts', 9) }}" 
                                             class="w-full font-bold rounded-lg border-indigo-200 focus:ring-indigo-500 text-indigo-700 text-sm" placeholder="9 (atau 3)">
@@ -398,12 +398,7 @@
                                                     value="{{ \App\Models\GlobalSetting::val('ijazah_range_mts', '7,8,9,1,2,3') }}" 
                                                     class="w-full font-mono text-xs rounded-lg border-slate-300 focus:ring-indigo-500" placeholder="7,8,9,1,2,3">
                                             </div>
-                                            <div>
-                                                <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Rentang MA</label>
-                                                <input type="text" name="ijazah_range_ma" 
-                                                    value="{{ \App\Models\GlobalSetting::val('ijazah_range_ma', '10,11,12,1,2,3') }}" 
-                                                    class="w-full font-mono text-xs rounded-lg border-slate-300 focus:ring-indigo-500" placeholder="10,11,12,1,2,3">
-                                            </div>
+                                            <!-- MA Range Removed -->
                                         </div>
                                         <p class="text-[10px] text-slate-400 mt-2 italic px-1">
                                             * Masukkan tingkat kelas yang akan diambil nilai Rapor-nya. Pisahkan dengan koma (contoh: 7,8,9).
@@ -501,7 +496,7 @@
                     <span class="material-symbols-outlined text-primary">storefront</span> Identitas Sekolah & Aplikasi
                 </h3>
 
-                <form action="{{ route('settings.identity.update') }}" method="POST" enctype="multipart/form-data" class="max-w-4xl">
+                <form action="{{ route('settings.identity.update') }}" method="POST" enctype="multipart/form-data" class="w-full">
                     @csrf
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         
@@ -553,51 +548,90 @@
                              <span class="material-symbols-outlined text-indigo-500">supervisor_account</span> Kepala Madrasah (Tanda Tangan Rapor & DKN)
                         </h4>
                         
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- MI -->
                             <div class="bg-teal-50 dark:bg-teal-900/20 p-4 rounded-xl border border-teal-100 dark:border-teal-800">
-                                <h5 class="font-bold text-sm text-teal-800 dark:text-teal-300 mb-3 border-b border-teal-200 pb-2">Tingkat MI</h5>
+                                <h5 class="font-bold text-sm text-teal-800 dark:text-teal-300 mb-3 border-b border-teal-200 pb-2">Identitas Tingkat MI</h5>
                                 <div class="space-y-3">
+                                    {{-- Hidden Fetch for Default Values --}}
+                                    @php $mi = \App\Models\IdentitasSekolah::where('jenjang', 'MI')->first(); @endphp
+                                    
                                     <div>
+                                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Nama Madrasah (MI)</label>
+                                        <input type="text" name="nama_sekolah_mi" value="{{ $mi->nama_sekolah ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-teal-500 font-bold" placeholder="MIS ...">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">NSM</label>
+                                            <input type="text" name="nsm_mi" value="{{ $mi->nsm ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-teal-500" placeholder="NSM">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">NPSN</label>
+                                            <input type="text" name="npsn_mi" value="{{ $mi->npsn ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-teal-500" placeholder="NPSN">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Alamat</label>
+                                        <input type="text" name="alamat_mi" value="{{ $mi->alamat ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-teal-500" placeholder="Jl. ...">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Kabupaten/Kota (Untuk Titimangsa)</label>
+                                        <input type="text" name="kabupaten_mi" value="{{ $mi->kabupaten ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-teal-500" placeholder="Contoh: Sidoarjo">
+                                    </div>
+
+                                    <div class="pt-2 border-t border-teal-200 mt-2">
                                         <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Nama Kepala MI</label>
-                                        <input type="text" name="hm_name_mi" value="{{ \App\Models\GlobalSetting::val('hm_name_mi') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-teal-500 focus:border-teal-500" placeholder="Nama Lengkap & Gelar">
+                                        <input type="text" name="hm_name_mi" value="{{ \App\Models\GlobalSetting::val('hm_name_mi') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-teal-500 bg-white" placeholder="Nama Lengkap & Gelar">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">NIP Kepala MI</label>
-                                        <input type="text" name="hm_nip_mi" value="{{ \App\Models\GlobalSetting::val('hm_nip_mi') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-teal-500 focus:border-teal-500" placeholder="NIP e.g. 198...">
+                                        <input type="text" name="hm_nip_mi" value="{{ \App\Models\GlobalSetting::val('hm_nip_mi') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-teal-500 bg-white" placeholder="NIP">
                                     </div>
                                 </div>
                             </div>
 
                             <!-- MTs -->
                             <div class="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-xl border border-indigo-100 dark:border-indigo-800">
-                                <h5 class="font-bold text-sm text-indigo-800 dark:text-indigo-300 mb-3 border-b border-indigo-200 pb-2">Tingkat MTs</h5>
+                                <h5 class="font-bold text-sm text-indigo-800 dark:text-indigo-300 mb-3 border-b border-indigo-200 pb-2">Identitas Tingkat MTs</h5>
                                 <div class="space-y-3">
+                                    {{-- Hidden Fetch for Default Values --}}
+                                    @php $mts = \App\Models\IdentitasSekolah::where('jenjang', 'MTS')->first(); @endphp
+
                                     <div>
+                                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Nama Madrasah (MTs)</label>
+                                        <input type="text" name="nama_sekolah_mts" value="{{ $mts->nama_sekolah ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-indigo-500 font-bold" placeholder="MTs ...">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">NSM</label>
+                                            <input type="text" name="nsm_mts" value="{{ $mts->nsm ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-indigo-500" placeholder="NSM">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">NPSN</label>
+                                            <input type="text" name="npsn_mts" value="{{ $mts->npsn ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-indigo-500" placeholder="NPSN">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Alamat</label>
+                                        <input type="text" name="alamat_mts" value="{{ $mts->alamat ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-indigo-500" placeholder="Jl. ...">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Kabupaten/Kota (Untuk Titimangsa)</label>
+                                        <input type="text" name="kabupaten_mts" value="{{ $mts->kabupaten ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-indigo-500" placeholder="Contoh: Sidoarjo">
+                                    </div>
+
+                                    <div class="pt-2 border-t border-indigo-200 mt-2">
                                         <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Nama Kepala MTs</label>
-                                        <input type="text" name="hm_name_mts" value="{{ \App\Models\GlobalSetting::val('hm_name_mts') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Nama Lengkap & Gelar">
+                                        <input type="text" name="hm_name_mts" value="{{ \App\Models\GlobalSetting::val('hm_name_mts') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-indigo-500 bg-white" placeholder="Nama Lengkap & Gelar">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">NIP Kepala MTs</label>
-                                        <input type="text" name="hm_nip_mts" value="{{ \App\Models\GlobalSetting::val('hm_nip_mts') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-indigo-500 focus:border-indigo-500" placeholder="NIP">
+                                        <input type="text" name="hm_nip_mts" value="{{ \App\Models\GlobalSetting::val('hm_nip_mts') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-indigo-500 bg-white" placeholder="NIP">
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- MA -->
-                            <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-xl border border-purple-100 dark:border-purple-800">
-                                <h5 class="font-bold text-sm text-purple-800 dark:text-purple-300 mb-3 border-b border-purple-200 pb-2">Tingkat MA</h5>
-                                <div class="space-y-3">
-                                    <div>
-                                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Nama Kepala MA</label>
-                                        <input type="text" name="hm_name_ma" value="{{ \App\Models\GlobalSetting::val('hm_name_ma') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-purple-500 focus:border-purple-500" placeholder="Nama Lengkap & Gelar">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">NIP Kepala MA</label>
-                                        <input type="text" name="hm_nip_ma" value="{{ \App\Models\GlobalSetting::val('hm_nip_ma') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-purple-500 focus:border-purple-500" placeholder="NIP">
-                                    </div>
-                                </div>
-                            </div>
+                            <!-- MA Card Removed -->
                         </div>
                     </div>
 

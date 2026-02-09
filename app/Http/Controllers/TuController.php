@@ -228,9 +228,7 @@ class TuController extends Controller
             ->where(function($q) {
                 $q->where('nama_kelas', 'LIKE', '%6%')   // MI Class 6
                   ->orWhere('nama_kelas', 'LIKE', '%9%') // MTs Class 9
-                  ->orWhere('nama_kelas', 'LIKE', '%12%') // MA Class 12
-                  ->orWhere('nama_kelas', 'LIKE', '%3%')  // MTs/MA Class 3 (Relative)
-                  ->orWhere('nama_kelas', 'LIKE', '%XII%') // Roman 12
+                  ->orWhere('nama_kelas', 'LIKE', '%3%')  // MTs Class 3 (Relative)
                   ->orWhere('nama_kelas', 'LIKE', '%IX%')  // Roman 9
                   ->orWhere('nama_kelas', 'LIKE', '%VI%')  // Roman 6
                   ->orWhere('nama_kelas', 'LIKE', '%III%'); // Roman 3
@@ -275,8 +273,6 @@ class TuController extends Controller
             
             if ($jenjang === 'MTS') {
                 $startLvl = 7; $endLvl = 9; $periods = [1, 2];
-            } elseif ($jenjang === 'MA') {
-                $startLvl = 10; $endLvl = 12; $periods = [1, 2];
             } else {
                 $startLvl = 1; $endLvl = 6; $periods = [1, 2, 3];
             }
@@ -293,8 +289,8 @@ class TuController extends Controller
                 $lvlGrades = $sGrades->filter(fn($g) => $g->kelas && $g->kelas->tingkat_kelas == $lvl);
                 
                 // Fallback: If no grades found at absolute level (e.g. 7), try relative level (e.g. 1) IF user uses relative classes
-                if ($lvlGrades->isEmpty() && ($jenjang === 'MTS' || $jenjang === 'MA')) {
-                     $relativeLvl = $lvl - ($jenjang === 'MTS' ? 6 : 9);
+                if ($lvlGrades->isEmpty() && ($jenjang === 'MTS')) {
+                     $relativeLvl = $lvl - 6;
                      $lvlGrades = $sGrades->filter(fn($g) => $g->kelas && $g->kelas->tingkat_kelas == $relativeLvl);
                 }
 
@@ -328,8 +324,8 @@ class TuController extends Controller
             $jenjang = $kelas->jenjang->kode ?? ($kelas->tingkat_kelas <= 6 ? 'MI' : 'MTS');
             
             // Dynamic Levels
-            $levelKey = ($jenjang === 'MTS') ? 'ijazah_range_mts' : (($jenjang === 'MA') ? 'ijazah_range_ma' : 'ijazah_range_mi');
-            $defaultLevels = ($jenjang === 'MTS') ? '7,8,9' : (($jenjang === 'MA') ? '10,11,12' : '4,5,6');
+            $levelKey = ($jenjang === 'MTS') ? 'ijazah_range_mts' : 'ijazah_range_mi';
+            $defaultLevels = ($jenjang === 'MTS') ? '7,8,9' : '4,5,6';
             
             $targetLevelsStr = \App\Models\GlobalSetting::val($levelKey, $defaultLevels);
             $targetLevels = array_map('intval', explode(',', $targetLevelsStr));
@@ -377,8 +373,8 @@ class TuController extends Controller
             $jenjang = $kelas->jenjang->kode ?? ($kelas->tingkat_kelas <= 6 ? 'MI' : 'MTS');
             
             // Dynamic Levels
-            $levelKey = ($jenjang === 'MTS') ? 'ijazah_range_mts' : (($jenjang === 'MA') ? 'ijazah_range_ma' : 'ijazah_range_mi');
-            $defaultLevels = ($jenjang === 'MTS') ? '7,8,9' : (($jenjang === 'MA') ? '10,11,12' : '4,5,6');
+            $levelKey = ($jenjang === 'MTS') ? 'ijazah_range_mts' : 'ijazah_range_mi';
+            $defaultLevels = ($jenjang === 'MTS') ? '7,8,9' : '4,5,6';
             
             $targetLevelsStr = \App\Models\GlobalSetting::val($levelKey, $defaultLevels);
             $targetLevels = array_map('intval', explode(',', $targetLevelsStr));
@@ -566,7 +562,6 @@ class TuController extends Controller
             
             $periodCountsByJenjang['MI'] = $miCount > 0 ? $miCount : 1; 
             $periodCountsByJenjang['MTS'] = $mtsCount > 0 ? $mtsCount : 1;
-            $periodCountsByJenjang['MA'] = $mtsCount > 0 ? $mtsCount : 1; // Alias
         }
             
         $monitoringData = [];
@@ -604,7 +599,7 @@ class TuController extends Controller
                     // Match Jenjang
                     $jName = strtoupper($cls->jenjang->nama ?? ''); // MI, MTS, MA
                     if (str_contains($jName, 'MI')) $periodMultiplier = $periodCountsByJenjang['MI'] ?? 1;
-                    else if (str_contains($jName, 'MTS') || str_contains($jName, 'MA')) $periodMultiplier = $periodCountsByJenjang['MTS'] ?? 1;
+                    else if (str_contains($jName, 'MTS')) $periodMultiplier = $periodCountsByJenjang['MTS'] ?? 1;
                 }
                 
                 $expected = $studentCount * $mapelCount * $periodMultiplier;
@@ -696,7 +691,7 @@ class TuController extends Controller
         $endLvl = max($targetLevels);
         
         // Periods & Labels
-        if ($jenjang === 'MTS' || $jenjang === 'MA') {
+        if ($jenjang === 'MTS') {
             $periods = [1, 2]; // Semesters
             $periodLabel = 'Smt';
             $periodLabelMap = ['Ganjil', 'Genap'];
@@ -802,8 +797,7 @@ class TuController extends Controller
                     $displayLvl = $lvl;
                     // Relative Labeling Logic
                     if ($jenjang === 'MTS') $displayLvl = $lvl - 6;
-                    if ($jenjang === 'MA') $displayLvl = $lvl - 9;
-                    $lvlSuffix = ($jenjang === 'MTS' || $jenjang === 'MA') ? (' ' . $jenjang) : '';
+                    $lvlSuffix = ($jenjang === 'MTS') ? (' ' . $jenjang) : '';
                     
                     // Check bounds to prevents silly labels if config is weird
                     if ($displayLvl < 1) $displayLvl = $lvl; 
@@ -821,8 +815,8 @@ class TuController extends Controller
                         $score = $val ? $val->nilai_akhir : null;
                         
                         // Priority 2: Fallback to Relative Level Data if Absolute missing (MTS case)
-                        if ($score === null && ($jenjang === 'MTS' || $jenjang === 'MA')) {
-                             $relLvl = ($jenjang === 'MTS') ? ($lvl - 6) : ($lvl - 9);
+                        if ($score === null && ($jenjang === 'MTS')) {
+                             $relLvl = $lvl - 6;
                              // Optimization: Only query if really needed.
                              // Re-query from collection
                              $relLvlGrades = $sGrades->filter(fn($g) => $g->kelas && $g->kelas->tingkat_kelas == $relLvl);
@@ -1019,7 +1013,6 @@ class TuController extends Controller
         $hmTitle = 'Kepala Madrasah'; // Generic or specific
         if ($jenjang === 'MI') $hmTitle = 'Kepala Madrasah Ibtidaiyah';
         if ($jenjang === 'MTS') $hmTitle = 'Kepala Madrasah Tsanawiyah';
-        if ($jenjang === 'MA') $hmTitle = 'Kepala Madrasah Aliyah';
         
         $sheet->setCellValue($sigCol.$row, $hmTitle . ',');
         $sheet->mergeCells("$sigCol$row:$lastCol$row");
@@ -1035,9 +1028,6 @@ class TuController extends Controller
         } elseif ($jenjang === 'MTS') {
             $hmName = \App\Models\GlobalSetting::val('hm_name_mts') ?: ($school->kepala_madrasah ?? '......................');
             $hmNip = \App\Models\GlobalSetting::val('hm_nip_mts') ?: ($school->nip_kepala ?? '-');
-        } elseif ($jenjang === 'MA') {
-            $hmName = \App\Models\GlobalSetting::val('hm_name_ma') ?: ($school->kepala_madrasah ?? '......................');
-            $hmNip = \App\Models\GlobalSetting::val('hm_nip_ma') ?: ($school->nip_kepala ?? '-');
         } else {
              $hmName = $school->kepala_madrasah ?? '......................';
              $hmNip = $school->nip_kepala ?? '-';

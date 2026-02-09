@@ -193,10 +193,9 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 @if($isDone)
-                                    <a href="{{ route('walikelas.katrol.index', ['kelas_id' => $kelas->id, 'mapel_id' => $data->id]) }}" 
-                                       class="text-slate-400 hover:text-primary transition-colors p-2 rounded-full hover:bg-slate-100 dark:hover:bg-[#20342a]" title="Lihat Nilai">
-                                        <span class="material-symbols-outlined">visibility</span>
-                                    </a>
+                                    <button type="button" class="text-slate-300 cursor-not-allowed p-2 rounded-full" title="Fitur Katrol Nilai (Segera Hadir)">
+                                        <span class="material-symbols-outlined">visibility_off</span>
+                                    </button>
                                 @else
                                     <button class="group inline-flex items-center gap-1.5 px-3 py-1.5 border border-primary text-primary hover:bg-primary hover:text-white rounded-lg transition-all text-xs font-bold shadow-sm">
                                         <span class="material-symbols-outlined text-[16px] group-hover:animate-swing">notifications</span>

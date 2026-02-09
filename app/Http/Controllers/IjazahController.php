@@ -494,34 +494,18 @@ class IjazahController extends Controller
         return back()->with('success', "Import Selesai. $count nilai ujian berhasil disimpan.");
     }
 
-    // --- ADMIN SETTINGS ---
+    // --- CUSTOM TRANSCRIPT LOGIC ---
     public function printTranscript($kelasId)
     {
         $kelas = Kelas::with(['jenjang', 'tahun_ajaran', 'wali_kelas'])->findOrFail($kelasId);
         $activeYear = $kelas->tahun_ajaran;
         
-        // 1. Get Template
-        $template = \App\Models\ReportTemplate::where('type', 'transcript')->where('is_active', true)->first();
-        
-        // If no template, use default preset
-        if (!$template) {
-            $template = new \App\Models\ReportTemplate();
-            $template->name = 'Default Transcript';
-            $template->type = 'transcript';
-            $template->margins = ['top' => 10, 'right' => 10, 'bottom' => 10, 'left' => 10];
-            $template->orientation = 'portrait';
-            
-            // Load Default Content (Simple)
-            $ctrl = new \App\Http\Controllers\TemplateController();
-            $contentResponse = $ctrl->loadPreset(new Request(['preset' => 'transcript_simple']));
-            $template->content = $contentResponse->getData()->content;
-        }
-
-        // 2. Data Preparation
+        // 1. Data Preparation
         $students = $kelas->anggota_kelas()->with('siswa')->get()->sortBy('siswa.nama_lengkap');
         
-        // Mapels
+        // Mapels Logic (Existing)
         $jenjang = $kelas->jenjang->kode ?? ($kelas->tingkat_kelas <= 6 ? 'MI' : 'MTS');
+        // Fetch explicit Ujian Mapels if defined, else generic
         $selectedMapelIds = \App\Models\UjianMapel::where('id_tahun_ajaran', $kelas->id_tahun_ajaran)
                                 ->where('jenjang', $jenjang)
                                 ->pluck('id_mapel');
@@ -533,7 +517,7 @@ class IjazahController extends Controller
         }
 
         $mapels = Mapel::whereIn('id', $mapelIds)
-            ->orderBy('kategori', 'asc')
+            ->orderBy('kategori', 'asc') // A, B, C, Mulok
             ->orderBy('nama_mapel', 'asc')
             ->get();
             
@@ -545,104 +529,59 @@ class IjazahController extends Controller
         // School Info
         $school = IdentitasSekolah::where('jenjang', $jenkins = $kelas->jenjang->kode ?? 'MI')->first() ?? IdentitasSekolah::first();
         
-        // Settings
-        $minLulus = \App\Models\GlobalSetting::val('ijazah_min_lulus', 60);
+        // Global Setting for Titimangsa
+        $titimangsaDate = \App\Models\GlobalSetting::val('titimangsa_' . strtolower($jenjang)) ?? date('d F Y');
+        $titimangsaPlace = \App\Models\GlobalSetting::val('titimangsa_tempat_' . strtolower($jenjang)) ?? ($school->kota ?? 'Kota');
+        $titimangsa = $titimangsaPlace . ', ' . $titimangsaDate;
 
-        // 3. Render HTML
-        $finalHtml = '';
-        
-        foreach ($students as $index => $ak) {
+        // BROWSER PRINT SUPPORT (Replaces Mpdf)
+        // Pass all students to the view, let the specific "Print All" view handle the looping and page breaks.
+        // OR better yet, reuse the single view but wrapped in a parent view or modified to accept a collection.
+        // For simplicity and speed, let's pass the processed data for ALL students to a new "bulk" view or simple view.
+
+        $dataStudents = [];
+
+        foreach ($students as $ak) {
             $student = $ak->siswa;
             $sGrades = $allGrades[$student->id] ?? collect([]);
             
-            // Prepare Loop Data
-            $loopGrades = [];
-            $no = 1;
+            // Group Mapels
+            $mapelGroups = ['A' => [], 'B' => []];
             $sumFinal = 0;
             $countMapel = 0;
 
             foreach ($mapels as $mapel) {
                 $g = $sGrades->where('id_mapel', $mapel->id)->first();
-                $nilaiAkhir = $g->nilai_ijazah ?? 0;
                 
-                if ($nilaiAkhir > 0) {
-                    $sumFinal += $nilaiAkhir;
+                $rataRapor    = $g->rata_rata_rapor ?? 0;
+                $nilaiUjian   = $g->nilai_ujian_madrasah ?? 0;
+                $nilaiSekolah = $g->nilai_ijazah ?? 0;
+                
+                if ($nilaiSekolah > 0) {
+                    $sumFinal += $nilaiSekolah;
                     $countMapel++;
                 }
 
-                $loopGrades[] = [
-                    'no' => $no++,
-                    'mapel' => $mapel->nama_mapel,
-                    'kkm' => 75, // TODO: Fetch Real KKM
-                    'nilai' => $nilaiAkhir ?: '-',
-                    'predikat' => '-', // Not used in simple transcript usually
-                    'rata_rapor' => $g->rata_rata_rapor ?? '-',
-                    'nilai_ujian' => $g->nilai_ujian_madrasah ?? '-'
+                $data = [
+                    'nama' => $mapel->nama_mapel,
+                    'rata_rapor' => $rataRapor > 0 ? number_format($rataRapor, 2) : '-',
+                    'nilai_ujian' => $nilaiUjian > 0 ? number_format($nilaiUjian, 2) : '-',
+                    'nilai_sekolah' => $nilaiSekolah > 0 ? number_format($nilaiSekolah, 2) : '-'
                 ];
-            }
-            
-            $avg = $countMapel > 0 ? $sumFinal / $countMapel : 0;
-            $isLulus = $avg >= $minLulus;
-            $statusLulus = $isLulus ? 'LULUS' : 'TIDAK LULUS';
-            if ($avg == 0) $statusLulus = '-';
 
-            // Variables
-            $vars = [
-                '[[NAMA_SISWA]]' => strtoupper($student->nama_lengkap),
-                '[[NIS]]' => $student->nis ?? '-',
-                '[[NISN]]' => $student->nisn ?? '-',
-                '[[KELAS]]' => $kelas->nama_kelas,
-                '[[SEMESTER]]' => 'Akhir',
-                '[[TAHUN_AJARAN]]' => $activeYear->nama_tahun,
-                '[[NAMA_SEKOLAH]]' => strtoupper($school->nama_sekolah ?? 'SEKOLAH'),
-                '[[KEPALA_SEKOLAH]]' => $school->kepala_sekolah ?? '-',
-                '[[WALI_KELAS]]' => $kelas->wali_kelas->name ?? '-',
-                '[[TANGGAL_RAPOR]]' => ($school->kota ?? 'Kota') . ', ' . date('d F Y'),
-                '[[STATUS_KENAIKAN]]' => $statusLulus,
-                '[[ALAMAT_SISWA]]' => $student->alamat ?? '-',
-                '[[JUMLAH_NILAI]]' => number_format($sumFinal, 2),
-                '[[RATA_RATA]]' => number_format($avg, 2),
-                '[[PERINGKAT]]' => '-',
-                '[[TOTAL_SISWA]]' => $students->count(),
-            ];
-
-            // Render Content
-            $pageContent = $template->content;
-            
-            // Loop Replacement
-            if (preg_match_all('/\[\[LOOP_NILAI_START\]\](.*?)\[\[LOOP_NILAI_END\]\]/s', $pageContent, $matches)) {
-                foreach ($matches[1] as $idx => $block) {
-                    $compiledRows = '';
-                    foreach ($loopGrades as $lg) {
-                        $row = $block;
-                        $row = str_replace('[[NO]]', $lg['no'], $row);
-                        $row = str_replace('[[MAPEL]]', $lg['mapel'], $row);
-                        $row = str_replace('[[KKM]]', $lg['kkm'], $row);
-                        $row = str_replace('[[NILAI]]', $lg['nilai'], $row); // Nilai Akhir
-                        $row = str_replace('[[PREDIKAT]]', $lg['predikat'], $row);
-                        // Extra Vars for Transcript
-                        $row = str_replace('[[NILAI_RAPOR]]', $lg['rata_rapor'], $row);
-                        $row = str_replace('[[NILAI_UJIAN]]', $lg['nilai_ujian'], $row);
-                        $compiledRows .= $row;
-                    }
-                    $pageContent = str_replace($matches[0][$idx], $compiledRows, $pageContent);
+                if (in_array(strtoupper($mapel->kategori), ['B', 'MULOK', 'MUATAN LOKAL'])) {
+                    $mapelGroups['B'][] = $data;
+                } else {
+                    $mapelGroups['A'][] = $data;
                 }
             }
-
-            // Variable Replacement
-            foreach ($vars as $key => $val) {
-                $pageContent = str_replace($key, $val, $pageContent);
-            }
             
-            // Append Page Break
-            $finalHtml .= '<div class="page-break" style="page-break-after: always;"></div>';
-            $finalHtml .= $pageContent;
+            $avgNetwork = $countMapel > 0 ? number_format($sumFinal / $countMapel, 2) : '0.00';
+
+            $dataStudents[] = compact('student', 'mapelGroups', 'avgNetwork');
         }
 
-        return view('reports.custom_print', [
-            'content' => $finalHtml,
-            'template' => $template
-        ]);
+        return view('ijazah.print_transcript_bulk', compact('dataStudents', 'kelas', 'school', 'titimangsa'));
     }
 
     public function settings()
@@ -684,10 +623,6 @@ class IjazahController extends Controller
         // Save Ranges (Implode array to CSV string)
         $rangeMi = implode(',', $request->input('range_mi', []));
         $rangeMts = implode(',', $request->input('range_mts', []));
-        
-        // If empty (user unchecked all), maybe save '0'? Or specific handling.
-        // For Ijazah, usually at least one class needed. If empty, maybe assume default?
-        // Let's save what user sent. If empty, it's empty.
         
         \App\Models\GlobalSetting::updateOrCreate(['key' => 'ijazah_range_mi'], ['value' => $rangeMi]);
         \App\Models\GlobalSetting::updateOrCreate(['key' => 'ijazah_range_mts'], ['value' => $rangeMts]);
