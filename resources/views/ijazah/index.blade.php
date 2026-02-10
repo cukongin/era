@@ -89,13 +89,16 @@
                       data-title="Buka Kunci Nilai?"
                       data-message="Status nilai akan kembali menjadi Draft dan bisa diedit kembali."
                       data-confirm-text="Ya, Buka Kunci!"
-                      data-confirm-color="#059669"
+                      data-confirm-color="#dc2626"
                       data-icon="question">
                     @csrf
                     <input type="hidden" name="kelas_id" value="{{ $kelas->id }}">
-                    <input type="hidden" name="action" value="draft">
+                    <input type="hidden" name="action" value="unlock">
                     {{-- Admin Unlock Trigger --}}
-                    <button type="submit" class="text-xs text-slate-500 underline ml-2">Buka Kunci</button>
+                    <button type="submit" class="bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 shadow-sm transition-all ml-2" title="Buka Kunci (Admin)">
+                        <span class="material-symbols-outlined text-[20px]">lock_open</span>
+                        <span class="hidden md:inline">Buka Kunci</span>
+                    </button>
                 </form>
                 @endif
 

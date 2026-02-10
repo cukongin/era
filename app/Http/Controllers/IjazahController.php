@@ -172,6 +172,19 @@ class IjazahController extends Controller
 
     public function store(Request $request)
     {
+        // Handle Unlock Action (Admin Only/System)
+        if ($request->input('action') === 'unlock') {
+             $request->validate(['kelas_id' => 'required|exists:kelas,id']);
+             if (!Auth::user()->isAdmin()) abort(403);
+
+             $kelas = Kelas::findOrFail($request->kelas_id);
+             $studentIds = $kelas->anggota_kelas()->pluck('id_siswa');
+             
+             NilaiIjazah::whereIn('id_siswa', $studentIds)->update(['status' => 'draft']);
+             
+             return back()->with('success', 'Data Nilai Ijazah berhasil <strong class="font-bold">DIBUKA KEMBALI</strong>. Silakan edit jika diperlukan.');
+        }
+
         $request->validate([
             'grades' => 'required|array',
             'kelas_id' => 'required|exists:kelas,id'
