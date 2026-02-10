@@ -25,11 +25,11 @@
         </div>
         
         <div class="flex gap-2 items-center">
-             <!-- Filter Lengkap -->
-            <form action="{{ route('walikelas.kenaikan.index') }}" method="GET" class="flex gap-2 items-center flex-wrap">
+            <!-- Filter Lengkap -->
+            <form action="{{ route('walikelas.kenaikan.index') }}" method="GET" class="flex flex-col md:flex-row gap-2 items-center flex-wrap w-full md:w-auto p-2 md:p-0 bg-slate-50 md:bg-transparent rounded-lg md:rounded-none border md:border-none border-slate-200">
                 
                 <!-- Tahun Ajaran -->
-                <select name="year_id" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-40">
+                <select name="year_id" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-full md:w-40">
                     @foreach($years as $y)
                         <option value="{{ $y->id }}" {{ $activeYear->id == $y->id ? 'selected' : '' }}>
                             {{ $y->nama }}
@@ -38,7 +38,7 @@
                 </select>
 
                 <!-- Jenjang -->
-                <select name="jenjang" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-24">
+                <select name="jenjang" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-full md:w-24">
                     <option value="">Semua</option>
                     @foreach($jenjangs as $j)
                         <option value="{{ $j->kode }}" {{ request('jenjang') == $j->kode || ($kelas && $kelas->jenjang->kode == $j->kode) ? 'selected' : '' }}>
@@ -48,7 +48,7 @@
                 </select>
 
                 <!-- Kelas -->
-                <select name="kelas_id" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-32">
+                <select name="kelas_id" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-full md:w-32">
                     @foreach($allClasses as $c)
                         <option value="{{ $c->id }}" {{ $kelas->id == $c->id ? 'selected' : '' }}>
                             {{ $c->nama_kelas }}
@@ -57,7 +57,7 @@
                 </select>
 
                 <!-- Periode -->
-                <select name="period_id" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-40">
+                <select name="period_id" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-full md:w-40">
                     @foreach($periods as $p)
                         <option value="{{ $p->id }}" {{ isset($activePeriod) && $activePeriod->id == $p->id ? 'selected' : '' }}>
                             {{ $p->nama_periode }}
@@ -124,18 +124,126 @@
 
     <!-- Table Section -->
     <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 relative">
-        <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+        <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <h2 class="font-bold flex items-center gap-2">
                 <span class="material-symbols-outlined text-indigo-600">table_chart</span>
                 Daftar Rekomendasi {{ $pageContext['title'] }}
             </h2>
-            <div class="relative">
+            <div class="relative w-full md:w-auto">
                 <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-sm">search</span>
-                <input type="text" x-model="search" placeholder="Cari nama santri..." class="pl-9 pr-4 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 w-64">
+                <input type="text" x-model="search" placeholder="Cari nama santri..." class="pl-9 pr-4 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 w-full md:w-64">
             </div>
         </div>
         
-        <div class="overflow-x-auto">
+        <!-- Mobile Card View -->
+        <div class="md:hidden space-y-4 p-4 bg-slate-50 dark:bg-slate-900/50">
+            @foreach($studentStats as $index => $stat)
+                @php
+                    // Re-use logic for badge
+                    $status = $stat->final_status ?: 'pending';
+                    $badgeClass = 'bg-slate-100 text-slate-600 border-slate-200';
+                    $badgeLabel = 'BELUM DITENTUKAN';
+                    
+                    if(in_array($status, ['promoted', 'promote', 'graduated', 'graduate'])) {
+                        $badgeClass = 'bg-emerald-100 text-emerald-700 border-emerald-200';
+                        $badgeLabel = $pageContext['success_label'] ?? 'NAIK KELAS';
+                    } elseif(in_array($status, ['retained', 'retain', 'not_graduated', 'not_graduate'])) {
+                        $badgeClass = 'bg-red-100 text-red-700 border-red-200';
+                        $badgeLabel = $pageContext['fail_label'] ?? 'TINGGAL KELAS';
+                    } elseif($status == 'conditional') {
+                         $badgeClass = 'bg-amber-100 text-amber-700 border-amber-200';
+                         $badgeLabel = 'NAIK BERSYARAT';
+                    }
+
+                    $studentJson = json_encode([
+                        'id' => $stat->student->id,
+                        'name' => $stat->student->nama_lengkap,
+                        'current_status' => $status,
+                        'class_id' => $kelas->id
+                    ]);
+                @endphp
+
+            <div class="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700"
+                 data-name="{{ strtolower($stat->student->nama_lengkap) }}" 
+                 x-show="matchesSearch($el.dataset.name)">
+                
+                <!-- Card Header -->
+                <div class="flex justify-between items-start mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm shrink-0">
+                            {{ $index + 1 }}
+                        </div>
+                        <div class="overflow-hidden">
+                             <h3 class="font-bold text-slate-900 dark:text-white truncate">{{ $stat->student->nama_lengkap }}</h3>
+                             <p class="text-xs text-slate-500">NIS: {{ $stat->student->nis_lokal ?? '-' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-3 gap-2 text-center text-xs mb-3 bg-slate-50 dark:bg-slate-700/50 p-2 rounded-lg border border-slate-100 dark:border-slate-600">
+                    <div>
+                        <span class="text-slate-400 block text-[10px] uppercase">Rata-rata</span>
+                        <span class="font-bold text-slate-700 dark:text-slate-200 text-sm">{{ $stat->avg_yearly }}</span>
+                    </div>
+                    <div>
+                         <span class="text-slate-400 block text-[10px] uppercase">Sikap</span>
+                         <span class="font-bold text-sm {{ $stat->attitude == 'A' ? 'text-emerald-600' : ($stat->attitude == 'C' ? 'text-red-600' : 'text-slate-700') }}">{{ $stat->attitude }}</span>
+                    </div>
+                     <div>
+                         <span class="text-slate-400 block text-[10px] uppercase">Kehadiran</span>
+                         <span class="font-bold text-sm {{ $stat->attendance_pct < 85 ? 'text-red-600' : 'text-slate-700' }}">{{ $stat->attendance_pct }}%</span>
+                    </div>
+                </div>
+                
+                <!-- Failure/Notes -->
+                @if(($stat->under_kkm > 0) || !empty($stat->fail_reasons) || $stat->ijazah_note)
+                <div class="mb-3 space-y-1">
+                     @if($stat->under_kkm > 0)
+                        <div class="text-xs bg-red-50 text-red-700 px-2 py-1 rounded border border-red-100 inline-block font-bold">
+                            {{ $stat->under_kkm }} Mapel < KKM
+                        </div>
+                     @endif
+                     
+                     @if(!empty($stat->fail_reasons))
+                        <div class="text-xs text-red-600 bg-red-50 p-2 rounded border border-red-100">
+                            @foreach($stat->fail_reasons as $reason)
+                                <div>• {{ $reason }}</div>
+                            @endforeach
+                        </div>
+                     @endif
+
+                     @if($stat->ijazah_note)
+                        <div class="text-xs font-bold text-emerald-600 bg-emerald-50 p-2 rounded border border-emerald-100">
+                            {{ $stat->ijazah_note }}
+                        </div>
+                     @endif
+                </div>
+                @endif
+                
+                <!-- Footer Action -->
+                @if(isset($isFinalPeriod) && $isFinalPeriod)
+                <div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-700 gap-2">
+                    <span class="px-3 py-1.5 rounded-lg text-xs font-bold uppercase border flex-1 text-center {{ $badgeClass }}">
+                        {{ $badgeLabel }}
+                    </span>
+
+                    @if((!isset($isLocked) || !$isLocked) && (!$stat->is_locked || auth()->user()->isAdmin()))
+                        <button @click="openModal({{ $studentJson }})" class="p-1.5 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border border-indigo-200 transition-colors">
+                            <span class="material-symbols-outlined text-[20px]">edit</span>
+                        </button>
+                    @endif
+                    
+                    <!-- Checkbox for Bulk -->
+                     <input type="checkbox" value="{{ $stat->student->id }}" x-model="selectedIds" class="w-6 h-6 text-primary bg-slate-100 border-slate-300 rounded focus:ring-primary ml-1">
+                </div>
+                @endif
+
+            </div>
+            @endforeach
+        </div>
+
+        <div class="overflow-x-auto hidden md:block">
             <table class="w-full text-left text-sm">
                 <thead class="bg-slate-50 dark:bg-slate-700 text-slate-500 uppercase text-xs font-bold">
                     <tr>
