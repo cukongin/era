@@ -1509,11 +1509,29 @@ class WaliKelasController extends Controller
     }
     public function katrol(Request $request)
     {
-        // 1. Get Filters
-        $waliKelasInfo = $this->getWaliKelasInfo();
-        $classes = $waliKelasInfo['classes'];
-        $kelasId = $request->kelas_id ?? ($classes->first()->id ?? null);
-        $kelas = Kelas::find($kelasId);
+        $user = Auth::user();
+        $activeYear = TahunAjaran::where('status', 'aktif')->firstOrFail();
+
+        // Fetch Classes for Selector
+        if ($user->hasRole('admin') || $user->hasRole('staff_tu')) {
+            $classes = Kelas::where('id_tahun_ajaran', $activeYear->id)
+                            ->with('jenjang')
+                            ->orderBy('tingkat_kelas')
+                            ->orderBy('nama_kelas')
+                            ->get();
+        } else {
+            $classes = Kelas::where('id_tahun_ajaran', $activeYear->id)
+                            ->where('id_wali_kelas', $user->id)
+                            ->with('jenjang')
+                            ->get();
+        }
+
+        // Selected Class
+        if ($request->kelas_id) {
+            $kelas = $classes->where('id', $request->kelas_id)->first();
+        } else {
+            $kelas = $classes->first();
+        }
 
         if (!$kelas) {
             return redirect()->route('walikelas.dashboard')->with('error', 'Kelas tidak ditemukan.');
