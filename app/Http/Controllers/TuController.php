@@ -1091,24 +1091,16 @@ class TuController extends Controller
         $counts = ['rr' => 0, 'um' => 0, 'na' => 0];
 
         foreach ($mapels as $m) {
-            // 1. Calculate Rata-Rapor (RR)
-            $mapelGrades = $studentGrades->where('id_mapel', $m->id);
+            // 1. Get Rata-Rapor (RR) from Ijazah Record (Official)
+            // Do NOT re-calculate from raw grades because Ijazah might use diff range (e.g. 4-6)
+            $ijazahRecord = $ijazahGrades->where('id_mapel', $m->id)->first();
+            $rr = $ijazahRecord ? $ijazahRecord->rata_rata_rapor : 0;
             
-            // Filter by target levels
-            $relevantGrades = $mapelGrades->filter(function($g) use ($targetLevels) {
-                return $g->kelas && in_array($g->kelas->tingkat_kelas, $targetLevels);
-            });
-            
-            $count = $relevantGrades->count();
-            $sum = $relevantGrades->sum('nilai_akhir');
-            
-            $rr = $count > 0 ? round($sum / $count, 2) : 0;
             $summary['rr'][$m->id] = $rr;
             if ($rr > 0) { $sums['rr'] += $rr; $counts['rr']++; }
             
             // 2. Get Ujian Madrasah (UM) - ROUNDED TO INT
-            $umRecord = $ijazahGrades->where('id_mapel', $m->id)->first();
-            $um = $umRecord ? round($umRecord->nilai_ujian_madrasah) : 0; 
+            $um = $ijazahRecord ? round($ijazahRecord->nilai_ujian_madrasah) : 0; 
             
             $summary['um'][$m->id] = $um;
             if ($um > 0) { $sums['um'] += $um; $counts['um']++; }
