@@ -25,7 +25,18 @@
             </p>
         </div>
         
-        <div class="flex gap-2">
+        <div class="flex gap-2 items-center">
+             <!-- Filter Periode -->
+            <form action="<?php echo e(route('walikelas.kenaikan.index')); ?>" method="GET">
+                <select name="period_id" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block w-48 p-2.5 shadow-sm font-bold">
+                    <?php $__currentLoopData = $periods; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($p->id); ?>" <?php echo e(isset($activePeriod) && $activePeriod->id == $p->id ? 'selected' : ''); ?>>
+                            <?php echo e($p->nama_periode); ?> (<?php echo e($p->status); ?>)
+                        </option>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </select>
+            </form>
+
             <?php
                 $allDecisionsLocked = collect($studentStats)->every(fn($s) => $s->is_locked);
                 $isUserAdmin = auth()->user()->isAdmin() || auth()->user()->isTu();

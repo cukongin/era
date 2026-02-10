@@ -820,7 +820,7 @@ class WaliKelasController extends Controller
     }
     public function kenaikanKelas()
     {
-        list($kelas, $activePeriod, $activeYear) = $this->getWaliKelasInfo();
+        list($kelas, $systemActivePeriod, $activeYear) = $this->getWaliKelasInfo();
         if (!$kelas) {
             return back()->with('error', 'Anda tidak memiliki kelas di Tahun Ajaran Aktif (' . $activeYear->nama_tahun . '). Silakan cek Pengaturan Tahun Ajaran.');
         }
@@ -834,7 +834,13 @@ class WaliKelasController extends Controller
                ->orderBy('id', 'asc')
                ->get();
         
-        $activeP = $periods->firstWhere('status', 'aktif'); // Using local var to avoid conflict
+        // Filter Logic
+        $activePeriod = $systemActivePeriod; // Default
+        if (request('period_id')) {
+            $activePeriod = $periods->firstWhere('id', request('period_id')) ?? $systemActivePeriod;
+        }
+
+        $activeP = $activePeriod; // Alias for check below
         $lastPeriod = $periods->last();
         $isFinalPeriod = false;
 
@@ -1319,7 +1325,9 @@ class WaliKelasController extends Controller
             'allClasses', 
             'isLocked',
             'pageContext', // Passing the context
-            'debugInfo'
+            'debugInfo',
+            'periods', // All Periods for Dropdown
+            'activePeriod' // Selected Period
         ));
     }
 
