@@ -219,7 +219,35 @@ class SettingsController extends Controller
         Periode::create(['id_tahun_ajaran' => $year->id, 'nama_periode' => 'Semester Ganjil', 'lingkup_jenjang' => 'MTS', 'status' => 'aktif', 'tipe' => 'SEMESTER']);
         Periode::create(['id_tahun_ajaran' => $year->id, 'nama_periode' => 'Semester Genap', 'lingkup_jenjang' => 'MTS', 'status' => 'tutup', 'tipe' => 'SEMESTER']);
 
-        return back()->with('success', 'Tahun Ajaran baru berhasil dibuat dan periode otomatis digenerate.');
+        // Auto-seed Predicates (A, B, C, D)
+        $this->seedDefaultPredicates($year->id);
+
+        return back()->with('success', 'Tahun Ajaran baru berhasil dibuat, periode & predikat otomatis digenerate.');
+    }
+
+    private function seedDefaultPredicates($yearId) 
+    {
+        $defaults = [
+            ['grade' => 'A', 'min' => 90, 'max' => 100, 'deskripsi' => 'Sangat Baik'],
+            ['grade' => 'B', 'min' => 80, 'max' => 89, 'deskripsi' => 'Baik'],
+            ['grade' => 'C', 'min' => 70, 'max' => 79, 'deskripsi' => 'Cukup'],
+            ['grade' => 'D', 'min' => 0,  'max' => 69,  'deskripsi' => 'Kurang'],
+        ];
+    
+        $jenjangs = ['MI', 'MTS'];
+    
+        foreach ($jenjangs as $jenjang) {
+            foreach ($defaults as $d) {
+                \App\Models\PredikatNilai::create([
+                    'id_tahun_ajaran' => $yearId,
+                    'jenjang' => $jenjang,
+                    'grade' => $d['grade'],
+                    'min_score' => $d['min'],
+                    'max_score' => $d['max'],
+                    'deskripsi' => $d['deskripsi']
+                ]);
+            }
+        }
     }
 
     public function toggleYear($id)
