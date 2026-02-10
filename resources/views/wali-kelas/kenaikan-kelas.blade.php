@@ -186,7 +186,7 @@
                     </thead>
                     <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
                         @foreach($studentStats as $index => $stat)
-                        <tr x-show="matchesSearch('{{ strtolower($stat->student->nama_lengkap) }}')" class="hover:bg-slate-50 transition-colors group">
+                        <tr x-show="matchesSearch(@js(strtolower($stat->student->nama_lengkap)))" class="hover:bg-slate-50 transition-colors group">
                             @if(isset($isFinalPeriod) && $isFinalPeriod)
                             <td class="w-4 p-4">
                                 <div class="flex items-center">
