@@ -443,19 +443,42 @@ class PromotionController extends Controller
              return response()->json(['message' => '⚠️ AKSES DITOLAK: Periode terkunci.'], 403);
         }
 
-        // Check if locked
-        $decision = DB::table('promotion_decisions')->where('id', $request->decision_id)->first();
-        if ($decision && !is_null($decision->override_by)) {
-             return response()->json(['message' => '⚠️ GAGAL: Data sudah dikunci permanen.'], 403);
+    public function updateDecision(Request $request) 
+    {
+        if (!$this->checkActiveYear()) {
+             return response()->json(['message' => '⚠️ AKSES DITOLAK: Periode terkunci.'], 403);
         }
 
-        DB::table('promotion_decisions')
-            ->where('id', $request->decision_id)
-            ->update([
+        $decisionId = $request->decision_id;
+        $studentId = $request->student_id;
+        $classId = $request->class_id;
+        $activeYear = TahunAjaran::where('status', 'aktif')->firstOrFail();
+
+        if ($decisionId) {
+            $decision = DB::table('promotion_decisions')->where('id', $decisionId)->first();
+            if ($decision && !is_null($decision->override_by)) {
+                return response()->json(['message' => '⚠️ GAGAL: Data sudah dikunci permanen.'], 403);
+            }
+            DB::table('promotion_decisions')->where('id', $decisionId)->update([
                 'final_decision' => $request->status,
-                // 'override_by' => Auth::id(), // DON'T SET OVERRIDE HERE! Override means PERMANENT LOCK.
                 'updated_at' => now()
             ]);
+        } elseif ($studentId && $classId) {
+             $exists = DB::table('promotion_decisions')
+                ->where('id_siswa', $studentId)
+                ->where('id_kelas', $classId)
+                ->where('id_tahun_ajaran', $activeYear->id)
+                ->first();
+             if ($exists && !is_null($exists->override_by)) {
+                 return response()->json(['message' => '⚠️ GAGAL: Data sudah dikunci permanen.'], 403);
+             }
+             DB::table('promotion_decisions')->updateOrInsert(
+                ['id_siswa' => $studentId, 'id_kelas' => $classId, 'id_tahun_ajaran' => $activeYear->id],
+                ['final_decision' => $request->status, 'updated_at' => now()]
+             );
+        } else {
+             return response()->json(['message' => 'Missing ID parameters'], 400);
+        }
             
         return response()->json(['message' => 'Status saved']);
     }
@@ -466,29 +489,36 @@ class PromotionController extends Controller
              return response()->json(['message' => '⚠️ AKSES DITOLAK: Periode terkunci.'], 403);
         }
 
-        $request->validate([
-            'decision_ids' => 'required|array',
-            'status' => 'required|string'
-        ]);
-
-        $decisionIds = $request->decision_ids;
-        $status = $request->status;
-        
         $activeYear = TahunAjaran::where('status', 'aktif')->firstOrFail();
-        
-        // Update only those not locked (override_by IS NULL)
-        $affected = DB::table('promotion_decisions')
-            ->whereIn('id', $decisionIds)
-            ->whereNull('override_by') // Only editable
-            ->update([
-                'final_decision' => $status,
-                'updated_at' => now()
-            ]);
+        $decisionIds = $request->decision_ids;
+        $studentIds = $request->student_ids;
+        $classId = $request->class_id;
+        $status = $request->status;
+        $count = 0;
+
+        if ($decisionIds && count($decisionIds) > 0) {
+            $count = DB::table('promotion_decisions')
+                ->whereIn('id', $decisionIds)
+                ->whereNull('override_by')
+                ->update(['final_decision' => $status, 'updated_at' => now()]);
+        } elseif ($studentIds && count($studentIds) > 0 && $classId) {
+            foreach ($studentIds as $sid) {
+                 $exists = DB::table('promotion_decisions')
+                    ->where('id_siswa', $sid)
+                    ->where('id_kelas', $classId)
+                    ->where('id_tahun_ajaran', $activeYear->id)
+                    ->first();
+                 if ($exists && !is_null($exists->override_by)) continue;
+                 
+                 DB::table('promotion_decisions')->updateOrInsert(
+                    ['id_siswa' => $sid, 'id_kelas' => $classId, 'id_tahun_ajaran' => $activeYear->id],
+                    ['final_decision' => $status, 'updated_at' => now()]
+                 );
+                 $count++;
+            }
+        }
             
-        return response()->json([
-            'message' => "$affected Santri Berhasil Diupdate.", 
-            'count' => $affected
-        ]);
+        return response()->json(['message' => "$count Santri Berhasil Diupdate.", 'count' => $count]);
     }
 
     public function processPromotion(Request $request)
