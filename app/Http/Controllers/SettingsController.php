@@ -122,10 +122,21 @@ class SettingsController extends Controller
                 ->get();
             
             // If empty, generate defaults for View
+            // If empty, generate defaults for View from User Request (A-D)
             if ($predicates->isEmpty()) {
-                $defaults = ['A', 'B', 'C', 'D'];
-                foreach ($defaults as $g) {
-                    $predicates[] = (object) ['grade' => $g, 'min_score' => 0, 'max_score' => 0, 'deskripsi' => ''];
+                $defaults = [
+                    ['grade' => 'A', 'min' => 90, 'max' => 100, 'desk' => 'Sangat Baik'],
+                    ['grade' => 'B', 'min' => 80, 'max' => 89, 'desk' => 'Baik'],
+                    ['grade' => 'C', 'min' => 70, 'max' => 79, 'desk' => 'Cukup'],
+                    ['grade' => 'D', 'min' => 0,  'max' => 69,  'desk' => 'Kurang'],
+                ];
+                foreach ($defaults as $d) {
+                    $predicates[] = (object) [
+                        'grade' => $d['grade'], 
+                        'min_score' => $d['min'], 
+                        'max_score' => $d['max'], 
+                        'deskripsi' => $d['desk']
+                    ];
                 }
             }
             
