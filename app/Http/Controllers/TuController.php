@@ -878,10 +878,16 @@ class TuController extends Controller
                 if($val != 0) $sheet->getStyle($cStr.$row)->getNumberFormat()->setFormatCode('0.00');
                 $currCol++;
             }
-            // Use Central Avg
-            $rrAvg = $summary['averages']['rr'] ?? 0;
-            $sheet->setCellValue($colStrAvg.$row, $rrAvg > 0 ? number_format($rrAvg, 2) : '-');
-            if($rrAvg > 0) $sheet->getStyle($colStrAvg.$row)->getNumberFormat()->setFormatCode('0.00');
+            
+            // Layout: Merge RR & UM Last Column for Label "RATA-RATA TOTAL"
+            $sheet->setCellValue($colStrAvg.$row, "RATA-RATA\nTOTAL");
+            $sheet->mergeCells("$colStrAvg$row:$colStrAvg".($row+1));
+            $sheet->getStyle($colStrAvg.$row)->getAlignment()->setWrapText(true);
+            $sheet->getStyle($colStrAvg.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle($colStrAvg.$row)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+            $sheet->getStyle($colStrAvg.$row)->getFont()->setBold(true)->setSize(10)->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE));
+            $sheet->getStyle($colStrAvg.$row)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FF666666'); // Dark Grey
+            
             $row++;
             
             // UM Row
@@ -899,9 +905,7 @@ class TuController extends Controller
                 if($val != 0) $sheet->getStyle($cStr.$row)->getNumberFormat()->setFormatCode('0');
                 $currCol++;
             }
-            $umAvg = $summary['averages']['um'] ?? 0;
-            $sheet->setCellValue($colStrAvg.$row, $umAvg > 0 ? round($umAvg) : '-');
-            if($umAvg > 0) $sheet->getStyle($colStrAvg.$row)->getNumberFormat()->setFormatCode('0');
+            // Last Column skipped (Merged with above)
             $row++;
             
             // NA Row
@@ -926,9 +930,14 @@ class TuController extends Controller
             $naAvg = $summary['averages']['na'] ?? 0;
             $academicPass = $naAvg >= $minLulus; // Use for Status
             
-            $sheet->setCellValue($colStrAvg.$row, $naAvg > 0 ? number_format($naAvg, 2) : '-');
+            $sheet->setCellValue($colStrAvg.$row, $naAvg > 0 ? $naAvg : '-'); // NO number_format here, let Excel format handle it? Or explicit?
             if($naAvg > 0) $sheet->getStyle($colStrAvg.$row)->getNumberFormat()->setFormatCode('0.00');
-            $sheet->getStyle($colStrAvg.$row)->getFont()->setBold(true);
+            
+            // Style for Final Score
+            $sheet->getStyle($colStrAvg.$row)->getFont()->setBold(true)->setSize(11)->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE));
+            $sheet->getStyle($colStrAvg.$row)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FF333333'); // Darker Grey
+            $sheet->getStyle($colStrAvg.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle($colStrAvg.$row)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
             
             $promoRecord = \Illuminate\Support\Facades\DB::table('promotion_decisions')
                 ->where('id_siswa', $ak->id_siswa)
