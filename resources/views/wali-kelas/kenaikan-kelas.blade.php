@@ -188,11 +188,13 @@
 
                                     if(in_array($status, ['promoted', 'promote', 'graduated', 'graduate'])) {
                                         $badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
-                                        $badgeLabel = in_array($status, ['graduated', 'graduate']) ? 'LULUS' : 'NAIK KELAS';
+                                        // Use dynamic label from controller
+                                        $badgeLabel = $pageContext['success_label'] ?? 'NAIK KELAS';
                                         $badgeIcon = 'check_circle';
                                     } elseif(in_array($status, ['retained', 'retain', 'not_graduated', 'not_graduate'])) {
                                         $badgeClass = 'bg-red-50 text-red-700 border-red-200';
-                                        $badgeLabel = in_array($status, ['not_graduated', 'not_graduate']) ? 'TIDAK LULUS' : 'TINGGAL KELAS';
+                                        // Use dynamic label from controller
+                                        $badgeLabel = $pageContext['fail_label'] ?? 'TINGGAL KELAS';
                                         $badgeIcon = 'cancel';
                                     } elseif($status == 'conditional') {
                                         $badgeClass = 'bg-amber-50 text-amber-700 border-amber-200';
