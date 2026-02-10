@@ -20,7 +20,14 @@ class WaliKelasController extends Controller
     private function getWaliKelasInfo()
     {
         $user = Auth::user();
-        $activeYear = TahunAjaran::where('status', 'aktif')->firstOrFail();
+
+        // Allow Year Override by Request (for Admin/History View)
+        if (request('year_id')) {
+             $activeYear = TahunAjaran::find(request('year_id'));
+             if(!$activeYear) $activeYear = TahunAjaran::where('status', 'aktif')->firstOrFail();
+        } else {
+             $activeYear = TahunAjaran::where('status', 'aktif')->firstOrFail();
+        }
         
         // Default: Find assigned class for this teacher
         $kelas = Kelas::where('id_wali_kelas', $user->id)
@@ -825,6 +832,20 @@ class WaliKelasController extends Controller
             return back()->with('error', 'Anda tidak memiliki kelas di Tahun Ajaran Aktif (' . $activeYear->nama_tahun . '). Silakan cek Pengaturan Tahun Ajaran.');
         }
 
+        // Dropdown Data
+        $years = TahunAjaran::orderBy('nama_tahun', 'desc')->get();
+        $jenjangs = \App\Models\Jenjang::all();
+        
+        // Fetch Classes for Dropdown (Filtered by Year & Jenjang)
+        $allClassesQuery = Kelas::where('id_tahun_ajaran', $activeYear->id)
+                                ->orderBy('nama_kelas');
+        if (request('jenjang')) {
+             $allClassesQuery->whereHas('jenjang', fn($q) => $q->where('kode', request('jenjang')));
+        }
+        $allClasses = $allClassesQuery->get();
+
+
+        // FILTER LOGIC
         // ==========================================
         // ACCESS CONTROL: FINAL PERIOD CHECK
         // ==========================================
@@ -1323,11 +1344,13 @@ class WaliKelasController extends Controller
             'isFinalYear', 
             'isFinalPeriod', // CRITICAL: Must pass this!
             'allClasses', 
-            'isLocked',
             'pageContext', // Passing the context
             'debugInfo',
             'periods', // All Periods for Dropdown
-            'activePeriod' // Selected Period
+            'activePeriod', // Selected Period
+            'years', // All Years
+            'jenjangs', // All Jenjangs
+            'activeYear' // Selected Year
         ));
     }
 
