@@ -454,11 +454,13 @@ class PromotionController extends Controller
 
         if ($decisionId) {
             $decision = DB::table('promotion_decisions')->where('id', $decisionId)->first();
-            if ($decision && !is_null($decision->override_by)) {
+            // Allow Admin to bypass lock
+            if ($decision && !is_null($decision->override_by) && !Auth::user()->isAdmin()) {
                 return response()->json(['message' => '⚠️ GAGAL: Data sudah dikunci permanen.'], 403);
             }
             DB::table('promotion_decisions')->where('id', $decisionId)->update([
                 'final_decision' => $request->status,
+                'override_by' => Auth::id(), // Update locker
                 'updated_at' => now()
             ]);
         } elseif ($studentId && $classId) {
@@ -467,7 +469,8 @@ class PromotionController extends Controller
                 ->where('id_kelas', $classId)
                 ->where('id_tahun_ajaran', $activeYear->id)
                 ->first();
-             if ($exists && !is_null($exists->override_by)) {
+             
+             if ($exists && !is_null($exists->override_by) && !Auth::user()->isAdmin()) {
                  return response()->json(['message' => '⚠️ GAGAL: Data sudah dikunci permanen.'], 403);
              }
              DB::table('promotion_decisions')->updateOrInsert(
