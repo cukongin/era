@@ -439,6 +439,8 @@ class PromotionController extends Controller
 
     public function updateDecision(Request $request) 
     {
+        \Illuminate\Support\Facades\Log::info('Promotion Update Request:', $request->all());
+
         if (!$this->checkActiveYear()) {
              return response()->json(['message' => '⚠️ AKSES DITOLAK: Periode terkunci.'], 403);
         }
@@ -447,6 +449,8 @@ class PromotionController extends Controller
         $studentId = $request->student_id;
         $classId = $request->class_id;
         $activeYear = TahunAjaran::where('status', 'aktif')->firstOrFail();
+
+        \Illuminate\Support\Facades\Log::info("Promotion Update Processing: Sid: $studentId, Cid: $classId, Year: {$activeYear->id}, Status: " . $request->status);
 
         if ($decisionId) {
             $decision = DB::table('promotion_decisions')->where('id', $decisionId)->first();
