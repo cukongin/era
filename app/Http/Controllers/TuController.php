@@ -869,16 +869,22 @@ class TuController extends Controller
             $sheet->getStyle("A$row:$colStrKet$row")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFFFF0E0');
             
             $currCol = 4;
+            $rrRowSum = 0; $rrRowCount = 0;
             foreach ($mapels as $m) {
                 $cStr = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($currCol);
-                // Use MAPEL ID as key
                 $val = $summary['rr'][$m->id] ?? 0;
                 $valStr = $val != 0 ? $val : '-';
                 $sheet->setCellValue($cStr.$row, $valStr);
                 if ($valStr === '-') $sheet->getStyle($cStr.$row)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFEEEEEE');
-                if($val != 0) $sheet->getStyle($cStr.$row)->getNumberFormat()->setFormatCode('0.00');
+                if($val != 0) {
+                     $sheet->getStyle($cStr.$row)->getNumberFormat()->setFormatCode('0.00');
+                     $rrRowSum += $val; $rrRowCount++;
+                }
                 $currCol++;
             }
+            $rrAvg = $rrRowCount > 0 ? $rrRowSum / $rrRowCount : 0;
+            $sheet->setCellValue($colStrAvg.$row, $rrAvg > 0 ? $rrAvg : '-');
+            if($rrAvg > 0) $sheet->getStyle($colStrAvg.$row)->getNumberFormat()->setFormatCode('0.00');
             $row++;
             
             // UM Row
@@ -887,15 +893,23 @@ class TuController extends Controller
             $sheet->getStyle("A$row:$colStrKet$row")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFEFF6FF');
             
             $currCol = 4;
+            $umRowSum = 0; $umRowCount = 0;
             foreach ($mapels as $m) {
                 $cStr = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($currCol);
-                $val = $summary['um'][$m->id] ?? 0;
+                // ROUNDED INTEGER
+                $val = isset($summary['um'][$m->id]) ? round($summary['um'][$m->id]) : 0;
                 $valStr = $val != 0 ? $val : '-';
                 $sheet->setCellValue($cStr.$row, $valStr);
                 if ($valStr === '-') $sheet->getStyle($cStr.$row)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFEEEEEE');
-                if($val != 0) $sheet->getStyle($cStr.$row)->getNumberFormat()->setFormatCode('0.00');
+                if($val != 0) {
+                     $sheet->getStyle($cStr.$row)->getNumberFormat()->setFormatCode('0'); // Integer format
+                     $umRowSum += $val; $umRowCount++;
+                }
                 $currCol++;
             }
+            $umAvg = $umRowCount > 0 ? $umRowSum / $umRowCount : 0;
+            $sheet->setCellValue($colStrAvg.$row, $umAvg > 0 ? round($umAvg) : '-');
+            if($umAvg > 0) $sheet->getStyle($colStrAvg.$row)->getNumberFormat()->setFormatCode('0');
             $row++;
             
             // NA Row
@@ -919,6 +933,12 @@ class TuController extends Controller
                 $sheet->getStyle($cStr.$row)->getFont()->setBold(true);
                 $currCol++;
             }
+            
+            // Write NA Average to Last Column
+            $naAvg = count($naValues) > 0 ? array_sum($naValues) / count($naValues) : 0;
+            $sheet->setCellValue($colStrAvg.$row, $naAvg > 0 ? $naAvg : '-');
+            if($naAvg > 0) $sheet->getStyle($colStrAvg.$row)->getNumberFormat()->setFormatCode('0.00');
+            $sheet->getStyle($colStrAvg.$row)->getFont()->setBold(true);
             
             // Calculate Status Logic (With Veto)
             $naAvg = count($naValues) > 0 ? array_sum($naValues) / count($naValues) : 0;
