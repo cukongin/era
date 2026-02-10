@@ -22,7 +22,7 @@ class WaliKelasController extends Controller
         $user = Auth::user();
 
         // Allow Year Override by Request (for Admin/History View)
-        if (request('year_id')) {
+        if (($user->isAdmin() || $user->isTu()) && request('year_id')) {
              $activeYear = TahunAjaran::find(request('year_id'));
              if(!$activeYear) $activeYear = TahunAjaran::where('status', 'aktif')->firstOrFail();
         } else {

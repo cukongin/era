@@ -26,6 +26,8 @@
         
         <div class="flex gap-2 items-center">
             <!-- Filter Lengkap -->
+            <!-- Filter Lengkap -->
+            @if(auth()->user()->isAdmin() || auth()->user()->isTu())
             <div x-data="{ open: false }" class="w-full md:w-auto">
                 <!-- Mobile Toggle Button -->
                 <button @click="open = !open" type="button" class="md:hidden w-full flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5 rounded-lg shadow-sm">
@@ -80,6 +82,7 @@
 
                 </form>
             </div>
+            @endif
 
             @php
                 $allDecisionsLocked = collect($studentStats)->every(fn($s) => $s->is_locked);
