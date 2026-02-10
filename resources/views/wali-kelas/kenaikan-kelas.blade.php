@@ -288,7 +288,6 @@
                             
                             @if(isset($isFinalPeriod) && $isFinalPeriod)
                             <td class="px-6 py-4">
-                            <td class="px-6 py-4">
                                 <div class="text-[10px] text-red-500 font-bold hidden">RAW: {{ $stat->final_status ?: 'EMPTY' }}</div>
                                 <div x-data="{ editing: false, currentStatus: '{{ $stat->final_status ?: 'pending' }}', loading: false }" class="flex justify-end relative">
                                     <!-- DISPLAY MODE (LOCKED) -->

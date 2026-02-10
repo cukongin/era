@@ -214,6 +214,12 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/{kelas}/preview', [App\Http\Controllers\GradeImportController::class, 'preview'])->name('grade.import.preview');
     });
 
+    // Promotion & Decision Routes (Wali Kelas & Admin)
+    Route::middleware(['role:teacher,admin'])->prefix('promotion')->group(function () {
+        Route::post('/update', [App\Http\Controllers\PromotionController::class, 'updateDecision'])->name('promotion.update');
+        Route::post('/bulk-update', [App\Http\Controllers\PromotionController::class, 'bulkUpdateDecision'])->name('promotion.bulk_update');
+    });
+
     // Wali Kelas Area
     Route::middleware(['role:teacher,admin'])->prefix('wali-kelas')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\WaliKelasController::class, 'dashboard'])->name('walikelas.dashboard');
