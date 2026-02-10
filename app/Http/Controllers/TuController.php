@@ -869,21 +869,18 @@ class TuController extends Controller
             $sheet->getStyle("A$row:$colStrKet$row")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFFFF0E0');
             
             $currCol = 4;
-            $rrRowSum = 0; $rrRowCount = 0;
             foreach ($mapels as $m) {
                 $cStr = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($currCol);
                 $val = $summary['rr'][$m->id] ?? 0;
                 $valStr = $val != 0 ? $val : '-';
                 $sheet->setCellValue($cStr.$row, $valStr);
                 if ($valStr === '-') $sheet->getStyle($cStr.$row)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFEEEEEE');
-                if($val != 0) {
-                     $sheet->getStyle($cStr.$row)->getNumberFormat()->setFormatCode('0.00');
-                     $rrRowSum += $val; $rrRowCount++;
-                }
+                if($val != 0) $sheet->getStyle($cStr.$row)->getNumberFormat()->setFormatCode('0.00');
                 $currCol++;
             }
-            $rrAvg = $rrRowCount > 0 ? $rrRowSum / $rrRowCount : 0;
-            $sheet->setCellValue($colStrAvg.$row, $rrAvg > 0 ? $rrAvg : '-');
+            // Use Central Avg
+            $rrAvg = $summary['averages']['rr'] ?? 0;
+            $sheet->setCellValue($colStrAvg.$row, $rrAvg > 0 ? number_format($rrAvg, 2) : '-');
             if($rrAvg > 0) $sheet->getStyle($colStrAvg.$row)->getNumberFormat()->setFormatCode('0.00');
             $row++;
             
@@ -893,21 +890,16 @@ class TuController extends Controller
             $sheet->getStyle("A$row:$colStrKet$row")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFEFF6FF');
             
             $currCol = 4;
-            $umRowSum = 0; $umRowCount = 0;
             foreach ($mapels as $m) {
                 $cStr = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($currCol);
-                // ROUNDED INTEGER
-                $val = isset($summary['um'][$m->id]) ? round($summary['um'][$m->id]) : 0;
+                $val = $summary['um'][$m->id] ?? 0; // Already rounded
                 $valStr = $val != 0 ? $val : '-';
                 $sheet->setCellValue($cStr.$row, $valStr);
                 if ($valStr === '-') $sheet->getStyle($cStr.$row)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFEEEEEE');
-                if($val != 0) {
-                     $sheet->getStyle($cStr.$row)->getNumberFormat()->setFormatCode('0'); // Integer format
-                     $umRowSum += $val; $umRowCount++;
-                }
+                if($val != 0) $sheet->getStyle($cStr.$row)->getNumberFormat()->setFormatCode('0');
                 $currCol++;
             }
-            $umAvg = $umRowCount > 0 ? $umRowSum / $umRowCount : 0;
+            $umAvg = $summary['averages']['um'] ?? 0;
             $sheet->setCellValue($colStrAvg.$row, $umAvg > 0 ? round($umAvg) : '-');
             if($umAvg > 0) $sheet->getStyle($colStrAvg.$row)->getNumberFormat()->setFormatCode('0');
             $row++;
@@ -918,7 +910,6 @@ class TuController extends Controller
             $sheet->getStyle("A$row:$colStrKet$row")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFDCFCE7');
             $sheet->getStyle("A$row:$colStrKet$row")->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK);
 
-            $naValues = [];
             $currCol = 4;
             foreach ($mapels as $m) {
                 $cStr = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($currCol);
@@ -926,23 +917,18 @@ class TuController extends Controller
                 $valStr = $val != 0 ? $val : '-';
                 $sheet->setCellValue($cStr.$row, $valStr);
                 if ($valStr === '-') $sheet->getStyle($cStr.$row)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFEEEEEE');
-                if($val != 0) {
-                     $sheet->getStyle($cStr.$row)->getNumberFormat()->setFormatCode('0.00');
-                     $naValues[] = $val;
-                }
+                if($val != 0) $sheet->getStyle($cStr.$row)->getNumberFormat()->setFormatCode('0.00');
                 $sheet->getStyle($cStr.$row)->getFont()->setBold(true);
                 $currCol++;
             }
             
-            // Write NA Average to Last Column
-            $naAvg = count($naValues) > 0 ? array_sum($naValues) / count($naValues) : 0;
-            $sheet->setCellValue($colStrAvg.$row, $naAvg > 0 ? $naAvg : '-');
+            // Write NA Average (Use Central Calculation)
+            $naAvg = $summary['averages']['na'] ?? 0;
+            $academicPass = $naAvg >= $minLulus; // Use for Status
+            
+            $sheet->setCellValue($colStrAvg.$row, $naAvg > 0 ? number_format($naAvg, 2) : '-');
             if($naAvg > 0) $sheet->getStyle($colStrAvg.$row)->getNumberFormat()->setFormatCode('0.00');
             $sheet->getStyle($colStrAvg.$row)->getFont()->setBold(true);
-            
-            // Calculate Status Logic (With Veto)
-            $naAvg = count($naValues) > 0 ? array_sum($naValues) / count($naValues) : 0;
-            $academicPass = $naAvg >= $minLulus;
             
             $promoRecord = \Illuminate\Support\Facades\DB::table('promotion_decisions')
                 ->where('id_siswa', $ak->id_siswa)
@@ -1101,6 +1087,9 @@ class TuController extends Controller
         $bRapor = \App\Models\GlobalSetting::val('ijazah_bobot_rapor', 60);
         $bUjian = \App\Models\GlobalSetting::val('ijazah_bobot_ujian', 40);
 
+        $sums = ['rr' => 0, 'um' => 0, 'na' => 0];
+        $counts = ['rr' => 0, 'um' => 0, 'na' => 0];
+
         foreach ($mapels as $m) {
             // 1. Calculate Rata-Rapor (RR)
             $mapelGrades = $studentGrades->where('id_mapel', $m->id);
@@ -1115,21 +1104,31 @@ class TuController extends Controller
             
             $rr = $count > 0 ? round($sum / $count, 2) : 0;
             $summary['rr'][$m->id] = $rr;
+            if ($rr > 0) { $sums['rr'] += $rr; $counts['rr']++; }
             
-            // 2. Get Ujian Madrasah (UM)
+            // 2. Get Ujian Madrasah (UM) - ROUNDED TO INT
             $umRecord = $ijazahGrades->where('id_mapel', $m->id)->first();
-            $um = $umRecord ? $umRecord->nilai_ujian_madrasah : 0; 
+            $um = $umRecord ? round($umRecord->nilai_ujian_madrasah) : 0; 
             
             $summary['um'][$m->id] = $um;
+            if ($um > 0) { $sums['um'] += $um; $counts['um']++; }
             
             // 3. Calculate Nilai Akhir (NA) using Dynamic Weights
             if ($rr > 0 || $um > 0) {
                 $na = ($rr * ($bRapor/100)) + ($um * ($bUjian/100));
-                $summary['na'][$m->id] = round($na, 2);
+                $valNa = round($na, 2);
+                $summary['na'][$m->id] = $valNa;
+                if ($valNa > 0) { $sums['na'] += $valNa; $counts['na']++; }
             } else {
                 $summary['na'][$m->id] = 0;
             }
         }
+        
+        $summary['averages'] = [
+             'rr' => $counts['rr'] > 0 ? $sums['rr'] / $counts['rr'] : 0,
+             'um' => $counts['um'] > 0 ? $sums['um'] / $counts['um'] : 0,
+             'na' => $counts['na'] > 0 ? $sums['na'] / $counts['na'] : 0,
+        ];
         
         return $summary;
     }
