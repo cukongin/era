@@ -100,7 +100,7 @@ class WaliKelasController extends Controller
         // 3. Determine Active Class (Selected or First)
         $kelas = $request->kelas_id;
         $kelas = null;
-        if ($kelas->id) {
+        if ($kelas) {
             $kelas = $allClasses->where('id', $kelas->id)->first();
         } 
         if (!$kelas) {
