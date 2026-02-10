@@ -1546,8 +1546,8 @@ class WaliKelasController extends Controller
 
         // Subjects (Mapel)
         // Better: Get mapels from NilaiSiswa to ensure we only show mapels that have grades.
-        $subjects = Mapel::whereHas('nilai_siswa', function($q) use ($kelasId, $selectedPeriodeId) {
-            $q->where('id_kelas', $kelasId)->where('id_periode', $selectedPeriodeId);
+        $subjects = Mapel::whereHas('nilai_siswa', function($q) use ($kelas, $selectedPeriodeId) {
+            $q->where('id_kelas', $kelas->id)->where('id_periode', $selectedPeriodeId);
         })->get();
 
         if ($subjects->isEmpty()) {
