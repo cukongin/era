@@ -51,8 +51,16 @@
             @endif
         </div>
         <div class="flex gap-2">
-            <!-- Filter Kelas -->
-            <form id="filter-kelas" action="{{ route('promotion.index') }}" method="GET">
+            <!-- Filter Kelas & Periode -->
+            <form id="filter-form" action="{{ route('promotion.index') }}" method="GET" class="flex gap-2">
+                <select name="period_id" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block w-48 p-2.5 shadow-sm font-bold">
+                    @foreach($allPeriods as $p)
+                        <option value="{{ $p->id }}" {{ isset($selectedPeriod) && $selectedPeriod->id == $p->id ? 'selected' : '' }}>
+                            {{ $p->nama_periode }} ({{ $p->status }})
+                        </option>
+                    @endforeach
+                </select>
+
                 <select name="class_id" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block w-48 p-2.5 shadow-sm font-bold">
                     @foreach($allClasses as $c)
                         <option value="{{ $c->id }}" {{ isset($selectedClass) && $selectedClass->id == $c->id ? 'selected' : '' }}>

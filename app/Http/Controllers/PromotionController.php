@@ -42,6 +42,13 @@ class PromotionController extends Controller
             $selectedClass = $allClasses->where('id', $request->class_id)->first() ?? $selectedClass;
         }
 
+        // Period Selection
+        $allPeriods = Periode::where('id_tahun_ajaran', $activeYear->id)->get();
+        $selectedPeriod = $allPeriods->where('status', 'aktif')->first();
+        if ($request->has('period_id')) {
+            $selectedPeriod = $allPeriods->where('id', $request->period_id)->first() ?? $selectedPeriod;
+        }
+
         $students = collect([]);
         $metrics = ['total' => 0, 'promoted' => 0, 'retained' => 0];
         $isLocked = false;
@@ -65,7 +72,7 @@ class PromotionController extends Controller
                 ->exists();
 
             // Run Calculation
-            $this->calculate($selectedClass->id);
+            $this->calculate($selectedClass->id, $selectedPeriod ? $selectedPeriod->id : null);
 
             // Fetch Results
             $students = DB::table('promotion_decisions')
@@ -162,24 +169,21 @@ class PromotionController extends Controller
             }
         }
 
-        // 4. Access Control (Period Check)
-        $periods = Periode::where('id_tahun_ajaran', $activeYear->id)->get();
-        $activePeriod = $periods->firstWhere('status', 'aktif');
-        $warningMessage = null;
-
-        if ($activePeriod) {
-            $isLast = $periods->last() && $activePeriod->id === $periods->last()->id;
-            if (!$isLast && !$user->role === 'admin') {
-                return redirect()->route('dashboard')->with('error', 'Halaman ini hanya aktif di periode akhir.');
-            }
+        if ($selectedPeriod) {
+            $isLast = $allPeriods->last() && $selectedPeriod->id === $allPeriods->last()->id;
+            // Admin Access: Allow viewing any period
+            // Wali Kelas/User: Only allow if Active
+            
             if (!$isLast) {
-                 $warningMessage = "⚠️ PERINGATAN: Periode saat ini ({$activePeriod->nama_periode}) BUKAN periode akhir.";
+                 $warningMessage = "⚠️ NOTE: Menampilkan data Periode: {$selectedPeriod->nama_periode}. Status akhir (Naik/Lulus) hanya valid di periode akhir.";
             }
         }
 
         return view('promotion.index', compact(
             'allClasses', 
             'selectedClass', 
+            'allPeriods',
+            'selectedPeriod',
             'students', 
             'metrics', 
             'isLocked', 
@@ -192,7 +196,7 @@ class PromotionController extends Controller
 
     // THE LOGIC ENGINE
     // THE LOGIC ENGINE
-    public function calculate($kelasId)
+    public function calculate($kelasId, $filterPeriodId = null)
     {
         $activeYear = TahunAjaran::where('status', 'aktif')->firstOrFail();
         $kelas = Kelas::find($kelasId);
@@ -216,6 +220,9 @@ class PromotionController extends Controller
         
         $periods = Periode::where('id_tahun_ajaran', $activeYear->id)
             ->where('lingkup_jenjang', $jenjang)
+            ->when($filterPeriodId, function($q) use ($filterPeriodId) {
+                return $q->where('id', $filterPeriodId);
+            })
             ->get();
         $periodIds = $periods->pluck('id');
 
