@@ -5,14 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cetak DKN - {{ $kelas->nama_kelas }}</title>
     <style>
-        body { font-family: Arial, sans-serif; font-size: 11px; }
-        .header { text-align: center; margin-bottom: 20px; font-weight: bold; }
-        .table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .table th, .table td { border: 1px solid #000; padding: 4px; text-align: center; }
-        .text-left { text-align: left !important; }
+        body { font-family: Arial, sans-serif; font-size: 11px; margin: 0; padding: 0; }
+        .header { text-align: center; margin-bottom: 20px; font-weight: bold; text-transform: uppercase; }
+        .table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 10px; }
+        .table th, .table td { border: 1px solid #000; padding: 4px; text-align: center; vertical-align: middle; }
+        .text-left { text-align: left !important; padding-left: 5px !important; }
         .bg-gray { background-color: #f0f0f0; }
+        .vertical-header {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            white-space: nowrap;
+            height: 120px;
+            padding: 5px;
+            font-size: 9px;
+            max-width: 30px;
+        }
+        .rank-col { font-weight: bold; background-color: #f9f9f9; }
         @media print {
             @page { size: landscape; margin: 10mm; }
+            body { -webkit-print-color-adjust: exact; }
+            .bg-gray { background-color: #f0f0f0 !important; }
         }
     </style>
 </head>
@@ -21,7 +33,7 @@
     <div class="header">
         DAFTAR KUMPULAN NILAI (DKN) IJAZAH<br>
         TAHUN PELAJARAN {{ $kelas->tahun_ajaran->nama_tahun }}<br>
-        {{ strtoupper($school->nama_sekolah ?? 'SEKOLAH') }}
+        {{ $school->nama_sekolah ?? 'SEKOLAH' }}
     </div>
 
     @php
@@ -30,127 +42,81 @@
         $minLulus = \App\Models\GlobalSetting::val('ijazah_min_lulus', 60);
     @endphp
 
-    <div style="margin-bottom: 10px;">
-        Kelas: {{ $kelas->nama_kelas }}
+    <div style="margin-bottom: 10px; font-weight: bold;">
+        KELAS: {{ $kelas->nama_kelas }} <span style="float: right;">Wali Kelas: {{ $kelas->wali_kelas->name ?? '-' }}</span>
     </div>
 
-    <table class="table">
     <table class="table">
         <thead>
             <tr class="bg-gray">
                 <th rowspan="2" style="width: 30px;">NO</th>
-                <th rowspan="2" style="width: 150px;">NAMA SISWA</th>
-                <th rowspan="2" style="width: 200px;">MATA PELAJARAN</th>
-                <th colspan="3">KOMPONEN NILAI</th>
-                <th rowspan="2" style="width: 50px;">PREDIKAT</th>
-                <th rowspan="2" style="width: 80px;">KETERANGAN</th>
+                <th rowspan="2" style="width: 200px;">NAMA SISWA / NISN</th>
+                @foreach($mapels as $mapel)
+                    <th rowspan="2" class="vertical-header">{{ $mapel->nama_mapel }}</th>
+                @endforeach
+                <th colspan="2">NILAI AKHIR</th>
+                <th rowspan="2" style="width: 60px;">KET</th>
             </tr>
             <tr class="bg-gray">
-                <th style="width: 80px;">RATA-RATA RAPOR<br>({{ $bRapor }}%)</th>
-                <th style="width: 80px;">UJIAN MADRASAH<br>({{ $bUjian }}%)</th>
-                <th style="width: 80px;">NILAI AKHIR<br>(IJAZAH)</th>
+                <th style="width: 50px;">JUMLAH</th>
+                <th style="width: 50px;">RATA-RATA</th>
             </tr>
         </thead>
         <tbody>
             @foreach($students as $index => $s)
                 @php 
-                    // Determine Grade Counts for Rowspan
-                    // Assuming we list ALL mapels for each student per row? 
-                    // OR One Student per Row (Horizontal Mapels)?
-                    // User Example: "No | Mapel | Rata | Ujian | Akhir | Pred | Ket" -> This looks like ONE ROW PER MAPEL.
-                    // BUT DKN usually means "Daftar Kumpulan Nilai" (Student List).
-                    // If we follow User Example strictly: "1 | Fiqih...", "2 | Bahasa Arab...". This is per-student transcript style?
-                    // NO, User said "Struktur Tabel Bantu" usually implies a per-student sheet.
-                    // BUT "Tabel Ijazah (Lengkap Kelulusan)" usually implies DKN (List of Students).
-                    
-                    // Let's stick to the STANDARD DKN FORMAT (Students as Rows, Mapels as Columns) OR (Students as Blocks).
-                    // However, printing ALL columns (Rata, Ujian, NA, Pred, Ket) for EACH mapel horizontally will explode the width.
-                    // The User's Example "A B C D E F G H" (No, Mapel, Rapor 4,5,6, Rata, Ujian, NA) is clearly a Transcript format (Vertical Mapels).
-                    
-                    // IF this is "Cetak DKN" (Class List), we usually only show FINAL GRADE to save space.
-                    // BUT User asks "Coba jelaskan...". User provided a TRANSCRIPT view (One student, many mapels).
-                    
-                    // CHALLENGE: "Cetak DKN" usually means 1 Row per Student.
-                    // If I change `print_dkn` to Vertical (One block per student), it becomes "SKL / Transkrip Sementara".
-                    
-                    // WAIT: User context is "Tabel Ijazah".
-                    // Let's look at the View `print_dkn.blade.php`. It currently iterates `$students`.
-                    
-                    // COMPROMISE: I will make the DKN table simpler but with SUB-COLUMNS for each mapel? No space.
-                    // Maybe the user wants a "Ledger Ijazah"?
-                    
-                    // Let's assume user wants the "Standard DKN" (List of students) but wants to see the FINAL SCORE mostly.
-                    // BUT user passed "Predikat" and "Keterangan".
-                    // If I add Predikat/Keterangan per Mapel per Student, it's huge.
-                    // Maybe Predikat/Keterangan applied to the AVERAGE TOTAL? ("RATA-RATA TOTAL: 80.61 -> LULUS").
-                    
-                    // Let's look at User's Example 2:
-                    // "RATA-RATA TOTAL: 80.61 | B | LULUS"
-                    // So Predikat/Status applies to the STUDENT'S OVERALL PERFORMANCE?
-                    // OR Per Mapel?
-                    // Table shows: "Matematika | 67.2 | D | TIDAK". So PER MAPEL.
-                    
-                    // If per mapel, a Matrix DKN (Students x Mapels) is hard to fit Predicate.
-                    // I will stick to the previous layout (Students x Mapels) BUT add a summary column at the end?
-                    // OR is this view meant to be "Leger Ijazah"?
-                    
-                    // Let's re-read: "Cetak DKN". 
-                    // I will implement a "Compact DKN":
-                    // Rows: Students.
-                    // Cols: Mapels (Just Nilai Akhir).
-                    // Summary Cols: Total, Rata-Rata, Predikat (of Avg), Status (Lulus/Tidak).
-                    
-                    // BUT user might want the "Calculation Proof" per mapel?
-                    // That's usually "Leger".
-                    
-                    // Let's optimize `print_dkn` to display:
-                    // 1. One Row Per Student.
-                    // 2. Col for each Mapel (Showing NA).
-                    // 3. Final Cols: Rata-Rata NA, Predikat (Overall), Keputusan (Lulus/Tidak).
-                    
-                    // Adding Predicate Logic to the existing DKN summary.
-                @endphp
-            <tr>
-                <td class="text-center">{{ $index + 1 }}</td>
-                <td class="text-left">{{ $s->siswa->nama_lengkap }}<br><span style="font-size: 9px; color: #666;">NISN: {{ $s->siswa->nisn }}</span></td>
-                
-                @php 
-                    $totalSum = 0; 
+                    $totalNa = 0; 
                     $mapelCount = 0; 
                     $hasFail = false;
                 @endphp
-
+            <tr>
+                <td class="text-center">{{ $index + 1 }}</td>
+                <td class="text-left">
+                    <div style="font-weight: bold;">{{ strtoupper($s->siswa->nama_lengkap) }}</div>
+                    <div style="font-size: 9px; color: #555;">{{ $s->siswa->nisn ?? '-' }}</div>
+                </td>
+                
                 @foreach($mapels as $mapel)
                     @php
+                        // Logic MATCHING Excel Export
+                        // 1. Get Nilai Ijazah Row
                         $g = $grades[$s->id_siswa]->where('id_mapel', $mapel->id)->first();
-                        $val = $g->nilai_ijazah ?? 0;
-                        if ($val > 0) {
-                            $totalSum += $val;
-                            $mapelCount++;
-                            if ($val < $minLulus) $hasFail = true;
+                        
+                        // 2. Fetch RR and UM
+                        $rr = $g->rata_rata_rapor ?? 0;
+                        $um = isset($g->nilai_ujian_madrasah) ? round($g->nilai_ujian_madrasah) : 0; // ROUNDED
+                        
+                        // 3. Calculate NA
+                        $na = 0;
+                        if ($rr > 0 || $um > 0) {
+                            $calc = ($rr * ($bRapor/100)) + ($um * ($bUjian/100));
+                            $na = round($calc, 2);
                         }
+                        
+                        // Accumulate
+                        if ($na > 0) {
+                            $totalNa += $na;
+                            $mapelCount++;
+                        }
+                        
+                        // Fail Check (Optional for display color)
+                        $isLow = $na < $minLulus && $na > 0;
                     @endphp
-                    <td class="text-center" style="{{ $val < $minLulus && $val > 0 ? 'color: red; font-weight: bold;' : '' }}">
-                        {{ $val > 0 ? number_format($val, 2) : '-' }}
+                    <td class="text-center" style="{{ $isLow ? 'color: red; font-weight: bold;' : '' }}">
+                        {{ $na > 0 ? number_format($na, 2) : '-' }}
                     </td>
                 @endforeach
                 
                 @php 
-                    $avg = $mapelCount > 0 ? $totalSum / $mapelCount : 0;
-                    // Predikat Global (rata-rata)
-                    $predikat = 'D';
-                    if ($avg >= 90) $predikat = 'A';
-                    elseif ($avg >= 80) $predikat = 'B';
-                    elseif ($avg >= 70) $predikat = 'C';
-                    
-                    // Status
-                    // Lulus if Average >= MinLulus AND (Optional: No failed subjects? Usually Ijazah is pure Average, but User showed "TIDAK" per mapel. Usually "Lulus Satuan Pendidikan" depends on Overall Avg).
-                    // Let's use Average >= MinLulus.
-                    $lulus = $avg >= $minLulus;
+                    $avgNa = $mapelCount > 0 ? $totalNa / $mapelCount : 0;
+                    $lulus = $avgNa >= $minLulus;
                 @endphp
 
-                <td class="text-center font-bold">{{ number_format($avg, 2) }}</td>
-                <td class="text-center font-bold">{{ $lulus ? 'LULUS' : 'TIDAK' }}</td>
+                <td class="text-center font-bold">{{ $totalNa > 0 ? number_format($totalNa, 2) : '-' }}</td>
+                <td class="text-center font-bold" style="background-color: #f0f0f0;">{{ $avgNa > 0 ? number_format($avgNa, 2) : '-' }}</td>
+                <td class="text-center font-bold" style="{{ $lulus ? 'color: green;' : 'color: red;' }}">
+                    {{ $lulus ? 'LULUS' : 'TIDAK' }}
+                </td>
             </tr>
             @endforeach
         </tbody>
@@ -158,17 +124,22 @@
     
     <div style="margin-top: 10px; font-size: 10px;">
         <strong>Keterangan:</strong><br>
-        1. Nilai yang tercantum adalah <strong>Nilai Akhir (NA)</strong> Ijazah.<br>
-        2. Rumus Nilai Akhir: <strong>NA = (Rata-rata Rapor × {{ $bRapor }}%) + (Nilai Ujian Madrasah × {{ $bUjian }}%)</strong>.<br>
+        1. Nilai yang tercantum adalah <strong>Nilai Akhir (NA)</strong>.<br>
+        2. Rumus: <strong>NA = (Rata-rata Rapor × {{ $bRapor }}%) + (Ujian Madrasah (Bulat) × {{ $bUjian }}%)</strong>.<br>
         3. Kriteria Kelulusan: Rata-rata Nilai Akhir minimal <strong>{{ number_format($minLulus, 2) }}</strong>.
     </div>
 
-    <div style="margin-top: 20px; text-align: right; margin-right: 50px;">
-        {{ $school->kota ?? 'Kota' }}, {{ date('d F Y') }}<br>
-        Kepala Madrasah,<br><br><br><br>
-        <strong>{{ $school->nama_kepala_sekolah ?? '......................' }}</strong><br>
-        NIP. {{ $school->nip_kepala_sekolah ?? '-' }}
-    </div>
+    <table style="width: 100%; margin-top: 30px; border: none;">
+        <tr>
+            <td style="border: none; width: 70%;"></td>
+            <td style="border: none; text-align: center;">
+                {{ $school->kota ?? 'Kota' }}, {{ date('d F Y') }}<br>
+                Kepala Madrasah,<br><br><br><br><br>
+                <strong><u>{{ $school->nama_kepala_sekolah ?? '......................' }}</u></strong><br>
+                NIP. {{ $school->nip_kepala_sekolah ?? '-' }}
+            </td>
+        </tr>
+    </table>
 
     <script>
         window.print();
