@@ -26,15 +26,50 @@
         </div>
         
         <div class="flex gap-2 items-center">
-             <!-- Filter Periode -->
-            <form action="<?php echo e(route('walikelas.kenaikan.index')); ?>" method="GET">
-                <select name="period_id" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block w-48 p-2.5 shadow-sm font-bold">
-                    <?php $__currentLoopData = $periods; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <option value="<?php echo e($p->id); ?>" <?php echo e(isset($activePeriod) && $activePeriod->id == $p->id ? 'selected' : ''); ?>>
-                            <?php echo e($p->nama_periode); ?> (<?php echo e($p->status); ?>)
+             <!-- Filter Lengkap -->
+            <form action="<?php echo e(route('walikelas.kenaikan.index')); ?>" method="GET" class="flex gap-2 items-center flex-wrap">
+                
+                <!-- Tahun Ajaran -->
+                <select name="year_id" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-40">
+                    <?php $__currentLoopData = $years; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $y): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($y->id); ?>" <?php echo e($activeYear->id == $y->id ? 'selected' : ''); ?>>
+                            <?php echo e($y->nama); ?>
+
                         </option>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
+
+                <!-- Jenjang -->
+                <select name="jenjang" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-24">
+                    <option value="">Semua</option>
+                    <?php $__currentLoopData = $jenjangs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $j): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($j->kode); ?>" <?php echo e(request('jenjang') == $j->kode || ($kelas && $kelas->jenjang->kode == $j->kode) ? 'selected' : ''); ?>>
+                            <?php echo e($j->kode); ?>
+
+                        </option>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </select>
+
+                <!-- Kelas -->
+                <select name="kelas_id" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-32">
+                    <?php $__currentLoopData = $allClasses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $c): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($c->id); ?>" <?php echo e($kelas->id == $c->id ? 'selected' : ''); ?>>
+                            <?php echo e($c->nama_kelas); ?>
+
+                        </option>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </select>
+
+                <!-- Periode -->
+                <select name="period_id" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-40">
+                    <?php $__currentLoopData = $periods; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($p->id); ?>" <?php echo e(isset($activePeriod) && $activePeriod->id == $p->id ? 'selected' : ''); ?>>
+                            <?php echo e($p->nama_periode); ?>
+
+                        </option>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </select>
+
             </form>
 
             <?php

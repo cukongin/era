@@ -833,7 +833,7 @@ class WaliKelasController extends Controller
         }
 
         // Dropdown Data
-        $years = TahunAjaran::orderBy('nama_tahun', 'desc')->get();
+        $years = TahunAjaran::orderBy('nama', 'desc')->get();
         $jenjangs = \App\Models\Jenjang::all();
         
         // Fetch Classes for Dropdown (Filtered by Year & Jenjang)

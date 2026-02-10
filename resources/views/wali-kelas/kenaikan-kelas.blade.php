@@ -32,7 +32,7 @@
                 <select name="year_id" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-40">
                     @foreach($years as $y)
                         <option value="{{ $y->id }}" {{ $activeYear->id == $y->id ? 'selected' : '' }}>
-                            {{ $y->nama_tahun }}
+                            {{ $y->nama }}
                         </option>
                     @endforeach
                 </select>
