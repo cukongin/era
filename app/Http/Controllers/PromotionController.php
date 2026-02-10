@@ -443,12 +443,6 @@ class PromotionController extends Controller
              return response()->json(['message' => '⚠️ AKSES DITOLAK: Periode terkunci.'], 403);
         }
 
-    public function updateDecision(Request $request) 
-    {
-        if (!$this->checkActiveYear()) {
-             return response()->json(['message' => '⚠️ AKSES DITOLAK: Periode terkunci.'], 403);
-        }
-
         $decisionId = $request->decision_id;
         $studentId = $request->student_id;
         $classId = $request->class_id;
