@@ -80,7 +80,9 @@ class BackupController extends Controller
             // Use --routines to include procedures/functions if any
             // Use --add-drop-table to ensure restore works on existing DB
             // Use --hex-blob to handle binary data safely
-            $command = "\"$dumpPath\" -u $dbUser $passwordPart -h $dbHost --routines --add-drop-table --hex-blob $dbName > \"$path\" 2>&1";
+            // Use --result-file to avoid shell encoding issues (UTF-16 vs UTF-8)
+            // This ensures the file is written directly by mysqldump in correct UTF-8 format
+            $command = "\"$dumpPath\" -u $dbUser $passwordPart -h $dbHost --routines --add-drop-table --hex-blob --result-file=\"$path\" $dbName 2>&1";
 
             // Execute command
             // Use exec or process. exec is simpler for this one-liner.
@@ -144,7 +146,8 @@ class BackupController extends Controller
                 $mysqlPath = 'mysql'; // Fallback to PATH
             }
 
-            $command = "\"$mysqlPath\" -u $dbUser $passwordPart -h $dbHost --max_allowed_packet=512M $dbName < \"$path\" 2>&1"; // Capture stderr
+            // Add charset to prevent encoding errors (BOM or wide characters)
+            $command = "\"$mysqlPath\" --default-character-set=utf8 -u $dbUser $passwordPart -h $dbHost --max_allowed_packet=512M $dbName < \"$path\" 2>&1";
 
             $output = [];
             $resultCode = null;
@@ -189,7 +192,7 @@ class BackupController extends Controller
          }
          
          // Restore Command
-         $command = "\"$mysqlPath\" -u $dbUser $passwordPart -h $dbHost --max_allowed_packet=512M $dbName < \"$path\" 2>&1";
+         $command = "\"$mysqlPath\" --default-character-set=utf8 -u $dbUser $passwordPart -h $dbHost --max_allowed_packet=512M $dbName < \"$path\" 2>&1";
 
          $output = [];
          $resultCode = null;
