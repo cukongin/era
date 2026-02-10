@@ -290,12 +290,32 @@
                             <td class="px-6 py-4">
                                 <div class="text-[10px] text-red-500 font-bold hidden">RAW: {{ $stat->final_status ?: 'EMPTY' }}</div>
                                 <div x-data="{ editing: false, currentStatus: '{{ $stat->final_status ?: 'pending' }}', loading: false }" class="flex justify-end relative">
-                                    <!-- DISPLAY MODE (LOCKED) -->
+                                    <!-- DISPLAY MODE (LOCKED) - SERVER SIDE RENDERED -->
                                     <div x-show="!editing" class="flex items-center gap-2">
-                                        <span class="px-3 py-1.5 rounded-lg text-xs font-bold uppercase border shadow-sm flex items-center gap-2"
-                                             :class="getStatusClass(currentStatus)">
-                                             <span class="material-symbols-outlined text-[14px]" x-text="getStatusIcon(currentStatus)"></span>
-                                             <span x-text="getStatusLabel(currentStatus)"></span>
+                                        @php
+                                            $status = $stat->final_status ?: 'pending';
+                                            $badgeClass = 'bg-slate-50 text-slate-600 border-slate-200';
+                                            $badgeLabel = 'BELUM DITENTUKAN';
+                                            $badgeIcon = 'help_outline';
+
+                                            if(in_array($status, ['promoted', 'promote', 'graduated', 'graduate'])) {
+                                                $badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                                                $badgeLabel = in_array($status, ['graduated', 'graduate']) ? 'LULUS' : 'NAIK KELAS';
+                                                $badgeIcon = 'lock';
+                                            } elseif(in_array($status, ['retained', 'retain', 'not_graduated', 'not_graduate'])) {
+                                                $badgeClass = 'bg-red-50 text-red-700 border-red-200';
+                                                $badgeLabel = in_array($status, ['not_graduated', 'not_graduate']) ? 'TIDAK LULUS' : 'TINGGAL KELAS';
+                                                $badgeIcon = 'lock';
+                                            } elseif($status == 'conditional') {
+                                                $badgeClass = 'bg-amber-50 text-amber-700 border-amber-200';
+                                                $badgeLabel = 'NAIK BERSYARAT';
+                                                $badgeIcon = 'lock';
+                                            }
+                                        @endphp
+
+                                        <span class="px-3 py-1.5 rounded-lg text-xs font-bold uppercase border shadow-sm flex items-center gap-2 {{ $badgeClass }}">
+                                             <span class="material-symbols-outlined text-[14px]">{{ $badgeIcon }}</span>
+                                             <span>{{ $badgeLabel }}</span>
                                         </span>
                                         
                                         @if(!isset($isLocked) || !$isLocked)
