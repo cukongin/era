@@ -498,26 +498,40 @@ class PromotionController extends Controller
         $count = 0;
 
         if ($decisionIds && count($decisionIds) > 0) {
-            $count = DB::table('promotion_decisions')
-                ->whereIn('id', $decisionIds)
-                ->whereNull('override_by')
-                ->update(['final_decision' => $status, 'updated_at' => now()]);
-        } elseif ($studentIds && count($studentIds) > 0 && $classId) {
-            foreach ($studentIds as $sid) {
-                 $exists = DB::table('promotion_decisions')
-                    ->where('id_siswa', $sid)
-                    ->where('id_kelas', $classId)
-                    ->where('id_tahun_ajaran', $activeYear->id)
-                    ->first();
-                 if ($exists && !is_null($exists->override_by)) continue;
-                 
-                 DB::table('promotion_decisions')->updateOrInsert(
-                    ['id_siswa' => $sid, 'id_kelas' => $classId, 'id_tahun_ajaran' => $activeYear->id],
-                    ['final_decision' => $status, 'updated_at' => now()]
-                 );
-                 $count++;
-            }
-        }
+            // Admin Bypass Logic for Bulk by ID
+           $query = DB::table('promotion_decisions')->whereIn('id', $decisionIds);
+           if (!Auth::user()->isAdmin()) {
+               $query->whereNull('override_by');
+           }
+           $dataToUpdate = ['final_decision' => $status, 'updated_at' => now()];
+           if (Auth::user()->isAdmin()) {
+               $dataToUpdate['override_by'] = Auth::id();
+           }
+           $count = $query->update($dataToUpdate);
+           
+       } elseif ($studentIds && count($studentIds) > 0 && $classId) {
+           foreach ($studentIds as $sid) {
+                $exists = DB::table('promotion_decisions')
+                   ->where('id_siswa', $sid)
+                   ->where('id_kelas', $classId)
+                   ->where('id_tahun_ajaran', $activeYear->id)
+                   ->first();
+                
+                // Admin Bypass Logic for Bulk by Student ID
+                if ($exists && !is_null($exists->override_by) && !Auth::user()->isAdmin()) continue;
+                
+                $dataToUpdate = ['final_decision' => $status, 'updated_at' => now()];
+                if (Auth::user()->isAdmin()) {
+                    $dataToUpdate['override_by'] = Auth::id();
+                }
+
+                DB::table('promotion_decisions')->updateOrInsert(
+                   ['id_siswa' => $sid, 'id_kelas' => $classId, 'id_tahun_ajaran' => $activeYear->id],
+                   $dataToUpdate
+                );
+                $count++;
+           }
+       }
             
         return response()->json(['message' => "$count Santri Berhasil Diupdate.", 'count' => $count]);
     }

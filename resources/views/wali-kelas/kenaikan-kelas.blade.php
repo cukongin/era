@@ -390,20 +390,38 @@
                     });
                     
                     if (res.ok) {
-                        window.location.reload(); // Reload to reflect changes safely
+                        this.showModal = false;
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: 'Status kenaikan kelas berhasil diperbarui.',
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.reload();
+                        });
                     } else {
                         const data = await res.json();
-                        alert(data.message || 'Gagal menyimpan');
+                        Swal.fire('Gagal', data.message || 'Gagal menyimpan', 'error');
                     }
                 } catch (e) {
-                    alert('Terjadi kesalahan jaringan');
+                    Swal.fire('Error', 'Terjadi kesalahan jaringan', 'error');
                 } finally {
                     this.saving = false;
                 }
             },
 
             async bulkUpdate(status) {
-                 if (!confirm(`Yakin ubah status ${this.selectedIds.length} santri jadi ${status}?`)) return;
+                 const result = await Swal.fire({
+                    title: 'Konfirmasi Massal',
+                    text: `Yakin ubah status ${this.selectedIds.length} santri terpilih?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Lanjutkan',
+                    cancelButtonText: 'Batal'
+                 });
+
+                 if (!result.isConfirmed) return;
 
                  try {
                      const res = await fetch("{{ route('promotion.bulk_update') }}", {
@@ -420,12 +438,22 @@
                      });
                      
                      if (res.ok) {
-                         window.location.reload();
+                         const data = await res.json();
+                         Swal.fire({
+                            icon: 'success',
+                            title: 'Selesai!',
+                            text: data.message || 'Update massal berhasil.',
+                            timer: 2000,
+                            showConfirmButton: false
+                         }).then(() => {
+                             window.location.reload();
+                         });
                      } else {
-                         alert('Gagal melakukan update massal');
+                         const data = await res.json();
+                         Swal.fire('Gagal', data.message || 'Gagal melakukan update massal', 'error');
                      }
                  } catch(e) {
-                     alert('Error network');
+                     Swal.fire('Error', 'Terjadi kesalahan jaringan', 'error');
                  }
             }
         }
