@@ -213,6 +213,10 @@
                                         <span class="material-symbols-outlined text-[14px]">{{ $badgeIcon }}</span>
                                         <span>{{ $badgeLabel }}</span>
                                 </span>
+                                <div class="text-[10px] text-slate-400 mt-1 text-right">
+                                    Final: {{ $stat->final_status ?? 'NULL' }} <br>
+                                    Sys: {{ $stat->system_status }}
+                                </div>
                                 
                                 @if((!isset($isLocked) || !$isLocked) && (!$stat->is_locked || auth()->user()->isAdmin()))
                                 <button @click="openModal({{ $studentJson }})" 
