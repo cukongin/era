@@ -293,21 +293,32 @@
                                         <div onclick="window.open('{{ route('reports.print', ['student' => $student->id, 'year_id' => $riwayat->kelas->id_tahun_ajaran]) }}', '_blank')" class="flex-1 text-right">
                                             @php
                                                 $displayStatus = $riwayat->status;
-                                                $isPast = $riwayat->kelas->tahun_ajaran->status == 'tidak_aktif';
+                                                // Fetch Active Year ID (Global)
+                                                // Cache logic to avoid N+1 query
+                                                static $activeYearIdCached = null;
+                                                if ($activeYearIdCached === null) {
+                                                    $activeYearIdCached = \App\Models\TahunAjaran::where('status', 'aktif')->value('id');
+                                                }
+                                                
+                                                $isPast = $riwayat->kelas->id_tahun_ajaran != $activeYearIdCached;
                                                 
                                                 // SMART INFERENCE: Fix Old Data showing 'AKTIF'
                                                 if ($displayStatus == 'aktif' && $isPast) {
                                                     $grade = (int) filter_var($riwayat->kelas->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
-                                                    // Detect Final Year (6, 9, 12, or 3 for old MTS naming)
-                                                    $isFinal = in_array($grade, [6, 9, 12]) || 
-                                                               ($grade == 3 && stripos($riwayat->kelas->nama_kelas, 'MTS') !== false);
+                                                    $name = strtoupper($riwayat->kelas->nama_kelas);
                                                     
-                                                    // If explicit student status is 'lulus' and this is their last record, safe to say LULUS
-                                                    if ($isFinal) {
-                                                        $displayStatus = 'lulus';
-                                                    } else {
-                                                        $displayStatus = 'naik_kelas';
+                                                    // Detect Final Year
+                                                    // MI: 6
+                                                    // MTS: 9 (or 3 if using old naming)
+                                                    // MA/SMA: 12 (or 3)
+                                                    $isFinal = in_array($grade, [6, 9, 12]);
+                                                    
+                                                    // Special Case: "3 - MTs" -> Final
+                                                    if ($grade == 3 && (strpos($name, 'MTS') !== false || strpos($name, 'SMP') !== false || strpos($name, 'ALIYAH') !== false || strpos($name, 'SMA') !== false)) {
+                                                        $isFinal = true;
                                                     }
+                                                    
+                                                    $displayStatus = $isFinal ? 'lulus' : 'naik_kelas';
                                                 }
                                             @endphp
 
