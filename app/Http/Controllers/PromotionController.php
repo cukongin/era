@@ -443,15 +443,52 @@ class PromotionController extends Controller
              return response()->json(['message' => '⚠️ AKSES DITOLAK: Periode terkunci.'], 403);
         }
 
+        // Check if locked
+        $decision = DB::table('promotion_decisions')->where('id', $request->decision_id)->first();
+        if ($decision && !is_null($decision->override_by)) {
+             return response()->json(['message' => '⚠️ GAGAL: Data sudah dikunci permanen.'], 403);
+        }
+
         DB::table('promotion_decisions')
             ->where('id', $request->decision_id)
             ->update([
                 'final_decision' => $request->status,
-                'override_by' => Auth::id(),
+                // 'override_by' => Auth::id(), // DON'T SET OVERRIDE HERE! Override means PERMANENT LOCK.
                 'updated_at' => now()
             ]);
             
         return response()->json(['message' => 'Status saved']);
+    }
+
+    public function bulkUpdateDecision(Request $request) 
+    {
+        if (!$this->checkActiveYear()) {
+             return response()->json(['message' => '⚠️ AKSES DITOLAK: Periode terkunci.'], 403);
+        }
+
+        $request->validate([
+            'decision_ids' => 'required|array',
+            'status' => 'required|string'
+        ]);
+
+        $decisionIds = $request->decision_ids;
+        $status = $request->status;
+        
+        $activeYear = TahunAjaran::where('status', 'aktif')->firstOrFail();
+        
+        // Update only those not locked (override_by IS NULL)
+        $affected = DB::table('promotion_decisions')
+            ->whereIn('id', $decisionIds)
+            ->whereNull('override_by') // Only editable
+            ->update([
+                'final_decision' => $status,
+                'updated_at' => now()
+            ]);
+            
+        return response()->json([
+            'message' => "$affected Santri Berhasil Diupdate.", 
+            'count' => $affected
+        ]);
     }
 
     public function processPromotion(Request $request)

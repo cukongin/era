@@ -149,7 +149,7 @@
     </div>
 
     <!-- Table -->
-    <div class="bg-white dark:bg-[#1a2332] rounded-xl border border-slate-200 dark:border-[#2a3441] shadow-sm overflow-hidden flex flex-col flex-1">
+    <div class="bg-white dark:bg-[#1a2332] rounded-xl border border-slate-200 dark:border-[#2a3441] shadow-sm overflow-hidden flex flex-col flex-1 relative">
         <div class="px-6 py-4 border-b border-slate-100 dark:border-[#2a3441] flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50 dark:bg-[#1e2837]">
             <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-slate-400">table_view</span>
@@ -166,19 +166,29 @@
             <table class="w-full text-sm text-left text-slate-500 dark:text-slate-400">
                 <thead class="text-xs text-slate-700 uppercase bg-slate-50 dark:bg-[#1a2332] dark:text-slate-400 font-bold sticky top-0 z-10">
                     <tr>
+                        <th scope="col" class="p-4 w-4">
+                            <div class="flex items-center">
+                                <input id="checkbox-all" type="checkbox" @change="toggleAll($event)" class="w-4 h-4 text-primary bg-slate-100 border-slate-300 rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-slate-800 focus:ring-2 dark:bg-slate-700 dark:border-slate-600">
+                                <label for="checkbox-all" class="sr-only">checkbox</label>
+                            </div>
+                        </th>
                         <th scope="col" class="px-6 py-3 border-b border-slate-200">Nama Santri</th>
-                        <th scope="col" class="px-6 py-3 text-center border-b border-slate-200">Rata-rata</th>
                         <th scope="col" class="px-6 py-3 text-center border-b border-slate-200">Mapel < KKM</th>
+                        <th scope="col" class="px-6 py-3 text-center border-b border-slate-200">Rata-rata</th>
                         <th scope="col" class="px-6 py-3 text-center border-b border-slate-200">Sikap</th>
                         <th scope="col" class="px-6 py-3 text-center border-b border-slate-200">Kehadiran</th>
                         <th scope="col" class="px-6 py-3 text-center border-b border-slate-200">Rekomendasi</th>
-                        <th scope="col" class="px-6 py-3 text-left border-b border-slate-200 w-64">Catatan</th>
-                        <th scope="col" class="px-6 py-3 text-right border-b border-slate-200 w-48">Status Akhir</th>
+                        <th scope="col" class="px-6 py-3 text-right border-b border-slate-200 w-64">Status Akhir</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-[#2a3441]">
                     @foreach($students as $st)
-                    <tr x-show="matchesSearch('{{ strtolower($st->nama_siswa) }}')" class="bg-white dark:bg-[#1a2332] hover:bg-slate-50 dark:hover:bg-[#1e2837] transition-colors">
+                    <tr x-show="matchesSearch('{{ strtolower($st->nama_siswa) }}')" class="bg-white dark:bg-[#1a2332] hover:bg-slate-50 dark:hover:bg-[#1e2837] transition-colors group">
+                        <td class="w-4 p-4">
+                            <div class="flex items-center">
+                                <input type="checkbox" value="{{ $st->id }}" x-model="selectedIds" class="w-4 h-4 text-primary bg-slate-100 border-slate-300 rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-slate-800 focus:ring-2 dark:bg-slate-700 dark:border-slate-600">
+                            </div>
+                        </td>
                         <td class="px-6 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">
                             <div class="flex items-center gap-3">
                                 <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600">
@@ -190,14 +200,14 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-center font-mono font-bold">{{ $st->average_score }}</td>
-                        <td class="px-6 py-4 text-center">
+                         <td class="px-6 py-4 text-center">
                             @if($st->failed_kkm_count > 0)
                                 <span class="text-red-600 font-bold bg-red-50 px-2 py-0.5 rounded">{{ $st->failed_kkm_count }}</span>
                             @else
                                 <span class="text-slate-300">0</span>
                             @endif
                         </td>
+                        <td class="px-6 py-4 text-center font-mono font-bold">{{ $st->average_score }}</td>
                         <td class="px-6 py-4 text-center font-bold {{ $st->attitude_grade == 'C' || $st->attitude_grade == 'D' ? 'text-red-500' : 'text-green-600' }}">
                             {{ $st->attitude_grade }}
                         </td>
@@ -222,37 +232,59 @@
                                 </span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 text-xs text-slate-500 leading-snug break-words">
-                            {{ $st->notes }}
-                        </td>
                         <td class="px-6 py-4 text-right">
-                            <div class="flex flex-col items-end gap-2">
-                                <select 
-                                    onchange="updateDecision({{ $st->id }}, this.value)" 
-                                    class="bg-white border text-xs font-bold rounded-lg p-2 w-32 shadow-sm focus:ring-primary focus:border-primary
-                                    {{ $st->final_decision == 'promoted' || $st->final_decision == 'graduated' ? 'border-emerald-500 text-emerald-700 bg-emerald-50' : 
-                                       ($st->final_decision == 'retained' || $st->final_decision == 'not_graduated' ? 'border-red-500 text-red-700 bg-red-50 ml-auto' : 'border-slate-300') }}"
-                                    {{ isset($isLocked) && $isLocked ? 'disabled' : '' }}
-                                >
-                                    @if($pageContext['type'] == 'graduation')
-                                        <option value="graduated" {{ $st->final_decision == 'graduated' ? 'selected' : '' }}>LULUS</option>
-                                        <option value="not_graduated" {{ $st->final_decision == 'not_graduated' ? 'selected' : '' }}>TIDAK LULUS</option>
-                                        <option value="pending" {{ $st->final_decision == 'pending' ? 'selected' : '' }}>Ditangguhkan</option>
-                                    @else
-                                        <option value="promoted" {{ $st->final_decision == 'promoted' ? 'selected' : '' }}>Naik Kelas</option>
-                                        <option value="conditional" {{ $st->final_decision == 'conditional' ? 'selected' : '' }}>Naik Bersyarat</option>
-                                        <option value="retained" {{ $st->final_decision == 'retained' ? 'selected' : '' }}>Tinggal Kelas</option>
-                                        <option value="pending" {{ $st->final_decision == 'pending' ? 'selected' : '' }}>Ditangguhkan</option>
+                           <!-- SECURE LOCK UI -->
+                           <div x-data="{ editing: false, currentStatus: '{{ $st->final_decision ?? $st->system_recommendation }}', loading: false }" class="flex justify-end relative">
+                                <!-- DISPLAY MODE (LOCKED) -->
+                                <div x-show="!editing" class="flex items-center gap-2">
+                                    <span class="px-3 py-1.5 rounded-lg text-xs font-bold uppercase border shadow-sm flex items-center gap-2"
+                                         :class="{
+                                            'bg-emerald-50 text-emerald-700 border-emerald-200': currentStatus == 'promoted' || currentStatus == 'graduated',
+                                            'bg-red-50 text-red-700 border-red-200': currentStatus == 'retained' || currentStatus == 'not_graduated',
+                                            'bg-amber-50 text-amber-700 border-amber-200': currentStatus == 'conditional',
+                                            'bg-slate-50 text-slate-600 border-slate-200': currentStatus == 'pending'
+                                         }">
+                                         <span class="material-symbols-outlined text-[14px]">lock</span>
+                                         <span x-text="getStatusLabel(currentStatus)"></span>
+                                    </span>
+                                    
+                                    @if(!isset($isLocked) || !$isLocked)
+                                    <button @click="editing = true" class="text-slate-400 hover:text-blue-600 transition-colors p-1 rounded hover:bg-slate-100">
+                                        <span class="material-symbols-outlined">edit</span>
+                                    </button>
                                     @endif
-                                </select>
-                            </div>
+                                </div>
+
+                                <!-- EDIT MODE (UNLOCKED) -->
+                                <div x-show="editing" @click.away="editing = false" class="absolute right-0 top-0 z-20 flex items-center gap-1 bg-white p-1 rounded-lg border shadow-lg">
+                                    <select x-model="currentStatus" @change="loading = true; await updateDecision({{ $st->id }}, currentStatus); loading = false; editing = false;" 
+                                            class="bg-white border text-xs font-bold rounded p-1 w-32 focus:ring-primary focus:border-primary">
+                                        @if($pageContext['type'] == 'graduation')
+                                            <option value="graduated">LULUS</option>
+                                            <option value="not_graduated">TIDAK LULUS</option>
+                                            <option value="pending">Ditangguhkan</option>
+                                        @else
+                                            <option value="promoted">Naik Kelas</option>
+                                            <option value="conditional">Naik Bersyarat</option>
+                                            <option value="retained">Tinggal Kelas</option>
+                                            <option value="pending">Ditangguhkan</option>
+                                        @endif
+                                    </select>
+                                    <button @click="editing = false" class="text-slate-400 hover:text-red-500">
+                                        <span class="material-symbols-outlined">close</span>
+                                    </button>
+                                </div>
+                                <div x-show="loading" class="absolute right-0 top-0 bg-white/80 p-1">
+                                    <span class="material-symbols-outlined animate-spin text-primary text-sm">sync</span>
+                                </div>
+                           </div>
                         </td>
                     </tr>
                     @endforeach
 
                     @if(count($students) == 0)
                     <tr>
-                        <td colspan="7" class="px-6 py-10 text-center text-slate-500">
+                        <td colspan="8" class="px-6 py-10 text-center text-slate-500">
                             Belum ada data nilai untuk kelas ini.
                         </td>
                     </tr>
@@ -261,11 +293,80 @@
             </table>
         </div>
     </div>
+    
+    <!-- FLOATING BULK TOOLBAR -->
+    <div x-show="selectedIds.length > 0" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="translate-y-20 opacity-0"
+         x-transition:enter-end="translate-y-0 opacity-100"
+         x-transition:leave="transition ease-in duration-300"
+         x-transition:leave-start="translate-y-0 opacity-100"
+         x-transition:leave-end="translate-y-20 opacity-0"
+         class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
+        <div class="bg-slate-900/90 backdrop-blur text-white rounded-full shadow-2xl px-6 py-3 flex items-center gap-6 border border-slate-700/50 ring-1 ring-white/10">
+            <div class="flex items-center gap-3 border-r border-slate-700 pr-6">
+                <span class="bg-primary text-white text-xs font-bold px-2 py-0.5 rounded-full" x-text="selectedIds.length"></span>
+                <span class="font-bold text-sm">Terpilih</span>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-400 font-bold mr-2 uppercase tracking-wider">Set Status:</span>
+                
+                @if($pageContext['type'] == 'graduation')
+                    <button @click="bulkUpdate('graduated')" class="px-4 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-xs font-bold transition-colors shadow-lg shadow-emerald-900/20">
+                        LULUS
+                    </button>
+                    <button @click="bulkUpdate('not_graduated')" class="px-4 py-1.5 rounded-full bg-red-600 hover:bg-red-500 text-xs font-bold transition-colors shadow-lg shadow-red-900/20">
+                        TIDAK LULUS
+                    </button>
+                @else
+                    <button @click="bulkUpdate('promoted')" class="px-4 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-xs font-bold transition-colors shadow-lg shadow-emerald-900/20">
+                        NAIK KELAS
+                    </button>
+                    <button @click="bulkUpdate('retained')" class="px-4 py-1.5 rounded-full bg-red-600 hover:bg-red-500 text-xs font-bold transition-colors shadow-lg shadow-red-900/20">
+                        TINGGAL KELAS
+                    </button>
+                @endif
+            </div>
+            
+            <button @click="selectedIds = []" class="ml-2 text-slate-400 hover:text-white transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+    </div>
 </div>
 
 <script>
     function promotionPage() {
         return {
+            selectedIds: [],
+            search: '',
+            matchesSearch(name) {
+                if(!this.search) return true;
+                return name.includes(this.search.toLowerCase());
+            },
+            toggleAll(e) {
+                if(e.target.checked) {
+                    this.selectedIds = [
+                        @foreach($students as $st)
+                            {{ $st->id }},
+                        @endforeach
+                    ];
+                } else {
+                    this.selectedIds = [];
+                }
+            },
+            getStatusLabel(status) {
+                const labels = {
+                    'promoted': 'NAIK KELAS',
+                    'conditional': 'NAIK BERSYARAT',
+                    'retained': 'TINGGAL KELAS',
+                    'graduated': 'LULUS',
+                    'not_graduated': 'TIDAK LULUS',
+                    'pending': 'BELUM DITENTUKAN'
+                };
+                return labels[status] || status;
+            },
             async updateDecision(id, status) {
                 try {
                     const res = await fetch("{{ route('promotion.update') }}", {
@@ -280,12 +381,37 @@
                     if (res.ok) {
                         // Optional: Show toast
                     } else {
-                        alert('Gagal menyimpan perubahan');
+                        const data = await res.json();
+                        alert(data.message || 'Gagal menyimpan perubahan');
                     }
                 } catch (e) {
                     console.error(e);
                     alert('Error network');
                 }
+            },
+            async bulkUpdate(status) {
+                 if (!confirm(`Yakin set status ${status.toUpperCase().replace('_', ' ')} untuk ${this.selectedIds.length} santri terpilih?`)) return;
+
+                 try {
+                     const res = await fetch("{{ route('promotion.bulk_update') }}", {
+                         method: 'POST',
+                         headers: {
+                             'Content-Type': 'application/json',
+                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                         },
+                         body: JSON.stringify({ decision_ids: this.selectedIds, status: status })
+                     });
+                     
+                     if (res.ok) {
+                         const data = await res.json();
+                         alert(data.message);
+                         window.location.reload();
+                     } else {
+                         alert('Gagal melakukan update massal');
+                     }
+                 } catch(e) {
+                     alert('Error network');
+                 }
             }
         }
     }

@@ -285,6 +285,7 @@ Route::middleware(['auth'])->group(function () {
         // Admin Promotion Routes
         Route::get('/promotion', [App\Http\Controllers\PromotionController::class, 'index'])->name('promotion.index');
         Route::post('/promotion/update', [App\Http\Controllers\PromotionController::class, 'updateDecision'])->name('promotion.update');
+        Route::post('/promotion/bulk-update', [App\Http\Controllers\PromotionController::class, 'bulkUpdateDecision'])->name('promotion.bulk_update');
         Route::post('/promotion/process', [App\Http\Controllers\PromotionController::class, 'processPromotion'])->name('promotion.process');
         Route::post('/promotion/process-all', [App\Http\Controllers\PromotionController::class, 'processAll'])->name('promotion.process_all');
         Route::post('/promotion/finalize', [App\Http\Controllers\PromotionController::class, 'finalize'])->name('promotion.finalize');
