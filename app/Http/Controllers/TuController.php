@@ -687,6 +687,13 @@ class TuController extends Controller
         $defaultLevels = ($jenjang === 'MTS') ? $defaultLevelsMts : $defaultLevelsMi;
         $settingKey = ($jenjang === 'MTS') ? 'ijazah_range_mts' : 'ijazah_range_mi';
         $levelString = \App\Models\GlobalSetting::val($settingKey, $defaultLevels);
+        
+        // AUTO-FIX: If user has old default "4,5,6" saved in DB, force it to new default "1-6"
+        if ($jenjang === 'MI' && $levelString === '4,5,6') {
+            $levelString = '1,2,3,4,5,6';
+        }
+
+        $targetLevels = array_map('trim', explode(',', $levelString));
         $targetLevels = array_map('trim', explode(',', $levelString));
         
         // Determine Bounds from Config
