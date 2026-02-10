@@ -26,46 +26,60 @@
         
         <div class="flex gap-2 items-center">
             <!-- Filter Lengkap -->
-            <form action="{{ route('walikelas.kenaikan.index') }}" method="GET" class="flex flex-col md:flex-row gap-2 items-center flex-wrap w-full md:w-auto p-2 md:p-0 bg-slate-50 md:bg-transparent rounded-lg md:rounded-none border md:border-none border-slate-200">
-                
-                <!-- Tahun Ajaran -->
-                <select name="year_id" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-full md:w-40">
-                    @foreach($years as $y)
-                        <option value="{{ $y->id }}" {{ $activeYear->id == $y->id ? 'selected' : '' }}>
-                            {{ $y->nama }}
-                        </option>
-                    @endforeach
-                </select>
+            <div x-data="{ open: false }" class="w-full md:w-auto">
+                <!-- Mobile Toggle Button -->
+                <button @click="open = !open" type="button" class="md:hidden w-full flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5 rounded-lg shadow-sm">
+                    <div class="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-200">
+                        <span class="material-symbols-outlined text-indigo-600">tune</span>
+                        <span>Filter: {{ $activeYear->nama }}</span>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-500 transition-transform duration-200" :class="{'rotate-180': open}">expand_more</span>
+                </button>
 
-                <!-- Jenjang -->
-                <select name="jenjang" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-full md:w-24">
-                    <option value="">Semua</option>
-                    @foreach($jenjangs as $j)
-                        <option value="{{ $j->kode }}" {{ request('jenjang') == $j->kode || ($kelas && $kelas->jenjang->kode == $j->kode) ? 'selected' : '' }}>
-                            {{ $j->kode }}
-                        </option>
-                    @endforeach
-                </select>
+                <!-- Form -->
+                <form action="{{ route('walikelas.kenaikan.index') }}" method="GET" 
+                      class="flex-col md:flex-row gap-2 items-center flex-wrap w-full md:w-auto mt-2 md:mt-0"
+                      :class="open ? 'flex' : 'hidden md:flex'">
+                    
+                    <!-- Tahun Ajaran -->
+                    <select name="year_id" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-full md:w-40">
+                        @foreach($years as $y)
+                            <option value="{{ $y->id }}" {{ $activeYear->id == $y->id ? 'selected' : '' }}>
+                                {{ $y->nama }}
+                            </option>
+                        @endforeach
+                    </select>
 
-                <!-- Kelas -->
-                <select name="kelas_id" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-full md:w-32">
-                    @foreach($allClasses as $c)
-                        <option value="{{ $c->id }}" {{ $kelas->id == $c->id ? 'selected' : '' }}>
-                            {{ $c->nama_kelas }}
-                        </option>
-                    @endforeach
-                </select>
+                    <!-- Jenjang -->
+                    <select name="jenjang" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-full md:w-24">
+                        <option value="">Semua</option>
+                        @foreach($jenjangs as $j)
+                            <option value="{{ $j->kode }}" {{ request('jenjang') == $j->kode || ($kelas && $kelas->jenjang->kode == $j->kode) ? 'selected' : '' }}>
+                                {{ $j->kode }}
+                            </option>
+                        @endforeach
+                    </select>
 
-                <!-- Periode -->
-                <select name="period_id" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-full md:w-40">
-                    @foreach($periods as $p)
-                        <option value="{{ $p->id }}" {{ isset($activePeriod) && $activePeriod->id == $p->id ? 'selected' : '' }}>
-                            {{ $p->nama_periode }}
-                        </option>
-                    @endforeach
-                </select>
+                    <!-- Kelas -->
+                    <select name="kelas_id" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-full md:w-32">
+                        @foreach($allClasses as $c)
+                            <option value="{{ $c->id }}" {{ $kelas->id == $c->id ? 'selected' : '' }}>
+                                {{ $c->nama_kelas }}
+                            </option>
+                        @endforeach
+                    </select>
 
-            </form>
+                    <!-- Periode -->
+                    <select name="period_id" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-full md:w-40">
+                        @foreach($periods as $p)
+                            <option value="{{ $p->id }}" {{ isset($activePeriod) && $activePeriod->id == $p->id ? 'selected' : '' }}>
+                                {{ $p->nama_periode }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                </form>
+            </div>
 
             @php
                 $allDecisionsLocked = collect($studentStats)->every(fn($s) => $s->is_locked);
@@ -137,6 +151,16 @@
         
         <!-- Mobile Card View -->
         <div class="md:hidden space-y-4 p-4 bg-slate-50 dark:bg-slate-900/50">
+            <!-- Select All (Mobile) -->
+            @if(isset($isFinalPeriod) && $isFinalPeriod)
+            <div class="bg-white dark:bg-slate-800 rounded-xl p-3 shadow-sm border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                <label class="flex items-center gap-3 cursor-pointer w-full">
+                     <input type="checkbox" @change="toggleAll($event)" class="w-5 h-5 text-indigo-600 bg-slate-100 border-slate-300 rounded focus:ring-indigo-500">
+                     <span class="font-bold text-slate-700 dark:text-slate-200 text-sm">Pilih Semua ({{ count($studentStats) }})</span>
+                </label>
+            </div>
+            @endif
+
             @foreach($studentStats as $index => $stat)
                 @php
                     // Re-use logic for badge
