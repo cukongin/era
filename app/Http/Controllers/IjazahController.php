@@ -266,8 +266,8 @@ class IjazahController extends Controller
         // Determine Target Semesters/Levels
         $levels = [];
         if ($jenjang === 'MI') {
-            $val = \App\Models\GlobalSetting::val('ijazah_range_mi', '4,5,6');
-            $levels = $val ? explode(',', $val) : [4,5,6];
+            $val = \App\Models\GlobalSetting::val('ijazah_range_mi', '1,2,3,4,5,6');
+            $levels = $val ? explode(',', $val) : [1,2,3,4,5,6];
         } elseif ($jenjang === 'MTS') {
             $val = \App\Models\GlobalSetting::val('ijazah_range_mts', '7,8,9');
             $levels = $val ? explode(',', $val) : [7,8,9];

@@ -169,7 +169,7 @@
             <p>Keterangan:</p>
             <ol style="margin-top: 0; padding-left: 10px;">
                 @if($jenjang === 'MI')
-                <li>Nilai Rata-rata Rapor: Diambil dari rata-rata nilai rapor kelas 4, 5, dan 6 (Semester 1-2).</li>
+                <li>Nilai Rata-rata Rapor: Diambil dari rata-rata nilai rapor kelas 1, 2, 3, 4, 5, dan 6 (Semester 1-2).</li>
                 @else
                 <li>Nilai Rata-rata Rapor: Diambil dari rata-rata nilai rapor kelas 1, 2, dan 3 (Semester 1-6).</li>
                 @endif
@@ -257,7 +257,7 @@
                         </tr>
 
                         {{-- Signature Space --}}
-                        <tr><td colspan="5" style="height: 60px;"></td></tr>
+                        <tr><td colspan="5" style="height: 70px;"></td></tr>
 
                         {{-- Name --}}
                         <tr>

@@ -681,7 +681,10 @@ class TuController extends Controller
         $ijazahGrades = \App\Models\NilaiIjazah::whereIn('id_siswa', $studentIds)->get();
         
         // Settings: Fetch Dynamic Levels
-        $defaultLevels = ($jenjang === 'MTS') ? '7,8,9' : '4,5,6'; // Default if not set
+        $defaultLevelsMts = '7,8,9';
+        $defaultLevelsMi = '1,2,3,4,5,6'; // UPDATED from 4,5,6 to 1-6 per User Request
+
+        $defaultLevels = ($jenjang === 'MTS') ? $defaultLevelsMts : $defaultLevelsMi;
         $settingKey = ($jenjang === 'MTS') ? 'ijazah_range_mts' : 'ijazah_range_mi';
         $levelString = \App\Models\GlobalSetting::val($settingKey, $defaultLevels);
         $targetLevels = array_map('trim', explode(',', $levelString));
