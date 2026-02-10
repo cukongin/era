@@ -267,10 +267,10 @@ class IjazahController extends Controller
         $levels = [];
         if ($jenjang === 'MI') {
             $val = \App\Models\GlobalSetting::val('ijazah_range_mi', '1,2,3,4,5,6');
-            $levels = $val ? explode(',', $val) : [1,2,3,4,5,6];
+            $levels = $val ? array_map('trim', explode(',', $val)) : [1,2,3,4,5,6];
         } elseif ($jenjang === 'MTS') {
             $val = \App\Models\GlobalSetting::val('ijazah_range_mts', '7,8,9');
-            $levels = $val ? explode(',', $val) : [7,8,9];
+            $levels = $val ? array_map('trim', explode(',', $val)) : [7,8,9];
         } // MA: 10,11,12 ?
 
         $students = $kelas->anggota_kelas()->pluck('id_siswa');
