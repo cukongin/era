@@ -98,10 +98,10 @@ class WaliKelasController extends Controller
         $allClasses = $query->orderBy('nama_kelas')->get();
         
         // 3. Determine Active Class (Selected or First)
-        $kelas = $request->kelas_id;
+        $kelasId = $request->kelas_id;
         $kelas = null;
-        if ($kelas) {
-            $kelas = $allClasses->where('id', $kelas->id)->first();
+        if ($kelasId) {
+            $kelas = $allClasses->where('id', $kelasId)->first();
         } 
         if (!$kelas) {
             $kelas = $allClasses->first();
@@ -1560,7 +1560,7 @@ class WaliKelasController extends Controller
         $mapelId = $request->mapel_id ?? ($subjects->first()->id ?? null);
 
         // 2. Fetch Grades
-        $grades = NilaiSiswa::where('id_kelas', $kelas->id)
+        $grades = NilaiSiswa::where('id_kelas', $kelasId)
             ->where('id_periode', $selectedPeriodeId)
             ->where('id_mapel', $mapelId)
             ->with('siswa')
@@ -1577,7 +1577,7 @@ class WaliKelasController extends Controller
         $currentKkm = $kkmEntry->nilai_kkm ?? 70; // Default KKM
 
         return view('wali-kelas.katrol.index', compact(
-            'kelas', '$kelas->id', 'classes', 
+            'kelas', 'kelasId', 'classes', 
             'allPeriods', 'selectedPeriodeId', 
             'subjects', 'mapelId', 
             'grades', 'currentKkm', 'activeYear'
