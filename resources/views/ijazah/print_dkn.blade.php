@@ -49,75 +49,104 @@
     <table class="table">
         <thead>
             <tr class="bg-gray">
-                <th rowspan="2" style="width: 30px;">NO</th>
-                <th rowspan="2" style="width: 200px;">NAMA SISWA / NISN</th>
+                <th rowspan="2" style="width: 25px;">NO</th>
+                <th rowspan="2" style="width: 180px;">NAMA SISWA / NISN</th>
+                <th rowspan="2" style="width: 40px;">KET</th>
                 @foreach($mapels as $mapel)
                     <th rowspan="2" class="vertical-header">{{ $mapel->nama_mapel }}</th>
                 @endforeach
-                <th colspan="2">NILAI AKHIR</th>
-                <th rowspan="2" style="width: 60px;">KET</th>
+                <th colspan="2">RATA-RATA</th>
+                <th rowspan="2" style="width: 60px;">STATUS</th>
             </tr>
             <tr class="bg-gray">
-                <th style="width: 50px;">JUMLAH</th>
-                <th style="width: 50px;">RATA-RATA</th>
+                <th style="width: 40px;">JML</th>
+                <th style="width: 40px;">AVG</th>
             </tr>
         </thead>
         <tbody>
             @foreach($students as $index => $s)
                 @php 
-                    $totalNa = 0; 
-                    $mapelCount = 0; 
-                    $hasFail = false;
-                @endphp
-            <tr>
-                <td class="text-center">{{ $index + 1 }}</td>
-                <td class="text-left">
-                    <div style="font-weight: bold;">{{ strtoupper($s->siswa->nama_lengkap) }}</div>
-                    <div style="font-size: 9px; color: #555;">{{ $s->siswa->nisn ?? '-' }}</div>
-                </td>
-                
-                @foreach($mapels as $mapel)
-                    @php
-                        // Logic MATCHING Excel Export
-                        // 1. Get Nilai Ijazah Row
+                    // 1. CALCULATE ALL DATA FIRST
+                    $dataRR = []; $sumRR = 0; $countRR = 0;
+                    $dataUM = []; $sumUM = 0; $countUM = 0;
+                    $dataNA = []; $sumNA = 0; $countNA = 0;
+                    
+                    foreach($mapels as $mapel) {
                         $g = $grades[$s->id_siswa]->where('id_mapel', $mapel->id)->first();
                         
-                        // 2. Fetch RR and UM
+                        // RR
                         $rr = $g->rata_rata_rapor ?? 0;
-                        $um = isset($g->nilai_ujian_madrasah) ? round($g->nilai_ujian_madrasah) : 0; // ROUNDED
+                        $dataRR[$mapel->id] = $rr;
+                        if($rr > 0) { $sumRR += $rr; $countRR++; }
                         
-                        // 3. Calculate NA
+                        // UM (Rounded)
+                        $um = isset($g->nilai_ujian_madrasah) ? round($g->nilai_ujian_madrasah) : 0;
+                        $dataUM[$mapel->id] = $um;
+                        if($um > 0) { $sumUM += $um; $countUM++; }
+                        
+                        // NA
                         $na = 0;
                         if ($rr > 0 || $um > 0) {
                             $calc = ($rr * ($bRapor/100)) + ($um * ($bUjian/100));
                             $na = round($calc, 2);
                         }
-                        
-                        // Accumulate
-                        if ($na > 0) {
-                            $totalNa += $na;
-                            $mapelCount++;
-                        }
-                        
-                        // Fail Check (Optional for display color)
-                        $isLow = $na < $minLulus && $na > 0;
-                    @endphp
-                    <td class="text-center" style="{{ $isLow ? 'color: red; font-weight: bold;' : '' }}">
-                        {{ $na > 0 ? number_format($na, 2) : '-' }}
-                    </td>
-                @endforeach
-                
-                @php 
-                    $avgNa = $mapelCount > 0 ? $totalNa / $mapelCount : 0;
-                    $lulus = $avgNa >= $minLulus;
+                        $dataNA[$mapel->id] = $na;
+                        if($na > 0) { $sumNA += $na; $countNA++; }
+                    }
+                    
+                    // Averages
+                    $avgRR = $countRR > 0 ? $sumRR / $countRR : 0;
+                    $avgUM = $countUM > 0 ? $sumUM / $countUM : 0;
+                    $avgNA = $countNA > 0 ? $sumNA / $countNA : 0;
+                    $lulus = $avgNA >= $minLulus;
                 @endphp
+                
+                <!-- ROW 1: Rata Rapor -->
+                <tr>
+                    <td rowspan="3" class="text-center">{{ $index + 1 }}</td>
+                    <td rowspan="3" class="text-left">
+                        <div style="font-weight: bold;">{{ strtoupper($s->siswa->nama_lengkap) }}</div>
+                        <div style="font-size: 9px; color: #555;">{{ $s->siswa->nisn ?? '-' }}</div>
+                    </td>
+                    <td class="text-center" style="font-size: 9px; background-color: #fdfdfd;">Rata-rata Rapor</td>
+                    @foreach($mapels as $mapel)
+                        <td class="text-center text-gray-500" style="font-size: 9px;">
+                            {{ $dataRR[$mapel->id] > 0 ? $dataRR[$mapel->id] : '-' }}
+                        </td>
+                    @endforeach
+                    <td class="text-center" style="font-size: 9px;">{{ $avgRR > 0 ? number_format($avgRR, 2) : '-' }}</td>
+                    <td class="text-center" style="font-size: 9px;">-</td>
+                    <td rowspan="3" class="text-center font-bold" style="{{ $lulus ? 'color: green;' : 'color: red;' }}">
+                        {{ $lulus ? 'LULUS' : 'TIDAK' }}
+                    </td>
+                </tr>
 
-                <td class="text-center font-bold">{{ $totalNa > 0 ? number_format($totalNa, 2) : '-' }}</td>
-                <td class="text-center font-bold" style="background-color: #f0f0f0;">{{ $avgNa > 0 ? number_format($avgNa, 2) : '-' }}</td>
-                <td class="text-center font-bold" style="{{ $lulus ? 'color: green;' : 'color: red;' }}">
-                    {{ $lulus ? 'LULUS' : 'TIDAK' }}
-                </td>
-            </tr>
+                <!-- ROW 2: Ujian Madrasah -->
+                <tr>
+                    <td class="text-center" style="font-size: 9px; background-color: #fdfdfd;">Ujian Madrasah</td>
+                    @foreach($mapels as $mapel)
+                        <td class="text-center text-gray-500" style="font-size: 9px;">
+                            {{ $dataUM[$mapel->id] > 0 ? $dataUM[$mapel->id] : '-' }}
+                        </td>
+                    @endforeach
+                    <td class="text-center" style="font-size: 9px;">{{ $avgUM > 0 ? round($avgUM) : '-' }}</td>
+                    <td class="text-center" style="font-size: 9px;">-</td>
+                </tr>
+
+                <!-- ROW 3: Nilai Akhir (Highlight) -->
+                <tr style="background-color: #f0f8ff;">
+                    <td class="text-center font-bold" style="font-size: 9px;">Nilai Akhir</td>
+                    @foreach($mapels as $mapel)
+                        @php $val = $dataNA[$mapel->id]; @endphp
+                        <td class="text-center font-bold" style="{{ $val < $minLulus && $val > 0 ? 'color: red;' : '' }}">
+                            {{ $val > 0 ? number_format($val, 2) : '-' }}
+                        </td>
+                    @endforeach
+                    <td class="text-center font-bold">{{ $sumNA > 0 ? $sumNA : '-' }}</td>
+                    <td class="text-center font-bold" style="background-color: #333; color: white;">
+                        {{ $avgNA > 0 ? number_format($avgNA, 2) : '-' }}
+                    </td>
+                </tr>
             @endforeach
         </tbody>
     </table>
@@ -135,8 +164,7 @@
             <td style="border: none; text-align: center;">
                 {{ $school->kota ?? 'Kota' }}, {{ date('d F Y') }}<br>
                 Kepala Madrasah,<br><br><br><br><br>
-                <strong><u>{{ $school->nama_kepala_sekolah ?? '......................' }}</u></strong><br>
-                NIP. {{ $school->nip_kepala_sekolah ?? '-' }}
+                <strong>{{ $school->nama_kepala_sekolah ?? '......................' }}</strong>
             </td>
         </tr>
     </table>
