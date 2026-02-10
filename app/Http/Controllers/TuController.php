@@ -680,21 +680,13 @@ class TuController extends Controller
         $mapels = Mapel::whereIn('id', $mapelIds)->orderBy('kategori', 'asc')->orderBy('id', 'asc')->get();
         $ijazahGrades = \App\Models\NilaiIjazah::whereIn('id_siswa', $studentIds)->get();
         
-        // Settings: Fetch Dynamic Levels
-        $defaultLevelsMts = '7,8,9';
-        $defaultLevelsMi = '1,2,3,4,5,6'; // UPDATED from 4,5,6 to 1-6 per User Request
-
-        $defaultLevels = ($jenjang === 'MTS') ? $defaultLevelsMts : $defaultLevelsMi;
-        $settingKey = ($jenjang === 'MTS') ? 'ijazah_range_mts' : 'ijazah_range_mi';
-        $levelString = \App\Models\GlobalSetting::val($settingKey, $defaultLevels);
-        
-        // AUTO-FIX: If user has old default "4,5,6" saved in DB, force it to new default "1-6"
-        if ($jenjang === 'MI' && $levelString === '4,5,6') {
-            $levelString = '1,2,3,4,5,6';
+        // Settings: Custom Logic for DKN FULL EXPORT (Always 1-6 for MI, 7-9 for MTs)
+        // User requested: "DKN Lengkap itu keseluruhan nilai rapor"
+        if ($jenjang === 'MTS') {
+             $targetLevels = [7, 8, 9];
+        } else {
+             $targetLevels = [1, 2, 3, 4, 5, 6]; 
         }
-
-        $targetLevels = array_map('trim', explode(',', $levelString));
-        $targetLevels = array_map('trim', explode(',', $levelString));
         
         // Determine Bounds from Config
         $startLvl = min($targetLevels);
