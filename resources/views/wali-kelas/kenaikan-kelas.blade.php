@@ -372,6 +372,44 @@
 </div>
 
 <script>
+    // GLOBAL HELPERS (Accessible from child scopes)
+    function getStatusLabel(status) {
+        const labels = {
+            'promoted': 'NAIK KELAS',
+            'promote': 'NAIK KELAS',
+            'conditional': 'NAIK BERSYARAT',
+            'retained': 'TINGGAL KELAS',
+            'retain': 'TINGGAL KELAS',
+            'graduated': 'LULUS',
+            'graduate': 'LULUS',
+            'not_graduated': 'TIDAK LULUS',
+            'not_graduate': 'TIDAK LULUS',
+            'pending': 'BELUM DITENTUKAN',
+            'review': 'PERLU TINJAUAN'
+        };
+        return labels[status] || status || 'BELUM DITENTUKAN';
+    }
+
+    function getStatusClass(status) {
+        if (['promoted', 'promote', 'graduated', 'graduate'].includes(status)) {
+            return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+        }
+        if (['retained', 'retain', 'not_graduated', 'not_graduate'].includes(status)) {
+            return 'bg-red-50 text-red-700 border-red-200';
+        }
+        if (status === 'conditional') {
+            return 'bg-amber-50 text-amber-700 border-amber-200';
+        }
+        return 'bg-slate-50 text-slate-600 border-slate-200';
+    }
+
+    function getStatusIcon(status) {
+        if (['pending', 'review', '', null].includes(status)) {
+            return 'help_outline';
+        }
+        return 'lock';
+    }
+
     function promotionPage() {
         return {
             selectedIds: [],
@@ -390,40 +428,6 @@
                 } else {
                     this.selectedIds = [];
                 }
-            },
-            getStatusLabel(status) {
-                const labels = {
-                    'promoted': 'NAIK KELAS',
-                    'promote': 'NAIK KELAS',
-                    'conditional': 'NAIK BERSYARAT',
-                    'retained': 'TINGGAL KELAS',
-                    'retain': 'TINGGAL KELAS',
-                    'graduated': 'LULUS',
-                    'graduate': 'LULUS',
-                    'not_graduated': 'TIDAK LULUS',
-                    'not_graduate': 'TIDAK LULUS',
-                    'pending': 'BELUM DITENTUKAN',
-                    'review': 'PERLU TINJAUAN'
-                };
-                return labels[status] || status || 'BELUM DITENTUKAN';
-            },
-            getStatusClass(status) {
-                if (['promoted', 'promote', 'graduated', 'graduate'].includes(status)) {
-                    return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-                }
-                if (['retained', 'retain', 'not_graduated', 'not_graduate'].includes(status)) {
-                    return 'bg-red-50 text-red-700 border-red-200';
-                }
-                if (status === 'conditional') {
-                    return 'bg-amber-50 text-amber-700 border-amber-200';
-                }
-                return 'bg-slate-50 text-slate-600 border-slate-200';
-            },
-            getStatusIcon(status) {
-                if (['pending', 'review', '', null].includes(status)) {
-                    return 'help_outline';
-                }
-                return 'lock';
             },
             async updateDecision(studentId, classId, status) {
                 try {
