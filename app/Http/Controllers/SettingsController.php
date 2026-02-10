@@ -63,17 +63,17 @@ class SettingsController extends Controller
         }
 
         // 3. Grading Weights Data (Active Year Only)
-        $bobotMI = new BobotPenilaian(['bobot_harian' => 50, 'bobot_uts_cawu' => 50]); // Default
-        $bobotMTS = new BobotPenilaian(['bobot_harian' => 30, 'bobot_uts_cawu' => 30, 'bobot_uas' => 40]); // Default
+        $bobotMI = new BobotPenilaian(['bobot_harian' => 0, 'bobot_uts_cawu' => 100]); // Default
+        $bobotMTS = new BobotPenilaian(['bobot_harian' => 0, 'bobot_uts_cawu' => 0, 'bobot_uas' => 100]); // Default
 
         if ($activeYear) {
             $bobotMI = BobotPenilaian::firstOrCreate(
                 ['id_tahun_ajaran' => $activeYear->id, 'jenjang' => 'MI'],
-                ['bobot_harian' => 50, 'bobot_uts_cawu' => 50, 'bobot_uas' => 0]
+                ['bobot_harian' => 0, 'bobot_uts_cawu' => 100, 'bobot_uas' => 0]
             );
             $bobotMTS = BobotPenilaian::firstOrCreate(
                 ['id_tahun_ajaran' => $activeYear->id, 'jenjang' => 'MTS'],
-                ['bobot_harian' => 30, 'bobot_uts_cawu' => 30, 'bobot_uas' => 40]
+                ['bobot_harian' => 0, 'bobot_uts_cawu' => 0, 'bobot_uas' => 100]
             );
         }
 
