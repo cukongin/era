@@ -158,13 +158,31 @@
         3. Kriteria Kelulusan: Rata-rata Nilai Akhir minimal <strong>{{ number_format($minLulus, 2) }}</strong>.
     </div>
 
-    <table style="width: 100%; margin-top: 30px; border: none;">
+    @php
+        // Jenjang Logic (Robust)
+        $jenjang = ($kelas->jenjang->kode ?? '') == 'MTS' || $kelas->tingkat_kelas > 6 ? 'MTS' : 'MI';
+        $key = strtolower($jenjang);
+        
+        // Fetch Headmaster from Global Settings (Priority)
+        $hmName = \App\Models\GlobalSetting::val("hm_name_$key");
+        $hmNip = \App\Models\GlobalSetting::val("hm_nip_$key");
+        
+        // Fallback to IdentitasSekolah if GlobalSetting is empty
+        if(empty($hmName)) $hmName = $school->nama_kepala_sekolah ?? '......................';
+        if(empty($hmNip)) $hmNip = $school->nip_kepala_sekolah ?? '-';
+        
+        // Date (Indonesian Format)
+        $date = \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM Y');
+        $place = $school->kabupaten ?? $school->kota ?? 'Tempat';
+    @endphp
+
+    <table style="width: 100%; margin-top: 30px; border: none; page-break-inside: avoid;">
         <tr>
-            <td style="border: none; width: 70%;"></td>
+            <td style="border: none; width: 65%;"></td>
             <td style="border: none; text-align: center;">
-                {{ $school->kota ?? 'Kota' }}, {{ date('d F Y') }}<br>
+                {{ $place }}, {{ $date }}<br>
                 Kepala Madrasah,<br><br><br><br><br>
-                <strong>{{ $school->nama_kepala_sekolah ?? '......................' }}</strong>
+                <strong>{{ strtoupper($hmName) }}</strong>
             </td>
         </tr>
     </table>
