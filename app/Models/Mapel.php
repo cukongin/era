@@ -12,4 +12,9 @@ class Mapel extends Model
     protected $table = 'mapel';
     protected $guarded = ['id'];
     protected $fillable = ['nama_mapel', 'nama_kitab', 'kode_mapel', 'kategori', 'target_jenjang'];
+
+    public function nilai_siswa()
+    {
+        return $this->hasMany(NilaiSiswa::class, 'id_mapel');
+    }
 }
