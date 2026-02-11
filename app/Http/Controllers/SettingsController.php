@@ -1150,8 +1150,8 @@ class SettingsController extends Controller
             // Use Symfony Process (Safe wrapper for proc_open)
             // exec() is disabled on Hostinger, but proc_open is active.
             
-            // 1. Git Pull
-            $process = \Symfony\Component\Process\Process::fromShellCommandline('git pull origin master');
+            // 1. Git Pull (Force Reset to Match Repo)
+            $process = \Symfony\Component\Process\Process::fromShellCommandline('git fetch origin master && git reset --hard origin/master');
             $process->setWorkingDirectory(base_path()); // Ensure we are in project root
             $process->run();
 
