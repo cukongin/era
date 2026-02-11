@@ -20,27 +20,8 @@
             <p class="text-slate-500 dark:text-slate-400 ml-8">Ranking detail dan analisa nilai siswa kelas <span class="font-bold text-primary">{{ $class->nama_kelas }}</span>.</p>
         </div>
 
-        <div class="flex items-center gap-2">
-            <!-- Period Selector -->
-            <form action="{{ route('reports.class.analytics', $class->id) }}" method="GET">
-                <div class="relative group">
-                    <select name="period_id" class="appearance-none pl-10 pr-8 py-2.5 text-sm font-bold text-slate-700 bg-white border-2 border-slate-200 rounded-xl hover:border-primary/50 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 dark:bg-[#1a2332] dark:text-slate-200 dark:border-slate-700 cursor-pointer min-w-[220px] shadow-sm transition-all" onchange="this.form.submit()">
-                        <option value="annual" {{ ($isAnnual ?? false) ? 'selected' : '' }} class="font-bold text-purple-600">🏆 Analisa Tahunan (Semua)</option>
-                        <option disabled>──────────</option>
-                        @foreach($periodes as $p)
-                            <option value="{{ $p->id }}" {{ isset($periode) && $periode->id == $p->id && !($isAnnual ?? false) ? 'selected' : '' }}>
-                                {{ $p->nama_periode }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 group-hover:text-primary transition-colors">
-                        <span class="material-symbols-outlined text-[20px] {{ ($isAnnual ?? false) ? 'text-purple-500' : '' }}">calendar_month</span>
-                    </div>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
-                        <span class="material-symbols-outlined text-[18px]">expand_more</span>
-                    </div>
-                </div>
-            </form>
+        <div class="hidden">
+            <!-- Period Selector Removed (Forced Annual) -->
         </div>
     </div>
     

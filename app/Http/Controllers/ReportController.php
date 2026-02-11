@@ -1115,23 +1115,16 @@ class ReportController extends Controller
              ->where('lingkup_jenjang', $class->jenjang->kode)
              ->get();
 
-        $isAnnual = $request->period_id === 'annual';
+        // FORCED ANNUAL VIEW (User Request: "Jangan tampilkan per periode, langsung 1 tahun")
+        $isAnnual = true; 
         $periode = null;
 
         if ($isAnnual) {
             // Annual Mode: Use ALL periods
             $targetPeriodIds = $periodes->pluck('id');
         } else {
-            // Single Period Mode
-            if ($request->period_id) {
-                $periode = $periodes->firstWhere('id', $request->period_id);
-            } else {
-                $periode = $periodes->firstWhere('status', 'aktif');
-                if (!$periode) $periode = $periodes->last();
-            }
-            if (!$periode && !$isAnnual) return back()->with('error', 'Periode tidak ditemukan.');
-            
-            $targetPeriodIds = [$periode->id]; // Single ID array
+            // Unreachable but kept for safety/fallback structure
+            $targetPeriodIds = [];
         }
 
         // 2. Fetch Data (Filtered by Target Periods)
@@ -1434,16 +1427,18 @@ class ReportController extends Controller
         ];
         
         // 2. Anomaly Detection (The "Paradox") & Role Models (The "Anti-Paradox")
-        // Rigid Logic: Rank Top 5 AND Alpha >= 10
+        // Rigid Logic: Rank Top 20 AND Alpha >= 10 (Expanded scope)
         $anomalies = collect($rankingData)->filter(function($student) {
-            return $student['rank'] <= 5 && $student['alpha'] >= 10;
-        });
+            return $student['rank'] <= 20 && $student['alpha'] >= 10;
+        })->take(5); // Limit to 5 per user request
         $anomalyIds = $anomalies->pluck('student.id')->toArray();
         
-        // Role Model Logic: Top 5 Rankers who are NOT Anomalies
-        // This provides the "Apple to Apple" comparison the user requested.
+        // Role Model Logic: Top 20 Rankers who are NOT Anomalies AND have Low Alpha
+        // Condition: Rank <= 20 AND Alpha <= 5
         $roleModels = collect($rankingData)->filter(function($student) use ($anomalyIds) {
-            return !in_array($student['student']->id, $anomalyIds);
+            return $student['rank'] <= 20 
+                && $student['alpha'] <= 5
+                && !in_array($student['student']->id, $anomalyIds);
         })->take(5); // Take top 5 "Normal/Good" students
 
         // 6. Podium (Top 3)
