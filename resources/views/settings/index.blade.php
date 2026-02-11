@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="flex flex-col gap-6" x-data="settingsPage">
-    
+
     <!-- Header & Year Management -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -34,12 +34,12 @@
                 <span class="material-symbols-outlined">warning</span> Tahun Ajaran Kosong
             </div>
             @endif
-            
+
             <!-- Backup Button -->
-            <a href="{{ route('backup.store') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-bold shadow-lg transition-all flex items-center gap-2 text-sm">
+            <a href="{{ route('backup.store') }}" class="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg font-bold shadow-lg transition-all flex items-center gap-2 text-sm">
                 <span class="material-symbols-outlined text-[18px]">cloud_download</span> Backup DB
             </a>
-            
+
             <button onclick="document.getElementById('yearModal').classList.remove('hidden')" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg font-bold shadow-lg transition-all flex items-center gap-2 text-sm">
                 <span class="material-symbols-outlined text-[18px]">edit_calendar</span> Kelola Tahun
             </button>
@@ -109,17 +109,17 @@
         <!-- TAB 1: ATURAN PENILAIAN (GRADING) -->
         <!-- TAB 1: ATURAN PENILAIAN (GRADING) -->
         <div x-show="activeTab === 'grading'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
-            
+
             <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 relative">
-                
+
                 <!-- Toolbar (Jenjang Switcher) -->
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100 dark:border-slate-800">
                     <div class="bg-slate-100 dark:bg-slate-800 p-1 rounded-lg inline-flex">
-                        <a href="?tab=grading&jenjang=MI" 
+                        <a href="?tab=grading&jenjang=MI"
                            class="px-4 py-1.5 rounded-md text-sm font-bold transition-all flex items-center gap-2 {{ $jenjang === 'MI' ? 'bg-white dark:bg-slate-700 shadow text-slate-900 dark:text-white' : 'text-slate-500 hover:text-slate-700' }}">
                             MI (Cawu)
                         </a>
-                        <a href="?tab=grading&jenjang=MTS" 
+                        <a href="?tab=grading&jenjang=MTS"
                            class="px-4 py-1.5 rounded-md text-sm font-bold transition-all flex items-center gap-2 {{ $jenjang === 'MTS' ? 'bg-white dark:bg-slate-700 shadow text-slate-900 dark:text-white' : 'text-slate-500 hover:text-slate-700' }}">
                             MTs (Semester)
                         </a>
@@ -140,10 +140,10 @@
                     <input type="hidden" name="tab" value="grading">
 
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                        
+
                         <!-- Left Column: Bobot & Kenaikan -->
                         <div class="lg:col-span-5 space-y-6">
-                            
+
                             <!-- Card: Periode Input Nilai -->
                             <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-5 mb-6">
                                 <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm mb-4">
@@ -158,8 +158,8 @@
                                                     {{ $periode->status == 'aktif' ? 'Aktif (Bisa Input)' : 'Terkunci' }}
                                                 </div>
                                             </div>
-                                            
-                                            <button type="submit" form="form-toggle-{{ $periode->id }}" 
+
+                                            <button type="submit" form="form-toggle-{{ $periode->id }}"
                                                 class="w-10 h-6 rounded-full transition-colors relative {{ $periode->status == 'aktif' ? 'bg-green-500' : 'bg-slate-300' }}">
                                                 <span class="absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform {{ $periode->status == 'aktif' ? 'translate-x-4' : '' }}"></span>
                                             </button>
@@ -167,30 +167,30 @@
                                     @endforeach
                                 </div>
                             </div>
-                            
+
                             <!-- Card: Bobot -->
-                            <div class="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-200 dark:border-indigo-800 p-5">
+                            <div class="bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/20 dark:border-primary/20 p-5">
                                 <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm mb-4">
-                                    <span class="material-symbols-outlined text-indigo-500 text-sm">tune</span> Komponen & Bobot ({{ $jenjang }})
+                                    <span class="material-symbols-outlined text-primary text-sm">tune</span> Komponen & Bobot ({{ $jenjang }})
                                 </h4>
-                                
+
                                 <div class="space-y-4">
                                     <!-- Harian -->
                                     <div class="bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
                                         <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1">Nilai Harian (PH)</label>
                                         <div class="relative">
                                             <input type="number" name="bobot_harian" value="{{ $activeBobot->bobot_harian ?? 0 }}" {{ $isLocked ? 'disabled' : '' }}
-                                                   class="w-full text-center font-bold rounded-lg border-slate-300 focus:ring-indigo-500 focus:border-indigo-500 text-indigo-600">
+                                                   class="w-full text-center font-bold rounded-lg border-slate-300 focus:ring-primary focus:border-primary text-primary">
                                             <span class="absolute right-3 top-2 text-xs font-bold text-slate-400">%</span>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- UTS -->
                                     <div class="bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
                                         <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1">{{ $jenjang === 'MI' ? 'Ujian Cawu (UTS)' : 'Nilai Tengah Semester (PTS)' }}</label>
                                         <div class="relative">
                                             <input type="number" name="bobot_uts_cawu" value="{{ $activeBobot->bobot_uts_cawu ?? 0 }}" {{ $isLocked ? 'disabled' : '' }}
-                                                   class="w-full text-center font-bold rounded-lg border-slate-300 focus:ring-indigo-500 focus:border-indigo-500 text-indigo-600">
+                                                   class="w-full text-center font-bold rounded-lg border-slate-300 focus:ring-primary focus:border-primary text-primary">
                                             <span class="absolute right-3 top-2 text-xs font-bold text-slate-400">%</span>
                                         </div>
                                     </div>
@@ -201,7 +201,7 @@
                                         <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1">Nilai Akhir Semester (PAS)</label>
                                         <div class="relative">
                                             <input type="number" name="bobot_uas" value="{{ $activeBobot->bobot_uas ?? 0 }}" {{ $isLocked ? 'disabled' : '' }}
-                                                   class="w-full text-center font-bold rounded-lg border-slate-300 focus:ring-indigo-500 focus:border-indigo-500 text-indigo-600">
+                                                   class="w-full text-center font-bold rounded-lg border-slate-300 focus:ring-primary focus:border-primary text-primary">
                                             <span class="absolute right-3 top-2 text-xs font-bold text-slate-400">%</span>
                                         </div>
                                     </div>
@@ -220,7 +220,7 @@
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">KKM Default</label>
-                                        <input type="number" name="kkm_default" value="{{ $gradingSettings['kkm_default'] ?? 70 }}" {{ $isLocked ? 'disabled' : '' }} 
+                                        <input type="number" name="kkm_default" value="{{ $gradingSettings['kkm_default'] ?? 70 }}" {{ $isLocked ? 'disabled' : '' }}
                                                class="w-full text-center font-bold rounded-lg border-slate-300 focus:ring-primary text-sm">
                                     </div>
                                     <div>
@@ -235,7 +235,7 @@
                                 <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">
                                     <label class="flex items-center gap-3 cursor-pointer">
                                         <input type="hidden" name="rounding_enable" value="0">
-                                        <input type="checkbox" name="rounding_enable" value="1" {{ ($gradingSettings['rounding_enable'] ?? 0) ? 'checked' : '' }} {{ $isLocked ? 'disabled' : '' }} 
+                                        <input type="checkbox" name="rounding_enable" value="1" {{ ($gradingSettings['rounding_enable'] ?? 0) ? 'checked' : '' }} {{ $isLocked ? 'disabled' : '' }}
                                                class="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary">
                                         <span class="text-xs font-bold text-slate-700 dark:text-slate-300">Bulatkan Nilai Akhir</span>
                                     </label>
@@ -245,7 +245,7 @@
 
                         <!-- Right Column -->
                         <div class="lg:col-span-7 space-y-6">
-                            
+
                              <!-- Card: Syarat Kenaikan -->
                              <div class="bg-slate-50 dark:bg-slate-900/30 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
                                 <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm mb-4">
@@ -254,17 +254,17 @@
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Hari Efektif /Thn</label>
-                                        <input type="number" name="total_effective_days" value="{{ $gradingSettings['total_effective_days'] ?? 220 }}" {{ $isLocked ? 'disabled' : '' }} 
+                                        <input type="number" name="total_effective_days" value="{{ $gradingSettings['total_effective_days'] ?? 220 }}" {{ $isLocked ? 'disabled' : '' }}
                                                class="w-full text-center font-bold rounded-lg border-slate-300 focus:ring-primary text-sm">
                                     </div>
                                     <div>
                                         <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Max Mapel Gagal</label>
-                                        <input type="number" name="promotion_max_kkm_failure" value="{{ $gradingSettings['promotion_max_kkm_failure'] ?? 3 }}" {{ $isLocked ? 'disabled' : '' }} 
+                                        <input type="number" name="promotion_max_kkm_failure" value="{{ $gradingSettings['promotion_max_kkm_failure'] ?? 3 }}" {{ $isLocked ? 'disabled' : '' }}
                                                class="w-full text-center font-bold rounded-lg border-slate-300 focus:ring-primary text-sm">
                                     </div>
                                     <div>
                                         <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Min Absensi (%)</label>
-                                        <input type="number" name="promotion_min_attendance" value="{{ $gradingSettings['promotion_min_attendance'] ?? 85 }}" {{ $isLocked ? 'disabled' : '' }} 
+                                        <input type="number" name="promotion_min_attendance" value="{{ $gradingSettings['promotion_min_attendance'] ?? 85 }}" {{ $isLocked ? 'disabled' : '' }}
                                                class="w-full text-center font-bold rounded-lg border-slate-300 focus:ring-primary text-sm">
                                     </div>
                                     <div>
@@ -275,18 +275,18 @@
                                             <option value="C" {{ ($gradingSettings['promotion_min_attitude'] ?? '') == 'C' ? 'selected' : '' }}>C</option>
                                         </select>
                                     </div>
-                                    
+
                                     <div class="col-span-2">
                                         <label class="flex items-start gap-3 p-3 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-200 transition-colors">
                                             <input type="hidden" name="promotion_requires_all_periods" value="0">
-                                            <input type="checkbox" name="promotion_requires_all_periods" value="1" 
-                                                {{ ($gradingSettings['promotion_requires_all_periods'] ?? 1) ? 'checked' : '' }} 
-                                                {{ $isLocked ? 'disabled' : '' }} 
-                                                class="w-5 h-5 mt-0.5 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
+                                            <input type="checkbox" name="promotion_requires_all_periods" value="1"
+                                                {{ ($gradingSettings['promotion_requires_all_periods'] ?? 1) ? 'checked' : '' }}
+                                                {{ $isLocked ? 'disabled' : '' }}
+                                                class="w-5 h-5 mt-0.5 text-primary rounded border-gray-300 focus:ring-primary">
                                             <div>
                                                 <span class="font-bold text-slate-700 dark:text-slate-300 text-sm block">Wajib Mengikuti SEMUA Periode Ujian</span>
                                                 <span class="text-[10px] text-slate-500 block leading-tight">
-                                                    Siswa <b>WAJIB</b> memiliki nilai di semua periode (Ganjil & Genap) dalam satu tahun ajaran. 
+                                                    Siswa <b>WAJIB</b> memiliki nilai di semua periode (Ganjil & Genap) dalam satu tahun ajaran.
                                                     Jika tidak, akan otomatis bertanda <b class="text-amber-500">Perlu Ditinjau</b>.
                                                 </span>
                                             </div>
@@ -316,15 +316,15 @@
                                                 <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-700">{{ $p->grade }}</div>
                                             </td>
                                             <td class="px-4 py-2 text-center">
-                                                <input type="number" name="predikat[{{ $p->grade }}][min]" value="{{ $p->min_score }}" {{ $isLocked ? 'disabled' : '' }} 
+                                                <input type="number" name="predikat[{{ $p->grade }}][min]" value="{{ $p->min_score }}" {{ $isLocked ? 'disabled' : '' }}
                                                        class="w-16 text-center font-bold bg-transparent border-0 border-b-2 border-slate-100 focus:border-primary focus:ring-0 p-1">
                                             </td>
                                             <td class="px-4 py-2 text-center">
-                                                <input type="number" name="predikat[{{ $p->grade }}][max]" value="{{ $p->max_score }}" {{ $isLocked ? 'disabled' : '' }} 
+                                                <input type="number" name="predikat[{{ $p->grade }}][max]" value="{{ $p->max_score }}" {{ $isLocked ? 'disabled' : '' }}
                                                        class="w-16 text-center font-bold bg-transparent border-0 border-b-2 border-slate-100 focus:border-primary focus:ring-0 p-1">
                                             </td>
                                             <td class="px-4 py-2">
-                                                <input type="text" name="predikat[{{ $p->grade }}][deskripsi]" value="{{ $p->deskripsi ?? '' }}" {{ $isLocked ? 'disabled' : '' }} 
+                                                <input type="text" name="predikat[{{ $p->grade }}][deskripsi]" value="{{ $p->deskripsi ?? '' }}" {{ $isLocked ? 'disabled' : '' }}
                                                        class="w-full text-sm bg-transparent border-0 focus:ring-0 disabled:opacity-50" placeholder="Deskripsi...">
                                             </td>
                                         </tr>
@@ -341,8 +341,8 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Tempat Titimangsa</label>
-                                        <input type="text" name="titimangsa_tempat_{{ strtolower($jenjang) }}" 
-                                               value="{{ $gradingSettings['titimangsa_tempat_' . strtolower($jenjang)] ?? ($school->kabupaten ?? '') }}" 
+                                        <input type="text" name="titimangsa_tempat_{{ strtolower($jenjang) }}"
+                                               value="{{ $gradingSettings['titimangsa_tempat_' . strtolower($jenjang)] ?? ($school->kabupaten ?? '') }}"
                                                placeholder="Contoh: Jakarta"
                                                class="w-full font-bold rounded-lg border-slate-300 focus:ring-primary text-sm">
                                         <p class="text-[10px] text-slate-400 mt-1">Kota/Tempat di atas tanda tangan.</p>
@@ -350,20 +350,20 @@
                                     <div>
                                         <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Tanggal Rapor</label>
                                         <div class="relative">
-                                            <input type="text" name="titimangsa_{{ strtolower($jenjang) }}" 
-                                                value="{{ $gradingSettings['titimangsa_' . strtolower($jenjang)] ?? '' }}" 
+                                            <input type="text" name="titimangsa_{{ strtolower($jenjang) }}"
+                                                value="{{ $gradingSettings['titimangsa_' . strtolower($jenjang)] ?? '' }}"
                                                 placeholder="Contoh: 20 Juli 2024"
                                                 class="w-full font-bold rounded-lg border-slate-300 focus:ring-primary text-sm">
                                              <span class="absolute right-3 top-2 text-slate-400 material-symbols-outlined text-[18px]">calendar_today</span>
                                         </div>
                                         <p class="text-[10px] text-slate-400 mt-1">Baris 1 (Hijriyah). Contoh: 18 Sya'ban 1446 H.</p>
                                     </div>
-                                    
+
                                     <div class="col-span-1 md:col-span-2">
                                         <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Tanggal Baris 2 (Masehi)</label>
                                         <div class="relative">
-                                            <input type="text" name="titimangsa_2_{{ strtolower($jenjang) }}" 
-                                                value="{{ $gradingSettings['titimangsa_2_' . strtolower($jenjang)] ?? '' }}" 
+                                            <input type="text" name="titimangsa_2_{{ strtolower($jenjang) }}"
+                                                value="{{ $gradingSettings['titimangsa_2_' . strtolower($jenjang)] ?? '' }}"
                                                 placeholder="Contoh: 17 Februari 2025 M."
                                                 class="w-full font-bold rounded-lg border-slate-300 focus:ring-primary text-sm">
                                              <span class="absolute right-3 top-2 text-slate-400 material-symbols-outlined text-[18px]">calendar_month</span>
@@ -374,38 +374,38 @@
                             </div>
 
                             <!-- Card: Pengaturan Titimangsa Transkrip (NEW) -->
-                            <div class="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl shadow-sm border border-indigo-200 dark:border-indigo-800 p-5 mt-6">
+                            <div class="bg-primary/5 dark:bg-primary/10 rounded-xl shadow-sm border border-primary/20 dark:border-primary/20 p-5 mt-6">
                                 <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm mb-4">
-                                    <span class="material-symbols-outlined text-indigo-600 text-sm">history_edu</span> Pengaturan Titimangsa Transkrip / Ijazah
+                                    <span class="material-symbols-outlined text-primary text-sm">history_edu</span> Pengaturan Titimangsa Transkrip / Ijazah
                                 </h4>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Tempat Titimangsa</label>
-                                        <input type="text" name="titimangsa_transkrip_tempat_{{ strtolower($jenjang) }}" 
-                                               value="{{ $gradingSettings['titimangsa_transkrip_tempat_' . strtolower($jenjang)] ?? ($school->kabupaten ?? '') }}" 
+                                        <input type="text" name="titimangsa_transkrip_tempat_{{ strtolower($jenjang) }}"
+                                               value="{{ $gradingSettings['titimangsa_transkrip_tempat_' . strtolower($jenjang)] ?? ($school->kabupaten ?? '') }}"
                                                placeholder="Contoh: Jakarta"
-                                               class="w-full font-bold rounded-lg border-indigo-300 focus:ring-indigo-500 text-sm">
+                                               class="w-full font-bold rounded-lg border-primary/30 focus:ring-primary text-sm">
                                     </div>
                                     <div>
                                         <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Tanggal Transkrip (Utama)</label>
                                         <div class="relative">
-                                            <input type="text" name="titimangsa_transkrip_{{ strtolower($jenjang) }}" 
-                                                value="{{ $gradingSettings['titimangsa_transkrip_' . strtolower($jenjang)] ?? '' }}" 
+                                            <input type="text" name="titimangsa_transkrip_{{ strtolower($jenjang) }}"
+                                                value="{{ $gradingSettings['titimangsa_transkrip_' . strtolower($jenjang)] ?? '' }}"
                                                 placeholder="Contoh: 20 Juli 2024"
-                                                class="w-full font-bold rounded-lg border-indigo-300 focus:ring-indigo-500 text-sm">
-                                             <span class="absolute right-3 top-2 text-indigo-400 material-symbols-outlined text-[18px]">calendar_today</span>
+                                                class="w-full font-bold rounded-lg border-primary/30 focus:ring-primary text-sm">
+                                             <span class="absolute right-3 top-2 text-primary material-symbols-outlined text-[18px]">calendar_today</span>
                                         </div>
                                         <p class="text-[10px] text-slate-400 mt-1">Baris 1 (Misal Hijriyah)</p>
                                     </div>
-                                    
+
                                     <div class="col-span-1 md:col-span-2">
                                         <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Tanggal Transkrip Baris 2</label>
                                         <div class="relative">
-                                            <input type="text" name="titimangsa_transkrip_2_{{ strtolower($jenjang) }}" 
-                                                value="{{ $gradingSettings['titimangsa_transkrip_2_' . strtolower($jenjang)] ?? '' }}" 
+                                            <input type="text" name="titimangsa_transkrip_2_{{ strtolower($jenjang) }}"
+                                                value="{{ $gradingSettings['titimangsa_transkrip_2_' . strtolower($jenjang)] ?? '' }}"
                                                 placeholder="Contoh: 17 Februari 2025 M."
-                                                class="w-full font-bold rounded-lg border-indigo-300 focus:ring-indigo-500 text-sm">
-                                             <span class="absolute right-3 top-2 text-indigo-400 material-symbols-outlined text-[18px]">calendar_month</span>
+                                                class="w-full font-bold rounded-lg border-primary/30 focus:ring-primary text-sm">
+                                             <span class="absolute right-3 top-2 text-primary material-symbols-outlined text-[18px]">calendar_month</span>
                                         </div>
                                         <p class="text-[10px] text-slate-400 mt-1">Baris 2 (Misal Masehi). Kosongkan jika ingin sama dengan Rapor.</p>
                                     </div>
@@ -413,41 +413,41 @@
                             </div>
 
                             <!-- Card: Pengaturan Tingkat Akhir (Moved to Standalone Card) -->
-                            <div class="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl shadow-sm border border-indigo-200 dark:border-indigo-800 p-5 mt-6">
+                            <div class="bg-primary/5 dark:bg-primary/10 rounded-xl shadow-sm border border-primary/20 dark:border-primary/20 p-5 mt-6">
                                 <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm mb-4">
-                                    <span class="material-symbols-outlined text-indigo-600 text-sm">school</span> Pengaturan Tingkat Akhir (Kelulusan)
+                                    <span class="material-symbols-outlined text-primary text-sm">school</span> Pengaturan Tingkat Akhir (Kelulusan)
                                 </h4>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Kelas Akhir MI</label>
-                                        <input type="number" name="final_grade_mi" 
-                                            value="{{ \App\Models\GlobalSetting::val('final_grade_mi', 6) }}" 
-                                            class="w-full font-bold rounded-lg border-indigo-200 focus:ring-indigo-500 text-indigo-700 text-sm" placeholder="6">
+                                        <input type="number" name="final_grade_mi"
+                                            value="{{ \App\Models\GlobalSetting::val('final_grade_mi', 6) }}"
+                                            class="w-full font-bold rounded-lg border-primary/20 focus:ring-primary text-primary text-sm" placeholder="6">
                                         <p class="text-[10px] text-slate-400 mt-1">Siswa kelas ini akan dianggap LULUS jika naik.</p>
                                     </div>
                                     <div>
                                         <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Kelas Akhir MTs</label>
-                                        <input type="number" name="final_grade_mts" 
-                                            value="{{ \App\Models\GlobalSetting::val('final_grade_mts', 9) }}" 
-                                            class="w-full font-bold rounded-lg border-indigo-200 focus:ring-indigo-500 text-indigo-700 text-sm" placeholder="9 (atau 3)">
+                                        <input type="number" name="final_grade_mts"
+                                            value="{{ \App\Models\GlobalSetting::val('final_grade_mts', 9) }}"
+                                            class="w-full font-bold rounded-lg border-primary/20 focus:ring-primary text-primary text-sm" placeholder="9 (atau 3)">
                                         <p class="text-[10px] text-slate-400 mt-1">Siswa kelas ini akan dianggap LULUS.</p>
                                     </div>
-                                    
+
                                     <!-- NEW: Range Configuration -->
-                                    <div class="col-span-1 md:col-span-2 pt-4 border-t border-indigo-100 dark:border-indigo-800">
+                                    <div class="col-span-1 md:col-span-2 pt-4 border-t border-primary/10 dark:border-primary/20">
                                         <h5 class="font-bold text-xs uppercase text-slate-500 mb-3">Rentang Kelas Perhitungan Ijazah (DKN)</h5>
                                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <div>
                                                 <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Rentang MI</label>
-                                                <input type="text" name="ijazah_range_mi" 
-                                                    value="{{ \App\Models\GlobalSetting::val('ijazah_range_mi', '4,5,6') }}" 
+                                                <input type="text" name="ijazah_range_mi"
+                                                    value="{{ \App\Models\GlobalSetting::val('ijazah_range_mi', '4,5,6') }}"
                                                     class="w-full font-mono text-xs rounded-lg border-slate-300 focus:ring-indigo-500" placeholder="4,5,6">
                                             </div>
                                             <div>
                                                 <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Rentang MTs</label>
-                                                <input type="text" name="ijazah_range_mts" 
-                                                    value="{{ \App\Models\GlobalSetting::val('ijazah_range_mts', '7,8,9,1,2,3') }}" 
-                                                    class="w-full font-mono text-xs rounded-lg border-slate-300 focus:ring-indigo-500" placeholder="7,8,9,1,2,3">
+                                                <input type="text" name="ijazah_range_mts"
+                                                    value="{{ \App\Models\GlobalSetting::val('ijazah_range_mts', '7,8,9,1,2,3') }}"
+                                                    class="w-full font-mono text-xs rounded-lg border-slate-300 focus:ring-primary" placeholder="7,8,9,1,2,3">
                                             </div>
                                             <!-- MA Range Removed -->
                                         </div>
@@ -466,7 +466,7 @@
                                         <span class="material-symbols-outlined">lock</span> Mode Baca
                                     </div>
                                 @else
-                                    <button type="submit" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-lg shadow-indigo-200 transition-all flex items-center gap-2">
+                                    <button type="submit" class="px-6 py-2.5 bg-primary hover:bg-primary-dark text-white font-bold rounded-lg shadow-lg shadow-primary/20 transition-all flex items-center gap-2">
                                         <span class="material-symbols-outlined">save</span> Simpan Aturan
                                     </button>
                                 @endif
@@ -482,7 +482,7 @@
 
         <!-- TAB 2: TARGET KKM (KKM) -->
         <div x-show="activeTab === 'kkm'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
-            
+
             <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
                 <div class="flex justify-between items-center mb-6">
                     <div>
@@ -490,7 +490,7 @@
                          <p class="text-sm text-slate-500">Nilai minimum untuk ketuntasan belajar per mata pelajaran.</p>
                     </div>
                 </div>
-                
+
                 <div class="rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
                     <form id="kkmForm" action="{{ route('settings.kkm.store') }}" method="POST">
                         @csrf
@@ -506,8 +506,8 @@
                             <thead class="bg-white dark:bg-slate-800 uppercase text-xs font-bold text-slate-500 border-b border-slate-200 dark:border-slate-700">
                                 <tr>
                                     <th class="px-6 py-4">Mata Pelajaran</th>
-                                    <th class="px-6 py-4 w-40 text-center bg-teal-50/50 text-teal-700">KKM MI</th>
-                                    <th class="px-6 py-4 w-40 text-center bg-indigo-50/50 text-indigo-700">KKM MTs</th>
+                                    <th class="px-6 py-4 w-40 text-center bg-emerald-50/50 text-emerald-700">KKM MI</th>
+                                    <th class="px-6 py-4 w-40 text-center bg-primary/10 text-primary">KKM MTs</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-200 dark:divide-slate-700 bg-white">
@@ -519,14 +519,14 @@
                                     </td>
                                     <td class="px-6 py-3 text-center bg-teal-50/20">
                                         @if($mapel->target_jenjang == 'MI' || $mapel->target_jenjang == 'SEMUA')
-                                            <input type="number" name="kkm[{{ $mapel->id }}][MI]" value="{{ $kkms[$mapel->id.'-MI']->nilai_kkm ?? 70 }}" :disabled="isLocked" class="w-20 text-center font-bold text-teal-700 rounded border-slate-200 focus:border-teal-500 focus:ring-teal-500 text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                                            <input type="number" name="kkm[{{ $mapel->id }}][MI]" value="{{ $kkms[$mapel->id.'-MI']->nilai_kkm ?? 70 }}" :disabled="isLocked" class="w-20 text-center font-bold text-emerald-700 rounded border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 text-sm disabled:opacity-50 disabled:cursor-not-allowed">
                                         @else
                                             <span class="text-slate-300">-</span>
                                         @endif
                                     </td>
                                     <td class="px-6 py-3 text-center bg-indigo-50/20">
                                          @if($mapel->target_jenjang == 'MTS' || $mapel->target_jenjang == 'SEMUA')
-                                            <input type="number" name="kkm[{{ $mapel->id }}][MTS]" value="{{ $kkms[$mapel->id.'-MTS']->nilai_kkm ?? 75 }}" :disabled="isLocked" class="w-20 text-center font-bold text-indigo-700 rounded border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                                            <input type="number" name="kkm[{{ $mapel->id }}][MTS]" value="{{ $kkms[$mapel->id.'-MTS']->nilai_kkm ?? 75 }}" :disabled="isLocked" class="w-20 text-center font-bold text-primary rounded border-slate-200 focus:border-primary focus:ring-primary text-sm disabled:opacity-50 disabled:cursor-not-allowed">
                                         @else
                                             <span class="text-slate-300">-</span>
                                         @endif
@@ -550,7 +550,7 @@
                 <form action="{{ route('settings.identity.update') }}" method="POST" enctype="multipart/form-data" class="w-full">
                     @csrf
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        
+
                         <!-- Left: Info Aplikasi -->
                         <div class="space-y-4">
                             <div>
@@ -558,7 +558,7 @@
                                 <input type="text" name="app_name" value="{{ \App\Models\GlobalSetting::val('app_name', 'E-Rapor') }}" class="w-full rounded-lg border-slate-300 dark:bg-slate-800 focus:ring-primary focus:border-primary">
                                 <p class="text-xs text-slate-500 mt-1">Nama yang tampil di Tab Browser dan Login Page.</p>
                             </div>
-                            
+
                             <div>
                                 <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Sub-Judul / Tagline</label>
                                 <input type="text" name="app_tagline" value="{{ \App\Models\GlobalSetting::val('app_tagline', 'Integrated System') }}" class="w-full rounded-lg border-slate-300 dark:bg-slate-800 focus:ring-primary focus:border-primary">
@@ -569,7 +569,7 @@
                         <!-- Right: Logo Upload -->
                         <div class="space-y-4">
                             <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Logo Sekolah</label>
-                            
+
                             <div class="flex items-start gap-4">
                                 <div class="w-32 h-32 bg-slate-100 rounded-lg border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden relative group">
                                     @if(\App\Models\GlobalSetting::val('app_logo'))
@@ -596,91 +596,92 @@
                     <!-- HEADMASTER CONFIGURATION (PER JENJANG) -->
                     <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
                         <h4 class="font-bold text-base text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-                             <span class="material-symbols-outlined text-indigo-500">supervisor_account</span> Kepala Madrasah (Tanda Tangan Rapor & DKN)
+                             <span class="material-symbols-outlined text-primary">supervisor_account</span> Kepala Madrasah (Tanda Tangan Rapor & DKN)
                         </h4>
-                        
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- MI -->
-                            <div class="bg-teal-50 dark:bg-teal-900/20 p-4 rounded-xl border border-teal-100 dark:border-teal-800">
-                                <h5 class="font-bold text-sm text-teal-800 dark:text-teal-300 mb-3 border-b border-teal-200 pb-2">Identitas Tingkat MI</h5>
+                            <div class="bg-emerald-50 dark:bg-emerald-900/20 p-4 rounded-xl border border-emerald-100 dark:border-emerald-800">
+                                <h5 class="font-bold text-sm text-emerald-800 dark:text-emerald-300 mb-3 border-b border-emerald-200 pb-2">Identitas Tingkat MI</h5>
                                 <div class="space-y-3">
                                     {{-- Hidden Fetch for Default Values --}}
                                     @php $mi = \App\Models\IdentitasSekolah::where('jenjang', 'MI')->first(); @endphp
-                                    
+
                                     <div>
                                         <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Nama Madrasah (MI)</label>
-                                        <input type="text" name="nama_sekolah_mi" value="{{ $mi->nama_sekolah ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-teal-500 font-bold" placeholder="MIS ...">
+                                        <input type="text" name="nama_sekolah_mi" value="{{ $mi->nama_sekolah ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-emerald-500 font-bold" placeholder="MIS ...">
                                     </div>
                                     <div class="grid grid-cols-2 gap-2">
                                         <div>
                                             <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">NSM</label>
-                                            <input type="text" name="nsm_mi" value="{{ $mi->nsm ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-teal-500" placeholder="NSM">
+                                            <input type="text" name="nsm_mi" value="{{ $mi->nsm ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-emerald-500" placeholder="NSM">
                                         </div>
                                         <div>
                                             <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">NPSN</label>
-                                            <input type="text" name="npsn_mi" value="{{ $mi->npsn ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-teal-500" placeholder="NPSN">
+                                            <input type="text" name="npsn_mi" value="{{ $mi->npsn ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-emerald-500" placeholder="NPSN">
                                         </div>
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Alamat</label>
-                                        <input type="text" name="alamat_mi" value="{{ $mi->alamat ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-teal-500" placeholder="Jl. ...">
+                                        <input type="text" name="alamat_mi" value="{{ $mi->alamat ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-emerald-500" placeholder="Jl. ...">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Kabupaten/Kota (Untuk Titimangsa)</label>
-                                        <input type="text" name="kabupaten_mi" value="{{ $mi->kabupaten ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-teal-500" placeholder="Contoh: Sidoarjo">
+                                        <input type="text" name="kabupaten_mi" value="{{ $mi->kabupaten ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-emerald-500" placeholder="Contoh: Sidoarjo">
                                     </div>
 
-                                    <div class="pt-2 border-t border-teal-200 mt-2">
+                                    <div class="pt-2 border-t border-emerald-200 mt-2">
                                         <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Nama Kepala MI</label>
-                                        <input type="text" name="hm_name_mi" value="{{ \App\Models\GlobalSetting::val('hm_name_mi') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-teal-500 bg-white" placeholder="Nama Lengkap & Gelar">
+                                        <input type="text" name="hm_name_mi" value="{{ \App\Models\GlobalSetting::val('hm_name_mi') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-emerald-500 bg-white" placeholder="Nama Lengkap & Gelar">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">NIP Kepala MI</label>
-                                        <input type="text" name="hm_nip_mi" value="{{ \App\Models\GlobalSetting::val('hm_nip_mi') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-teal-500 bg-white" placeholder="NIP">
+                                        <input type="text" name="hm_nip_mi" value="{{ \App\Models\GlobalSetting::val('hm_nip_mi') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-emerald-500 bg-white" placeholder="NIP">
                                     </div>
                                 </div>
                             </div>
 
                             <!-- MTs -->
-                            <div class="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-xl border border-indigo-100 dark:border-indigo-800">
-                                <h5 class="font-bold text-sm text-indigo-800 dark:text-indigo-300 mb-3 border-b border-indigo-200 pb-2">Identitas Tingkat MTs</h5>
+                            <div class="bg-primary/5 dark:bg-primary/10 p-4 rounded-xl border border-primary/20 dark:border-primary/20">
+                                <h5 class="font-bold text-sm text-primary dark:text-primary mb-3 border-b border-primary/20 pb-2">Identitas Tingkat MTs</h5>
                                 <div class="space-y-3">
                                     {{-- Hidden Fetch for Default Values --}}
                                     @php $mts = \App\Models\IdentitasSekolah::where('jenjang', 'MTS')->first(); @endphp
 
                                     <div>
                                         <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Nama Madrasah (MTs)</label>
-                                        <input type="text" name="nama_sekolah_mts" value="{{ $mts->nama_sekolah ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-indigo-500 font-bold" placeholder="MTs ...">
+                                        <input type="text" name="nama_sekolah_mts" value="{{ $mts->nama_sekolah ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-primary font-bold" placeholder="MTs ...">
                                     </div>
                                     <div class="grid grid-cols-2 gap-2">
                                         <div>
                                             <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">NSM</label>
-                                            <input type="text" name="nsm_mts" value="{{ $mts->nsm ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-indigo-500" placeholder="NSM">
+                                            <input type="text" name="nsm_mts" value="{{ $mts->nsm ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-primary" placeholder="NSM">
                                         </div>
                                         <div>
                                             <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">NPSN</label>
-                                            <input type="text" name="npsn_mts" value="{{ $mts->npsn ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-indigo-500" placeholder="NPSN">
+                                            <input type="text" name="npsn_mts" value="{{ $mts->npsn ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-primary" placeholder="NPSN">
                                         </div>
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Alamat</label>
-                                        <input type="text" name="alamat_mts" value="{{ $mts->alamat ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-indigo-500" placeholder="Jl. ...">
+                                        <input type="text" name="alamat_mts" value="{{ $mts->alamat ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-primary" placeholder="Jl. ...">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Kabupaten/Kota (Untuk Titimangsa)</label>
-                                        <input type="text" name="kabupaten_mts" value="{{ $mts->kabupaten ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-indigo-500" placeholder="Contoh: Sidoarjo">
+                                        <input type="text" name="kabupaten_mts" value="{{ $mts->kabupaten ?? '' }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-primary" placeholder="Contoh: Sidoarjo">
                                     </div>
 
-                                    <div class="pt-2 border-t border-indigo-200 mt-2">
+                                    <div class="pt-2 border-t border-primary/20 mt-2">
                                         <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Nama Kepala MTs</label>
-                                        <input type="text" name="hm_name_mts" value="{{ \App\Models\GlobalSetting::val('hm_name_mts') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-indigo-500 bg-white" placeholder="Nama Lengkap & Gelar">
+                                        <input type="text" name="hm_name_mts" value="{{ \App\Models\GlobalSetting::val('hm_name_mts') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-primary bg-white" placeholder="Nama Lengkap & Gelar">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">NIP Kepala MTs</label>
-                                        <input type="text" name="hm_nip_mts" value="{{ \App\Models\GlobalSetting::val('hm_nip_mts') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-indigo-500 bg-white" placeholder="NIP">
+                                        <input type="text" name="hm_nip_mts" value="{{ \App\Models\GlobalSetting::val('hm_nip_mts') }}" class="w-full text-sm rounded-lg border-slate-300 focus:ring-primary bg-white" placeholder="NIP">
                                     </div>
                                 </div>
                             </div>
+
 
                             <!-- MA Card Removed -->
                         </div>
@@ -693,8 +694,8 @@
                         <span class="material-symbols-outlined animate-spin" x-show="loading">sync</span>
                         <span x-text="loading ? 'Menyimpan...' : 'Simpan Konfigurasi'"></span>
                     </button>
-                </div>       
-                
+                </div>
+
                 <div class="flex justify-end pt-4 border-t border-slate-200 dark:border-slate-700" x-show="isLocked">
                     <div class="px-6 py-3 rounded-xl bg-slate-100 text-slate-500 font-bold flex items-center gap-2 border border-slate-200">
                          <span class="material-symbols-outlined">lock</span> Mode Baca (Terkunci)
@@ -705,12 +706,12 @@
 
         <!-- TAB 3: UMUM & PERIODE (GENERAL) -->
         <div x-show="activeTab === 'general'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
-            
+
              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                 
+
                  <!-- LEFT COLUMN: DEADLINE & WHITELIST -->
                  <div class="space-y-6">
-                     
+
                      <!-- Card: Safety Lock (NEW) -->
                      <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 relative overflow-hidden">
                         <div class="absolute top-0 right-0 p-4 opacity-10">
@@ -769,7 +770,7 @@
                                     </div>
                                     <div class="flex gap-2 items-end">
                                         <div class="flex-1">
-                                            <input type="datetime-local" name="deadlines[{{ $periode->id }}]" 
+                                            <input type="datetime-local" name="deadlines[{{ $periode->id }}]"
                                                    value="{{ $periode->end_date ? \Carbon\Carbon::parse($periode->end_date)->format('Y-m-d\TH:i') : '' }}"
                                                    class="w-full rounded-lg border-slate-300 dark:bg-slate-800 text-xs font-bold">
                                         </div>
@@ -797,7 +798,7 @@
                             <h3 class="font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
                                 <span class="material-symbols-outlined text-green-500">verified_user</span> Whitelist
                             </h3>
-                            <button onclick="document.getElementById('modalWhitelist').showModal()" class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100">
+                            <button onclick="document.getElementById('modalWhitelist').showModal()" class="text-xs font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-lg hover:bg-primary/20">
                                 + Guru
                             </button>
                         </div>
@@ -850,7 +851,7 @@
                             <h3 class="font-bold text-lg text-slate-900 dark:text-white">Opsi Cetak Rapor</h3>
                             <p class="text-sm text-slate-500">Komponen opsional pada PDF Rapor.</p>
                         </div>
-                        
+
                         <form action="{{ route('settings.users.permissions') }}" method="POST" class="space-y-4">
                             @csrf
                             <!-- Toggle Ekskul -->
@@ -867,7 +868,7 @@
                                     <div class="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:bg-primary peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                                 </label>
                             </div>
-                            
+
                             <!-- Toggle Prestasi -->
                             <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200">
                                 <div class="flex items-center gap-3">
@@ -882,13 +883,13 @@
                                    <div class="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:bg-primary peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                                </label>
                            </div>
-    
+
                            <div class="pt-4 text-right">
                                <button type="submit" class="text-sm font-bold text-primary hover:text-green-700 hover:underline">Simpan Opsi Rapor</button>
                            </div>
                         </form>
                      </div>
-    
+
                      <!-- Shortcut Links -->
                      <div>
                          <div class="grid grid-cols-1 gap-4">
@@ -925,7 +926,7 @@
         <!-- TAB: BACKUP & RESTORE -->
         <div x-show="activeTab === 'backup'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
             <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
-                
+
                 <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-6 flex items-center gap-2">
                     <span class="material-symbols-outlined text-blue-600">cloud_sync</span> Backup & Restore Database
                 </h3>
@@ -936,7 +937,7 @@
                         <div>
                             <h4 class="font-bold text-blue-800 dark:text-blue-300 text-lg mb-2">Buat Backup Baru</h4>
                             <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                                Sistem akan membuat file `.sql` lengkap dari database saat ini. 
+                                Sistem akan membuat file `.sql` lengkap dari database saat ini.
                                 File akan disimpan di server dan bisa didownload.
                             </p>
                         </div>
@@ -997,7 +998,7 @@
                                             <span class="material-symbols-outlined text-[16px]">history</span> Restore
                                         </button>
                                     </form>
-                                    
+
                                     <a href="{{ route('backup.download', $backup->filename) }}" class="text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded border border-blue-200 flex items-center gap-1" title="Download">
                                         <span class="material-symbols-outlined text-[16px]">download</span> Download
                                     </a>
@@ -1044,13 +1045,13 @@
                     <div class="absolute top-0 right-0 p-4 opacity-10">
                             <span class="material-symbols-outlined text-9xl">move_up</span>
                     </div>
-                    
+
                     <div class="relative z-10 flex-1">
                         <h3 class="text-2xl font-bold flex items-center gap-2 mb-2">
                                 <span class="material-symbols-outlined">dataset_linked</span> Super Migration (Data Sync)
                         </h3>
                         <p class="text-emerald-100 max-w-xl text-sm">
-                            Pindahkan data antar server (Local ↔ Online) tanpa duplikat. 
+                            Pindahkan data antar server (Local ↔ Online) tanpa duplikat.
                             <br>Sistem akan cerdas menggabungkan data (Upsert) tanpa menimpa akun Admin.
                         </p>
                     </div>
@@ -1063,7 +1064,7 @@
                                 <span class="material-symbols-outlined">download</span> Download Data (JSON)
                             </button>
                         </form>
-                        
+
                         <!-- IMPORT TRIGGER -->
                         <button onclick="document.getElementById('modalMigration').showModal()" class="bg-emerald-800 text-white hover:bg-emerald-900 border border-emerald-500 font-bold py-3 px-6 rounded-xl shadow-lg transition-transform hover:scale-105 flex items-center gap-2">
                             <span class="material-symbols-outlined">upload</span> Upload Data
@@ -1094,7 +1095,7 @@
                                     </ul>
                                 </div>
                             </div>
-                            
+
                             <div>
                                 <label class="block text-sm font-bold mb-2">Pilih File JSON Backup</label>
                                 <input type="file" name="backup_file" accept=".json" required
@@ -1114,18 +1115,18 @@
                     <div class="absolute top-0 right-0 p-4 opacity-10">
                          <span class="material-symbols-outlined text-9xl">cloud_sync</span>
                     </div>
-                    
+
                     <div class="relative z-10">
                         <h3 class="text-2xl font-bold flex items-center gap-2 mb-2">
                              <span class="material-symbols-outlined">rocket_launch</span> Update Aplikasi Otomatis
                         </h3>
                         <p class="text-violet-100 max-w-xl">
-                            Klik tombol ini untuk menarik update terbaru dari sistem pusat (GitHub). 
+                            Klik tombol ini untuk menarik update terbaru dari sistem pusat (GitHub).
                             Pastikan koneksi internet server stabil.
                         </p>
                     </div>
 
-                            <form action="{{ route('settings.maintenance.update-app') }}" method="POST" class="relative z-10" 
+                            <form action="{{ route('settings.maintenance.update-app') }}" method="POST" class="relative z-10"
                   data-confirm-delete="true"
                   data-title="Mulai Update Otomatis?"
                   data-message="Website mungkin tidak bisa diakses beberapa detik saat proses update berlangsung.">
@@ -1138,10 +1139,10 @@
 
                 <!-- GRID CONTAINER FOR TOOLS -->
                 <div class="max-w-6xl mx-auto space-y-6">
-                    
+
                     <!-- CARD 1: MAGIC FIX (Full Width) -->
                     <div class="bg-white dark:bg-slate-800 rounded-xl border-l-4 border-emerald-500 shadow-lg relative overflow-hidden text-slate-800 dark:text-white p-6 flex flex-col md:flex-row items-center justify-between gap-6">
-                        
+
                         <!-- Icon & Text -->
                         <div class="flex items-start gap-4 flex-1">
                             <div class="p-4 bg-emerald-100 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 shrink-0">
@@ -1338,7 +1339,7 @@ function confirmReset(e) {
                 <h3 class="text-lg leading-6 font-medium text-slate-900 dark:text-white" id="modal-title">
                     Kelola Tahun Ajaran
                 </h3>
-                
+
                 <div class="mt-4 flex flex-col gap-6">
                     <!-- Form New -->
                     <form action="{{ route('settings.year.store') }}" method="POST" class="flex gap-2">
@@ -1358,8 +1359,8 @@ function confirmReset(e) {
                                     @csrf
                                     <button type="submit" class="text-xs bg-slate-200 hover:bg-primary hover:text-white px-3 py-1 rounded transition-colors">Aktifkan</button>
                                 </form>
-                                 <form action="{{ route('settings.year.destroy', $year->id) }}" method="POST" 
-                                      data-confirm-delete="true" 
+                                 <form action="{{ route('settings.year.destroy', $year->id) }}" method="POST"
+                                      data-confirm-delete="true"
                                       data-title="Hapus Tahun Ajaran?"
                                       data-message="Semua data kelas, nilai, dan absensi di tahun ini akan hilang PERMANEN.">
                                     @csrf
@@ -1387,7 +1388,7 @@ function confirmReset(e) {
         <h3 class="font-bold text-lg mb-4 text-slate-800 dark:text-white">Beri Akses Khusus</h3>
         <form action="{{ route('settings.deadline.whitelist.store') }}" method="POST">
             @csrf
-            
+
             <div class="mb-4">
                 <label class="block text-xs font-bold text-slate-500 mb-1">Pilih Guru</label>
                 <div class="relative">
@@ -1448,7 +1449,7 @@ function confirmReset(e) {
                 // Submit the form closest to the button
                 this.$el.closest('form').submit();
             },
-            
+
             init() {
                 // Optional: Auto-scroll to error if any
                 if (document.querySelector('.text-red-600')) {

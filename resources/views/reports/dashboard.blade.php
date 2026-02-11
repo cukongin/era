@@ -17,7 +17,7 @@
         <!-- Siswa -->
         <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-900/5 dark:bg-slate-800 dark:ring-white/10">
             <div class="flex items-center gap-4">
-                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary">
                     <span class="material-symbols-outlined text-2xl">school</span>
                 </div>
                 <div>
@@ -43,7 +43,7 @@
         <!-- Kelas -->
         <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-900/5 dark:bg-slate-800 dark:ring-white/10">
             <div class="flex items-center gap-4">
-                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-violet-50 text-violet-600 dark:bg-violet-900/20 dark:text-violet-400">
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400">
                     <span class="material-symbols-outlined text-2xl">meeting_room</span>
                 </div>
                 <div>
@@ -56,7 +56,7 @@
         <!-- Mapel -->
         <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-900/5 dark:bg-slate-800 dark:ring-white/10">
             <div class="flex items-center gap-4">
-                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-50 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400">
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400">
                     <span class="material-symbols-outlined text-2xl">menu_book</span>
                 </div>
                 <div>
@@ -112,7 +112,7 @@
                         <td class="px-6 py-4 w-1/3">
                             <div class="flex items-center gap-2">
                                 <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                                    <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-500" style="width: {{ $item['percentage'] }}%"></div>
+                                    <div class="bg-primary h-2.5 rounded-full transition-all duration-500" style="width: {{ $item['percentage'] }}%"></div>
                                 </div>
                                 <span class="text-xs font-bold text-gray-700 dark:text-gray-300 w-8 text-right">{{ $item['percentage'] }}%</span>
                             </div>
@@ -157,7 +157,7 @@
             labels: ['Excellent (A)', 'Good (B)', 'Average (C)', 'Poor (D)'],
             datasets: [{
                 data: [predikatData.A, predikatData.B, predikatData.C, predikatData.D],
-                backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
+                backgroundColor: ['#10b981', '#14b8a6', '#f59e0b', '#ef4444'],
                 borderWidth: 0
             }]
         },
@@ -179,7 +179,7 @@
             datasets: [{
                 label: 'Rata-Rata Kelas',
                 data: classData.map(c => c.average),
-                backgroundColor: '#6366f1',
+                backgroundColor: '#003e29',
                 borderRadius: 4
             }]
         },

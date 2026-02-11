@@ -4,13 +4,13 @@
 
 @section('content')
 <div class="space-y-6">
-    
+
     <!-- Header & Filters -->
     <div class="bg-white dark:bg-[#1a2e22] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
                 <h1 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <span class="material-symbols-outlined text-indigo-600">travel_explore</span>
+                    <span class="material-symbols-outlined text-primary">travel_explore</span>
                     Global Monitoring
                 </h1>
                 <p class="text-xs text-slate-500 mt-1">Pantau progress penginputan nilai seluruh kelas.</p>
@@ -19,7 +19,7 @@
             <!-- Unified Filter -->
             <form action="{{ route('tu.monitoring.global') }}" method="GET" class="w-full md:w-auto flex flex-col md:flex-row items-stretch md:items-center gap-3">
                 <input type="hidden" name="year_id" value="{{ $activeYear->id }}">
-                
+
                 <!-- Jenjang Selector -->
                 <div class="relative group w-full md:w-auto">
                     <select name="jenjang" class="w-full appearance-none bg-none pl-9 pr-8 h-[40px] text-sm font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:border-primary/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 cursor-pointer shadow-sm transition-all md:min-w-[140px]" onchange="this.form.submit()">
@@ -80,7 +80,7 @@
 
     <!-- Content -->
     <div class="">
-        
+
         @if(count($monitoringData) > 0)
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @foreach($monitoringData as $data)
@@ -132,7 +132,7 @@
             <p class="text-sm">Coba ubah filter di atas.</p>
         </div>
         @endif
-        
+
     </div>
 </div>
 @endsection

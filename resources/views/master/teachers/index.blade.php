@@ -18,7 +18,7 @@
                 <span class="material-symbols-outlined text-[20px]">upload_file</span>
                 <span>Import Excel</span>
             </button>
-            <form action="{{ route('master.teachers.destroy-all') }}" method="POST" 
+            <form action="{{ route('master.teachers.destroy-all') }}" method="POST"
                   data-confirm-delete="true"
                   data-title="Hapus SEMUA Guru?"
                   data-message="AWAS: Semua data guru dan akun loginnya akan DIHAPUS PERMANEN. Tindakan ini tidak bisa dibatalkan.">
@@ -29,7 +29,7 @@
                     <span>Hapus Semua</span>
                 </button>
             </form>
-            
+
             <!-- Error Alert -->
             @if(session('import_errors'))
             <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg relative mb-4" role="alert">
@@ -51,7 +51,7 @@
                         <div class="space-y-2">
                              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">File CSV/Excel</label>
                              <input type="file" name="file" required class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
-                             <div class="bg-blue-50 p-3 rounded-lg text-xs text-blue-700 space-y-1">
+                             <div class="bg-primary/5 p-3 rounded-lg text-xs text-primary space-y-1">
                                 <p class="font-bold">Format Kolom (Lengkap 11 Kolom):</p>
                                 <p>1.NIK*, 2.Nama, 3.Gender(L/P), 4.Tempat Lhr, 5.Tgl Lhr, 6.Alamat, 7.NPWP*, 8.Pend.Terakhir, 9.Riwayat Pesantren, 10.Mapel Ajar, 11.Email</p>
                                 <p class="italic text-[10px] mt-1">* Gunakan tanda kutip (') di Excel untuk NIK/NPWP agar Text.</p>
@@ -68,7 +68,7 @@
             <!-- CREATE MODAL -->
             <div x-show="openCreate" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" x-cloak>
                  <div @click.outside="openCreate = false" class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-2xl w-full max-w-2xl border border-slate-200 dark:border-slate-800 flex flex-col max-h-[90vh]">
-                    
+
                     <!-- Modal Header -->
                     <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                         <div>
@@ -84,14 +84,14 @@
                     <div class="p-6 overflow-y-auto custom-scrollbar">
                         <form action="{{ route('master.teachers.store') }}" method="POST" id="createTeacherForm" class="space-y-6" enctype="multipart/form-data">
                             @csrf
-                            
+
                             <!-- Section: Akun Login -->
-                            <div class="bg-blue-50/50 dark:bg-blue-900/10 p-5 rounded-xl border border-blue-100 dark:border-blue-800/20">
+                            <div class="bg-slate-50 dark:bg-slate-900/50 p-5 rounded-xl border border-slate-200 dark:border-slate-800">
                                 <div class="flex items-center gap-2 mb-4">
-                                    <div class="p-1.5 bg-blue-100 text-blue-600 rounded-lg">
+                                    <div class="p-1.5 bg-slate-200 text-slate-600 rounded-lg">
                                         <span class="material-symbols-outlined text-[18px]">lock</span>
                                     </div>
-                                    <h4 class="font-bold text-blue-900 dark:text-blue-300 text-sm">Akun Login</h4>
+                                    <h4 class="font-bold text-slate-900 dark:text-white text-sm">Akun Login</h4>
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div class="col-span-1 md:col-span-2">
@@ -117,7 +117,7 @@
                                     </div>
                                     <h4 class="font-bold text-slate-900 dark:text-white text-sm">Identitas & Riwayat</h4>
                                 </div>
-                                
+
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <!-- Photo Upload -->
                                     <div class="col-span-1 md:col-span-2">
@@ -148,7 +148,7 @@
                                                 <span class="material-symbols-outlined text-[14px]">add</span> Tambah
                                             </button>
                                         </div>
-                                        
+
                                         <!-- List Pendidikan -->
                                         <template x-for="(item, index) in education" :key="item.id">
                                             <div class="grid grid-cols-12 gap-2 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 items-end">
@@ -189,7 +189,7 @@
                                             Belum ada data pendidikan. Klik "Tambah" di atas.
                                         </div>
                                     </div>
-                                    
+
                                      <div class="col-span-1 md:col-span-2">
                                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Mapel yang diajarkan</label>
                                         <input type="text" name="mapel_ajar_text" placeholder="Contoh: Matematika, Fiqih" class="w-full rounded-xl border-slate-200 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary text-sm">
@@ -291,7 +291,7 @@
                             <td class="px-6 py-4 text-center">
                                 <div class="flex items-center justify-center gap-2">
                                     <!-- Detail/Edit Button -->
-                                    <a href="{{ route('master.teachers.show', $teacher->id) }}" class="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors" title="Lihat Profil / Edit">
+                                    <a href="{{ route('master.teachers.show', $teacher->id) }}" class="p-2 bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-100 transition-colors" title="Lihat Profil / Edit">
                                         <span class="material-symbols-outlined text-[18px]">edit</span>
                                     </a>
                                     <!-- Delete Button -->
@@ -338,7 +338,7 @@
             <h2 class="text-xl font-bold text-slate-900 dark:text-white">Akun Berhasil Digenerate!</h2>
             <p class="text-slate-500 dark:text-slate-400 text-sm">Silakan catat atau bagikan kredensial berikut kepada guru yang bersangkutan.</p>
         </div>
-        
+
         <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg border border-slate-100 dark:border-slate-800 space-y-3 mb-6">
             <div>
                 <label class="text-xs font-bold text-slate-400 uppercase">Nama Guru</label>

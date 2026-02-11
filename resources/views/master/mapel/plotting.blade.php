@@ -3,8 +3,8 @@
 @section('title', 'Plotting Paket Mapel')
 
 @section('content')
-<div class="flex flex-col gap-6" x-data="{ 
-    selectedJenjang: '', 
+<div class="flex flex-col gap-6" x-data="{
+    selectedJenjang: '',
     selectedTingkat: '',
     selectedMapels: [],
     targetClasses: [],
@@ -17,15 +17,15 @@
 
     async fetchExisting() {
         if (!this.selectedJenjang || !this.selectedTingkat) return;
-        
+
         this.loading = true;
         try {
             let url = `{{ route('master.mapel.get-plotting-data') }}?id_jenjang=${this.selectedJenjang}&tingkat_kelas=${this.selectedTingkat}`;
             let res = await fetch(url);
             let data = await res.json();
-            
+
             // NEW STRUCTURE: { activeMapelIds: [...], classes: [...] }
-            this.selectedMapels = data.activeMapelIds.map(String); 
+            this.selectedMapels = data.activeMapelIds.map(String);
             this.targetClasses = data.classes;
             if (this.targetClasses.length === 0) {
                  // Optional: Show warning or empty state
@@ -49,10 +49,10 @@
             let url = `{{ route('master.mapel.get-plotting-data') }}?id_jenjang=${this.sourceJenjang}&tingkat_kelas=${this.sourceTingkat}`;
             let res = await fetch(url);
             let data = await res.json();
-            
+
             // Replace current selection
             if(data.activeMapelIds && data.activeMapelIds.length > 0) {
-                this.selectedMapels = data.activeMapelIds.map(String); 
+                this.selectedMapels = data.activeMapelIds.map(String);
                 alert(`Berhasil menyalin ${data.activeMapelIds.length} mapel!`);
             } else {
                 alert('Sumber data kosong (belum ada mapel di-plot).');
@@ -69,7 +69,7 @@
         let checkboxes = document.querySelectorAll(`input[data-category='${category}']`);
         // Check if all are currently checked
         let allChecked = Array.from(checkboxes).every(cb => this.selectedMapels.includes(cb.value));
-        
+
         checkboxes.forEach(cb => {
             let val = cb.value;
             if (allChecked) {
@@ -93,7 +93,7 @@
 
     <!-- Main Card -->
     <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 relative">
-        
+
         <!-- Loading Overlay -->
         <div x-show="loading" class="absolute inset-0 z-50 bg-white/50 dark:bg-black/50 flex items-center justify-center rounded-xl backdrop-blur-sm">
             <span class="material-symbols-outlined animate-spin text-primary text-4xl">autorenew</span>
@@ -106,7 +106,7 @@
                     Pilih Jenjang & Tingkat. Mapel yang dipilih akan diterapkan ke <b>SEMUA KELAS</b> di tingkat tersebut.
                 </p>
             </div>
-            <button type="button" onclick="openCloneModal()" class="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-lg hover:bg-indigo-100 font-bold text-sm transition-colors">
+            <button type="button" onclick="openCloneModal()" class="flex items-center gap-2 px-4 py-2 bg-primary/5 text-primary border border-primary/10 rounded-lg hover:bg-primary/10 font-bold text-sm transition-colors">
                 <span class="material-symbols-outlined text-[20px]">content_copy</span>
                 Salin ke Kelas Lain
             </button>
@@ -118,7 +118,7 @@
             {{ session('error') }}
         </div>
         @endif
-        
+
         @if(session('success'))
         <div class="bg-green-50 text-green-600 p-4 rounded-lg mb-6 border border-green-100 flex items-center gap-2">
             <span class="material-symbols-outlined">check_circle</span>
@@ -128,7 +128,7 @@
 
         <form action="{{ route('master.mapel.save-plotting') }}" method="POST">
             @csrf
-            
+
             <!-- Step 1: Target -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div>
@@ -235,8 +235,8 @@
                             </div>
 
                             <!-- Source -->
-                            <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mb-4 border border-blue-100 dark:border-blue-800">
-                                <h4 class="font-bold text-blue-800 dark:text-blue-300 text-xs uppercase mb-3 flex items-center gap-2">
+                            <div class="bg-primary/5 dark:bg-primary/20 p-4 rounded-lg mb-4 border border-primary/10 dark:border-primary/50">
+                                <h4 class="font-bold text-primary dark:text-primary text-xs uppercase mb-3 flex items-center gap-2">
                                     <span class="material-symbols-outlined text-[16px]">input</span> Sumber Data (Copy Dari)
                                 </h4>
                                 <div class="grid grid-cols-2 gap-4">
@@ -283,8 +283,8 @@
                             </div>
 
                             <!-- Target -->
-                            <div class="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-lg mb-6 border border-indigo-100 dark:border-indigo-800">
-                                <h4 class="font-bold text-indigo-800 dark:text-indigo-300 text-xs uppercase mb-3 flex items-center gap-2">
+                            <div class="bg-primary/5 dark:bg-primary/20 p-4 rounded-lg mb-6 border border-primary/10 dark:border-primary/50">
+                                <h4 class="font-bold text-primary dark:text-primary text-xs uppercase mb-3 flex items-center gap-2">
                                     <span class="material-symbols-outlined text-[16px]">output</span> Target (Terapkan Ke)
                                 </h4>
                                 <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -293,7 +293,7 @@
                                         <p class="text-xs font-bold text-slate-400 uppercase">MI</p>
                                         @for($i=1; $i<=6; $i++)
                                         <label class="flex items-center gap-2 cursor-pointer">
-                                            <input type="checkbox" name="targets[]" value="1-{{ $i }}" class="rounded text-indigo-600 focus:ring-indigo-500">
+                                            <input type="checkbox" name="targets[]" value="1-{{ $i }}" class="rounded text-primary focus:ring-primary">
                                             <span class="text-sm">Kelas {{ $i }}</span>
                                         </label>
                                         @endfor
@@ -303,7 +303,7 @@
                                         <p class="text-xs font-bold text-slate-400 uppercase">MTS</p>
                                         @for($i=7; $i<=9; $i++)
                                         <label class="flex items-center gap-2 cursor-pointer">
-                                            <input type="checkbox" name="targets[]" value="2-{{ $i }}" class="rounded text-indigo-600 focus:ring-indigo-500">
+                                            <input type="checkbox" name="targets[]" value="2-{{ $i }}" class="rounded text-primary focus:ring-primary">
                                             <span class="text-sm">Kelas {{ $i }}</span>
                                         </label>
                                         @endfor
@@ -313,7 +313,7 @@
                                         <p class="text-xs font-bold text-slate-400 uppercase">MA</p>
                                         @for($i=10; $i<=12; $i++)
                                         <label class="flex items-center gap-2 cursor-pointer">
-                                            <input type="checkbox" name="targets[]" value="3-{{ $i }}" class="rounded text-indigo-600 focus:ring-indigo-500">
+                                            <input type="checkbox" name="targets[]" value="3-{{ $i }}" class="rounded text-primary focus:ring-primary">
                                             <span class="text-sm">Kelas {{ $i }}</span>
                                         </label>
                                         @endfor
@@ -323,7 +323,7 @@
 
                             <div class="flex justify-end gap-3">
                                 <button type="button" onclick="closeCloneModal()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50">Batal</button>
-                                <button type="submit" class="px-4 py-2 text-sm font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-sm">
+                                <button type="submit" class="px-4 py-2 text-sm font-bold text-white bg-primary rounded-lg hover:bg-primary/90 shadow-sm">
                                     Terapkan Plotting
                                 </button>
                             </div>
@@ -339,7 +339,7 @@
     function openCloneModal() {
         document.getElementById('cloneModal').classList.remove('hidden');
     }
-    
+
     function closeCloneModal() {
         document.getElementById('cloneModal').classList.add('hidden');
     }

@@ -4,6 +4,8 @@
     </IfModule>
 
     RewriteEngine On
+    RewriteBase /erapor/public/
+    Options +FollowSymLinks
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .

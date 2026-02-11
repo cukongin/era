@@ -36,14 +36,14 @@
                                     <span>•</span>
                                     <div class="flex gap-1">
                                         @foreach($menu->roles as $role)
-                                        <span class="px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">{{ $role->role }}</span>
+                                        <span class="px-1.5 py-0.5 rounded bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary">{{ $role->role }}</span>
                                         @endforeach
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button @click="$dispatch('edit-menu', { id: {{ $menu->id }}, title: '{{ $menu->title }}', icon: '{{ $menu->icon }}', route: '{{ $menu->route }}', url: '{{ $menu->url }}', order: {{ $menu->order }}, roles: {{ $menu->roles->pluck('role') }} })" class="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-slate-500 transition-colors">
                             <span class="material-symbols-outlined text-lg">edit</span>
@@ -81,7 +81,7 @@
                         <div class="flex items-center gap-2">
                              <div class="flex gap-1 text-[10px]">
                                 @foreach($child->roles as $role)
-                                <span class="px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">{{ $role->role }}</span>
+                                <span class="px-1.5 py-0.5 rounded bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary">{{ $role->role }}</span>
                                 @endforeach
                             </div>
                             <div class="flex items-center gap-1 opacity-0 group-hover/child:opacity-100 transition-opacity">
@@ -115,16 +115,16 @@
     @open-menu-modal.window="open = true; isEdit = false; form = { id: null, title: '', icon: '', route: '', url: '', order: 1, roles: [], parent_id: null }"
     @edit-menu.window="open = true; isEdit = true; form = $event.detail"
     class="relative z-50" x-show="open" x-cloak>
-    
+
     <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm" @click="open = false" x-transition.opacity></div>
-    
+
     <div class="fixed inset-0 flex items-center justify-center p-4">
         <div class="bg-white dark:bg-[#1a2e22] w-full max-w-2xl rounded-2xl shadow-xl overflow-hidden" x-transition.scale>
             <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
                 <h3 class="font-bold text-lg text-slate-800 dark:text-white" x-text="isEdit ? 'Edit Menu' : 'Tambah Menu'"></h3>
                 <button @click="open = false" class="text-slate-400 hover:text-slate-600"><span class="material-symbols-outlined">close</span></button>
             </div>
-            
+
             <form :action="isEdit ? '{{ url('settings/menus') }}/' + form.id : '{{ route('settings.menus.store') }}'" method="POST" class="p-6 space-y-6">
                 @csrf
                 <template x-if="isEdit">
@@ -171,7 +171,7 @@
                         <input type="text" name="url" x-model="form.url" class="w-full rounded-lg border-slate-200 text-sm" placeholder="/settings">
                     </div>
                 </div>
-                
+
                 <!-- Row 3: Icon, Parent, Order -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="space-y-1">

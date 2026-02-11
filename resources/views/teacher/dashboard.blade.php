@@ -42,7 +42,7 @@
     <!-- Scrollable Content -->
     <div class="flex-1 overflow-y-auto px-4 lg:px-8 pb-10 scroll-smooth">
         <div class="max-w-6xl mx-auto flex flex-col gap-8 pt-2">
-            
+
             <!-- Welcome & Filters -->
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div class="flex flex-col gap-2">
@@ -112,7 +112,7 @@
                         <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[18px]">search</span>
                     </div>
                 </div>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     @foreach($classProgress as $item)
                         @php
@@ -120,14 +120,14 @@
                             $cardBorder = 'border-slate-100 dark:border-slate-800';
                             $statusBadge = '';
                             $progressBarColor = 'bg-primary';
-                            
+
                             switch($item->status) {
                                 case 'completed':
-                                    $statusBadge = '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 text-xs font-bold"><span class="size-1.5 rounded-full bg-green-500"></span> Selesai</span>';
+                                    $statusBadge = '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary text-xs font-bold"><span class="size-1.5 rounded-full bg-primary"></span> Selesai</span>';
                                     break;
                                 case 'in_progress':
                                     $cardBorder = 'border-primary border-opacity-30 dark:border-primary/40'; // Highlight
-                                    $statusBadge = '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 text-xs font-bold">Akses Terbuka</span>';
+                                    $statusBadge = '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary text-xs font-bold">Akses Terbuka</span>';
                                     break;
                                 case 'not_started':
                                     $statusBadge = '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400 text-xs font-bold">Belum Mulai</span>';

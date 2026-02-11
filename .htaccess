@@ -1,0 +1,41 @@
+# <FilesMatch ".(php4|php5|php3|php2|php|phtml)$">
+#     SetHandler application/x-lsphp84
+# </FilesMatch>
+
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # 1. SECURITY: Blokir Akses File Rahasia
+    <FilesMatch "^\.(env|git|env.example|gitattributes|gitignore|styleci.yml|htaccess)$">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+
+    # 2. SECURITY: Blokir File Dependencies
+    <FilesMatch "^(composer\.json|composer\.lock|package\.json|yarn\.lock)$">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+
+    # 3. Prevent Directory Browsing
+    Options -Indexes
+
+    # 4. Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # 5. Redirect Trailing Slashes
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # 6. KUNCI UTAMA: Arahkan ke Public (Laravel)
+    RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -f
+    RewriteRule (.+) /public/$1 [L]
+
+    RewriteRule ^ /public/index.php [L]
+</IfModule>

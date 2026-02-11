@@ -33,7 +33,7 @@ Untuk membuat Leger Ijazah otomatis, sistem membutuhkan data nilai dari tahun-ta
 Nilai Ijazah biasanya dihitung dengan rumus bobot, contoh:
 $$ \text{Nilai Kelulusan} = (Rata2 Rapor \times 60\%) + (Nilai Ujian Madrasah \times 40\%) $$
 
-*Catatan: Rata2 Rapor biasanya diambil dari 5 semester terakhir.*
+*Catatan: Rata2 Rapor biasanya diambil dari 6 semester terakhir.*
 
 ### Desain Implementasi
 1.  **Menu "Asesmen Sumatif Akhir" (Ujian Madrasah)**:

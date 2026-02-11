@@ -33,7 +33,7 @@
                         <th rowspan="2" class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 sticky left-0 bg-slate-50 dark:bg-slate-800 z-30 min-w-[50px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">No</th>
                         <th rowspan="2" class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 sticky left-[50px] bg-slate-50 dark:bg-slate-800 z-30 min-w-[250px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">Nama Siswa</th>
                         <th rowspan="2" class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 min-w-[50px] text-center">L/P</th>
-                        
+
                         @foreach($mapels as $mapel)
                         <th colspan="{{ $periods->count() + 1 }}" class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 text-center border-l dark:border-slate-700">
                             <div class="truncate max-w-[150px] mx-auto">{{ $mapel->nama_mapel }}</div>
@@ -41,7 +41,7 @@
                         </th>
                         @endforeach
 
-                        <th rowspan="2" class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 min-w-[80px] text-center bg-blue-50/50 text-blue-800 border-l">Rata-rata<br>Total</th>
+                        <th rowspan="2" class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 min-w-[80px] text-center bg-primary/5 text-primary border-l">Rata-rata<br>Total</th>
                     </tr>
                     <tr>
                         <!-- Sub Columns for Periods -->
@@ -109,7 +109,7 @@
                         @php
                             $finalAvg = $countMapelAvg > 0 ? $grandTotalAvg / $countMapelAvg : 0;
                         @endphp
-                        <td class="px-4 py-3 text-center font-bold text-blue-600 bg-blue-50/10 border-l border-slate-200">
+                        <td class="px-4 py-3 text-center font-bold text-primary bg-primary/5 border-l border-slate-200">
                             {{ $countMapelAvg > 0 ? number_format($finalAvg, 2) : '-' }}
                         </td>
                     </tr>
@@ -150,7 +150,7 @@
             <div class="p-4 flex flex-col gap-3" @click="expanded = !expanded">
                 <div class="flex items-center gap-3">
                      <!-- Rank Badge (Placeholder as logic is complex here) -->
-                     <div class="w-10 h-10 flex-shrink-0 bg-indigo-100 text-indigo-700 rounded-lg flex items-center justify-center font-bold border border-indigo-200 shadow-sm">
+                     <div class="w-10 h-10 flex-shrink-0 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-bold border border-primary/20 shadow-sm">
                         <span class="text-xs uppercase absolute -mt-6 bg-white px-1 rounded text-[8px] text-slate-400 tracking-wider">No</span>
                         {{ $index + 1 }}
                      </div>
@@ -162,15 +162,15 @@
                             <span>{{ $ak->siswa->jenis_kelamin }}</span>
                         </div>
                      </div>
-                     <button class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-400 transition-transform duration-200" :class="expanded ? 'rotate-180 bg-indigo-50 border-indigo-200 text-indigo-600' : ''">
+                     <button class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-400 transition-transform duration-200" :class="expanded ? 'rotate-180 bg-primary/10 border-primary/20 text-primary' : ''">
                         <span class="material-symbols-outlined">expand_more</span>
                      </button>
                 </div>
-                
+
                 <!-- Quick Stats -->
-                <div class="bg-blue-50/50 border border-blue-100 rounded-lg p-3 flex justify-between items-center">
-                    <span class="text-xs text-blue-600 font-bold uppercase">Rata-Rata Total</span>
-                    <span class="font-bold text-lg text-blue-700">{{ number_format($finalAvg, 2) }}</span>
+                <div class="bg-primary/5 border border-primary/10 rounded-lg p-3 flex justify-between items-center">
+                    <span class="text-xs text-primary font-bold uppercase">Rata-Rata Total</span>
+                    <span class="font-bold text-lg text-primary">{{ number_format($finalAvg, 2) }}</span>
                 </div>
             </div>
 

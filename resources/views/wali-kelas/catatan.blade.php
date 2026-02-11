@@ -12,7 +12,7 @@
             <!-- Jenjang Toggle -->
             <div class="col-span-5 md:col-span-auto flex p-1 bg-slate-100 dark:bg-[#1a2332] rounded-xl border-2 border-slate-200 dark:border-slate-700 h-[46px]">
                 @foreach(['MI', 'MTS'] as $j)
-                <button type="submit" name="jenjang" value="{{ $j }}" 
+                <button type="submit" name="jenjang" value="{{ $j }}"
                     class="flex-1 px-3 text-sm font-bold rounded-lg transition-all flex items-center justify-center {{ (request('jenjang') == $j || (empty(request('jenjang')) && $loop->first)) ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300' }}">
                     {{ $j }}
                 </button>
@@ -52,7 +52,7 @@
             </p>
         </div>
         <div class="flex gap-2">
-            <button type="button" onclick="openGeneratorModal()" class="bg-indigo-500 text-white px-4 py-2.5 rounded-xl font-bold hover:bg-indigo-600 transition-all flex items-center gap-2 shadow-lg shadow-indigo-500/20">
+            <button type="button" onclick="openGeneratorModal()" class="bg-primary text-white px-4 py-2.5 rounded-xl font-bold hover:bg-primary/90 transition-all flex items-center gap-2 shadow-lg shadow-primary/20">
                 <span class="material-symbols-outlined">auto_fix_high</span> Generate Otomatis
             </button>
             <button type="submit" form="catatanForm" class="bg-primary text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-primary/30 hover:bg-green-600 transition-all flex items-center gap-2">
@@ -67,7 +67,7 @@
             @csrf
             <!-- Important: Pass Class ID for Admin context -->
             <input type="hidden" name="kelas_id" value="{{ $kelas->id }}">
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 @foreach($students as $ak)
                 @php
@@ -87,7 +87,7 @@
                             {{ $loop->iteration }}
                         </span>
                     </div>
-                    
+
                     <div class="space-y-3">
                          <div>
                             <label class="block text-xs font-medium text-slate-500 mb-1">Catatan / Motivasi</label>
@@ -110,32 +110,32 @@
                 <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <h3 class="text-lg font-semibold leading-6 text-gray-900 mb-4" id="modal-title">Konfigurasi Pesan Otomatis (Magic Notes 🪄)</h3>
                     <p class="text-sm text-gray-500 mb-6">Sesuaikan template pesan yang akan di-generate berdasarkan rata-rata nilai siswa.</p>
-                    
+
                     <div class="space-y-4">
                         <!-- Grade A -->
                         <div>
                             <label class="block text-sm font-medium text-green-700 mb-1">Grade A (91 - 100) - Sangat Baik</label>
-                            <textarea id="tpl_a" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" rows="2">Prestasi yang luar biasa! Pertahankan semangat belajarmu dan jadilah inspirasi bagi teman-temanmu.</textarea>
+                            <textarea id="tpl_a" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm" rows="2">Prestasi yang luar biasa! Pertahankan semangat belajarmu dan jadilah inspirasi bagi teman-temanmu.</textarea>
                         </div>
                         <!-- Grade B -->
                         <div>
-                            <label class="block text-sm font-medium text-blue-700 mb-1">Grade B (81 - 90) - Baik</label>
-                            <textarea id="tpl_b" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" rows="2">Hasil belajarmu sudah baik. Teruslah tekun dan tingkatkan lagi pencapaianmu di semester depan.</textarea>
+                            <label class="block text-sm font-medium text-primary mb-1">Grade B (81 - 90) - Baik</label>
+                            <textarea id="tpl_b" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm" rows="2">Hasil belajarmu sudah baik. Teruslah tekun dan tingkatkan lagi pencapaianmu di semester depan.</textarea>
                         </div>
                         <!-- Grade C -->
                         <div>
                             <label class="block text-sm font-medium text-amber-700 mb-1">Grade C (70 - 80) - Cukup</label>
-                            <textarea id="tpl_c" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" rows="2">Kamu memiliki potensi besar. Tingkatkan lagi fokus dan kedisiplinan dalam belajar agar hasilnya lebih maksimal.</textarea>
+                            <textarea id="tpl_c" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm" rows="2">Kamu memiliki potensi besar. Tingkatkan lagi fokus dan kedisiplinan dalam belajar agar hasilnya lebih maksimal.</textarea>
                         </div>
                         <!-- Grade D -->
                         <div>
                             <label class="block text-sm font-medium text-red-700 mb-1">Grade D (< 70) - Perlu Bimbingan</label>
-                            <textarea id="tpl_d" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" rows="2">Jangan menyerah! Belajarlah lebih giat lagi, perbanyak latihan, dan jangan ragu bertanya kepada guru.</textarea>
+                            <textarea id="tpl_d" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm" rows="2">Jangan menyerah! Belajarlah lebih giat lagi, perbanyak latihan, dan jangan ragu bertanya kepada guru.</textarea>
                         </div>
                     </div>
                 </div>
                 <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                    <button type="button" onclick="applyGenerator()" class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto">
+                    <button type="button" onclick="applyGenerator()" class="inline-flex w-full justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90 sm:ml-3 sm:w-auto">
                         <span class="material-symbols-outlined text-[16px] mr-1">auto_fix_normal</span> Terapkan Catatan
                     </button>
                     <button type="button" onclick="closeGeneratorModal()" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Batal</button>
@@ -161,18 +161,18 @@
         const tplB = document.getElementById('tpl_b').value;
         const tplC = document.getElementById('tpl_c').value;
         const tplD = document.getElementById('tpl_d').value;
-        
+
         document.querySelectorAll('.student-card').forEach(card => {
             const avg = parseFloat(card.dataset.avg) || 0;
             const noteInput = card.querySelector('.note-input');
-            
+
             let message = '';
-            
+
             if (avg >= 91) { message = tplA; }
             else if (avg >= 81) { message = tplB; }
             else if (avg >= 70) { message = tplC; }
-            else { 
-                message = tplD; 
+            else {
+                message = tplD;
             }
 
             // Set Note

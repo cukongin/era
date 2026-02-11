@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="max-w-[1200px] mx-auto flex flex-col gap-8">
-    
+
     <!-- Heading -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div class="flex flex-col gap-2 max-w-2xl">
@@ -33,19 +33,19 @@
         <!-- Tabs Navigation -->
         <div class="flex flex-col gap-4">
             <div class="flex border-b border-slate-200 dark:border-slate-800 w-full overflow-x-auto">
-                <a href="{{ route('master.students.index', ['tab' => 'active', 'level_id' => request('level_id')]) }}" 
+                <a href="{{ route('master.students.index', ['tab' => 'active', 'level_id' => request('level_id')]) }}"
                    class="px-5 py-3 text-sm font-bold min-w-max flex items-center gap-2 {{ request('tab', 'active') == 'active' ? 'text-green-600 border-b-2 border-green-600 bg-green-50/50' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50' }} transition-all">
                     <span class="material-symbols-outlined text-[18px]">verified</span>
                     Siswa Aktif
                     <span class="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full ml-1">{{ $stats['all_active'] }}</span>
                 </a>
-                <a href="{{ route('master.students.index', ['tab' => 'new', 'level_id' => request('level_id')]) }}" 
+                <a href="{{ route('master.students.index', ['tab' => 'new', 'level_id' => request('level_id')]) }}"
                    class="px-5 py-3 text-sm font-bold min-w-max flex items-center gap-2 {{ request('tab') == 'new' ? 'text-amber-600 border-b-2 border-amber-600 bg-amber-50/50' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50' }} transition-all">
                     <span class="material-symbols-outlined text-[18px]">fiber_new</span>
                     Siswa Baru
                     <span class="bg-amber-100 text-amber-700 text-xs px-2 py-0.5 rounded-full ml-1">{{ $stats['new'] ?? 0 }}</span>
                 </a>
-                <a href="{{ route('master.students.index', ['tab' => 'inactive', 'level_id' => request('level_id')]) }}" 
+                <a href="{{ route('master.students.index', ['tab' => 'inactive', 'level_id' => request('level_id')]) }}"
                    class="px-5 py-3 text-sm font-bold min-w-max flex items-center gap-2 {{ request('tab') == 'inactive' ? 'text-red-600 border-b-2 border-red-600 bg-red-50/50' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50' }} transition-all">
                     <span class="material-symbols-outlined text-[18px]">do_not_disturb_on</span>
                     Lulus / Keluar
@@ -56,7 +56,7 @@
             <!-- Filters & Search (Simplified) -->
             <form action="{{ route('master.students.index') }}" method="GET" class="flex flex-col md:flex-row gap-4 items-center justify-between">
                 <input type="hidden" name="tab" value="{{ request('tab', 'active') }}">
-                
+
                 <!-- Jenjang Filter -->
                 <div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
                     <a href="{{ route('master.students.index', ['tab' => request('tab', 'active'), 'level_id' => 'all']) }}" class="px-3 py-1.5 rounded-full text-xs font-bold border {{ !request('level_id') || request('level_id') == 'all' ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300' }}">Semua</a>
@@ -109,7 +109,7 @@
                             </div>
                         </td>
                         <td class="py-4 px-4">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ optional($student->jenjang)->kode == 'MI' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ optional($student->jenjang)->kode == 'MI' ? 'bg-emerald-100 text-emerald-800' : 'bg-primary/10 text-primary' }}">
                                 {{ optional($student->jenjang)->kode }}
                             </span>
                         </td>
@@ -135,7 +135,7 @@
                                     <span class="material-symbols-outlined text-[20px]">input</span>
                                 </button>
                                 @endif
-                                
+
                                 @if(request('tab') == 'inactive' && $student->status_siswa != 'lulus')
                                 <button type="button" onclick="restoreStudent({{ $student->id }})" class="text-green-500 hover:text-green-600 p-1 rounded hover:bg-green-50 transition-colors" title="Kembali Bersekolah (Restore)">
                                     <span class="material-symbols-outlined text-[20px]">restore_from_trash</span>
@@ -157,7 +157,7 @@
                 </tbody>
             </table>
         </div>
-        
+
         <!-- Pagination -->
         <div class="flex flex-col sm:flex-row items-center justify-between p-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-[#1a2e22] gap-4">
             <div class="text-sm text-slate-500">
@@ -196,11 +196,11 @@ function toggleDeleteBtn() {
 
 function openStatusModal(id, nama) {
     document.getElementById('statusStudentName').innerText = nama;
-    
+
     let url = "{{ route('master.students.updateStatus', ':id') }}";
     url = url.replace(':id', id);
     document.getElementById('statusForm').action = url;
-    
+
     document.getElementById('statusModal').classList.remove('hidden');
 }
 function closeStatusModal() {
@@ -227,7 +227,7 @@ function restoreStudent(id) {
                 <form id="statusForm" method="POST">
                     @csrf
                     <!-- Route defined in JS -->
-                    
+
                     <div class="bg-white dark:bg-[#1a2e22] px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                         <div class="flex items-center gap-3 mb-4">
                             <div class="h-10 w-10 flex-shrink-0 rounded-full bg-amber-100 flex items-center justify-center">
@@ -238,7 +238,7 @@ function restoreStudent(id) {
                                 <p class="text-xs text-slate-500" id="statusStudentName">Nama Siswa</p>
                             </div>
                         </div>
-                        
+
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-medium leading-6 text-slate-900 dark:text-white mb-1">Pilih Status Baru</label>
@@ -251,12 +251,12 @@ function restoreStudent(id) {
                                     <option value="meninggal">Meninggal Dunia</option>
                                 </select>
                             </div>
-                            
+
                             <div>
                                 <label class="block text-sm font-medium leading-6 text-slate-900 dark:text-white mb-1">Catatan (Opsional)</label>
                                 <textarea name="catatan" rows="2" class="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-amber-500 sm:text-sm sm:leading-6" placeholder="Alasan pindah/berhenti..."></textarea>
                             </div>
-                            
+
                             <div class="text-xs text-amber-600 bg-amber-50 p-2 rounded border border-amber-100">
                                 <b>Perhatian:</b> Siswa yang berstatus Mutasi/Keluar/Lulus tidak akan muncul di daftar Absensi, Penilaian, atau Kenaikan Kelas.
                             </div>
@@ -283,15 +283,15 @@ function restoreStudent(id) {
                     <div class="bg-white dark:bg-[#1a2e22] px-6 py-4 border-b border-slate-200 dark:border-slate-800">
                         <h3 class="text-lg font-bold leading-6 text-slate-900 dark:text-white">Tambah Siswa Baru (Buku Induk)</h3>
                     </div>
-                    
+
                     <div class="px-6 py-6 max-h-[70vh] overflow-y-auto">
                         <!-- Grid Layout -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            
+
                             <!-- Section: Identitas -->
                             <div class="space-y-4">
                                 <h4 class="font-bold text-primary text-sm uppercase tracking-wider border-b border-slate-100 pb-2">Identitas Diri</h4>
-                                
+
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nama Lengkap</label>
                                     <input type="text" name="nama_lengkap" required class="w-full rounded-lg border-slate-300 dark:border-slate-700 text-sm focus:ring-primary focus:border-primary px-3 py-2">
@@ -334,11 +334,11 @@ function restoreStudent(id) {
                                     <textarea name="alamat_lengkap" rows="3" class="w-full rounded-lg border-slate-300 dark:border-slate-700 text-sm focus:ring-primary focus:border-primary px-3 py-2"></textarea>
                                 </div>
                             </div>
-                            
+
                             <!-- Section: Data Tambahan -->
                             <div class="space-y-4">
                                 <h4 class="font-bold text-primary text-sm uppercase tracking-wider border-b border-slate-100 pb-2">Orang Tua & Akademik</h4>
-                                
+
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nama Ayah</label>
                                     <input type="text" name="nama_ayah" class="w-full rounded-lg border-slate-300 dark:border-slate-700 text-sm focus:ring-primary focus:border-primary px-3 py-2">
@@ -351,9 +351,9 @@ function restoreStudent(id) {
                                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">No. Telepon Ortu</label>
                                     <input type="text" name="no_telp_ortu" class="w-full rounded-lg border-slate-300 dark:border-slate-700 text-sm focus:ring-primary focus:border-primary px-3 py-2">
                                 </div>
-                                
+
                                 <hr class="border-slate-200">
-                                
+
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Jenjang</label>
@@ -371,7 +371,7 @@ function restoreStudent(id) {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="bg-slate-50 dark:bg-black/20 px-6 py-4 sm:flex sm:flex-row-reverse">
                         <button type="submit" class="inline-flex w-full justify-center rounded-lg bg-primary px-4 py-2 text-sm font-bold text-slate-900 shadow-sm hover:bg-green-600 sm:ml-3 sm:w-auto">Simpan Data</button>
                         <button type="button" onclick="document.getElementById('addStudentModal').classList.add('hidden')" class="mt-3 inline-flex w-full justify-center rounded-lg bg-white dark:bg-slate-800 px-4 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-700 hover:bg-slate-50 sm:mt-0 sm:w-auto">Batal</button>
@@ -397,7 +397,7 @@ function restoreStudent(id) {
                             <h3 class="text-base font-semibold leading-6 text-slate-900 dark:text-white" id="modal-title">Impor Data Siswa</h3>
                             <div class="mt-2 text-sm text-slate-500 dark:text-slate-400">
                                 <p class="mb-4">Upload file CSV/Excel untuk menambahkan siswa secara massal. Gunakan template yang disediakan agar format sesuai.</p>
-                                
+
                                 <a href="{{ route('master.students.template') }}" class="inline-flex items-center gap-2 text-primary hover:text-green-700 font-medium mb-4 p-2 bg-green-50 rounded-lg w-full border border-green-100 justify-center">
                                     <span class="material-symbols-outlined text-[18px]">download</span>
                                     Download Template CSV

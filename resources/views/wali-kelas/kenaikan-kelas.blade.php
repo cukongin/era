@@ -9,13 +9,13 @@
         <div>
             <h1 class="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 @if($pageContext['type'] == 'graduation')
-                    <span class="material-symbols-outlined text-indigo-600">school</span>
+                    <span class="material-symbols-outlined text-primary">school</span>
                 @endif
                 {{ $pageContext['title'] }}
             </h1>
             <p class="text-sm text-slate-500">
                 Sistem otomatis menghitung rekomendasi {{ strtolower($pageContext['title']) }} berdasarkan aturan penilaian.
-                <br>Kelas: <span class="font-bold text-indigo-600">{{ $kelas->nama_kelas }}</span>
+                <br>Kelas: <span class="font-bold text-primary">{{ $kelas->nama_kelas }}</span>
                 @if(isset($isLocked) && $isLocked)
                     <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800">
                         <span class="material-symbols-outlined text-[14px] mr-1">lock</span> Mode Baca
@@ -23,7 +23,7 @@
                 @endif
             </p>
         </div>
-        
+
         <div class="flex gap-2 items-center">
             <!-- Filter Lengkap -->
             <!-- Filter Lengkap -->
@@ -32,17 +32,17 @@
                 <!-- Mobile Toggle Button -->
                 <button @click="open = !open" type="button" class="md:hidden w-full flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5 rounded-lg shadow-sm">
                     <div class="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-200">
-                        <span class="material-symbols-outlined text-indigo-600">tune</span>
+                        <span class="material-symbols-outlined text-primary">tune</span>
                         <span>Filter: {{ $activeYear->nama }}</span>
                     </div>
                     <span class="material-symbols-outlined text-slate-500 transition-transform duration-200" :class="{'rotate-180': open}">expand_more</span>
                 </button>
 
                 <!-- Form -->
-                <form action="{{ route('walikelas.kenaikan.index') }}" method="GET" 
+                <form action="{{ route('walikelas.kenaikan.index') }}" method="GET"
                       class="flex-col md:flex-row gap-2 items-center flex-wrap w-full md:w-auto mt-2 md:mt-0"
                       :class="open ? 'flex' : 'hidden md:flex'">
-                    
+
                     <!-- Tahun Ajaran -->
                     <select name="year_id" onchange="this.form.submit()" class="bg-white dark:bg-[#1a2332] border border-slate-200 dark:border-[#2a3441] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 shadow-sm font-bold w-full md:w-40">
                         @foreach($years as $y)
@@ -109,7 +109,7 @@
                 <p class="text-sm font-medium text-slate-500">Total Santri</p>
                 <h3 class="text-3xl font-bold text-slate-900 dark:text-white mt-1">{{ $summary['total'] }}</h3>
             </div>
-            <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center">
+            <div class="w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center">
                 <span class="material-symbols-outlined">groups</span>
             </div>
         </div>
@@ -143,22 +143,22 @@
     <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 relative">
         <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <h2 class="font-bold flex items-center gap-2">
-                <span class="material-symbols-outlined text-indigo-600">table_chart</span>
+                <span class="material-symbols-outlined text-primary">table_chart</span>
                 Daftar Rekomendasi {{ $pageContext['title'] }}
             </h2>
             <div class="relative w-full md:w-auto">
                 <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-sm">search</span>
-                <input type="text" x-model="search" placeholder="Cari nama santri..." class="pl-9 pr-4 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 w-full md:w-64">
+                <input type="text" x-model="search" placeholder="Cari nama santri..." class="pl-9 pr-4 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary w-full md:w-64">
             </div>
         </div>
-        
+
         <!-- Mobile Card View -->
         <div class="md:hidden space-y-4 p-4 bg-slate-50 dark:bg-slate-900/50">
             <!-- Select All (Mobile) -->
             @if(isset($isFinalPeriod) && $isFinalPeriod)
             <div class="bg-white dark:bg-slate-800 rounded-xl p-3 shadow-sm border border-slate-200 dark:border-slate-700 flex items-center justify-between">
                 <label class="flex items-center gap-3 cursor-pointer w-full">
-                     <input type="checkbox" @change="toggleAll($event)" class="w-5 h-5 text-indigo-600 bg-slate-100 border-slate-300 rounded focus:ring-indigo-500">
+                     <input type="checkbox" @change="toggleAll($event)" class="w-5 h-5 text-primary bg-slate-100 border-slate-300 rounded focus:ring-primary">
                      <span class="font-bold text-slate-700 dark:text-slate-200 text-sm">Pilih Semua ({{ count($studentStats) }})</span>
                 </label>
             </div>
@@ -170,7 +170,7 @@
                     $status = $stat->final_status ?: 'pending';
                     $badgeClass = 'bg-slate-100 text-slate-600 border-slate-200';
                     $badgeLabel = 'BELUM DITENTUKAN';
-                    
+
                     if(in_array($status, ['promoted', 'promote', 'graduated', 'graduate'])) {
                         $badgeClass = 'bg-emerald-100 text-emerald-700 border-emerald-200';
                         $badgeLabel = $pageContext['success_label'] ?? 'NAIK KELAS';
@@ -191,13 +191,13 @@
                 @endphp
 
             <div class="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700"
-                 data-name="{{ strtolower($stat->student->nama_lengkap) }}" 
+                 data-name="{{ strtolower($stat->student->nama_lengkap) }}"
                  x-show="matchesSearch($el.dataset.name)">
-                
+
                 <!-- Card Header -->
                 <div class="flex justify-between items-start mb-3">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm shrink-0">
+                        <div class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm shrink-0">
                             {{ $index + 1 }}
                         </div>
                         <div class="overflow-hidden">
@@ -222,7 +222,7 @@
                          <span class="font-bold text-sm {{ $stat->attendance_pct < 85 ? 'text-red-600' : 'text-slate-700' }}">{{ $stat->attendance_pct }}%</span>
                     </div>
                 </div>
-                
+
                 <!-- Failure/Notes -->
                 @if(($stat->under_kkm > 0) || !empty($stat->fail_reasons) || $stat->ijazah_note)
                 <div class="mb-3 space-y-1">
@@ -231,7 +231,7 @@
                             {{ $stat->under_kkm }} Mapel < KKM
                         </div>
                      @endif
-                     
+
                      @if(!empty($stat->fail_reasons))
                         <div class="text-xs text-red-600 bg-red-50 p-2 rounded border border-red-100">
                             @foreach($stat->fail_reasons as $reason)
@@ -247,7 +247,7 @@
                      @endif
                 </div>
                 @endif
-                
+
                 <!-- Footer Action -->
                 @if(isset($isFinalPeriod) && $isFinalPeriod)
                 <div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-700 gap-2">
@@ -256,11 +256,11 @@
                     </span>
 
                     @if((!isset($isLocked) || !$isLocked) && (!$stat->is_locked || auth()->user()->isAdmin()))
-                        <button @click="openModal({{ $studentJson }})" class="p-1.5 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border border-indigo-200 transition-colors">
+                        <button @click="openModal({{ $studentJson }})" class="p-1.5 rounded-lg bg-primary/5 text-primary hover:bg-primary/10 border border-primary/20 transition-colors">
                             <span class="material-symbols-outlined text-[20px]">edit</span>
                         </button>
                     @endif
-                    
+
                     <!-- Checkbox for Bulk -->
                      <input type="checkbox" value="{{ $stat->student->id }}" x-model="selectedIds" class="w-6 h-6 text-primary bg-slate-100 border-slate-300 rounded focus:ring-primary ml-1">
                 </div>
@@ -293,10 +293,10 @@
                 </thead>
                 <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
                     @foreach($studentStats as $index => $stat)
-                    <tr data-name="{{ strtolower($stat->student->nama_lengkap) }}" 
-                        x-show="matchesSearch($el.dataset.name)" 
+                    <tr data-name="{{ strtolower($stat->student->nama_lengkap) }}"
+                        x-show="matchesSearch($el.dataset.name)"
                         class="hover:bg-slate-50 transition-colors group">
-                        
+
                         @if(isset($isFinalPeriod) && $isFinalPeriod)
                         <td class="w-4 p-4 text-center">
                             <input type="checkbox" value="{{ $stat->student->id }}" x-model="selectedIds" class="w-4 h-4 text-primary bg-slate-100 border-slate-300 rounded focus:ring-primary">
@@ -305,7 +305,7 @@
 
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xs">
+                                <div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
                                     {{ $index + 1 }}
                                 </div>
                                 <div>
@@ -378,7 +378,7 @@
                                         $badgeLabel = 'NAIK BERSYARAT';
                                         $badgeIcon = 'warning';
                                     }
-                                    
+
                                     // Prepare Data for Modal
                                     $studentJson = json_encode([
                                         'id' => $stat->student->id,
@@ -392,10 +392,10 @@
                                         <span class="material-symbols-outlined text-[14px]">{{ $badgeIcon }}</span>
                                         <span>{{ $badgeLabel }}</span>
                                 </span>
-                                
+
                                 @if((!isset($isLocked) || !$isLocked) && (!$stat->is_locked || auth()->user()->isAdmin()))
-                                <button @click="openModal({{ $studentJson }})" 
-                                        class="text-slate-400 hover:text-blue-600 transition-colors p-1 rounded hover:bg-slate-100" 
+                                <button @click="openModal({{ $studentJson }})"
+                                        class="text-slate-400 hover:text-primary transition-colors p-1 rounded hover:bg-slate-100"
                                         title="Ubah Keputusan">
                                     <span class="material-symbols-outlined">edit</span>
                                 </button>
@@ -411,7 +411,7 @@
     </div>
 
     <!-- FLOATING BULK TOOLBAR -->
-    <div x-show="selectedIds.length > 0" 
+    <div x-show="selectedIds.length > 0"
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="translate-y-20 opacity-0"
          x-transition:enter-end="translate-y-0 opacity-100"
@@ -436,13 +436,13 @@
     </div>
 
     <!-- EDIT MODAL -->
-    <div x-show="showModal" 
+    <div x-show="showModal"
          style="display: none;"
-         class="fixed inset-0 z-[99] overflow-y-auto" 
+         class="fixed inset-0 z-[99] overflow-y-auto"
          aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        
+
         <!-- Backdrop -->
-        <div x-show="showModal" 
+        <div x-show="showModal"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0"
              x-transition:enter-end="opacity-100"
@@ -452,7 +452,7 @@
              class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm transition-opacity"></div>
 
         <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-            <div x-show="showModal" 
+            <div x-show="showModal"
                  x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                  x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
@@ -461,11 +461,11 @@
                  x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                  @click.away="closeModal()"
                  class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                
+
                 <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <div class="sm:flex sm:items-start">
-                        <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
-                            <span class="material-symbols-outlined text-indigo-600">edit</span>
+                        <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 sm:mx-0 sm:h-10 sm:w-10">
+                            <span class="material-symbols-outlined text-primary">edit</span>
                         </div>
                         <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
                             <h3 class="text-base font-semibold leading-6 text-slate-900" id="modal-title">Ubah Keputusan</h3>
@@ -474,9 +474,9 @@
                                     Tentukan status akhir untuk santri: <br>
                                     <span class="font-bold text-slate-900 text-lg" x-text="editData.name"></span>
                                 </p>
-                                
+
                                 <label class="block text-sm font-bold text-slate-700 mb-2">Status Akhir</label>
-                                <select x-model="editData.new_status" class="w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border">
+                                <select x-model="editData.new_status" class="w-full rounded-md border-slate-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm p-2 border">
                                     @if($isFinalYear)
                                         <option value="graduated">LULUS</option>
                                         <option value="not_graduated">TIDAK LULUS</option>
@@ -492,10 +492,10 @@
                     </div>
                 </div>
                 <div class="bg-slate-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                    <button type="button" 
-                            @click="saveDecision()" 
+                    <button type="button"
+                            @click="saveDecision()"
                             :disabled="saving"
-                            class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto disabled:opacity-50 flex items-center gap-2">
+                            class="inline-flex w-full justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90 sm:ml-3 sm:w-auto disabled:opacity-50 flex items-center gap-2">
                         <span x-show="saving" class="material-symbols-outlined animate-spin text-xs">sync</span>
                         <span x-text="saving ? 'Menyimpan...' : 'Simpan Perubahan'"></span>
                     </button>
@@ -520,7 +520,7 @@
                 new_status: 'pending',
                 class_id: null
             },
-            
+
             matchesSearch(name) {
                 if(!this.search) return true;
                 return name.includes(this.search.toLowerCase());
@@ -561,13 +561,13 @@
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
-                        body: JSON.stringify({ 
-                            student_id: this.editData.id, 
+                        body: JSON.stringify({
+                            student_id: this.editData.id,
                             class_id: this.editData.class_id,
-                            status: this.editData.new_status 
+                            status: this.editData.new_status
                         })
                     });
-                    
+
                     if (res.ok) {
                         this.showModal = false;
                         Swal.fire({
@@ -609,13 +609,13 @@
                              'Content-Type': 'application/json',
                              'X-CSRF-TOKEN': '{{ csrf_token() }}'
                          },
-                         body: JSON.stringify({ 
-                            student_ids: this.selectedIds, 
+                         body: JSON.stringify({
+                            student_ids: this.selectedIds,
                             class_id: {{ $kelas->id }},
-                            status: status 
+                            status: status
                         })
                      });
-                     
+
                      if (res.ok) {
                          const data = await res.json();
                          Swal.fire({

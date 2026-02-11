@@ -19,13 +19,13 @@
                 @endif
             </h1>
             <p class="text-sm text-slate-500">
-                Periode: <strong class="text-slate-800 dark:text-slate-300">{{ $periode->nama_periode }}</strong> • 
+                Periode: <strong class="text-slate-800 dark:text-slate-300">{{ $periode->nama_periode }}</strong> •
                 KKM: <strong class="text-red-500">{{ $nilaiKkm }}</strong>
             </p>
         </div>
         <div class="flex gap-2">
             <!-- Back Button -->
-            <a href="{{ str_contains(url()->previous(), 'monitoring') ? route('walikelas.monitoring', ['kelas_id' => $assignment->id_kelas, 'periode_id' => $periode->id]) : route('teacher.dashboard') }}" 
+            <a href="{{ str_contains(url()->previous(), 'monitoring') ? route('walikelas.monitoring', ['kelas_id' => $assignment->id_kelas, 'periode_id' => $periode->id]) : route('teacher.dashboard') }}"
                class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 shadow-sm transition-all focus:ring-4 focus:ring-slate-200">
                 <span class="material-symbols-outlined text-[20px]">arrow_back</span>
                 Kembali
@@ -49,7 +49,7 @@
                         <input type="hidden" name="id_kelas" value="{{ $assignment->id_kelas }}">
                         <input type="hidden" name="id_mapel" value="{{ $assignment->id_mapel }}">
                         <input type="hidden" name="id_periode" value="{{ $periode->id }}">
-                        
+
                         <button type="submit" class="bg-amber-100 text-amber-700 hover:bg-amber-200 border border-amber-200 px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition-colors" title="Buka Kunci (Revisi)">
                             <span class="material-symbols-outlined">lock_open</span> Buka Kunci
                         </button>
@@ -84,7 +84,7 @@
     <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
         <form id="nilaiForm" action="{{ route('teacher.store-nilai') }}" method="POST">
             @csrf
-            
+
             <input type="hidden" name="id_kelas" value="{{ $assignment->id_kelas }}">
             <input type="hidden" name="id_mapel" value="{{ $assignment->id_mapel }}">
             <input type="hidden" name="id_periode" value="{{ $periode->id }}">
@@ -98,7 +98,7 @@
                         <tr>
                             <th class="px-4 py-3 w-10">No</th>
                             <th class="px-4 py-3 min-w-[200px]">Nama Santri</th>
-                            
+
                             @if($blueprint['harian'])
                             <th class="px-4 py-3 text-center w-24">Harian</th>
                             @endif
@@ -106,7 +106,7 @@
                             @if($blueprint['uts'])
                             <th class="px-4 py-3 text-center w-24">{{ $blueprint['label_uts'] }}</th>
                             @endif
-                            
+
                             @if($blueprint['uas'])
                             <th class="px-4 py-3 text-center w-24">{{ $blueprint['label_uas'] }}</th>
                             @endif
@@ -125,11 +125,11 @@
                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30">
                             <td class="px-4 py-3 text-center text-slate-500">{{ $index + 1 }}</td>
                             <td class="px-4 py-3 font-medium text-slate-900 dark:text-white">{{ $ak->siswa->nama_lengkap }}</td>
-                            
+
                             <!-- Input Harian -->
                             @if($blueprint['harian'])
                             <td class="px-2 py-2">
-                                @php 
+                                @php
                                     // FORCE INTEGER DISPLAY
                                     $hVal = ($bobot->bobot_harian == 0 && ($nilai->nilai_harian ?? null) === null) ? 0 : ($nilai->nilai_harian ?? '');
                                     // If numeric, round it to remove decimals for display
@@ -140,11 +140,11 @@
                             @else
                                 <input type="hidden" name="grades[{{ $ak->id_siswa }}][harian]" value="0" class="nilai-input" data-weight="0">
                             @endif
-                            
+
                             <!-- Input UTS/Cawu -->
                             @if($blueprint['uts'])
                             <td class="px-2 py-2">
-                                @php 
+                                @php
                                     $tVal = ($bobot->bobot_uts_cawu == 0 && ($nilai->nilai_uts_cawu ?? null) === null) ? 0 : ($nilai->nilai_uts_cawu ?? '');
                                     if(is_numeric($tVal)) $tVal = (int) round($tVal);
                                 @endphp
@@ -153,11 +153,11 @@
                             @else
                                 <input type="hidden" name="grades[{{ $ak->id_siswa }}][uts]" value="0" class="nilai-input" data-weight="0">
                             @endif
-                            
+
                             <!-- Input UAS (Only MTs) -->
                             @if($blueprint['uas'])
                             <td class="px-2 py-2">
-                                @php 
+                                @php
                                     $aVal = ($bobot->bobot_uas == 0 && ($nilai->nilai_uas ?? null) === null) ? 0 : ($nilai->nilai_uas ?? '');
                                     if(is_numeric($aVal)) $aVal = (int) round($aVal);
                                 @endphp
@@ -166,7 +166,7 @@
                             @else
                                 <input type="hidden" name="grades[{{ $ak->id_siswa }}][uas]" value="0" class="nilai-input" data-weight="0">
                             @endif
-                            
+
                             <!-- Calc Result -->
                             <td class="px-4 py-3 text-center font-bold text-slate-900 dark:text-white relative group">
                                 <span class="nilai-akhir text-lg block">{{ $nilai->nilai_akhir ?? 0 }}</span>
@@ -174,7 +174,7 @@
                             <td class="px-4 py-3 text-center font-bold predikat">
                                 {{ $nilai->predikat ?? '-' }}
                             </td>
-                            
+
                             <td class="px-2 py-2">
                                 <input type="text" name="grades[{{ $ak->id_siswa }}][catatan]" value="{{ $nilai->catatan ?? '' }}" placeholder="Catatan..." class="w-full text-sm rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 py-1 focus:ring-primary">
                             </td>
@@ -228,20 +228,20 @@
         } else {
             finalScore = Math.round(totalScore * 100) / 100;
         }
-        
+
         // --- KKM Coloring Only ---
         const kkm = {{ $nilaiKkm }};
-        
+
         // Update Akhir
         const akhirCell = row.querySelector('.nilai-akhir');
         akhirCell.innerText = finalScore;
-        
+
         // Update Color
         const predikatCell = row.querySelector('.predikat');
-        
+
         if (finalScore < kkm) {
             akhirCell.classList.add('text-red-500');
-            akhirCell.classList.remove('text-cyan-600');
+            akhirCell.classList.remove('text-slate-900', 'dark:text-white');
         } else {
             akhirCell.classList.remove('text-red-500');
         }
@@ -254,7 +254,7 @@
                 break; // Because sorted by min_score desc
             }
         }
-        
+
         predikatCell.innerText = predikat;
     }
 </script>
@@ -278,12 +278,12 @@
                                 <p class="text-xs text-slate-500">Upload format .csv atau .txt</p>
                             </div>
                         </div>
-                        
+
                         <div class="space-y-4">
-                            <div class="p-3 bg-blue-50 border border-blue-100 rounded-lg text-sm text-blue-700">
+                            <div class="p-3 bg-primary/5 border border-primary/10 rounded-lg text-sm text-primary">
                                 <b>Langkah 1:</b> Download Template terlebih dahulu agar format sesuai dengan data siswa di kelas ini.
                                 <div class="mt-2">
-                                    <a href="{{ route('teacher.input-nilai.template', ['kelas' => $assignment->id_kelas, 'mapel' => $assignment->id_mapel]) }}" class="inline-flex items-center gap-1 text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-md text-xs font-bold transition-colors">
+                                    <a href="{{ route('teacher.input-nilai.template', ['kelas' => $assignment->id_kelas, 'mapel' => $assignment->id_mapel]) }}" class="inline-flex items-center gap-1 text-white bg-primary hover:bg-primary/90 px-3 py-1.5 rounded-md text-xs font-bold transition-colors">
                                         <span class="material-symbols-outlined text-[16px]">download</span> Download Template
                                     </a>
                                 </div>

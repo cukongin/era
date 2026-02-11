@@ -36,7 +36,7 @@
             <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50/50">
                 <div>
                     <h3 class="font-bold text-slate-800 dark:text-white">Data Terbaca: {{ count($parsedData) }} Siswa</h3>
-                    
+
                     <p class="text-xs text-slate-500 mt-1">Silakan periksa dan edit nilai jika diperlukan sebelum menyimpan.</p>
                 </div>
                 <button type="submit" class="bg-primary text-white px-6 py-2.5 rounded-xl font-bold hover:bg-green-600 transition-all shadow-lg shadow-primary/30 flex items-center gap-2">
@@ -52,25 +52,25 @@
                         <tr>
                             <th class="px-4 py-3 min-w-[50px] bg-slate-100" rowspan="2">No</th>
                             <th class="px-4 py-3 min-w-[200px] sticky left-0 z-20 bg-slate-100 border-r border-slate-200" rowspan="2">Nama Siswa</th>
-                            
-                            @php 
+
+                            @php
                                 $structGrades = $structure['grades'] ?? [];
                                 $structNonAcademic = $structure['non_academic'] ?? [];
                             @endphp
-                            
+
                             {{-- Mapel Headers --}}
                             @foreach($structGrades as $pId => $mapels)
                                 @foreach($mapels as $mId => $meta)
                                     <th class="px-2 py-3 text-center border-l bg-slate-50 min-w-[150px]" colspan="{{ $jenjang == 'MTS' ? 3 : 2 }}">
                                         @php
-                                            $pName = count($structGrades) > 1 ? "(P$pId) " : ""; 
+                                            $pName = count($structGrades) > 1 ? "(P$pId) " : "";
                                         @endphp
                                         <div class="text-[10px] text-slate-400">{{ $pName }}</div>
                                         {{ $meta['nama_mapel'] }}
                                     </th>
                                 @endforeach
                             @endforeach
-                            
+
                             {{-- Non-Academic Headers --}}
                             @foreach($structNonAcademic as $pId => $fields)
                                 <th class="px-2 py-3 text-center border-l bg-blue-50/50 min-w-[200px]" colspan="{{ count($fields) }}">
@@ -91,12 +91,12 @@
                                     @endif
                                 @endforeach
                             @endforeach
-                            
+
                             <!-- Sub Headers Non-Academic -->
                             @foreach($structNonAcademic as $pId => $fields)
                                 @foreach($fields as $field)
                                     @php
-                                        $label = ucfirst($field); 
+                                        $label = ucfirst($field);
                                         $widthClass = 'min-w-[100px]'; // Default for Personality
 
                                         if($field == 'sakit') { $label = 'S'; $widthClass = 'min-w-[50px]'; }
@@ -119,7 +119,7 @@
                                     {{ $row['siswa']->nama_lengkap }}
                                     <div class="text-[10px] text-slate-400">{{ $row['siswa']->nis_lokal }}</div>
                                 </td>
-                                
+
                                 {{-- Grades Inputs --}}
                                 @foreach($structGrades as $pId => $mapels)
                                     @foreach($mapels as $mId => $meta)
@@ -128,33 +128,33 @@
                                         @endphp
                                         <!-- Harian -->
                                         <td class="p-1 border-l border-slate-100">
-                                            <input type="number" 
-                                                   name="grades[{{ $row['siswa']->id }}][{{ $pId }}][{{ $mId }}][harian]" 
-                                                   value="{{ $g['harian'] }}" 
+                                            <input type="number"
+                                                   name="grades[{{ $row['siswa']->id }}][{{ $pId }}][{{ $mId }}][harian]"
+                                                   value="{{ $g['harian'] }}"
                                                    class="w-full text-center text-xs border-0 bg-transparent focus:ring-1 focus:ring-primary rounded py-1 px-0 hover:bg-slate-100"
                                                    min="0" max="100">
                                         </td>
                                         <!-- UTS -->
                                         <td class="p-1">
-                                            <input type="number" 
-                                                   name="grades[{{ $row['siswa']->id }}][{{ $pId }}][{{ $mId }}][uts]" 
-                                                   value="{{ $g['uts'] }}" 
+                                            <input type="number"
+                                                   name="grades[{{ $row['siswa']->id }}][{{ $pId }}][{{ $mId }}][uts]"
+                                                   value="{{ $g['uts'] }}"
                                                    class="w-full text-center text-xs border-0 bg-transparent focus:ring-1 focus:ring-primary rounded py-1 px-0 hover:bg-slate-100"
                                                    min="0" max="100">
                                         </td>
                                         <!-- UAS -->
                                         @if($jenjang == 'MTS')
                                         <td class="p-1">
-                                            <input type="number" 
-                                                   name="grades[{{ $row['siswa']->id }}][{{ $pId }}][{{ $mId }}][uas]" 
-                                                   value="{{ $g['uas'] }}" 
+                                            <input type="number"
+                                                   name="grades[{{ $row['siswa']->id }}][{{ $pId }}][{{ $mId }}][uas]"
+                                                   value="{{ $g['uas'] }}"
                                                    class="w-full text-center text-xs border-0 bg-transparent focus:ring-1 focus:ring-primary rounded py-1 px-0 hover:bg-slate-100"
                                                    min="0" max="100">
                                         </td>
                                         @endif
                                     @endforeach
                                 @endforeach
-                                
+
                                 {{-- Non-Academic Inputs --}}
                                 @foreach($structNonAcademic as $pId => $fields)
                                     @foreach($fields as $field)
@@ -162,10 +162,10 @@
                                             $val = $row['non_academic'][$pId][$field] ?? '';
                                             $displayVal = $val !== null ? (string)$val : '';
                                         @endphp
-                                        <td class="p-1 border-l border-slate-100 bg-blue-50/10 relative group">
-                                            <input type="text" 
-                                                   name="non_academic[{{ $row['siswa']->id }}][{{ $pId }}][{{ $field }}]" 
-                                                   value="{{ $displayVal }}" 
+                                        <td class="p-1 border-l border-slate-100 bg-primary/5 relative group">
+                                            <input type="text"
+                                                   name="non_academic[{{ $row['siswa']->id }}][{{ $pId }}][{{ $field }}]"
+                                                   value="{{ $displayVal }}"
                                                    class="w-full text-center text-xs border-0 bg-transparent focus:ring-1 focus:ring-primary rounded py-1 px-0 hover:bg-slate-100"
                                                    placeholder="-">
                                         </td>
@@ -225,11 +225,11 @@
                                     </div>
                                 @endforeach
                             @endforeach
-                            
+
                             {{-- Non-Academic Inputs --}}
                             @if(count($structNonAcademic) > 0)
-                            <div class="bg-blue-50/30 rounded-lg p-3 border border-blue-100">
-                                <span class="text-xs font-bold text-blue-700 block mb-2">Kehadiran & Sikap</span>
+                            <div class="bg-primary/5 rounded-lg p-3 border border-primary/20">
+                                <span class="text-xs font-bold text-primary block mb-2">Kehadiran & Sikap</span>
                                 @foreach($structNonAcademic as $pId => $fields)
                                     <div class="grid grid-cols-2 gap-3">
                                     @foreach($fields as $field)

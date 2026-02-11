@@ -8,7 +8,7 @@
 
 @section('content')
 <div class="flex-1 flex flex-col h-full overflow-hidden relative bg-slate-50 dark:bg-slate-900">
-    
+
     <!-- Top Bar -->
     <div class="px-6 py-5 bg-white dark:bg-[#1a2e22] border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row justify-between md:items-center gap-4 z-20 shadow-sm">
         <div class="flex items-center gap-4">
@@ -17,10 +17,10 @@
             </a>
             <div>
                 <h1 class="text-2xl font-black text-slate-900 dark:text-white flex items-center gap-3 tracking-tight">
-                    <span class="bg-gradient-to-r from-blue-600 to-cyan-500 text-transparent bg-clip-text">Monitor DKN</span>
+                    <span class="bg-gradient-to-r from-primary to-emerald-500 text-transparent bg-clip-text">Monitor DKN</span>
                 </h1>
                 <div class="flex items-center gap-2 mt-1">
-                    <span class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-blue-50 text-blue-700 border border-blue-100 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800">
+                    <span class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-primary/10 text-primary border border-primary/20 dark:bg-primary/20 dark:text-primary dark:border-primary/20">
                         {{ $kelas->nama_kelas }}
                     </span>
                     <span class="text-xs text-slate-400">• Mode Monitoring</span>
@@ -43,7 +43,7 @@
         <!-- Average Card -->
         <div class="min-w-[85%] md:min-w-0 flex-shrink-0 snap-center bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
             <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                 <span class="material-symbols-outlined text-6xl text-blue-600">analytics</span>
+                 <span class="material-symbols-outlined text-6xl text-primary">analytics</span>
             </div>
             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Rata-Rata Kelas</p>
             <div class="flex items-baseline gap-2">
@@ -51,7 +51,7 @@
                 <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">NA</span>
             </div>
             <div class="mt-3 w-full bg-slate-100 rounded-full h-1.5 dark:bg-slate-700 overflow-hidden">
-                <div class="bg-blue-500 h-1.5 rounded-full" style="width: {{ min(($stats['average'] / 100) * 100, 100) }}%"></div>
+                <div class="bg-primary h-1.5 rounded-full" style="width: {{ min(($stats['average'] / 100) * 100, 100) }}%"></div>
             </div>
         </div>
 
@@ -140,7 +140,7 @@
                                         <span class="text-[10px] text-slate-400 font-mono">{{ $row['student']->nis_lokal }}</span>
                                     </div>
                                 </td>
-                                
+
                                 @php $summary = $row['summary']; @endphp
                                 @php $sumNA = 0; $countMapel = 0; @endphp
 
@@ -149,22 +149,22 @@
                                         $rr = $summary['rr'][$mapel->id] ?? null;
                                         $um = $summary['um'][$mapel->id] ?? null;
                                         $na = $summary['na'][$mapel->id] ?? null;
-                                        
+
                                         if($na > 0) { $sumNA += $na; $countMapel++; }
                                     @endphp
-                                    
+
                                     <td class="border-r border-slate-100 dark:border-slate-700 p-1 text-center">
                                         <span class="text-[11px] text-slate-500 dark:text-slate-400">
                                             {{ $rr !== null ? number_format((float)$rr, 2) : '-' }}
                                         </span>
                                     </td>
-                                    
+
                                     <td class="border-r border-slate-100 dark:border-slate-700 p-1 text-center bg-amber-50/20 dark:bg-amber-900/10">
                                          <span class="text-[11px] font-bold text-amber-700 dark:text-amber-500">
                                             {{ $um !== null ? number_format((float)$um, 0) : '-' }}
                                          </span>
                                     </td>
-                                    
+
                                     <td class="border-r border-slate-100 dark:border-slate-700 p-1 text-center bg-emerald-50/10">
                                         @if($na !== null)
                                             <span class="text-[11px] font-bold {{ $na < 75 ? 'text-red-500' : 'text-emerald-600' }}">
@@ -181,8 +181,8 @@
                                     $minLulus = \App\Models\GlobalSetting::val('ijazah_min_lulus', 60);
                                     $isPass = $avg >= $minLulus;
                                 @endphp
-                                
-                                <td class="p-3 text-center border-l border-indigo-100 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900/20 md:sticky md:right-[100px] z-30 font-black text-indigo-700 dark:text-indigo-300 shadow-[-4px_0_8px_rgba(0,0,0,0.03)]">
+
+                                <td class="p-3 text-center border-l border-primary/20 dark:border-primary/20 bg-primary/10 dark:bg-primary/20 md:sticky md:right-[100px] z-30 font-black text-primary dark:text-primary shadow-[-4px_0_8px_rgba(0,0,0,0.03)]">
                                     {{ number_format($avg, 2) }}
                                 </td>
 

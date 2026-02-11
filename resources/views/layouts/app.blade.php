@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ \App\Models\GlobalSetting::val('app_name', 'Madrasah Integrated System') }}</title>
-    
+
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -14,44 +14,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <!-- Tailwind CSS (CDN for Prototyping) -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <!-- Compiled CSS -->
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-            extend: {
-            colors: {
-              "primary": "#003e29", // Kaitoke Green (Deep Green)
-              "secondary": "#467061", // Como (Greenish Gray)
-              "accent": "#fee46d", // Kournikova (Yellow/Gold)
-              "background-light": "#f6f8f6",
-              "background-dark": "#002a1c", // Darker Green for bg
-            },
-            fontFamily: {
-              "display": ["Inter", "Amiri", "sans-serif"],
-              "sans": ["Inter", "Amiri", "sans-serif"],
-              "serif": ["Amiri", "Times New Roman", "serif"] 
-            },
-            },
-          },
-        }
-    </script>
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        .dark ::-webkit-scrollbar-thumb { background: #334155; }
-        
-        .fouc-cloak { opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out; }
-        [x-cloak] { display: none !important; }
-    </style>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.body.classList.remove('fouc-cloak');
@@ -100,11 +71,11 @@
                 </form>
             </div>
             @endif
-            
+
             <nav class="flex flex-col gap-1 px-4 py-6 flex-1 overflow-y-auto" x-data="{ activeGroup: '{{ Request::is('master*') || Request::is('classes*') ? 'master' : (Request::is('settings*') ? 'settings' : (Request::is('walikelas*') || Request::is('reports*') ? 'walikelas' : (Request::is('teacher*') ? 'teacher' : ''))) }}' }">
-                
+
                 @if(isset($sidebarMenus))
-                    
+
                     {{-- HARDCODED MENU FOR ADMIN/TU GLOBAL MONITORING --}}
                     {{-- @if(auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isTu()))
                     <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('tu.monitoring.global') ? 'bg-primary/10 text-primary' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} transition-all mb-1" href="{{ route('tu.monitoring.global') }}">
@@ -136,19 +107,19 @@
                             $allowedRoles = $menu->roles->pluck('role')->toArray();
                             $user = Auth::user();
                             $hasAccess = false;
-                            
+
                             if ($user->isAdmin() && in_array('admin', $allowedRoles)) $hasAccess = true;
                             if ($user->isTeacher() && in_array('teacher', $allowedRoles)) $hasAccess = true;
                             if ($user->isWaliKelas() && in_array('walikelas', $allowedRoles)) $hasAccess = true;
                             if ($user->isStudent() && in_array('student', $allowedRoles)) $hasAccess = true;
                             if ($user->isStaffTu() && in_array('staff_tu', $allowedRoles)) $hasAccess = true;
-                            
+
                             // Special Condition for "Input Nilai" (Optional)
-                            // if ($menu->title == 'Input Nilai' && ...) 
+                            // if ($menu->title == 'Input Nilai' && ...)
 
                             $hasChildren = $menu->children->isNotEmpty();
                             $isActiveGroup = false;
-                            
+
                             if ($hasChildren) {
                                 foreach($menu->children as $child) {
                                     if (request()->url() == url($child->url) || ($child->route && request()->routeIs($child->route))) {
@@ -169,7 +140,7 @@
                             @else
                                 <!-- Dropdown Menu -->
                                 <div class="space-y-1">
-                                    <button @click="activeGroup = (activeGroup === '{{ $menu->id }}' ? '' : '{{ $menu->id }}')" 
+                                    <button @click="activeGroup = (activeGroup === '{{ $menu->id }}' ? '' : '{{ $menu->id }}')"
                                         :class="{ 'text-primary': activeGroup === '{{ $menu->id }}' || '{{ $isActiveGroup }}' }"
                                         class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-semibold text-sm group">
                                         <div class="flex items-center gap-3">
@@ -178,7 +149,7 @@
                                         </div>
                                         <span class="material-symbols-outlined text-slate-400 text-sm transition-transform duration-200" :class="{ 'rotate-180': activeGroup === '{{ $menu->id }}' }">expand_more</span>
                                     </button>
-                                    
+
                                     <div x-show="activeGroup === '{{ $menu->id }}' || (activeGroup === '' && '{{ $isActiveGroup }}')" x-collapse class="pl-4 space-y-1">
                                         @foreach($menu->children as $child)
                                             @php
@@ -219,7 +190,7 @@
                             {{ Auth::user()->role == 'admin' ? 'Administrator' : (Auth::user()->role == 'teacher' ? 'Guru' : (Auth::user()->role == 'walikelas' ? 'Wali Kelas' : 'User')) }}
                         </span>
                     </div>
-                    
+
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button type="submit" class="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors" title="Logout">
@@ -239,7 +210,7 @@
                      <button @click="sidebarOpen = true" class="lg:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary">
                         <span class="material-symbols-outlined">menu</span>
                      </button>
-                    
+
                      <div class="flex flex-col">
                         <div class="flex items-center gap-2 text-slate-400 text-xs font-medium">
                             <span>Home</span>
@@ -291,7 +262,7 @@
         </main>
     </div>
     @stack('scripts')
-    
+
     <!-- Global SweetAlert Handler -->
     <!-- Global SweetAlert Handler -->
     <script>
@@ -359,7 +330,7 @@
                 const form = e.target;
                 if (form.getAttribute('data-confirm-delete') === 'true') {
                     e.preventDefault();
-                    
+
                     const message = form.getAttribute('data-message') || 'Data yang dihapus tidak dapat dikembalikan!';
                     const title = form.getAttribute('data-title') || 'Yakin Hapus?';
                     const confirmText = form.getAttribute('data-confirm-text') || 'Ya, Hapus!';

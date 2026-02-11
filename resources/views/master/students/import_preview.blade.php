@@ -61,7 +61,7 @@
     <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
         <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
             <h3 class="font-bold text-lg">Preview Data</h3>
-            
+
             <div class="flex gap-2">
                 @if($validRows > 0)
                 <form action="{{ route('master.students.import.process') }}" method="POST" onsubmit="return confirm('Yakin ingin memproses {{ $validRows }} data valid? Data error akan dilewati.');">
@@ -72,8 +72,8 @@
                     </button>
                 </form>
                 @endif
-                
-                <button form="editForm" type="submit" class="px-4 py-2 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700 transition-colors shadow-sm text-sm">
+
+                <button form="editForm" type="submit" class="px-4 py-2 rounded-lg bg-amber-600 text-white font-bold hover:bg-amber-700 transition-colors shadow-sm text-sm">
                     Cek Ulang
                 </button>
             </div>
@@ -81,7 +81,7 @@
 
         <form id="editForm" action="{{ route('master.students.import') }}" method="POST" class="overflow-x-auto">
             @csrf
-            
+
             <table class="w-full text-left text-xs whitespace-nowrap">
                 <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 font-bold border-b border-slate-200 dark:border-slate-700">
                     <tr>
@@ -98,25 +98,25 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
                     @foreach($allData as $idx => $row)
-                    @php 
-                        $isError = !empty($row['_error']); 
+                    @php
+                        $isError = !empty($row['_error']);
                         $bgClass = $isError ? 'bg-red-50 dark:bg-red-900/10' : '';
                         $borderClass = $isError ? 'border-red-300 focus:border-red-500 ring-red-200' : 'border-slate-200 focus:border-primary';
                     @endphp
                     <tr class="{{ $bgClass }} hover:bg-slate-50/80 transition-colors">
                         <td class="p-3 text-center">{{ $idx + 1 }}</td>
-                        
+
                         <!-- Inputs -->
                         <td class="p-2">
-                            <input type="text" name="rows[{{ $idx }}][nama]" value="{{ $row['nama_lengkap'] }}" 
+                            <input type="text" name="rows[{{ $idx }}][nama]" value="{{ $row['nama_lengkap'] }}"
                                 class="w-full px-2 py-1 rounded text-xs border {{ $borderClass }} bg-white dark:bg-slate-800">
                         </td>
                         <td class="p-2">
-                            <input type="text" name="rows[{{ $idx }}][nis]" value="{{ $row['nis_lokal'] }}" 
+                            <input type="text" name="rows[{{ $idx }}][nis]" value="{{ $row['nis_lokal'] }}"
                                 class="w-full px-2 py-1 rounded text-xs border {{ $borderClass }} bg-white dark:bg-slate-800">
                         </td>
                         <td class="p-2">
-                            <input type="text" name="rows[{{ $idx }}][nisn]" value="{{ $row['nisn'] }}" 
+                            <input type="text" name="rows[{{ $idx }}][nisn]" value="{{ $row['nisn'] }}"
                                 class="w-full px-2 py-1 rounded text-xs border {{ $borderClass }} bg-white dark:bg-slate-800">
                         </td>
                         <td class="p-2">
@@ -132,14 +132,14 @@
                             </select>
                         </td>
                         <td class="p-2">
-                            <input type="text" name="rows[{{ $idx }}][tempat_lahir]" value="{{ $row['tempat_lahir'] }}" 
+                            <input type="text" name="rows[{{ $idx }}][tempat_lahir]" value="{{ $row['tempat_lahir'] }}"
                                 class="w-full px-2 py-1 rounded text-xs border {{ $borderClass }} bg-white dark:bg-slate-800">
                         </td>
                         <td class="p-2">
                             <input type="text" name="rows[{{ $idx }}][tanggal_lahir]" value="{{ $row['tanggal_lahir'] }}" placeholder="YYYY-MM-DD"
                                 class="w-full px-2 py-1 rounded text-xs border {{ $borderClass }} bg-white dark:bg-slate-800">
                         </td>
-                        
+
                         <!-- Hidden Fields for others -->
                         <input type="hidden" name="rows[{{ $idx }}][nama_ayah]" value="{{ $row['nama_ayah'] }}">
                         <input type="hidden" name="rows[{{ $idx }}][nama_ibu]" value="{{ $row['nama_ibu'] }}">
@@ -164,7 +164,7 @@
                 </tbody>
             </table>
         </form>
-        
+
         @if(count($allData) > 50)
         <div class="p-4 bg-slate-50 text-center text-xs text-slate-500">
             Hanya menampilkan 50 baris pertama untuk performa. Total data: {{ count($allData) }}

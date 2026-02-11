@@ -21,7 +21,7 @@
             <a href="{{ route('walikelas.leger.export') }}" target="_blank" class="bg-emerald-600 text-white px-4 py-2 rounded-lg font-bold shadow hover:bg-emerald-700 transition-all flex items-center justify-center gap-2 w-full md:w-auto">
                 <span class="material-symbols-outlined">download</span> Export Excel (Semester)
             </a>
-            <a href="{{ route('walikelas.leger.rekap') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold shadow hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 w-full md:w-auto">
+            <a href="{{ route('walikelas.leger.rekap') }}" class="bg-primary text-white px-4 py-2 rounded-lg font-bold shadow hover:bg-primary/90 transition-all flex items-center justify-center gap-2 w-full md:w-auto">
                 <span class="material-symbols-outlined">table_view</span> Lihat Rekap Tahunan
             </a>
         </div>
@@ -36,7 +36,7 @@
                         <th class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 sticky left-0 bg-slate-50 dark:bg-slate-800 z-30 min-w-[50px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">No</th>
                         <th class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 sticky left-[50px] bg-slate-50 dark:bg-slate-800 z-30 min-w-[250px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">Nama Siswa</th>
                         <th class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 min-w-[80px] text-center">L/P</th>
-                        
+
                         @foreach($mapels as $mapel)
                         <th class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 min-w-[100px] text-center" title="{{ $mapel->nama_mapel }}">
                             <div class="truncate max-w-[100px]">{{ $mapel->nama_mapel }}</div>
@@ -47,7 +47,7 @@
                         </th>
                         @endforeach
 
-                        <th class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 min-w-[100px] text-center bg-blue-50/50 text-blue-800">Total</th>
+                        <th class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 min-w-[100px] text-center bg-primary/5 text-primary">Total</th>
                         <th class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 min-w-[100px] text-center bg-green-50/50 text-green-800">Rata2</th>
                         <th class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 min-w-[80px] text-center bg-yellow-50/50 text-yellow-800">Rank</th>
                     </tr>
@@ -76,7 +76,7 @@
                                 $totalScore += $score;
                                 $countMapel++;
                             }
-                            $kkmLocal = $kkm[$mapel->id] ?? 70; 
+                            $kkmLocal = $kkm[$mapel->id] ?? 70;
                         @endphp
                         <td class="px-4 py-3 text-center border-r border-slate-100 dark:border-slate-800 {{ $score < $kkmLocal && $grade ? 'text-red-600 font-bold' : 'text-slate-700 dark:text-slate-300' }}">
                             {{ $grade ? number_format($score, 0) : '-' }}
@@ -84,7 +84,7 @@
                         @endforeach
 
                         <!-- Summary -->
-                        <td class="px-4 py-3 text-center font-bold text-blue-600 bg-blue-50/10 border-r border-slate-100 dark:border-slate-800">
+                        <td class="px-4 py-3 text-center font-bold text-primary bg-primary/5 border-r border-slate-100 dark:border-slate-800">
                             {{ $totalScore > 0 ? number_format($totalScore, 0) : '-' }}
                         </td>
                         <td class="px-4 py-3 text-center font-bold text-green-600 bg-green-50/10 border-r border-slate-100 dark:border-slate-800">
@@ -133,16 +133,16 @@
                             <span>{{ $ak->siswa->jenis_kelamin }}</span>
                         </div>
                      </div>
-                     <button class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-400 transition-transform duration-200" :class="expanded ? 'rotate-180 bg-indigo-50 border-indigo-200 text-indigo-600' : ''">
+                     <button class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-400 transition-transform duration-200" :class="expanded ? 'rotate-180 bg-primary/10 border-primary/20 text-primary' : ''">
                         <span class="material-symbols-outlined">expand_more</span>
                      </button>
                 </div>
-                
+
                 <!-- Quick Stats -->
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="bg-blue-50/50 border border-blue-100 rounded-lg p-2.5 flex justify-between items-center">
-                        <span class="text-xs text-blue-600 font-bold uppercase">Total Nilai</span>
-                        <span class="font-bold text-blue-700">{{ number_format($totalScore, 0) }}</span>
+                    <div class="bg-primary/5 border border-primary/10 rounded-lg p-2.5 flex justify-between items-center">
+                        <span class="text-xs text-primary font-bold uppercase">Total Nilai</span>
+                        <span class="font-bold text-primary">{{ number_format($totalScore, 0) }}</span>
                     </div>
                     <div class="bg-green-50/50 border border-green-100 rounded-lg p-2.5 flex justify-between items-center">
                         <span class="text-xs text-green-600 font-bold uppercase">Rata-Rata</span>
@@ -212,7 +212,7 @@
         /* Hide scrollbars/sticky shadows in print */
         .sticky { position: static !important; box-shadow: none !important; }
         .overhead, button, a { display: none !important; }
-        
+
         /* Ensure table fits */
         table { width: 100%; }
         td, th { padding: 4px !important; font-size: 10px !important; }

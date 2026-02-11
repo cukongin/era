@@ -18,9 +18,9 @@
     <!-- Content -->
     <div class="flex-1 overflow-y-auto p-8 scroll-smooth">
         <div class="max-w-6xl mx-auto">
-            
+
             <div class="flex items-center gap-3 mb-6">
-                 <div class="bg-purple-100 text-purple-700 p-2 rounded-lg">
+                 <div class="bg-primary/10 text-primary p-2 rounded-lg">
                     <span class="material-symbols-outlined">school</span>
                  </div>
                  <h2 class="text-lg font-bold text-slate-800 dark:text-white">Daftar Kelas Akhir (MI 6 / MTs 9)</h2>
@@ -46,24 +46,24 @@
                             </div>
 
                             <div class="relative z-10 flex flex-col h-full">
-                                <span class="inline-block px-3 py-1 rounded-full bg-purple-50 text-purple-700 text-[10px] font-bold uppercase tracking-wider w-fit mb-3">
+                                <span class="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider w-fit mb-3">
                                     {{ $kelas->jenjang->nama_jenjang ?? $kelas->tingkat_kelas }}
                                 </span>
-                                
-                                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-1 group-hover:text-purple-600 transition-colors">
+
+                                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-1 group-hover:text-primary transition-colors">
                                     {{ $kelas->nama_kelas }}
                                 </h3>
-                                
+
                                 <p class="text-sm text-slate-500 mb-6 flex items-center gap-1">
                                     <span class="material-symbols-outlined text-[16px]">person</span>
                                     {{ $kelas->wali_kelas ? $kelas->wali_kelas->name : 'Tanpa Wali Kelas' }}
                                 </p>
-                                
+
                                 <div class="mt-auto flex flex-col gap-3">
                                     <a href="{{ route('tu.dkn.show', $kelas->id) }}" class="w-full py-3 bg-primary text-white rounded-xl font-bold text-sm shadow-lg shadow-primary/20 hover:bg-primary/90 hover:shadow-primary/30 transition-all flex items-center justify-center gap-2">
                                         <span class="material-symbols-outlined text-[18px]">edit_note</span> Input Nilai Ijazah
                                     </a>
-                                    
+
                                     <a href="{{ route('tu.dkn.archive', $kelas->id) }}" class="w-full py-3 bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-100 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2">
                                         <span class="material-symbols-outlined text-[18px]">inventory_2</span> Lihat Arsip Lengkap
                                     </a>

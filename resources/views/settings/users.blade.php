@@ -3,10 +3,10 @@
 @section('title', 'Manajemen User & Akses')
 
 @section('content')
-<div class="flex flex-col gap-6" x-data="{ 
+<div class="flex flex-col gap-6" x-data="{
     activeTab: 'users',
     selectedUsers: [],
-    get allSelected() { 
+    get allSelected() {
         return this.selectedUsers.length === {{ $users->count() }} && this.selectedUsers.length > 0;
     },
     toggleAll() {
@@ -22,15 +22,15 @@
             <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Manajemen User & Akses</h1>
             <p class="text-slate-500 text-sm">Kelola akun, sinkronisasi data guru, dan hak akses aplikasi.</p>
         </div>
-        
+
         <!-- Tab Navigation -->
         <div class="bg-slate-100 dark:bg-slate-800 p-1 rounded-lg flex gap-1">
-            <button @click="activeTab = 'users'" 
+            <button @click="activeTab = 'users'"
                 :class="activeTab === 'users' ? 'bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-white' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
                 class="px-4 py-2 text-sm font-bold rounded-md transition-all">
                 Akun Pengguna
             </button>
-            <button @click="activeTab = 'sync'" 
+            <button @click="activeTab = 'sync'"
                 :class="activeTab === 'sync' ? 'bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-white' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
                 class="px-4 py-2 text-sm font-bold rounded-md transition-all flex items-center gap-2">
                 Sinkronisasi Guru
@@ -38,7 +38,7 @@
                 <span class="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">{{ $teachersWithoutAccount->count() }}</span>
                 @endif
             </button>
-            <button @click="activeTab = 'permissions'" 
+            <button @click="activeTab = 'permissions'"
                 :class="activeTab === 'permissions' ? 'bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-white' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
                 class="px-4 py-2 text-sm font-bold rounded-md transition-all">
                 Kontrol Akses
@@ -129,7 +129,7 @@
                     </thead>
                     <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
                         @forelse($users as $user)
-                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors" :class="{'bg-blue-50/50': selectedUsers.includes('{{ $user->id }}')}">
+                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors" :class="{'bg-primary/50': selectedUsers.includes('{{ $user->id }}')}">
                             <td class="p-4">
                                 <input type="checkbox" value="{{ $user->id }}" x-model="selectedUsers" class="rounded border-slate-300 text-primary focus:ring-primary">
                             </td>
@@ -150,9 +150,9 @@
                             </td>
                             <td class="p-4">
                                 <form action="{{ route('settings.users.role', $user->id) }}" method="POST">
-                                    @csrf 
+                                    @csrf
                                     @method('PATCH')
-                                    <select name="role" onchange="this.form.submit()" class="text-[10px] font-bold uppercase rounded-md border-transparent focus:ring-0 cursor-pointer py-1 pl-2 pr-8 appearance-none {{ $user->role == 'admin' ? 'bg-red-100 text-red-700' : ($user->role == 'teacher' ? 'bg-blue-100 text-blue-700' : ($user->role == 'staff_tu' ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-700')) }}">
+                                    <select name="role" onchange="this.form.submit()" class="text-[10px] font-bold uppercase rounded-md border-transparent focus:ring-0 cursor-pointer py-1 pl-2 pr-8 appearance-none {{ $user->role == 'admin' ? 'bg-red-100 text-red-700' : ($user->role == 'teacher' ? 'bg-primary/10 text-primary' : ($user->role == 'staff_tu' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-700')) }}">
                                         <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>ADMIN</option>
                                         <option value="teacher" {{ $user->role == 'teacher' ? 'selected' : '' }}>GURU</option>
                                         <option value="staff_tu" {{ $user->role == 'staff_tu' ? 'selected' : '' }}>STAFF TU</option>
@@ -167,7 +167,7 @@
                                 <div class="flex items-center justify-end gap-2">
                                     <form action="{{ route('settings.users.impersonate', $user->id) }}" method="POST" target="_blank">
                                         @csrf
-                                        <button type="submit" class="px-3 py-1.5 bg-purple-50 text-purple-700 hover:bg-purple-100 rounded-lg text-xs font-bold flex items-center gap-1 transition-colors" title="Login Ajaib (Masuk sebagai user ini)">
+                                        <button type="submit" class="px-3 py-1.5 bg-amber-50 text-amber-700 hover:bg-amber-100 rounded-lg text-xs font-bold flex items-center gap-1 transition-colors" title="Login Ajaib (Masuk sebagai user ini)">
                                             <span class="material-symbols-outlined text-[16px]">bolt</span>
                                             Ajaib
                                         </button>
@@ -200,9 +200,9 @@
 
     <!-- TAB 2: SYNC TEACHERS -->
     <div x-show="activeTab === 'sync'" class="space-y-6">
-        <div class="bg-blue-50 border border-blue-200 p-6 rounded-xl">
-            <h3 class="font-bold text-blue-900 mb-2">Sinkronisasi Akun Guru</h3>
-            <p class="text-sm text-blue-700 mb-0">Daftar guru dibawah ini belum memiliki akun login. Klik "Buat Akun" untuk membuatkan akun guru secara otomatis sesuai NIP/Data Guru.</p>
+        <div class="bg-primary/5 border border-primary/20 p-6 rounded-xl">
+            <h3 class="font-bold text-primary mb-2">Sinkronisasi Akun Guru</h3>
+            <p class="text-sm text-primary/70 mb-0">Daftar guru dibawah ini belum memiliki akun login. Klik "Buat Akun" untuk membuatkan akun guru secara otomatis sesuai NIP/Data Guru.</p>
         </div>
 
         <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
@@ -251,9 +251,9 @@
     <div x-show="activeTab === 'permissions'" class="space-y-6">
         <form action="{{ route('settings.users.permissions') }}" method="POST">
             @csrf
-            
+
             <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 space-y-8">
-                
+
                 <!-- Guru Permissions -->
                 <div>
                     <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
@@ -261,10 +261,10 @@
                         Hak Akses Guru
                     </h3>
                     <div class="space-y-3 pl-8">
-                        @php 
+                        @php
                             $guruKeys = [
                                 'access_guru_input_nilai' => 'Bisa Akses Menu Input Nilai & Jadwal',
-                            ]; 
+                            ];
                         @endphp
                         @foreach($guruKeys as $key => $label)
                         <div class="flex items-center gap-3">
@@ -285,7 +285,7 @@
                         Hak Akses Wali Kelas
                     </h3>
                     <div class="space-y-3 pl-8">
-                        @php 
+                        @php
                             $waliKeys = [
                                 'access_wali_input_catatan' => 'Bisa Akses Menu Catatan Siswa',
                                 'access_wali_input_absensi' => 'Bisa Akses Menu Absensi',
@@ -293,7 +293,7 @@
                                 'access_wali_kenaikan_kelas' => 'Bisa Akses Menu Kenaikan Kelas',
                                 'access_wali_cetak_rapor' => 'Bisa Akses Menu Cetak Rapor',
                                 'access_wali_monitoring_nilai' => 'Bisa Akses Menu Monitoring Penilaian', // Added
-                            ]; 
+                            ];
                         @endphp
                         @foreach($waliKeys as $key => $label)
                          <div class="flex items-center gap-3">
@@ -328,7 +328,7 @@
             <h2 class="text-xl font-bold text-slate-900 dark:text-white">Akun Digenerate!</h2>
             <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Kredensial baru untuk <strong>{{ session('generated_credential')['role'] }}</strong>.</p>
         </div>
-        
+
         <div class="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-xl border border-slate-100 dark:border-slate-800 space-y-4 mb-6">
             <div class="flex justify-between items-center border-b border-slate-200 pb-2">
                 <span class="text-xs font-bold text-slate-500 uppercase">Nama</span>

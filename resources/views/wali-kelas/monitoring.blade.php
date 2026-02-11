@@ -11,7 +11,7 @@
         <div class="mb-6">
             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Filter (Admin Mode)</h3>
             <form action="{{ route('walikelas.monitoring') }}" method="GET" class="flex flex-col md:flex-row items-stretch md:items-center gap-3">
-                
+
                 <!-- Jenjang Selector -->
                 <div class="relative group w-full md:w-auto">
                     <select name="jenjang" class="w-full appearance-none bg-none pl-9 pr-8 h-[46px] text-sm font-bold text-slate-700 bg-white border-2 border-slate-200 rounded-xl hover:border-primary/50 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 dark:bg-[#1a2332] dark:text-slate-200 dark:border-slate-700 cursor-pointer shadow-sm transition-all md:min-w-[140px]" onchange="this.form.submit()">
@@ -42,7 +42,7 @@
                             }
                             $allClassesInYear = $q->get();
                         @endphp
-                        
+
                         @if($allClassesInYear->count() == 0)
                             <option value="">Tidak ada kelas</option>
                         @endif
@@ -111,7 +111,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Bulk Actions -->
             <div class="flex items-center gap-3 w-full md:w-auto">
                 @if(isset($allLocked) && $allLocked)
@@ -121,9 +121,9 @@
                     </div>
                 @else
                     <form action="{{ route('walikelas.monitoring.finalize') }}" method="POST"
-                          data-confirm-delete="true" 
+                          data-confirm-delete="true"
                           data-title="Kunci Nilai (Final)?"
-                          data-message="Nilai akan dikunci dan siap dicetak. Pastikan semua nilai sudah benar." 
+                          data-message="Nilai akan dikunci dan siap dicetak. Pastikan semua nilai sudah benar."
                           data-confirm-text="Ya, Kunci Nilai!"
                           data-confirm-color="#059669"
                           data-icon="question"
@@ -183,12 +183,12 @@
 
                 <!-- Actions -->
                 <div class="grid grid-cols-2 gap-2 mt-auto">
-                    <a href="{{ route('teacher.input-nilai', ['kelas' => $kelas->id, 'mapel' => $data->id, 'periode_id' => $periode->id]) }}" 
+                    <a href="{{ route('teacher.input-nilai', ['kelas' => $kelas->id, 'mapel' => $data->id, 'periode_id' => $periode->id]) }}"
                        class="flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-bold rounded-lg bg-white border border-slate-300 text-slate-700 shadow-sm active:bg-slate-50">
                         <span class="material-symbols-outlined text-[18px]">edit_note</span>
                         Input
                     </a>
-                    <a href="{{ route('walikelas.katrol.index', ['kelas_id' => $kelas->id, 'mapel_id' => $data->id]) }}" 
+                    <a href="{{ route('walikelas.katrol.index', ['kelas_id' => $kelas->id, 'mapel_id' => $data->id]) }}"
                        class="flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-bold rounded-lg text-white shadow-sm transition-all
                        {{ $isSafe ? 'bg-slate-500' : 'bg-primary' }}">
                         <span class="material-symbols-outlined text-[18px]">{{ $isSafe ? 'visibility' : 'upgrade' }}</span>
@@ -254,15 +254,15 @@
                             </td>
                             <td class="px-6 py-4 text-center">
                                 <div class="flex items-center justify-center gap-2">
-                                    <a href="{{ route('teacher.input-nilai', ['kelas' => $kelas->id, 'mapel' => $data->id, 'periode_id' => $periode->id]) }}" 
-                                       class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg shadow-sm text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all"
+                                    <a href="{{ route('teacher.input-nilai', ['kelas' => $kelas->id, 'mapel' => $data->id, 'periode_id' => $periode->id]) }}"
+                                       class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg shadow-sm text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all"
                                        title="Input Nilai sebagai Wali Kelas">
                                         <span class="material-symbols-outlined text-[16px]">edit_note</span>
                                         <span>Input</span>
                                     </a>
 
-                                    <a href="{{ route('walikelas.katrol.index', ['kelas_id' => $kelas->id, 'mapel_id' => $data->id]) }}" 
-                                       class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all 
+                                    <a href="{{ route('walikelas.katrol.index', ['kelas_id' => $kelas->id, 'mapel_id' => $data->id]) }}"
+                                       class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all
                                        {{ $isSafe ? 'bg-slate-500 hover:bg-slate-600 focus:ring-slate-500 opacity-70 hover:opacity-100' : 'bg-primary hover:bg-green-600 focus:ring-primary shadow-lg shadow-primary/30' }}">
                                         <span class="material-symbols-outlined text-[16px]">{{ $isSafe ? 'visibility' : 'upgrade' }}</span>
                                         <span>{{ $isSafe ? 'Lihat' : 'Katrol' }}</span>

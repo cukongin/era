@@ -65,7 +65,7 @@
         <form action="{{ route('grade.import.global.store') }}" method="POST">
             @csrf
             <input type="hidden" name="import_key" value="{{ $importKey }}">
-            <button type="submit" class="w-full md:w-auto bg-indigo-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-indigo-700 transition-all flex items-center justify-center gap-2">
+            <button type="submit" class="w-full md:w-auto bg-primary text-white px-6 py-3 rounded-lg font-bold hover:bg-primary/90 transition-all flex items-center justify-center gap-2">
                 <span class="material-symbols-outlined">save</span>
                 Proses Import Sekarang
             </button>

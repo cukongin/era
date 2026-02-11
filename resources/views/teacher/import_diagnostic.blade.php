@@ -40,7 +40,7 @@
         <h3 class="font-bold text-slate-900 dark:text-white mb-2">Mapping Kolom (Otomatis)</h3>
         <div class="flex flex-wrap gap-2">
             @foreach($columnMapping as $col => $idx)
-            <span class="px-2 py-1 rounded bg-blue-50 text-blue-700 text-sm border border-blue-200">
+            <span class="px-2 py-1 rounded bg-primary/10 text-primary text-sm border border-primary/20">
                 <b>{{ $col }}:</b> Index {{ $idx }}
             </span>
             @endforeach

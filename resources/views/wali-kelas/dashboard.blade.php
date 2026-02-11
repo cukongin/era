@@ -20,7 +20,7 @@
                 <!-- Jenjang Toggle Buttons -->
                 <div class="flex bg-slate-100 dark:bg-slate-700 p-1 rounded-lg" x-data="{ jenjang: '{{ request('jenjang') }}' }">
                     <input type="hidden" name="jenjang" :value="jenjang">
-                    
+
                     <button type="button" @click="jenjang = 'MI'; $nextTick(() => $el.closest('form').submit())" class="px-3 py-1 text-xs font-bold rounded-md transition-all" :class="jenjang === 'MI' ? 'bg-white dark:bg-[#1a2e22] text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'">
                         MI
                     </button>
@@ -39,7 +39,7 @@
             </form>
 
             @if($kelas)
-            <a href="{{ route('grade.import.index', $kelas->id) }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-lg shadow-sm transition-all flex items-center gap-2">
+            <a href="{{ route('grade.import.index', $kelas->id) }}" class="bg-primary hover:bg-primary/90 text-white font-bold py-2.5 px-5 rounded-lg shadow-sm transition-all flex items-center gap-2">
                 <span class="material-symbols-outlined text-[20px]">upload_file</span>
                 <span class="hidden sm:inline">Import Kolektif</span>
             </a>
@@ -59,7 +59,7 @@
         </div>
         <h3 class="text-lg font-bold text-slate-900 dark:text-white">Tidak Ada Data Kelas</h3>
         <p class="text-slate-500 dark:text-slate-400 text-center max-w-sm mt-1">
-            Belum ada kelas perwalian yang ditemukan untuk filter jenjang 
+            Belum ada kelas perwalian yang ditemukan untuk filter jenjang
             <span class="font-bold text-primary">{{ request('jenjang') ?? 'ini' }}</span>.
         </p>
     </div>
@@ -138,13 +138,13 @@
                         @php
                             $isDone = $data->progress >= 100;
                             $inProgress = $data->progress > 0 && !$isDone;
-                            
-                            $badgeClass = $isDone 
-                                ? 'bg-primary/10 text-primary' 
+
+                            $badgeClass = $isDone
+                                ? 'bg-primary/10 text-primary'
                                 : ($inProgress ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-200' : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200');
-                            
+
                             $barClass = $isDone ? 'bg-primary' : ($inProgress ? 'bg-orange-400' : 'bg-red-500');
-                            
+
                             // Data Attribute for filtering
                             $statusFilter = $isDone ? 'finished' : 'pending';
                         @endphp
@@ -238,9 +238,9 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.querySelector('input[placeholder="Cari Guru atau Mata Pelajaran..."]');
-    const filterBtn = document.querySelector('button.border-slate-200'); 
+    const filterBtn = document.querySelector('button.border-slate-200');
     const rows = Array.from(document.querySelectorAll('.search-item')); // Convert to Array
-    
+
     // UI Elements
     const elStart = document.getElementById('startShow');
     const elEnd = document.getElementById('endShow');
@@ -298,7 +298,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const guruElement = row.querySelectorAll('.search-text')[1];
             const guru = guruElement ? guruElement.innerText.toLowerCase() : '';
             const status = row.getAttribute('data-status');
-            
+
             const matchesSearch = mapel.includes(state.search) || guru.includes(state.search);
             let matchesFilter = true;
             if (state.filter === 'pending') matchesFilter = status === 'pending';
@@ -334,7 +334,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function renderControls(totalPages) {
         let html = '';
-        
+
         // Previous
         const prevDisabled = state.page === 1;
         html += `<button onclick="changePage(${state.page - 1})" ${prevDisabled ? 'disabled' : ''} class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#1a2e22] text-sm font-medium ${prevDisabled ? 'text-slate-300 cursor-not-allowed' : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-[#20342a]'}">

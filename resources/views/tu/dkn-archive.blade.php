@@ -6,17 +6,17 @@
 
 @php
     // Determine Structure based on Jenjang (Unified Logic)
-    $jenjang = $kelas->jenjang->kode ?? ($kelas->tingkat_kelas > 6 ? 'MTS' : 'MI'); 
-    
+    $jenjang = $kelas->jenjang->kode ?? ($kelas->tingkat_kelas > 6 ? 'MTS' : 'MI');
+
     // Defaults for MI
-    $startLvl = 1; 
+    $startLvl = 1;
     $endLvl = 6;
     $periods = [1, 2, 3];
     $periodLabel = 'Cawu';
     $headerRange = 'Kelas 1 - 6';
 
     if ($jenjang === 'MTS') {
-        $startLvl = 7; 
+        $startLvl = 7;
         $endLvl = 9;
         $periods = [1, 2]; // Semesters
         $periodLabel = 'Smt';
@@ -31,7 +31,7 @@
 <!-- 1. SCREEN VIEW (Visible on Screen, Hidden on Print) -->
 <!-- ========================================== -->
 <div class="space-y-6 print:hidden">
-    
+
     <!-- Screen Header -->
     <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
@@ -44,7 +44,7 @@
             <p class="text-sm text-slate-500">Daftar Kumpulan Nilai Lengkap ({{ $headerRange }})</p>
         </div>
         <div class="flex gap-2">
-            <button onclick="window.print()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold shadow hover:bg-indigo-700 transition-all flex items-center gap-2">
+            <button onclick="window.print()" class="bg-primary text-white px-4 py-2 rounded-lg font-bold shadow hover:bg-primary/90 transition-all flex items-center gap-2">
                 <span class="material-symbols-outlined">print</span> Cetak DKN
             </button>
             <a href="{{ route('tu.dkn.export_excel', $kelas->id) }}" class="bg-emerald-600 text-white px-4 py-2 rounded-lg font-bold shadow hover:bg-emerald-700 transition-all flex items-center gap-2">
@@ -78,7 +78,7 @@
                 <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
                     @php $no = 1; @endphp
                     @foreach($dknData as $row)
-                        @php 
+                        @php
                             // 1. Academic Status
                              $naValues = array_filter($row['summary']['na']);
                             $naAvg = count($naValues) > 0 ? array_sum($naValues) / count($naValues) : 0;
@@ -89,10 +89,10 @@
                             $promoRecord = $promotionDecisions[$sId] ?? null; // Now an Object
                             $promoStatus = $promoRecord->final_decision ?? null;
                             $promoNote = $promoRecord->notes ?? '';
-                            
+
                             // Check for both 'retained' (intermediate) and 'not_graduated' (final)
                             $isVetoed = in_array($promoStatus, ['retained', 'not_graduated']);
-                            
+
                             if ($isVetoed) {
                                 $status = 'Tidak Lulus';
                             } elseif ($academicStatus) {
@@ -101,9 +101,9 @@
                                 $status = 'Tidak Lulus';
                             }
 
-                            $isFirst = true; 
+                            $isFirst = true;
                         @endphp
-                        
+
                         <!-- Row 1 -->
                         <tr class="bg-white group hover:bg-slate-50 transition-colors">
                             <td rowspan="{{ $totalRowSpan }}" class="px-3 py-3 border-r border-slate-200 text-center align-top font-bold sticky left-0 bg-white group-hover:bg-slate-50">{{ $no++ }}</td>
@@ -111,16 +111,16 @@
                                 <div class="truncate max-w-[190px] text-slate-900">{{ $row['student']->nama_lengkap }}</div>
                                 <div class="text-[10px] font-normal text-slate-500 mt-1">NIS: {{ $row['student']->nis_lokal ?? $row['student']->nis ?? $row['student']->nisn ?? '-' }}</div>
                             </td>
-                            
+
                         @for($lvl = $startLvl; $lvl <= $endLvl; $lvl++)
                             @foreach($periods as $period)
                                 @if(!$isFirst) <tr class="bg-white group hover:bg-slate-50 transition-colors"> @endif
-                                
+
                                 @php
                                     // Calculate Display Label (Absolute -> Relative for MTS)
                                     $displayLvl = $lvl;
                                     if ($jenjang === 'MTS') $displayLvl = $lvl - 6;
-                                    
+
                                     // Suffix
                                     $lvlSuffix = ($jenjang === 'MTS') ? (' ' . $jenjang) : '';
                                 @endphp
@@ -130,10 +130,10 @@
                                 </td>
 
                                 @foreach($mapels as $mapel)
-                                    @php 
-                                        // Try fetching with current level. 
-                                        $score = $row['data'][$lvl][$period][$mapel->id] ?? null; 
-                                        
+                                    @php
+                                        // Try fetching with current level.
+                                        $score = $row['data'][$lvl][$period][$mapel->id] ?? null;
+
                                         // Fallback: If data is missing at absolute level, try relative
                                         if ($score === null && ($jenjang === 'MTS')) {
                                             $relativeLvl = $lvl - 6;
@@ -237,20 +237,20 @@
         <tbody>
             @php $no = 1; @endphp
             @foreach($dknData as $row)
-                @php 
-                    $rowSpan = $totalRowSpan; 
+                @php
+                    $rowSpan = $totalRowSpan;
                     $naValues = array_filter($row['summary']['na']);
                     $naAvg = count($naValues) > 0 ? array_sum($naValues) / count($naValues) : 0;
-                    
+
                     // Logic Sync with Screen View
                     $academicStatus = $naAvg >= $minLulus;
                     $sId = $row['student']->id;
                     $promoRecord = $promotionDecisions[$sId] ?? null;
                     $promoStatus = $promoRecord->final_decision ?? null;
                     $promoNote = $promoRecord->notes ?? '';
-                    
+
                     $isVetoed = in_array($promoStatus, ['retained', 'not_graduated']);
-                    
+
                     if ($isVetoed) {
                         $status = 'Tidak Lulus';
                     } elseif ($academicStatus) {
@@ -259,7 +259,7 @@
                         $status = 'Tidak Lulus';
                     }
                 @endphp
-                
+
                 <!-- Row 1 -->
                 <tr>
                     <td rowspan="{{ $totalRowSpan }}" class="px-1 py-1 border border-black text-center align-middle font-bold">{{ $no++ }}</td>
@@ -267,28 +267,28 @@
                         <div class="truncate max-w-[190px]">{{ $row['student']->nama_lengkap }}</div>
                         <div class="text-[9px] font-normal mt-1">NIS: {{ $row['student']->nis_lokal ?? $row['student']->nis ?? $row['student']->nisn ?? '-' }}</div>
                     </td>
-                    
+
                 @php $isFirst = true; @endphp
                 @for($lvl = $startLvl; $lvl <= $endLvl; $lvl++)
                     @foreach($periods as $period)
                         @if(!$isFirst) <tr> @endif
-                        
+
                         @php
                             // Calculate Display Label (Absolute -> Relative for MTS)
                             $displayLvl = $lvl;
                             if ($jenjang === 'MTS') $displayLvl = $lvl - 6;
-                            
+
                             // Suffix
                             $lvlSuffix = ($jenjang === 'MTS') ? (' ' . $jenjang) : '';
                         @endphp
 
-                        <td class="px-2 py-1 border border-black text-[#138aec] font-bold text-[9px] whitespace-nowrap">
+                        <td class="px-2 py-1 border border-black text-[#003e29] font-bold text-[9px] whitespace-nowrap">
                             {{ $displayLvl }}{{ $lvlSuffix }} | {{ $periodLabel }} {{ $period }}
                         </td>
 
                         @foreach($mapels as $mapel)
-                            @php 
-                                $score = $row['data'][$lvl][$period][$mapel->id] ?? null; 
+                            @php
+                                $score = $row['data'][$lvl][$period][$mapel->id] ?? null;
                                 if ($score === null && ($jenjang === 'MTS')) {
                                     $relativeLvl = $lvl - 6;
                                     $score = $row['data'][$relativeLvl][$period][$mapel->id] ?? null;
@@ -390,7 +390,7 @@
                          $hmNip = \App\Models\GlobalSetting::val('hm_nip_mts') ?: $hmNip;
                     }
                 @endphp
-                
+
                 <p>{{ $school->kabupaten ?? 'Kabupaten' }}, {{ date('d F Y') }}</p>
                 <p>{{ $hmTitle }},</p>
                 <br><br><br>
@@ -404,7 +404,7 @@
 <style>
     @media print {
         @page { size: landscape; margin: 5mm; }
-        
+
         /* RESET LAYOUT FOR MULTI-PAGE PRINTING */
         html, body, .h-screen, .overflow-hidden, .flex, .flex-col {
             height: auto !important;
@@ -420,11 +420,11 @@
         body * {
             visibility: hidden;
         }
-        
+
         #printable-dkn, #printable-dkn * {
             visibility: visible;
         }
-        
+
         #printable-dkn {
             position: absolute;
             left: 0;
@@ -444,13 +444,13 @@
             border-collapse: collapse !important;
             border: 0.5px solid #000 !important; /* Thinner Outer Border */
         }
-        
+
         td, th {
-            padding: 1px 2px !important; 
+            padding: 1px 2px !important;
             vertical-align: middle;
             border: 0.5px solid #000 !important; /* Thinner Inner Borders */
         }
-        
+
         /* Force background colors */
         .bg-yellow-50 { background-color: #fefce8 !important; -webkit-print-color-adjust: exact; }
         .bg-blue-50 { background-color: #eff6ff !important; -webkit-print-color-adjust: exact; }

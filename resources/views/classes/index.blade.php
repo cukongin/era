@@ -69,7 +69,7 @@
                 </form>
             </div>
         </div>
-        
+
         <!-- Filters Toolbar -->
         <div class="p-4 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-4">
             <div class="md:col-span-6 lg:col-span-5">
@@ -92,7 +92,7 @@
         <div class="group bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-md hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-300 flex flex-col justify-between h-[220px] relative">
             <div class="flex justify-between items-start">
                 <div class="flex flex-col gap-1 relative z-0">
-                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-bold {{ $class->jenjang->kode == 'MI' ? 'bg-teal-50 text-teal-700' : 'bg-indigo-50 text-indigo-700' }} w-fit">
+                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-bold {{ $class->jenjang->kode == 'MI' ? 'bg-primary/10 text-primary' : 'bg-primary/10 text-primary' }} w-fit">
                         {{ $class->jenjang->nama_jenjang }}
                     </span>
                     <a href="{{ route('classes.show', $class->id) }}" class="text-slate-900 dark:text-white text-xl font-bold hover:text-primary transition-colors before:absolute before:inset-0">
@@ -105,13 +105,13 @@
                     </button>
                     <!-- Dropdown -->
                     <div x-show="open" class="absolute right-0 mt-2 w-48 bg-white dark:bg-[#1a2e22] rounded-md shadow-lg py-1 border border-slate-200 dark:border-slate-800 z-50">
-                        <a href="#" 
-                           data-id="{{ $class->id }}" 
-                           data-nama="{{ $class->nama_kelas }}" 
-                           data-jenjang="{{ $class->id_jenjang }}" 
-                           data-tingkat="{{ $class->tingkat_kelas }}" 
+                        <a href="#"
+                           data-id="{{ $class->id }}"
+                           data-nama="{{ $class->nama_kelas }}"
+                           data-jenjang="{{ $class->id_jenjang }}"
+                           data-tingkat="{{ $class->tingkat_kelas }}"
                            data-wali="{{ $class->id_wali_kelas }}"
-                           onclick="event.preventDefault(); openEditModalFromEl(this)" 
+                           onclick="event.preventDefault(); openEditModalFromEl(this)"
                            class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5">
                             Edit Data
                         </a>
@@ -128,7 +128,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="flex items-center gap-3 mt-4 pointer-events-none">
                 @if($class->wali_kelas)
                 <div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
@@ -307,7 +307,7 @@
                             </div>
                             <h3 class="text-base font-semibold leading-6 text-slate-900 dark:text-white">Proses Kenaikan Kelas</h3>
                         </div>
-                        
+
                         <div class="space-y-4">
                             <div class="text-sm text-slate-500 bg-amber-50 border border-amber-100 p-3 rounded-lg">
                                 <ul class="list-disc pl-4 space-y-1">
@@ -370,12 +370,12 @@
         document.getElementById('edit_id_jenjang').value = jenjang;
         document.getElementById('edit_tingkat_kelas').value = tingkat;
         document.getElementById('edit_id_wali_kelas').value = wali || "";
-        
+
         // Set Action URL
         let url = "{{ route('classes.update', ':id') }}";
         url = url.replace(':id', id);
         document.getElementById('editForm').action = url;
-        
+
         // Update Disabled State
         updateTakenTeachersState(wali);
 
@@ -391,7 +391,7 @@
         let jenjang = el.getAttribute('data-jenjang');
         let tingkat = el.getAttribute('data-tingkat');
         let wali = el.getAttribute('data-wali');
-        
+
         openEditModal(id, nama, jenjang, tingkat, wali);
     }
 

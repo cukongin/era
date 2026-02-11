@@ -11,10 +11,10 @@
             <h1 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Cetak Rapor</h1>
             <p class="text-slate-500 dark:text-slate-400 mt-1">Pilih siswa untuk mencetak Rapor Capaian Kompetensi.</p>
         </div>
-        
+
         <!-- Filters Toolbar (Left Aligned) -->
         <div class="flex flex-wrap items-center gap-3">
-            
+
             <!-- Year Selector (Admin/TU) -->
             @if(isset($years) && count($years) > 0)
             <form action="{{ route('reports.index') }}" method="GET">
@@ -41,7 +41,7 @@
                 @if(isset($selectedYear))
                 <input type="hidden" name="year_id" value="{{ $selectedYear->id }}">
                 @endif
-                
+
                 @if(count($classes) > 1)
                 <div class="relative group">
                     <select name="class_id" class="appearance-none pl-10 pr-8 py-2.5 text-sm font-bold text-slate-700 bg-white border-2 border-slate-200 rounded-xl hover:border-primary/50 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 dark:bg-[#1a2332] dark:text-slate-200 dark:border-slate-700 cursor-pointer min-w-[200px] shadow-sm transition-all" onchange="this.form.submit()">
@@ -78,15 +78,15 @@
         @if($selectedClass)
             <div class="p-4 border-b border-slate-100 dark:border-[#2a3441] flex justify-between items-center bg-slate-50 dark:bg-[#1e2837]">
                 <span class="font-semibold text-slate-700 dark:text-slate-300">Daftar Siswa ({{ $students->count() }})</span>
-                
+
                 @if($students->count() > 0)
-                <a href="{{ route('reports.print.all', $selectedClass->id) }}" target="_blank" class="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">
+                <a href="{{ route('reports.print.all', $selectedClass->id) }}" target="_blank" class="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-primary rounded-lg hover:bg-primary/90 transition shadow-lg shadow-primary/20">
                     <span class="material-symbols-outlined text-[20px]">download</span>
                     Download Semua Rapor
                 </a>
                 @endif
             </div>
-            
+
             <div class="overflow-auto flex-1">
                 <table class="w-full text-sm text-left">
                     <thead class="text-xs text-slate-500 uppercase bg-slate-50 dark:bg-[#1e2837] dark:text-slate-400 border-b border-slate-100 dark:border-[#2a3441] sticky top-0">

@@ -22,9 +22,9 @@
     </div>
 
     <!-- Step 1: Template -->
-    <div class="bg-[#f0f9ff] border border-blue-200 rounded-xl p-6 flex flex-col md:flex-row items-center gap-6">
-        <div class="h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-            <span class="material-symbols-outlined text-3xl text-blue-600">download</span>
+    <div class="bg-primary/5 border border-primary/20 rounded-xl p-6 flex flex-col md:flex-row items-center gap-6">
+        <div class="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-3xl text-primary">download</span>
         </div>
         <div class="flex-1">
             <h3 class="text-lg font-bold text-slate-900 mb-1">Langkah 1: Download Template Master</h3>
@@ -33,11 +33,11 @@
                 <br><span class="text-red-500 font-bold">PENTING: Jangan mengubah ID di header kolom (misal: [123]).</span>
             </p>
             <div class="flex flex-wrap gap-3">
-                <a href="{{ route('grade.import.template', $kelas->id) }}" class="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20">
+                <a href="{{ route('grade.import.template', $kelas->id) }}" class="inline-flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
                     <span class="material-symbols-outlined">download</span>
                     Download Template (Periode Aktif)
                 </a>
-                <a href="{{ route('grade.import.template', ['kelas' => $kelas->id, 'type' => 'tahunan']) }}" class="inline-flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-lg font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-600/20">
+                <a href="{{ route('grade.import.template', ['kelas' => $kelas->id, 'type' => 'tahunan']) }}" class="inline-flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
                     <span class="material-symbols-outlined">calendar_month</span>
                     Download Template Tahunan (3 Periode)
                 </a>
@@ -66,7 +66,7 @@
                       transition-all
                     "/>
                 </div>
-                
+
                 <div class="pt-2">
                     <button type="submit" class="bg-primary text-white px-6 py-2.5 rounded-xl font-bold hover:bg-green-600 transition-all shadow-lg shadow-primary/30 flex items-center gap-2">
                         <span class="material-symbols-outlined">table_view</span>

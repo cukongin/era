@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="max-w-6xl mx-auto flex flex-col gap-8 font-sans" x-data="{ isEditing: false }">
-    
+
     <!-- Top Configuration / Back -->
     <div class="flex items-center justify-between no-print">
         <div class="flex items-center gap-2 text-sm text-slate-500">
@@ -28,7 +28,7 @@
         <!-- Header Card: Identity -->
         <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm flex flex-col md:flex-row gap-8 relative overflow-hidden">
              <!-- Decorative Top Bar -->
-             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-green-400"></div>
+             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-emerald-400"></div>
 
              <!-- Photo -->
              <div class="flex-shrink-0 relative group">
@@ -38,7 +38,7 @@
                     @else
                         <img src="https://ui-avatars.com/api/?name={{ urlencode($student->nama_lengkap) }}&background=random&size=200" class="w-full h-full object-cover opacity-80">
                     @endif
-                    
+
                     <!-- Edit Photo Overlay -->
                     <div x-show="isEditing" class="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-white cursor-pointer hover:bg-black/60 transition-colors">
                         <span class="material-symbols-outlined text-3xl mb-1">upload</span>
@@ -46,7 +46,7 @@
                         <input type="file" name="foto" class="absolute inset-0 opacity-0 cursor-pointer text-[0px]" accept="image/*">
                     </div>
                 </div>
-                
+
                 <!-- Active Badge -->
                 <div class="absolute -bottom-3 -right-3">
                      <span class="px-3 py-1 rounded-full text-xs font-bold border-2 border-white shadow-sm {{ $student->status_siswa == 'aktif' ? 'bg-green-500 text-white' : 'bg-red-500 text-white' }}">
@@ -70,14 +70,14 @@
                              </div>
                              <div class="flex items-center gap-1">
                                  <span class="material-symbols-outlined text-[18px]">fingerprint</span>
-                                 <span>NISN: 
+                                 <span>NISN:
                                      <span x-show="!isEditing">{{ $student->nisn ?? '-' }}</span>
                                      <input x-show="isEditing" type="text" name="nisn" value="{{ $student->nisn }}" class="w-32 border-b border-slate-300 py-0 px-1 ml-1 text-slate-900 focus:outline-none focus:border-primary">
                                  </span>
                              </div>
                          </div>
                      </div>
-                     
+
                      <!-- Edit Button -->
                      <div class="no-print">
                         <template x-if="!isEditing">
@@ -126,7 +126,7 @@
         <!-- Section: Biodata Pribadi -->
         <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
              <div class="flex items-center gap-3 mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">
-                 <span class="material-symbols-outlined text-green-500 bg-green-100 p-2 rounded-lg">person_book</span>
+                 <span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">person_book</span>
                  <h2 class="text-lg font-bold text-slate-900 dark:text-white">Biodata Pribadi</h2>
              </div>
 
@@ -179,14 +179,14 @@
         <!-- Section: Data Orang Tua -->
         <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
              <div class="flex items-center gap-3 mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">
-                 <span class="material-symbols-outlined text-indigo-500 bg-indigo-100 p-2 rounded-lg">family_restroom</span>
+                 <span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">family_restroom</span>
                  <h2 class="text-lg font-bold text-slate-900 dark:text-white">Data Orang Tua / Wali</h2>
              </div>
 
              <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- Father -->
                 <div class="bg-slate-50 dark:bg-slate-800/30 p-6 rounded-lg border border-slate-100 dark:border-slate-800">
-                    <div class="flex items-center gap-2 mb-4 text-indigo-600 font-bold text-sm uppercase">
+                    <div class="flex items-center gap-2 mb-4 text-primary font-bold text-sm uppercase">
                         <span class="material-symbols-outlined text-[18px]">man</span> Data Ayah
                     </div>
                     <div class="space-y-4">
@@ -238,14 +238,14 @@
     <!-- Section: Rekap Nilai Tahunan -->
     <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm break-inside-avoid">
             <div class="flex items-center gap-3 mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">
-                <span class="material-symbols-outlined text-green-500 bg-green-100 p-2 rounded-lg">table_chart</span>
+                <span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">table_chart</span>
                 <h2 class="text-lg font-bold text-slate-900 dark:text-white">Rekap Nilai Tahunan</h2>
                 <div class="ml-auto flex gap-2">
                     <span class="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded">Lulus KKM</span>
                     <span class="text-xs font-bold text-red-600 bg-red-100 px-2 py-1 rounded">Di Bawah KKM</span>
                 </div>
             </div>
-            
+
             <div class="overflow-x-auto">
                 <div x-data="{}">
                     <table class="w-full text-sm text-left">
@@ -261,8 +261,8 @@
                         <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                             @forelse($student->riwayat_kelas as $index => $riwayat)
                             <!-- Row Clickable to Report Card (New Tab) -->
-                            <tr class="bg-white dark:bg-[#1a2e22] hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors cursor-pointer group border-b border-slate-100 dark:border-slate-800">
-                                
+                            <tr class="bg-white dark:bg-[#1a2e22] hover:bg-primary/5 dark:hover:bg-primary/20 transition-colors cursor-pointer group border-b border-slate-100 dark:border-slate-800">
+
                                 <td onclick="window.open('{{ route('reports.print', ['student' => $student->id, 'year_id' => $riwayat->kelas->id_tahun_ajaran]) }}', '_blank')" class="px-6 py-4 font-medium text-slate-900 dark:text-white group-hover:text-primary transition-colors">{{ $loop->iteration }}</td>
                                 <td onclick="window.open('{{ route('reports.print', ['student' => $student->id, 'year_id' => $riwayat->kelas->id_tahun_ajaran]) }}', '_blank')" class="px-6 py-4">
                                     <div class="flex flex-col">
@@ -299,31 +299,31 @@
                                                 if ($activeYearIdCached === null) {
                                                     $activeYearIdCached = \App\Models\TahunAjaran::where('status', 'aktif')->value('id');
                                                 }
-                                                
+
                                                 $isPast = $riwayat->kelas->id_tahun_ajaran != $activeYearIdCached;
-                                                
+
                                                 // SMART INFERENCE: Fix Old Data showing 'AKTIF'
                                                 if ($displayStatus == 'aktif' && $isPast) {
                                                     $grade = (int) filter_var($riwayat->kelas->nama_kelas, FILTER_SANITIZE_NUMBER_INT);
                                                     $name = strtoupper($riwayat->kelas->nama_kelas);
-                                                    
+
                                                     // Detect Final Year
                                                     // MI: 6
                                                     // MTS: 9 (or 3 if using old naming)
                                                     // MA/SMA: 12 (or 3)
                                                     $isFinal = in_array($grade, [6, 9, 12]);
-                                                    
+
                                                     // Special Case: "3 - MTs" -> Final
                                                     if ($grade == 3 && (strpos($name, 'MTS') !== false || strpos($name, 'SMP') !== false || strpos($name, 'ALIYAH') !== false || strpos($name, 'SMA') !== false)) {
                                                         $isFinal = true;
                                                     }
-                                                    
+
                                                     $displayStatus = $isFinal ? 'lulus' : 'naik_kelas';
                                                 }
                                             @endphp
 
                                             @if($displayStatus == 'aktif')
-                                                <span class="text-xs font-bold text-blue-600 bg-blue-100 px-3 py-1 rounded-full border border-blue-200">AKTIF</span>
+                                                <span class="text-xs font-bold text-primary bg-primary/10 px-3 py-1 rounded-full border border-primary/20">AKTIF</span>
                                             @elseif($displayStatus == 'lulus')
                                                 <span class="text-xs font-bold text-green-600 bg-green-100 px-3 py-1 rounded-full border border-green-200">LULUS</span>
                                             @elseif($displayStatus == 'naik_kelas')
@@ -333,12 +333,12 @@
                                             @else
                                                 <span class="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">{{ strtoupper(str_replace('_', ' ', $displayStatus)) }}</span>
                                             @endif
-                                            
+
                                             <div class="mt-2 text-[10px] text-primary font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-end gap-1">
                                                 Lihat Rapor <span class="material-symbols-outlined text-[12px]">open_in_new</span>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Edit Status Button REMOVED as per User Request -->
                                     </div>
                                 </td>
@@ -378,7 +378,7 @@
                 </div>
             </div>
     </div>
-    
+
     <div class="text-center text-slate-400 text-sm mt-8 pb-8 no-print">
          &copy; {{ date('Y') }} Madrasah Digital System. Dokumen ini adalah salinan digital dari Buku Induk Siswa.
     </div>

@@ -26,7 +26,7 @@
                     <span class="material-symbols-outlined text-[18px]">expand_more</span>
                 </div>
             </div>
-            
+
             <!-- Class Selector -->
             <div class="relative group w-full md:w-auto md:min-w-[200px]">
                 <select name="kelas_id" class="w-full appearance-none bg-none pl-10 pr-8 h-[46px] text-sm font-bold text-slate-700 bg-white border-2 border-slate-200 rounded-xl hover:border-primary/50 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 dark:bg-[#1a2332] dark:text-slate-200 dark:border-slate-700 cursor-pointer shadow-sm transition-all" onchange="this.form.submit()">
@@ -81,7 +81,7 @@
                 Kelas: <strong>{{ $kelas->nama_kelas }}</strong> • Periode: <strong>{{ $periode->nama_periode }}</strong>
             </p>
         </div>
-        
+
         <!-- Actions Toolbar -->
         <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
             <!-- Template & Import -->
@@ -89,7 +89,7 @@
                 <a href="{{ route('walikelas.absensi.template') }}" class="text-slate-600 hover:text-primary transition-colors hover:bg-slate-100 px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
                     <span class="material-symbols-outlined text-[18px]">download</span> Template
                 </a>
-                
+
                 <form action="{{ route('walikelas.absensi.import') }}" method="POST" enctype="multipart/form-data" class="inline-block relative">
                     @csrf
                     <input type="hidden" name="kelas_id" value="{{ $kelas->id }}">
@@ -132,7 +132,7 @@
             @csrf
             <!-- Important: Pass Class ID for Admin context -->
             <input type="hidden" name="kelas_id" value="{{ $kelas->id }}">
-            
+
             <!-- Desktop Table View -->
             <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left text-sm">
@@ -140,8 +140,8 @@
                         <tr>
                             <th class="px-6 py-4 w-10">No</th>
                             <th class="px-6 py-4 min-w-[200px]">Nama Siswa</th>
-                            <th class="px-6 py-4 text-center w-24 bg-blue-50/50 text-blue-700">Sakit</th>
-                            <th class="px-6 py-4 text-center w-24 bg-purple-50/50 text-purple-700">Izin</th>
+                            <th class="px-6 py-4 text-center w-24 bg-primary/5 text-primary">Sakit</th>
+                            <th class="px-6 py-4 text-center w-24 bg-amber-50/50 text-amber-700">Izin</th>
                             <th class="px-6 py-4 text-center w-24 bg-red-50/50 text-red-700">Alpa</th>
                             <th class="px-6 py-4 text-center w-24">Total</th>
                             <th class="px-6 py-4 text-center w-32 border-l">Kelakuan</th>
@@ -160,18 +160,18 @@
                                 {{ $ak->siswa->nama_lengkap }}
                                 <div class="text-xs text-slate-400 font-normal mt-0.5">{{ $ak->siswa->nis_lokal }}</div>
                             </td>
-                            
+
                             <!-- Inputs -->
                             <td class="px-4 py-2 bg-blue-50/30">
-                                <input type="number" name="absensi[{{ $ak->id_siswa }}][sakit]" value="{{ $absensi->sakit ?? 0 }}" min="0" class="w-full text-center font-bold text-blue-700 rounded-lg border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-blue-500 focus:border-blue-500 abs-input" data-target="total-{{ $ak->id }}">
+                                <input type="number" name="absensi[{{ $ak->id_siswa }}][sakit]" value="{{ $absensi->sakit ?? 0 }}" min="0" class="w-full text-center font-bold text-primary rounded-lg border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary abs-input" data-target="total-{{ $ak->id }}">
                             </td>
-                            <td class="px-4 py-2 bg-purple-50/30">
-                                <input type="number" name="absensi[{{ $ak->id_siswa }}][izin]" value="{{ $absensi->izin ?? 0 }}" min="0" class="w-full text-center font-bold text-purple-700 rounded-lg border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-purple-500 focus:border-purple-500 abs-input" data-target="total-{{ $ak->id }}">
+                            <td class="px-4 py-2 bg-amber-50/30">
+                                <input type="number" name="absensi[{{ $ak->id_siswa }}][izin]" value="{{ $absensi->izin ?? 0 }}" min="0" class="w-full text-center font-bold text-amber-700 rounded-lg border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-amber-500 focus:border-amber-500 abs-input" data-target="total-{{ $ak->id }}">
                             </td>
                             <td class="px-4 py-2 bg-red-50/30">
                                 <input type="number" name="absensi[{{ $ak->id_siswa }}][alpa]" value="{{ $absensi->tanpa_keterangan ?? 0 }}" min="0" class="w-full text-center font-bold text-red-700 rounded-lg border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-red-500 focus:border-red-500 abs-input" data-target="total-{{ $ak->id }}">
                             </td>
-                            
+
                             <!-- Total (Calculated) -->
                             <td class="px-6 py-3 text-center font-bold text-slate-800" id="total-{{ $ak->id }}">
                                 {{ ($absensi->sakit ?? 0) + ($absensi->izin ?? 0) + ($absensi->tanpa_keterangan ?? 0) }}
@@ -235,12 +235,12 @@
                         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Ketidakhadiran</span>
                         <div class="grid grid-cols-3 gap-3">
                             <div class="flex flex-col gap-1">
-                                <label class="text-[10px] font-bold text-blue-600 uppercase text-center">Sakit</label>
-                                <input type="number" name="absensi[{{ $ak->id_siswa }}][sakit]" value="{{ $absensi->sakit ?? 0 }}" min="0" class="w-full text-center font-bold text-blue-700 bg-white border border-blue-200 rounded-lg py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 abs-input-mobile" data-target="total-mob-{{ $ak->id }}">
+                                <label class="text-[10px] font-bold text-primary uppercase text-center">Sakit</label>
+                                <input type="number" name="absensi[{{ $ak->id_siswa }}][sakit]" value="{{ $absensi->sakit ?? 0 }}" min="0" class="w-full text-center font-bold text-primary bg-white border border-primary/20 rounded-lg py-2 focus:ring-2 focus:ring-primary focus:border-primary abs-input-mobile" data-target="total-mob-{{ $ak->id }}">
                             </div>
                             <div class="flex flex-col gap-1">
-                                <label class="text-[10px] font-bold text-purple-600 uppercase text-center">Izin</label>
-                                <input type="number" name="absensi[{{ $ak->id_siswa }}][izin]" value="{{ $absensi->izin ?? 0 }}" min="0" class="w-full text-center font-bold text-purple-700 bg-white border border-purple-200 rounded-lg py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 abs-input-mobile" data-target="total-mob-{{ $ak->id }}">
+                                <label class="text-[10px] font-bold text-amber-600 uppercase text-center">Izin</label>
+                                <input type="number" name="absensi[{{ $ak->id_siswa }}][izin]" value="{{ $absensi->izin ?? 0 }}" min="0" class="w-full text-center font-bold text-amber-700 bg-white border border-amber-200 rounded-lg py-2 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 abs-input-mobile" data-target="total-mob-{{ $ak->id }}">
                             </div>
                             <div class="flex flex-col gap-1">
                                 <label class="text-[10px] font-bold text-red-600 uppercase text-center">Alpa</label>
@@ -304,10 +304,10 @@
 <script>
     function setNihil() {
         if(!confirm('Yakin ingin mereset semua data absensi menjadi 0 (Nihil)?')) return;
-        
+
         // Selector for both desktop and mobile inputs
         const selector = '.abs-input, .abs-input-mobile';
-        
+
         document.querySelectorAll(selector).forEach(input => {
             input.value = 0;
             // Trigger recalculation
@@ -318,20 +318,20 @@
     // Initialize calculation for all inputs
     function initCalculation() {
         const inputs = document.querySelectorAll('.abs-input, .abs-input-mobile');
-        
+
         inputs.forEach(input => {
             input.addEventListener('input', function() {
                 // Determine if this is mobile or desktop to find siblings correctly
                 const isMobile = this.classList.contains('abs-input-mobile');
                 const container = isMobile ? this.closest('.grid') : this.closest('tr');
-                
+
                 // Get all sibling inputs in the same row/container
                 const siblingSelector = isMobile ? '.abs-input-mobile' : '.abs-input';
                 const siblings = container.querySelectorAll(siblingSelector);
-                
+
                 let total = 0;
                 siblings.forEach(inp => total += parseInt(inp.value) || 0);
-                
+
                 // Update target
                 const targetId = this.dataset.target;
                 const targetEl = document.getElementById(targetId);

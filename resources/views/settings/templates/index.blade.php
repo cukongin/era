@@ -25,18 +25,18 @@
                 <p class="text-xs text-slate-500">Pilih mode template yang ingin digunakan saat mencetak Rapor.</p>
             </div>
         </div>
-        
+
         <form action="{{ route('settings.templates.config') }}" method="POST" class="flex items-center gap-4">
             @csrf
             <div class="flex items-center gap-2">
                 <span class="text-sm font-bold {{ \App\Models\GlobalSetting::val('rapor_use_custom_template') ? 'text-slate-400' : 'text-green-600' }}">Bawaan (Default)</span>
-                
+
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" name="rapor_use_custom_template" value="1" class="sr-only peer" onchange="this.form.submit()" {{ \App\Models\GlobalSetting::val('rapor_use_custom_template') ? 'checked' : '' }}>
-                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
 
-                <span class="text-sm font-bold {{ \App\Models\GlobalSetting::val('rapor_use_custom_template') ? 'text-blue-600' : 'text-slate-400' }}">Custom (CKEditor)</span>
+                <span class="text-sm font-bold {{ \App\Models\GlobalSetting::val('rapor_use_custom_template') ? 'text-primary' : 'text-slate-400' }}">Custom (CKEditor)</span>
             </div>
         </form>
     </div>
@@ -55,7 +55,7 @@
                 <h3 class="font-bold text-slate-800 dark:text-white">{{ $label }}</h3>
                 <span class="text-xs bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded-full">{{ $templates->where('type', $type)->count() }} Layout</span>
             </div>
-            
+
             <div class="divide-y divide-slate-100 dark:divide-slate-800">
                 @forelse($templates->where('type', $type) as $tpl)
                 <div class="p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
@@ -94,10 +94,10 @@
                                 <span class="material-symbols-outlined text-[20px]">lock</span>
                             </span>
                         @else
-                            <a href="{{ route('settings.templates.edit', $tpl->id) }}" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
+                            <a href="{{ route('settings.templates.edit', $tpl->id) }}" class="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" title="Edit">
                                 <span class="material-symbols-outlined text-[20px]">edit</span>
                             </a>
-                            
+
                             @if(!$tpl->is_active || $templates->where('type', $type)->count() > 1)
                             <form action="{{ route('settings.templates.destroy', $tpl->id) }}" method="POST"
                                   onsubmit="return confirm('Hapus template ini?');">
@@ -117,7 +117,7 @@
                 </div>
                 @endforelse
             </div>
-            
+
             <div class="p-3 bg-slate-50 dark:bg-slate-800/30 text-center">
                 <a href="{{ route('settings.templates.create') }}?type={{ $type }}" class="text-xs font-bold text-primary hover:underline">+ Buat {{ $type == 'cover' ? 'Cover' : ($type == 'transcript' ? 'Transkip' : 'Rapor') }} Baru</a>
             </div>

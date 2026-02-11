@@ -26,7 +26,7 @@
                     Wali Kelas: <span class="text-slate-900 dark:text-slate-100 font-medium">{{ $class->wali_kelas->name ?? 'Belum ditentukan' }}</span>
                 </p>
             </div>
-            
+
             <!-- Readiness Widget -->
             <div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-100 dark:border-slate-700">
                 <div class="flex flex-col">
@@ -40,7 +40,7 @@
     <!-- Students Dual Pane Manager -->
     <div class="flex flex-col gap-4" x-data="studentManager({{ $class->id }})">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
-            
+
             <!-- Left: Enrolled Students -->
             <div class="flex flex-col gap-4">
                 <div class="flex items-center justify-between">
@@ -50,7 +50,7 @@
                         <span class="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-500" x-text="enrolled.length">0</span>
                     </h3>
                 </div>
-                
+
                 <div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden h-[400px] flex flex-col bg-slate-50/50 dark:bg-slate-800/30">
                     <div class="p-2 border-b border-slate-200 dark:border-slate-700">
                             <input type="text" x-model="searchEnrolled" placeholder="Cari santri di kelas..." class="w-full text-xs rounded-md border-slate-300 dark:border-slate-600 focus:ring-primary focus:border-primary">
@@ -59,7 +59,7 @@
                         <template x-for="student in filteredEnrolled" :key="student.id">
                             <div class="flex items-center justify-between p-3 rounded-lg bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 group">
                                 <div class="flex items-center gap-3">
-                                    <div class="size-8 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center text-xs font-bold" x-text="student.initial"></div>
+                                    <div class="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold" x-text="student.initial"></div>
                                     <div>
                                         <div class="flex items-center gap-2">
                                             <p class="font-bold text-xs text-slate-800 dark:text-gray-200" x-text="student.nama_lengkap"></p>
@@ -100,7 +100,7 @@
                             <span class="material-symbols-outlined text-3xl mb-2">person_off</span>
                             <span class="text-xs">Tidak ada santri tersedia.<br>Pastikan jenjang sesuai.</span>
                         </div>
-                        
+
                             <!-- Loading State -->
                         <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-slate-900/80 z-10">
                             <span class="material-symbols-outlined animate-spin text-primary">progress_activity</span>
@@ -141,7 +141,7 @@
                           data-title="Buat Paket Mapel?"
                           data-message="Sistem akan otomatis menambahkan mapel sesuai jenjang. Mapel yang sudah ada tidak diduplikasi."
                           data-confirm-text="Ya, Buatkan!"
-                          data-confirm-color="#3b82f6"
+                          data-confirm-color="#10b981"
                           data-icon="info">
                         @csrf
                         <button type="submit" class="flex items-center gap-2 bg-slate-100 text-slate-700 border border-slate-200 px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-200 transition-colors shadow-sm">
@@ -162,15 +162,15 @@
                         <span class="material-symbols-outlined text-[18px]">add</span>
                         Assign Mapel
                     </button>
-                    
+
                     <!-- NEW: Trigger Pull Modal -->
-                    <button onclick="openPullModal()" class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors shadow-sm">
+                    <button onclick="openPullModal()" class="flex items-center gap-2 bg-slate-700 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-800 transition-colors shadow-sm">
                         <span class="material-symbols-outlined text-[18px]">cloud_download</span>
                         Tarik Siswa
                     </button>
                 </div>
             </div>
-            
+
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm">
                     <thead class="bg-slate-50 dark:bg-slate-800/50 text-xs uppercase text-slate-500 font-medium border-b border-slate-200 dark:border-slate-800">
@@ -195,7 +195,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <div x-data="{ 
+                                <div x-data="{
                                     loading: false,
                                     currentGuru: '{{ $pm->id_guru }}',
                                     updateGuru(e) {
@@ -236,8 +236,8 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-100">
-                                    <span class="size-1.5 rounded-full bg-green-500"></span> Ready
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+                                    <span class="size-1.5 rounded-full bg-primary"></span> Ready
                                 </span>
                             </td>
                         </tr>
@@ -300,33 +300,33 @@
             <div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-[#1a2e22] text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-200 dark:border-slate-800">
                 <div class="bg-white dark:bg-[#1a2e22] px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <h3 class="text-base font-semibold leading-6 text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                        <span class="material-symbols-outlined text-blue-600">cloud_download</span>
+                        <span class="material-symbols-outlined text-primary">cloud_download</span>
                         Ambil Data Santri (Otomatis)
                     </h3>
-                    
+
                     <div id="pullLoading" class="text-center py-8">
                         <span class="material-symbols-outlined animate-spin text-primary text-3xl">autorenew</span>
                         <p class="text-xs text-slate-500 mt-2">Mencari kelas sumber...</p>
                     </div>
 
                     <div id="pullContent" class="hidden space-y-4">
-                        <div class="bg-blue-50 text-blue-800 text-xs p-3 rounded-lg border border-blue-100">
+                        <div class="bg-slate-50 text-slate-600 text-xs p-3 rounded-lg border border-slate-200">
                             Fitur ini akan menarik santri dari Tahun Ajaran sebelumnya (<span id="prevYearName" class="font-bold"></span>) yang statusnya <b>NAIK KELAS</b> atau <b>LULUS</b>.
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium leading-6 text-slate-900 dark:text-white">Pilih Kelas Sumber</label>
-                            <select id="sourceClassSelect" class="mt-1 block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 dark:bg-slate-800 dark:text-white dark:ring-slate-700">
+                            <select id="sourceClassSelect" class="mt-1 block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-800 dark:text-white dark:ring-slate-700">
                                 <!-- Options populated via JS -->
                             </select>
                             <p class="text-[10px] text-slate-500 mt-1">*Hanya kelas Tingkat <span id="targetGradeDisplay"></span> yang muncul.</p>
                         </div>
                     </div>
-                    
+
                     <div id="pullError" class="hidden bg-red-50 text-red-600 text-xs p-3 rounded-lg border border-red-100 mt-4"></div>
                 </div>
                 <div class="bg-slate-50 dark:bg-black/20 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                    <button type="button" onclick="executePull()" id="btnPullAction" disabled class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed sm:ml-3 sm:w-auto">
+                    <button type="button" onclick="executePull()" id="btnPullAction" disabled class="inline-flex w-full justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed sm:ml-3 sm:w-auto">
                         Tarik Data
                     </button>
                     <button type="button" onclick="closePullModal()" class="mt-3 inline-flex w-full justify-center rounded-md bg-white dark:bg-slate-800 px-3 py-2 text-sm font-semibold text-slate-900 dark:text-slate-300 shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-700 hover:bg-slate-50 sm:mt-0 sm:w-auto">Batal</button>
@@ -352,7 +352,7 @@
             loading: false,
             searchEnrolled: '',
             searchCandidate: '',
-            
+
             init() {
                 this.loadCandidates();
                 window.refreshEnrolled = () => window.location.reload(); // Quick hack to refresh
@@ -369,9 +369,9 @@
                 try {
                     let url = `{{ url('classes') }}/${classId}/candidates?search=${this.searchCandidate}`;
                     let res = await fetch(url);
-                    
+
                     if (!res.ok) throw new Error('Network response was not ok');
-                    
+
                     this.candidates = await res.json();
                 } catch(e) {
                     console.error('Error loading candidates', e);
@@ -439,7 +439,7 @@
                             'Accept': 'application/json'
                         }
                     });
-                    
+
                     Toast.fire({
                         icon: 'success',
                         title: 'Santri berhasil dikeluarkan'
@@ -477,7 +477,7 @@
             .then(res => res.json())
             .then(data => {
                 document.getElementById('pullLoading').classList.add('hidden');
-                
+
                 if (data.error) {
                     showPullError(data.error);
                     return;
@@ -489,7 +489,7 @@
 
                 const select = document.getElementById('sourceClassSelect');
                 select.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-                
+
                 if (data.sources.length === 0) {
                     select.innerHTML += '<option disabled>Tidak ada kelas yang cocok.</option>';
                 } else {

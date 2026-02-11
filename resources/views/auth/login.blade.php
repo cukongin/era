@@ -7,33 +7,19 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              "primary": "#17cf54",
-              "primary-dark": "#12a843",
-            },
-            fontFamily: { "display": ["Inter", "sans-serif"] },
-          },
-        },
-      }
-    </script>
-    <style>body { font-family: 'Inter', sans-serif; }</style>
+    <!-- Compiled CSS -->
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body class="bg-gray-50 text-slate-800 antialiased h-screen flex items-center justify-center relative overflow-hidden">
-    
+
     <!-- Background Decor -->
-    <div class="absolute top-0 left-0 w-full h-1/2 bg-[#17cf54]/10 -skew-y-3 -z-10 origin-top-left"></div>
+    <div class="absolute top-0 left-0 w-full h-1/2 bg-login-primary/10 -skew-y-3 -z-10 origin-top-left"></div>
 
     <div class="w-full max-w-sm bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
         <div class="p-8 pb-6">
             <div class="flex flex-col items-center gap-2 mb-8">
-                <div class="bg-primary/10 p-3 rounded-xl mb-2">
-                    <span class="material-symbols-outlined text-primary text-4xl">mosque</span>
+                <div class="bg-login-primary/10 p-3 rounded-xl mb-2">
+                    <span class="material-symbols-outlined text-login-primary text-4xl">mosque</span>
                 </div>
                 <h1 class="text-xl font-bold text-slate-900 tracking-tight text-center">E-Rapor Madrasah</h1>
                 <p class="text-sm text-slate-500 text-center">Silakan login untuk masuk sistem</p>
@@ -54,27 +40,27 @@
                 @csrf
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-bold text-slate-700 uppercase tracking-wide">Email Address</label>
-                    <input type="email" name="email" class="w-full rounded-lg border-slate-300 focus:border-primary focus:ring-primary text-sm placeholder-slate-400" placeholder="admin@madrasah.com" value="{{ old('email') }}" required>
+                    <input type="email" name="email" class="w-full rounded-lg border-slate-300 focus:border-login-primary focus:ring-login-primary text-sm placeholder-slate-400" placeholder="admin@madrasah.com" value="{{ old('email') }}" required>
                 </div>
 
                 <!-- Honeypot for Bots (Hidden) -->
                 <div class="hidden">
                     <label>Don't fill this out if you're human: <input type="text" name="website" value="{{ old('website') }}" tabindex="-1" autocomplete="off"></label>
                 </div>
-                
+
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-bold text-slate-700 uppercase tracking-wide">Password</label>
-                    <input type="password" name="password" class="w-full rounded-lg border-slate-300 focus:border-primary focus:ring-primary text-sm placeholder-slate-400" placeholder="••••••••" required>
+                    <input type="password" name="password" class="w-full rounded-lg border-slate-300 focus:border-login-primary focus:ring-login-primary text-sm placeholder-slate-400" placeholder="••••••••" required>
                 </div>
 
                 <div class="flex items-center justify-between mt-1">
                     <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" class="rounded border-slate-300 text-primary focus:ring-primary">
+                        <input type="checkbox" class="rounded border-slate-300 text-login-primary focus:ring-login-primary">
                         <span class="text-xs text-slate-600">Ingat Saya</span>
                     </label>
                 </div>
 
-                <button type="submit" class="mt-4 bg-primary hover:bg-primary-dark text-white font-bold py-2.5 rounded-lg shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2">
+                <button type="submit" class="mt-4 bg-login-primary hover:bg-login-primary-dark text-white font-bold py-2.5 rounded-lg shadow-lg shadow-login-primary/30 transition-all flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined text-sm">login</span>
                     Log In
                 </button>

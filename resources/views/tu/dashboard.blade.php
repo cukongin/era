@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="flex-1 flex flex-col h-full overflow-hidden relative">
-    
+
     <!-- Header -->
     <header class="hidden lg:flex items-center justify-between px-8 py-5 bg-background-light dark:bg-[#1a2e22]">
         <div>
@@ -22,7 +22,7 @@
         </div>
         <div class="flex items-center gap-4">
             <div class="flex items-center gap-3 pl-2">
-                <div class="bg-center bg-no-repeat bg-cover rounded-full size-10 border-2 border-white dark:border-slate-700 shadow-sm flex items-center justify-center bg-purple-600 text-white uppercase font-bold text-lg">
+                <div class="bg-center bg-no-repeat bg-cover rounded-full size-10 border-2 border-white dark:border-slate-700 shadow-sm flex items-center justify-center bg-primary text-white uppercase font-bold text-lg">
                     {{ substr(auth()->user()->name, 0, 2) }}
                 </div>
                 <div class="flex flex-col">
@@ -46,11 +46,11 @@
                     </p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <a href="{{ route('tu.monitoring.global') }}" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-bold shadow-sm shadow-indigo-600/30 flex items-center gap-2 transition-all">
+                    <a href="{{ route('tu.monitoring.global') }}" class="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm font-bold shadow-sm shadow-primary/30 flex items-center gap-2 transition-all">
                         <span class="material-symbols-outlined text-[18px]">travel_explore</span>
                         Global Monitoring
                     </a>
-                    <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold border border-purple-200 shadow-sm flex items-center gap-1">
+                    <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold border border-primary/20 shadow-sm flex items-center gap-1">
                         <span class="material-symbols-outlined text-[14px]">analytics</span> Dashboard Analitik
                     </span>
                     <span class="text-slate-400 text-sm font-medium">{{ date('d F Y') }}</span>
@@ -62,7 +62,7 @@
                 <!-- Total Siswa -->
                 <div class="bg-white dark:bg-[#1a2e22] p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 relative overflow-hidden group">
                     <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <span class="material-symbols-outlined text-6xl text-blue-600">groups</span>
+                        <span class="material-symbols-outlined text-6xl text-primary">groups</span>
                     </div>
                     <div class="flex flex-col gap-1 relative z-10">
                         <p class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Total Siswa Aktif</p>
@@ -82,7 +82,7 @@
                 </div>
 
                 <!-- Tahun Ajaran -->
-                <div class="bg-gradient-to-br from-purple-700 to-indigo-800 text-white p-6 rounded-2xl shadow-lg shadow-purple-900/20 relative overflow-hidden">
+                <div class="bg-gradient-to-br from-[#003e29] to-[#005a3c] text-white p-6 rounded-2xl shadow-lg shadow-primary/20 relative overflow-hidden">
                     <div class="absolute -right-6 -bottom-6 opacity-20 transform rotate-12">
                         <span class="material-symbols-outlined text-9xl">calendar_month</span>
                     </div>
@@ -99,14 +99,14 @@
             </div>
 
             <div class="flex flex-col gap-8">
-                
+
                 <!-- Main Chart Section -->
                 <div class="w-full flex flex-col gap-8">
                     <div class="flex items-center justify-between">
                         <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <span class="material-symbols-outlined text-teal-600">monitoring</span> Tren Nilai Per-Angkatan
+                            <span class="material-symbols-outlined text-primary">monitoring</span> Tren Nilai Per-Angkatan
                         </h3>
-                        
+
                         <!-- Filter Angkatan -->
                         <form action="{{ route('tu.dashboard') }}" method="GET" class="flex items-center gap-2">
                             <label class="text-xs font-bold text-slate-500">Pilih Angkatan:</label>
@@ -126,7 +126,7 @@
                                 <h4 class="font-bold text-slate-800 dark:text-white">{{ $cohortDescription }}</h4>
                                 <p class="text-xs text-slate-500">Grafik menunjukkan rata-rata nilai siswa.</p>
                              </div>
-                             
+
                              @if($trend == 'up')
                                 <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold border border-green-200 flex items-center gap-1">
                                     <span class="material-symbols-outlined text-[16px]">trending_up</span> Perform Naik
@@ -147,16 +147,16 @@
                     <!-- Achievement Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10 pt-4">
                         <!-- (Best Student & Best Class Cards - Unchanged) -->
-                        <div class="bg-gradient-to-br from-indigo-500 to-blue-600 rounded-xl p-4 text-white shadow-lg shadow-indigo-500/20 relative overflow-hidden group">
+                        <div class="bg-gradient-to-br from-primary to-emerald-600 rounded-xl p-4 text-white shadow-lg shadow-primary/20 relative overflow-hidden group">
                             <div class="absolute top-0 right-0 p-3 opacity-20">
                                 <span class="material-symbols-outlined text-6xl">emoji_events</span>
                             </div>
                             <div class="relative z-10 flex flex-col h-full justify-between">
                                 <div>
-                                    <p class="text-indigo-100 text-xs font-bold uppercase tracking-wider mb-1">Siswa Terbaik Angkatan</p>
+                                    <p class="text-emerald-100 text-xs font-bold uppercase tracking-wider mb-1">Siswa Terbaik Angkatan</p>
                                     @if($topStudent)
                                         <h4 class="text-xl font-bold truncate max-w-[90%]">{{ $topStudent['name'] }}</h4>
-                                        <p class="text-xs text-indigo-100">Kelas: {{ $topStudent['class'] }}</p>
+                                        <p class="text-xs text-emerald-100">Kelas: {{ $topStudent['class'] }}</p>
                                     @else
                                         <h4 class="text-lg font-bold italic opacity-50">Belum ada data</h4>
                                     @endif
@@ -165,7 +165,7 @@
                                     @if($topStudent)
                                         <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-lg">
                                             <span class="text-2xl font-bold">{{ $topStudent['score'] }}</span>
-                                            <span class="text-[10px] uppercase font-bold text-indigo-100">Rata-Rata Kumulatif</span>
+                                            <span class="text-[10px] uppercase font-bold text-emerald-100">Rata-Rata Kumulatif</span>
                                         </div>
                                     @endif
                                 </div>
@@ -199,7 +199,7 @@
 
                     <!-- Subject Analysis Section -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4">
-                        
+
                         <!-- Hardest Subjects -->
                         <div class="bg-white dark:bg-[#1a2e22] rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-6">
                             <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 mb-4">
@@ -247,7 +247,7 @@
                         <!-- Grade Distribution Chart -->
                         <div class="bg-white dark:bg-[#1a2e22] rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-6 flex flex-col items-center justify-center">
                             <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 mb-2 w-full">
-                                <span class="material-symbols-outlined text-blue-500">pie_chart</span> Sebaran Predikat
+                                <span class="material-symbols-outlined text-primary">pie_chart</span> Sebaran Predikat
                             </h3>
                             <div id="gradeDistributionChart" class="w-full h-[200px]"></div>
                         </div>
@@ -256,7 +256,7 @@
 
                     <!-- Top Achievers Section (Split) -->
                     <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        
+
                         <!-- Hall of Fame (All Time Best) -->
                         <div>
                             <div class="flex flex-col mb-4 gap-1">
@@ -299,18 +299,18 @@
                         <div>
                             <div class="flex flex-col mb-4 gap-1">
                                 <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-blue-500">verified</span> 5 Kandidat Bintang Pelajar
+                                    <span class="material-symbols-outlined text-primary">verified</span> 5 Kandidat Bintang Pelajar
                                 </h3>
                                 <p class="text-xs text-slate-500">
                                     Siswa Terbaik (Aktif) sebagai acuan pemberian penghargaan sekolah.
                                 </p>
                             </div>
 
-                            <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden h-[340px] flex flex-col">
+                            <div class="bg-gradient-to-br from-primary to-emerald-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden h-[340px] flex flex-col">
                                 <div class="absolute bottom-0 left-0 p-8 opacity-10">
                                     <span class="material-symbols-outlined text-[150px]">stars</span>
                                 </div>
-                                
+
                                 <div class="flex flex-col gap-3 h-full relative z-10 overflow-y-auto pr-2 custom-scrollbar">
                                     @forelse($activeStars as $index => $star)
                                         @php
@@ -323,7 +323,7 @@
                                                 <div class="text-2xl filter drop-shadow-md min-w-[30px] text-center">{{ $medal }}</div>
                                                 <div>
                                                     <h4 class="font-bold text-sm">{{ $star->nama_lengkap }}</h4>
-                                                    <p class="text-[10px] text-blue-100 flex items-center gap-1">
+                                                    <p class="text-[10px] text-emerald-100 flex items-center gap-1">
                                                         <span class="material-symbols-outlined text-[10px]">class</span> {{ $star->class_name }}
                                                     </p>
                                                 </div>
@@ -448,7 +448,7 @@
             dataLabels: { enabled: false },
             legend: { position: 'bottom', fontSize: '11px' },
         };
-        
+
         var pieChart = new ApexCharts(document.querySelector("#gradeDistributionChart"), pieOptions);
         pieChart.render();
     });

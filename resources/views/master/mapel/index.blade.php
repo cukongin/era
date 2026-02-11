@@ -20,7 +20,7 @@
             <button onclick="openDeleteAllModal()" class="flex items-center gap-2 bg-red-50 text-red-600 border border-red-200 px-4 py-2 rounded-lg text-sm font-bold shadow-sm hover:bg-red-100 transition-colors">
                 <span class="material-symbols-outlined text-[20px]">delete_forever</span> Hapus Semua
             </button>
-            <button onclick="openCreateModal()" class="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold shadow hover:bg-green-600 transition-colors">
+            <button onclick="openCreateModal()" class="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold shadow hover:bg-primary/90 transition-colors">
                 <span class="material-symbols-outlined text-[20px]">add</span> Tambah Mapel
             </button>
         </div>
@@ -51,7 +51,7 @@
                         <button type="submit" class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:col-start-2 sm:text-sm">
                             Ya, Hapus Semua
                         </button>
-                        <button type="button" class="inline-flex justify-center w-full px-4 py-2 mt-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm dark:bg-slate-700 dark:text-gray-300 dark:border-slate-600 dark:hover:bg-slate-600" onclick="closeDeleteAllModal()">
+                        <button type="button" class="inline-flex justify-center w-full px-4 py-2 mt-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:mt-0 sm:col-start-1 sm:text-sm dark:bg-slate-700 dark:text-gray-300 dark:border-slate-600 dark:hover:bg-slate-600" onclick="closeDeleteAllModal()">
                             Batal
                         </button>
                     </div>
@@ -69,14 +69,14 @@
                 <form action="{{ route('master.mapel.import') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div>
-                        <div class="flex items-center justify-center w-12 h-12 mx-auto bg-blue-100 rounded-full dark:bg-blue-900">
-                            <span class="material-symbols-outlined text-blue-600 dark:text-blue-400">upload_file</span>
+                        <div class="flex items-center justify-center w-12 h-12 mx-auto bg-primary/10 rounded-full dark:bg-primary/20">
+                            <span class="material-symbols-outlined text-primary dark:text-primary">upload_file</span>
                         </div>
                         <div class="mt-3 text-center sm:mt-5">
                             <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white" id="modal-title">Import Data Mapel</h3>
                             <div class="mt-2 text-sm text-gray-500 dark:text-gray-400">
                                 <p class="mb-4">Upload file CSV dengan format yang sesuai. Gunakan template jika belum memiliki format.</p>
-                                <a href="{{ route('master.mapel.template') }}" class="inline-flex items-center px-4 py-2 gap-2 text-sm font-medium text-blue-700 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                <a href="{{ route('master.mapel.template') }}" class="inline-flex items-center px-4 py-2 gap-2 text-sm font-medium text-primary bg-primary/10 border border-transparent rounded-md hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
                                     <span class="material-symbols-outlined text-[18px]">download</span> Download Template
                                 </a>
                                 <div class="mt-4">
@@ -84,18 +84,18 @@
                                       file:mr-4 file:py-2 file:px-4
                                       file:rounded-full file:border-0
                                       file:text-sm file:font-semibold
-                                      file:bg-blue-50 file:text-blue-700
-                                      hover:file:bg-blue-100 dark:file:bg-slate-700 dark:file:text-slate-200
+                                      file:bg-primary/10 file:text-primary
+                                      hover:file:bg-primary/20 dark:file:bg-slate-700 dark:file:text-slate-200
                                     "/>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
-                        <button type="submit" class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:col-start-2 sm:text-sm">
+                        <button type="submit" class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-primary border border-transparent rounded-md shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:col-start-2 sm:text-sm">
                             Import
                         </button>
-                        <button type="button" class="inline-flex justify-center w-full px-4 py-2 mt-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm dark:bg-slate-700 dark:text-gray-300 dark:border-slate-600 dark:hover:bg-slate-600" onclick="closeImportModal()">
+                        <button type="button" class="inline-flex justify-center w-full px-4 py-2 mt-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:mt-0 sm:col-start-1 sm:text-sm dark:bg-slate-700 dark:text-gray-300 dark:border-slate-600 dark:hover:bg-slate-600" onclick="closeImportModal()">
                             Batal
                         </button>
                     </div>
@@ -125,22 +125,22 @@
                         <td class="px-6 py-4 font-semibold text-slate-900 dark:text-white font-arabic">{{ $mapel->nama_mapel }}</td>
                         <td class="px-6 py-4 text-slate-700 dark:text-slate-300 font-arabic text-md">{{ $mapel->nama_kitab ?? '-' }}</td>
                         <td class="px-6 py-4">
-                            <span class="px-2 py-1 rounded text-xs font-bold 
-                                {{ $mapel->kategori == 'AGAMA' ? 'bg-green-50 text-green-700' : 
-                                   ($mapel->kategori == 'MULOK' ? 'bg-amber-50 text-amber-700' : 'bg-blue-50 text-blue-700') }}">
+                            <span class="px-2 py-1 rounded text-xs font-bold
+                                {{ $mapel->kategori == 'AGAMA' ? 'bg-emerald-50 text-emerald-700' :
+                                   ($mapel->kategori == 'MULOK' ? 'bg-amber-50 text-amber-700' : 'bg-primary/10 text-primary') }}">
                                 {{ $mapel->kategori }}
                             </span>
                         </td>
                         <td class="px-6 py-4">
-                            <span class="px-2 py-1 rounded text-xs font-bold border 
-                                {{ $mapel->target_jenjang == 'MI' ? 'bg-teal-50 text-teal-700 border-teal-100' : 
-                                   ($mapel->target_jenjang == 'MTS' ? 'bg-indigo-50 text-indigo-700 border-indigo-100' : 'bg-slate-50 text-slate-600 border-slate-200') }}">
+                            <span class="px-2 py-1 rounded text-xs font-bold border
+                                {{ $mapel->target_jenjang == 'MI' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
+                                   ($mapel->target_jenjang == 'MTS' ? 'bg-primary/10 text-primary border-primary/20' : 'bg-slate-50 text-slate-600 border-slate-200') }}">
                                 {{ $mapel->target_jenjang }}
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right">
                             <div class="flex items-center justify-end gap-2">
-                                <button onclick='openEditModal(@json($mapel))' class="p-1 rounded text-blue-600 hover:bg-blue-50 transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+                                <button onclick='openEditModal(@json($mapel))' class="p-1 rounded text-amber-600 hover:bg-amber-50 transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
                                 <form action="{{ route('master.mapel.destroy', $mapel->id) }}" method="POST"
                                       data-confirm-delete="true"
                                       data-title="Hapus Mapel?"
@@ -172,7 +172,7 @@
                 <form id="mapelForm" method="POST">
                     @csrf
                     <input type="hidden" name="_method" id="formMethod" value="POST">
-                    
+
                     <div class="bg-white dark:bg-[#1a2e22] px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                         <h3 class="text-base font-semibold leading-6 text-slate-900 dark:text-white mb-4" id="modalTitle">Tambah Mapel</h3>
                         <div class="space-y-4">
@@ -214,7 +214,7 @@
                         </div>
                     </div>
                     <div class="bg-slate-50 dark:bg-black/20 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                        <button type="submit" class="inline-flex w-full justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600 sm:ml-3 sm:w-auto">Simpan</button>
+                        <button type="submit" class="inline-flex w-full justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90 sm:ml-3 sm:w-auto">Simpan</button>
                         <button type="button" onclick="closeModal()" class="mt-3 inline-flex w-full justify-center rounded-md bg-white dark:bg-slate-800 px-3 py-2 text-sm font-semibold text-slate-900 dark:text-slate-300 shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-700 hover:bg-slate-50 sm:mt-0 sm:w-auto">Batal</button>
                     </div>
                 </form>

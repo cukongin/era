@@ -37,11 +37,11 @@
                     @endif
                 </div>
             </div>
-            
+
             <div class="flex items-center gap-2">
                 <!-- PRESET DROPDOWN -->
                 <div class="relative group">
-                    <button type="button" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 border border-indigo-200">
+                    <button type="button" class="bg-primary/10 hover:bg-primary/20 text-primary px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 border border-primary/20">
                         <span class="material-symbols-outlined">interests</span> Load Preset
                     </button>
                     <div class="absolute right-0 top-full mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-xl hidden group-hover:block z-50 overflow-hidden">
@@ -51,15 +51,15 @@
                                 <span class="material-symbols-outlined text-green-600 text-[18px]">school</span> Rapor Kemenag (MI)
                             </button>
                             <button type="button" onclick="loadPreset('diknas_smp')" class="w-full text-left px-2 py-1.5 text-sm hover:bg-slate-50 rounded flex items-center gap-2">
-                                <span class="material-symbols-outlined text-blue-600 text-[18px]">menu_book</span> Rapor Diknas (SMP)
+                                <span class="material-symbols-outlined text-primary text-[18px]">menu_book</span> Rapor Diknas (SMP)
                             </button>
                             <button type="button" onclick="loadPreset('simple')" class="w-full text-left px-2 py-1.5 text-sm hover:bg-slate-50 rounded flex items-center gap-2">
                                 <span class="material-symbols-outlined text-slate-600 text-[18px]">article</span> Rapor Simple
                             </button>
-                            
+
                             <h6 class="text-xs font-bold text-slate-400 px-2 py-1 uppercase mt-2 border-t border-slate-100">Transkip Nilai</h6>
                             <button type="button" onclick="loadPreset('transcript_simple')" class="w-full text-left px-2 py-1.5 text-sm hover:bg-slate-50 rounded flex items-center gap-2">
-                                <span class="material-symbols-outlined text-purple-600 text-[18px]">workspace_premium</span> Transkip Nilai Simple
+                                <span class="material-symbols-outlined text-amber-600 text-[18px]">workspace_premium</span> Transkip Nilai Simple
                             </button>
                         </div>
                     </div>
@@ -70,11 +70,11 @@
                         <span class="material-symbols-outlined">check_circle</span> Aktifkan
                     </button>
                 @endif
-                
+
                 <button type="button" onclick="previewTemplate()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 border border-slate-300">
                     <span class="material-symbols-outlined">visibility</span> Preview
                 </button>
-                
+
                 <button type="button" onclick="saveTemplate()" class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg text-sm font-bold flex items-center gap-2 shadow-lg shadow-blue-500/30">
                     <span class="material-symbols-outlined">save</span> Simpan
                 </button>
@@ -93,14 +93,14 @@
                 const oldAction = form.action;
                 const oldTarget = form.target;
                 for (var i in CKEDITOR.instances) CKEDITOR.instances[i].updateElement();
-                
+
                 const methodInput = form.querySelector('input[name="_method"]');
-                if (methodInput) methodInput.disabled = true; 
-                
+                if (methodInput) methodInput.disabled = true;
+
                 form.action = "{{ route('settings.templates.preview') }}";
                 form.target = "_blank";
                 form.submit();
-                
+
                 if (methodInput) methodInput.disabled = false;
                 form.action = oldAction;
                 form.target = oldTarget || "";
@@ -108,11 +108,11 @@
 
             function loadPreset(presetName) {
                 if (!confirm('Konten editor akan ditimpa dengan template preset. Lanjutkan?')) return;
-                
+
                 // Get current type
                 const typeSelect = document.querySelector('select[name="type"]');
                 const type = typeSelect ? typeSelect.value : 'rapor';
-                
+
                 fetch(`{{ route('settings.templates.preset') }}?preset=${presetName}&type=${type}`)
                     .then(response => response.json())
                     .then(data => {
@@ -138,7 +138,7 @@
 
             <!-- Sidebar Settings -->
             <div class="w-72 flex flex-col gap-4 shrink-0 overflow-y-auto pb-10">
-                
+
                 <!-- Basic Info -->
                 <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-4">
 
@@ -191,9 +191,9 @@
                 <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex-1">
                     <h3 class="font-bold text-sm text-slate-700 mb-2">Kode Data (Variable)</h3>
                     <p class="text-xs text-slate-500 mb-3">Klik untuk menyalin kode.</p>
-                    
+
                     <div class="space-y-4">
-                        
+
                         <!-- Identitas Siswa -->
                         <div>
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block border-b pb-1 mb-2">1. Identitas Siswa</span>
@@ -218,7 +218,7 @@
                                 <button type="button" onclick="insertVar('[[TANGGAL_RAPOR]]')" class="text-left text-xs bg-slate-50 hover:bg-slate-100 p-1.5 rounded border border-slate-200 font-mono text-slate-700 transition">[[TANGGAL_RAPOR]]</button>
                             </div>
                         </div>
-                        
+
                         <!-- Statistik & Kenaikan -->
                         <div>
                             <span class="text-[10px] font-bold text-green-600 uppercase tracking-wider block border-b pb-1 mb-2">3. Statistik & Status</span>
@@ -235,37 +235,37 @@
                         <div>
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block border-b pb-1 mb-2">3. Tabel Akademik</span>
                             <div class="grid grid-cols-1 gap-1">
-                                <button type="button" onclick="insertVar('[[TABEL_NILAI]]')" class="text-left text-xs bg-blue-50 hover:bg-blue-100 p-2 rounded border border-blue-200 font-mono text-blue-700 font-bold transition">[[TABEL_NILAI]] <span class="text-[10px] text-blue-400 block">Daftar Nilai Otomatis</span></button>
-                                <button type="button" onclick="insertVar('[[TABEL_PRESTASI]]')" class="text-left text-xs bg-blue-50 hover:bg-blue-100 p-2 rounded border border-blue-200 font-mono text-blue-700 font-bold transition">[[TABEL_PRESTASI]] <span class="text-[10px] text-blue-400 block">Tabel Prestasi</span></button>
+                                <button type="button" onclick="insertVar('[[TABEL_NILAI]]')" class="text-left text-xs bg-primary/10 hover:bg-primary/20 p-2 rounded border border-primary/20 font-mono text-primary font-bold transition">[[TABEL_NILAI]] <span class="text-[10px] text-primary/70 block">Daftar Nilai Otomatis</span></button>
+                                <button type="button" onclick="insertVar('[[TABEL_PRESTASI]]')" class="text-left text-xs bg-primary/10 hover:bg-primary/20 p-2 rounded border border-primary/20 font-mono text-primary font-bold transition">[[TABEL_PRESTASI]] <span class="text-[10px] text-primary/70 block">Tabel Prestasi</span></button>
                             </div>
                         </div>
 
                         <!-- Tabel Transkip / Custom Loop -->
                         <div>
-                            <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider block border-b pb-1 mb-2">3b. Tabel Manual / Transkip</span>
+                            <span class="text-[10px] font-bold text-amber-500 uppercase tracking-wider block border-b pb-1 mb-2">3b. Tabel Manual / Transkip</span>
                             <p class="text-[10px] text-slate-400 mb-2 leading-tight">Gunakan ini untuk Transkip atau tabel custom.</p>
                             <div class="grid grid-cols-1 gap-1">
-                                <button type="button" onclick="insertVar('[[LOOP_NILAI_START]]')" class="text-left text-xs bg-indigo-50 hover:bg-indigo-100 p-1.5 rounded border border-indigo-200 font-mono text-indigo-700 font-bold transition">[[LOOP_NILAI_START]] <span class="text-[10px] text-indigo-400 float-right">Awal Loop</span></button>
-                                <div class="pl-2 border-l-2 border-indigo-100 grid grid-cols-1 gap-1">
+                                <button type="button" onclick="insertVar('[[LOOP_NILAI_START]]')" class="text-left text-xs bg-amber-50 hover:bg-amber-100 p-1.5 rounded border border-amber-200 font-mono text-amber-700 font-bold transition">[[LOOP_NILAI_START]] <span class="text-[10px] text-amber-500 float-right">Awal Loop</span></button>
+                                <div class="pl-2 border-l-2 border-amber-100 grid grid-cols-1 gap-1">
                                     <button type="button" onclick="insertVar('[[NO]]')" class="text-left text-xs p-1 hover:bg-slate-50 rounded text-slate-600 font-mono">[[NO]]</button>
                                     <button type="button" onclick="insertVar('[[MAPEL]]')" class="text-left text-xs p-1 hover:bg-slate-50 rounded text-slate-600 font-mono">[[MAPEL]]</button>
                                     <button type="button" onclick="insertVar('[[KKM]]')" class="text-left text-xs p-1 hover:bg-slate-50 rounded text-slate-600 font-mono">[[KKM]]</button>
                                     <button type="button" onclick="insertVar('[[NILAI]]')" class="text-left text-xs p-1 hover:bg-slate-50 rounded text-slate-600 font-mono">[[NILAI]] <span class="text-[9px] text-slate-400">(Nilai Akhir)</span></button>
                                     <button type="button" onclick="insertVar('[[PREDIKAT]]')" class="text-left text-xs p-1 hover:bg-slate-50 rounded text-slate-600 font-mono">[[PREDIKAT]]</button>
-                                    <button type="button" onclick="insertVar('[[NILAI_RAPOR]]')" class="text-left text-xs p-1 hover:bg-purple-50 rounded text-purple-600 font-mono">[[NILAI_RAPOR]] <span class="text-[9px] text-purple-400">(Rata Rapor)</span></button>
-                                    <button type="button" onclick="insertVar('[[NILAI_UJIAN]]')" class="text-left text-xs p-1 hover:bg-purple-50 rounded text-purple-600 font-mono">[[NILAI_UJIAN]] <span class="text-[9px] text-purple-400">(Nilai UM)</span></button>
+                                    <button type="button" onclick="insertVar('[[NILAI_RAPOR]]')" class="text-left text-xs p-1 hover:bg-amber-50 rounded text-amber-600 font-mono">[[NILAI_RAPOR]] <span class="text-[9px] text-amber-400">(Rata Rapor)</span></button>
+                                    <button type="button" onclick="insertVar('[[NILAI_UJIAN]]')" class="text-left text-xs p-1 hover:bg-amber-50 rounded text-amber-600 font-mono">[[NILAI_UJIAN]] <span class="text-[9px] text-amber-400">(Nilai UM)</span></button>
                                 </div>
-                                <button type="button" onclick="insertVar('[[LOOP_NILAI_END]]')" class="text-left text-xs bg-indigo-50 hover:bg-indigo-100 p-1.5 rounded border border-indigo-200 font-mono text-indigo-700 font-bold transition">[[LOOP_NILAI_END]] <span class="text-[10px] text-indigo-400 float-right">Akhir Loop</span></button>
+                                <button type="button" onclick="insertVar('[[LOOP_NILAI_END]]')" class="text-left text-xs bg-amber-50 hover:bg-amber-100 p-1.5 rounded border border-amber-200 font-mono text-amber-700 font-bold transition">[[LOOP_NILAI_END]] <span class="text-[10px] text-amber-500 float-right">Akhir Loop</span></button>
                             </div>
                         </div>
-                        
+
                         <!-- Non-Akademik -->
                         <div>
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block border-b pb-1 mb-2">4. Non-Akademik</span>
                             <div class="grid grid-cols-1 gap-1">
-                                <button type="button" onclick="insertVar('[[TABEL_EKSKUL]]')" class="text-left text-xs bg-blue-50 hover:bg-blue-100 p-2 rounded border border-blue-200 font-mono text-blue-700 font-bold transition">[[TABEL_EKSKUL]]</button>
-                                <button type="button" onclick="insertVar('[[TABEL_KEPRIBADIAN]]')" class="text-left text-xs bg-blue-50 hover:bg-blue-100 p-2 rounded border border-blue-200 font-mono text-blue-700 font-bold transition">[[TABEL_KEPRIBADIAN]]</button>
-                                <button type="button" onclick="insertVar('[[TABEL_KETIDAKHADIRAN]]')" class="text-left text-xs bg-blue-50 hover:bg-blue-100 p-2 rounded border border-blue-200 font-mono text-blue-700 font-bold transition">[[TABEL_KETIDAKHADIRAN]]</button>
+                                <button type="button" onclick="insertVar('[[TABEL_EKSKUL]]')" class="text-left text-xs bg-primary/10 hover:bg-primary/20 p-2 rounded border border-primary/20 font-mono text-primary font-bold transition">[[TABEL_EKSKUL]]</button>
+                                <button type="button" onclick="insertVar('[[TABEL_KEPRIBADIAN]]')" class="text-left text-xs bg-primary/10 hover:bg-primary/20 p-2 rounded border border-primary/20 font-mono text-primary font-bold transition">[[TABEL_KEPRIBADIAN]]</button>
+                                <button type="button" onclick="insertVar('[[TABEL_KETIDAKHADIRAN]]')" class="text-left text-xs bg-primary/10 hover:bg-primary/20 p-2 rounded border border-primary/20 font-mono text-primary font-bold transition">[[TABEL_KETIDAKHADIRAN]]</button>
                                 <button type="button" onclick="insertVar('[[CATATAN_WALI]]')" class="text-left text-xs bg-yellow-50 hover:bg-yellow-100 p-2 rounded border border-yellow-200 font-mono text-yellow-700 font-bold transition">[[CATATAN_WALI]]</button>
                                 <button type="button" onclick="insertVar('[[STATUS_KENAIKAN]]')" class="text-left text-xs bg-yellow-50 hover:bg-yellow-100 p-2 rounded border border-yellow-200 font-mono text-yellow-700 font-bold transition">[[STATUS_KENAIKAN]]</button>
                             </div>
@@ -314,11 +314,11 @@
 
         CKEDITOR.replace('editor', {
             height: 1000, // Fixed Pixel Height (Verified "Long")
-            resize_enabled: false, 
+            resize_enabled: false,
             versionCheck: false, // Disable security warning
             // A4 Content Style
             contentsCss: [
-                'https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap', 
+                'https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap',
                 'https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap',
                 '{{ asset("css/fonts.css") }}', // Load Local Fonts (LPMQ)
                 'https://cdn.tailwindcss.com'
@@ -327,8 +327,8 @@
             font_names: 'Arial/Arial, Helvetica, sans-serif;' +
                 'Times New Roman/Times New Roman, Times, serif;' +
                 'LPMQ Isep Misbah/LPMQ Isep Misbah, Amiri, serif;' + // Kemenag Font
-                'Amiri/Amiri, serif;' + 
-                'Lexend/Lexend, sans-serif;' + 
+                'Amiri/Amiri, serif;' +
+                'Lexend/Lexend, sans-serif;' +
                 'Verdana',
             fontSize_defaultLabel: '12px',
             font_defaultLabel: 'Arial', // Default font
@@ -343,13 +343,13 @@
                     editorBody.setStyle('padding', '20mm');
                     editorBody.setStyle('box-shadow', '0 0 10px rgba(0,0,0,0.2)');
                     editorBody.setStyle('border', '1px solid #ccc');
-                    
+
                     // Inject CSS into the editor head for body styling context
                     var head = this.document.getHead();
                     head.appendHtml('<style>body{background-color: #f1f5f9 !important;} p{margin-bottom:1em;}</style>');
                 }
             },
-            
+
             // Toolbar - Full Features
             toolbar: [
                 { name: 'document', items: [ 'Source', '-', 'Preview', 'Print' ] },
@@ -365,7 +365,7 @@
                 { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
                 { name: 'tools', items: [ 'Maximize', 'ShowBlocks' ] }
             ],
-            
+
             // Fonts
             font_names: 'Amiri/Amiri, serif;' + CKEDITOR.config.font_names,
             extraAllowedContent: 'style;*[id,rel](*)',
