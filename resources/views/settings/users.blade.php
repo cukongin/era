@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'Manajemen User & Akses')
 
@@ -204,6 +204,37 @@
             <h3 class="font-bold text-primary mb-2">Sinkronisasi Akun Guru</h3>
             <p class="text-sm text-primary/70 mb-0">Daftar guru dibawah ini belum memiliki akun login. Klik "Buat Akun" untuk membuatkan akun guru secara otomatis sesuai NIP/Data Guru.</p>
         </div>
+
+        <!-- Google Sheet Configuration Form (Real-time Login) -->
+        <form action="{{ route('settings.update-sheet-id') }}" method="POST" class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            @csrf
+            <h4 class="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-green-600">settings_ethernet</span>
+                Konfigurasi Login Real-time (Google Sheet)
+            </h4>
+            
+            <div class="bg-blue-50 text-blue-800 p-4 rounded-lg mb-4 text-sm border border-blue-100">
+                <strong>Cara Kerja:</strong> Saat guru login dengan kode, sistem akan langsung mengecek ke Google Sheet ini.
+                <br>Pastikan Sheet disetting <strong>"Anyone with the link can view"</strong>.
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-4 items-end">
+                <div class="flex-1 w-full">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">ID Spreadsheet / Link Google Sheet</label>
+                    <input type="text" name="sheet_id" 
+                           value="{{ \App\Models\GlobalSetting::val('teacher_sheet_id') }}" 
+                           placeholder="Contoh: 1WIshP6qoS8b4KoULTepKCprElBnxsuwLv3OuwHvnKr0" 
+                           class="w-full rounded-lg border-slate-300 focus:ring-primary p-2.5 font-mono text-sm" required>
+                    <p class="text-[10px] text-slate-500 mt-2">
+                        <span class="font-bold">Format Sheet:</span> Kolom A = Nama Guru (Sesuai di Aplikasi), Kolom B = Kode Akses (6 Digit).
+                    </p>
+                </div>
+                <button type="submit" class="bg-slate-900 text-white px-6 py-2.5 rounded-lg font-bold hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-lg h-10">
+                    <span class="material-symbols-outlined text-sm">save</span>
+                    Simpan ID
+                </button>
+            </div>
+        </form>
 
         <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
              <table class="w-full text-left border-collapse">

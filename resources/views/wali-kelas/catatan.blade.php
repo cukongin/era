@@ -108,7 +108,9 @@
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                    <h3 class="text-lg font-semibold leading-6 text-gray-900 mb-4" id="modal-title">Konfigurasi Pesan Otomatis (Magic Notes ðŸª„)</h3>
+                    <h3 class="text-lg font-semibold leading-6 text-gray-900 mb-4 flex items-center gap-2" id="modal-title">
+                        Konfigurasi Pesan Otomatis (Magic Notes <span class="material-symbols-outlined text-purple-500">auto_fix_high</span>)
+                    </h3>
                     <p class="text-sm text-gray-500 mb-6">Sesuaikan template pesan yang akan di-generate berdasarkan rata-rata nilai siswa.</p>
 
                     <div class="space-y-4">

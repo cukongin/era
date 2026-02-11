@@ -19,10 +19,10 @@
         <div class="p-8 pb-6">
             <div class="flex flex-col items-center gap-2 mb-8">
                 <div class="bg-login-primary/10 p-3 rounded-xl mb-2">
-                    <span class="material-symbols-outlined text-login-primary text-4xl">mosque</span>
+                    <span class="material-symbols-outlined text-login-primary text-4xl">admin_panel_settings</span>
                 </div>
-                <h1 class="text-xl font-bold text-slate-900 tracking-tight text-center">E-Rapor Madrasah</h1>
-                <p class="text-sm text-slate-500 text-center">Silakan login untuk masuk sistem</p>
+                <h1 class="text-xl font-bold text-slate-900 tracking-tight text-center">Login Admin</h1>
+                <p class="text-sm text-slate-500 text-center">Masuk dengan Email & Password</p>
             </div>
 
             @if ($errors->any())
@@ -36,7 +36,7 @@
             </div>
             @endif
 
-            <form action="{{ route('login.post') }}" method="POST" class="flex flex-col gap-4">
+            <form action="{{ route('login.admin.post') }}" method="POST" class="flex flex-col gap-4">
                 @csrf
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-bold text-slate-700 uppercase tracking-wide">Email Address</label>
@@ -50,7 +50,7 @@
 
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-bold text-slate-700 uppercase tracking-wide">Password</label>
-                    <input type="password" name="password" class="w-full rounded-lg border-slate-300 focus:border-login-primary focus:ring-login-primary text-sm placeholder-slate-400" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" required>
+                    <input type="password" name="password" class="w-full rounded-lg border-slate-300 focus:border-login-primary focus:ring-login-primary text-sm placeholder-slate-400" placeholder="********" required>
                 </div>
 
                 <div class="flex items-center justify-between mt-1">
@@ -62,9 +62,16 @@
 
                 <button type="submit" class="mt-4 bg-login-primary hover:bg-login-primary-dark text-white font-bold py-2.5 rounded-lg shadow-lg shadow-login-primary/30 transition-all flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined text-sm">login</span>
-                    Log In
+                    Log In Admin
                 </button>
             </form>
+            
+            <div class="mt-6 text-center">
+                <a href="{{ route('login') }}" class="text-xs text-slate-500 hover:text-surface-dark transition-colors flex items-center justify-center gap-1">
+                    <span class="material-symbols-outlined text-sm">key</span>
+                    Masuk dengan Kode
+                </a>
+            </div>
         </div>
         <div class="bg-gray-50 border-t border-gray-100 p-4 text-center">
             <p class="text-xs text-slate-400">Integrated System MI & MTs Diniyah</p>

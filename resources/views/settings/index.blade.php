@@ -1296,7 +1296,7 @@ function confirmReset(e) {
                     placeholder: 'Ketik RESET disini...'
                 },
                 showCancelButton: true,
-                confirmButtonText: 'LEDAKKAN ðŸ’£',
+                confirmButtonText: 'LEDAKKAN',
                 confirmButtonColor: '#d33',
                 showLoaderOnConfirm: true,
                 preConfirm: (text) => {

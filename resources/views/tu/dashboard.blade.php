@@ -40,7 +40,10 @@
             <!-- Welcome Section -->
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div class="flex flex-col gap-2">
-                    <h2 class="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Halo, {{ auth()->user()->name }} ðŸ‘‹</h2>
+                    <h2 class="text-3xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+                        Halo, {{ auth()->user()->name }} 
+                        <span class="material-symbols-outlined text-amber-500 animate-pulse">waving_hand</span>
+                    </h2>
                     <p class="text-slate-500 dark:text-slate-400">
                         Pantau tren performa akademik dan kelola arsip penilaian madrasah.
                     </p>
@@ -314,7 +317,11 @@
                                 <div class="flex flex-col gap-3 h-full relative z-10 overflow-y-auto pr-2 custom-scrollbar">
                                     @forelse($activeStars as $index => $star)
                                         @php
-                                            $medals = ['ðŸ¥‡', 'ðŸ¥ˆ', 'ðŸ¥‰'];
+                                            $medals = [
+                                                '<span class="material-symbols-outlined text-amber-500 text-sm">emoji_events</span>', 
+                                                '<span class="material-symbols-outlined text-slate-400 text-sm">emoji_events</span>', 
+                                                '<span class="material-symbols-outlined text-orange-700 text-sm">emoji_events</span>'
+                                            ];
                                             $medal = $medals[$index] ?? '#' . ($index+1);
                                             $bgClass = $index == 0 ? 'bg-white/20 border-white/40' : 'bg-white/10 border-white/10';
                                         @endphp

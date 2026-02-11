@@ -40,7 +40,9 @@
             <!-- DEBUG PANEL (TEMPORARY) -->
             @if(isset($debugInfo))
             <div class="mt-4 bg-slate-800 text-green-400 p-4 rounded-lg font-mono text-xs overflow-auto border border-slate-700">
-                <p class="font-bold text-white border-b border-slate-600 pb-2 mb-2">ðŸ•µï¸ DEBUG MODE ACTIVATED</p>
+                <p class="font-bold text-white border-b border-slate-600 pb-2 mb-2 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm">bug_report</span> DEBUG MODE ACTIVATED
+                </p>
                 <div class="grid grid-cols-2 gap-2">
                     @foreach($debugInfo as $k => $v)
                         <div class="text-slate-400">{{ $k }}:</div>
@@ -120,7 +122,9 @@
 
     <!-- DEBUG ALERT FOR USER FEEDBACK -->
     <div class="bg-indigo-100 border-l-4 border-indigo-500 text-indigo-700 p-4 mb-4 rounded shadow-sm">
-        <p class="font-bold text-sm">ðŸ•µï¸ DEBUGGING INFO (KELULUSAN) - VISIBLE TO EVERYONE:</p>
+        <p class="font-bold text-sm flex items-center gap-2">
+            <span class="material-symbols-outlined text-sm">bug_report</span> DEBUGGING INFO (KELULUSAN) - VISIBLE TO EVERYONE:
+        </p>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-mono mt-2">
             <div>
                <span class="block font-bold">SETTING MI:</span>
@@ -441,7 +445,7 @@
     <div class="mt-8 mb-4">
         <details class="group bg-slate-50 dark:bg-[#1e2837] border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
             <summary class="flex items-center justify-between p-4 cursor-pointer font-bold text-slate-600 dark:text-slate-400 text-xs uppercase tracking-wider hover:bg-slate-100 dark:hover:bg-[#253041] transition-colors">
-                <span>ðŸ› ï¸ System Logic Trace (Click to Expand)</span>
+                <span class="flex items-center gap-2"><span class="material-symbols-outlined text-sm">build</span> System Logic Trace (Click to Expand)</span>
                 <span class="material-symbols-outlined transform group-open:rotate-180 transition-transform text-slate-400">expand_more</span>
             </summary>
             <div class="p-4 border-t border-slate-200 dark:border-slate-700 font-mono text-xs text-slate-600 dark:text-slate-300 space-y-1">

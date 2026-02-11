@@ -23,7 +23,7 @@
                     <span class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-primary/10 text-primary border border-primary/20 dark:bg-primary/20 dark:text-primary dark:border-primary/20">
                         {{ $kelas->nama_kelas }}
                     </span>
-                    <span class="text-xs text-slate-400">â€¢ Mode Monitoring</span>
+                    <span class="text-xs text-slate-400">&bull; Mode Monitoring</span>
                 </div>
             </div>
         </div>

@@ -31,9 +31,9 @@
                                 <h3 class="font-bold text-slate-700 dark:text-slate-200">{{ $menu->title }}</h3>
                                 <div class="flex items-center gap-2 text-xs text-slate-500">
                                     <span class="bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-[10px] font-mono">{{ $menu->route ?? $menu->url }}</span>
-                                    <span>â€¢</span>
+                                    <span>&bull;</span>
                                     <span>Order: {{ $menu->order }}</span>
-                                    <span>â€¢</span>
+                                    <span>&bull;</span>
                                     <div class="flex gap-1">
                                         @foreach($menu->roles as $role)
                                         <span class="px-1.5 py-0.5 rounded bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary">{{ $role->role }}</span>

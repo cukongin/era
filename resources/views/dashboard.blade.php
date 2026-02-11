@@ -44,7 +44,10 @@
             <!-- Welcome Section -->
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div class="flex flex-col gap-2">
-                    <h2 class="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Selamat Datang, {{ auth()->user()->name }} ðŸ‘‹</h2>
+                    <h2 class="text-3xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+                        Selamat Datang, {{ auth()->user()->name }} 
+                        <span class="material-symbols-outlined text-amber-500 animate-pulse">waving_hand</span>
+                    </h2>
                     <p class="text-slate-500 dark:text-slate-400">
                         Pantau aktivitas akademik Madrasah MI & MTs secara real-time.
                     </p>

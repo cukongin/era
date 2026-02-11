@@ -153,7 +153,7 @@
                 <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                     <span class="material-symbols-outlined text-[18px]">group</span>
                     <span class="text-sm font-medium">{{ $class->anggota_kelas_count }} Siswa</span>
-                    <span class="text-xs text-slate-300 mx-1">â€¢</span>
+                    <span class="text-xs text-slate-300 mx-1">&bull;</span>
                     <span class="text-sm font-medium">{{ $class->pengajar_mapel_count }} Mapel</span>
                 </div>
                 <span class="flex h-2 w-2 rounded-full bg-slate-200 dark:bg-slate-700 relative"></span>

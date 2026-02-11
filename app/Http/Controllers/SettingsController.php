@@ -638,6 +638,36 @@ class SettingsController extends Controller
         return back()->with('success', 'Akun guru berhasil dibuat dan disinkronkan.');
     }
 
+    // Update Google Sheet ID for Real-time Login
+    public function updateSheetId(Request $request)
+    {
+        $request->validate([
+            'sheet_id' => 'required|string'
+        ]);
+
+        // Save to GlobalSettings
+        // Assuming GlobalSetting has a helper or we use the model directly
+        // Based on other methods, it seems we might need to insert/update
+        
+        $key = 'teacher_sheet_id';
+        $value = $request->input('sheet_id');
+
+        // Extract ID if full URL is pasted
+        if (strpos($value, '/d/') !== false) {
+            preg_match('/\/d\/([a-zA-Z0-9-_]+)/', $value, $matches);
+            if (isset($matches[1])) {
+                $value = $matches[1];
+            }
+        }
+
+        \App\Models\GlobalSetting::updateOrCreate(
+            ['key' => $key],
+            ['value' => $value]
+        );
+
+        return back()->with('success', 'ID Google Sheet berhasil disimpan.');
+    }
+
     public function generateUserAccount($id)
     {
         $user = \App\Models\User::with(['data_guru', 'data_siswa'])->findOrFail($id);

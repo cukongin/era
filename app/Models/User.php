@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role', // Added role
+        'access_code', // Login Code from Google Sheet
     ];
 
     /**

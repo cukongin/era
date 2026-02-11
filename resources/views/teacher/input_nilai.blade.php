@@ -19,7 +19,7 @@
                 @endif
             </h1>
             <p class="text-sm text-slate-500">
-                Periode: <strong class="text-slate-800 dark:text-slate-300">{{ $periode->nama_periode }}</strong> â€¢
+                Periode: <strong class="text-slate-800 dark:text-slate-300">{{ $periode->nama_periode }}</strong> &bull;
                 KKM: <strong class="text-red-500">{{ $nilaiKkm }}</strong>
             </p>
         </div>

@@ -78,7 +78,7 @@
             </div>
             <h1 class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white leading-tight">Input Ketidakhadiran & Kepribadian</h1>
             <p class="text-sm text-slate-500 mt-1">
-                Kelas: <strong>{{ $kelas->nama_kelas }}</strong> â€¢ Periode: <strong>{{ $periode->nama_periode }}</strong>
+                Kelas: <strong>{{ $kelas->nama_kelas }}</strong> &bull; Periode: <strong>{{ $periode->nama_periode }}</strong>
             </p>
         </div>
 

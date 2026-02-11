@@ -235,7 +235,7 @@
                      @if(!empty($stat->fail_reasons))
                         <div class="text-xs text-red-600 bg-red-50 p-2 rounded border border-red-100">
                             @foreach($stat->fail_reasons as $reason)
-                                <div>â€¢ {{ $reason }}</div>
+                                <div>&bull; {{ $reason }}</div>
                             @endforeach
                         </div>
                      @endif
@@ -344,7 +344,7 @@
                             @if(!empty($stat->fail_reasons))
                                 <div class="text-red-600 mb-1">
                                     @foreach($stat->fail_reasons as $reason)
-                                        <div>â€¢ {{ $reason }}</div>
+                                        <div>&bull; {{ $reason }}</div>
                                     @endforeach
                                 </div>
                             @endif

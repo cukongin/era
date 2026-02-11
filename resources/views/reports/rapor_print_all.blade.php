@@ -130,7 +130,7 @@
             </div>
             <div>
                 <h1 class="text-lg font-bold leading-tight">Cetak Massal Rapor</h1>
-                <p class="text-xs text-gray-500">Kelas {{ $class->nama_kelas }} â€¢ {{ count($reports) }} Siswa</p>
+                <p class="text-xs text-gray-500">Kelas {{ $class->nama_kelas }} &bull; {{ count($reports) }} Siswa</p>
             </div>
         </div>
         <div class="flex items-center gap-2">

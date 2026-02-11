@@ -125,7 +125,7 @@
             </div>
             <div>
                 <h1 class="text-lg font-bold leading-tight">Sistem Rapor Terpadu</h1>
-                <p class="text-xs text-gray-500">Pratinjau Cetak â€¢ Format Arial Compact</p>
+                <p class="text-xs text-gray-500">Pratinjau Cetak &bull; Format Arial Compact</p>
             </div>
         </div>
         <div class="flex items-center gap-2">

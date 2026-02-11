@@ -190,7 +190,7 @@
                                     </div>
                                     <div>
                                         <p class="font-medium text-slate-900 dark:text-white">{{ $pm->mapel->nama_mapel }}</p>
-                                        <p class="text-xs text-slate-500">{{ $pm->mapel->kode }} â€¢ {{ $pm->mapel->kategori }}</p>
+                                        <p class="text-xs text-slate-500">{{ $pm->mapel->kode }} &bull; {{ $pm->mapel->kategori }}</p>
                                     </div>
                                 </div>
                             </td>

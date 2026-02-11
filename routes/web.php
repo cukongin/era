@@ -24,9 +24,16 @@ use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\SettingsController;
 
 // Auth Routes (Public)
-// SECURITY: Login URL changed from /login to /portal-masuk
-Route::get('/portal-masuk', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/portal-masuk', [AuthController::class, 'login'])->middleware('throttle:60,1')->name('login.post'); // Relaxed for Localhost
+// Auth Routes (Public)
+// 1. Code Login (Primary)
+use App\Http\Controllers\LoginCodeController;
+Route::get('/portal-masuk', [LoginCodeController::class, 'showLoginForm'])->name('login');
+Route::post('/portal-masuk', [LoginCodeController::class, 'login'])->middleware('throttle:60,1')->name('login.post');
+
+// 2. Admin Login (Email/Password) - Backup
+Route::get('/portal-admin', [AuthController::class, 'showLogin'])->name('login.admin');
+Route::post('/portal-admin', [AuthController::class, 'login'])->middleware('throttle:60,1')->name('login.admin.post');
+
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Protected Routes (Login Required)
@@ -68,6 +75,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('settings/users/sync-teacher', [App\Http\Controllers\SettingsController::class, 'syncTeacherAccount'])->name('settings.users.sync-teacher');
 
         Route::get('/settings', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
+        Route::post('/settings/update-sheet-id', [App\Http\Controllers\SettingsController::class, 'updateSheetId'])->name('settings.update-sheet-id');
 
         
         // Monitoring (Moved to Shared Group)

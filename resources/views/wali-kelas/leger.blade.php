@@ -14,7 +14,7 @@
             </div>
             <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Leger Nilai Kelas {{ $kelas->nama_kelas }}</h1>
             <p class="text-sm text-slate-500">
-                Periode: <strong>{{ $periode->nama_periode }}</strong> â€¢ Total Siswa: <strong>{{ $students->count() }}</strong>
+                Periode: <strong>{{ $periode->nama_periode }}</strong> &bull; Total Siswa: <strong>{{ $students->count() }}</strong>
             </p>
         </div>
         <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
@@ -129,7 +129,7 @@
                         <h4 class="font-bold text-slate-900 dark:text-white line-clamp-1">{{ $ak->siswa->nama_lengkap }}</h4>
                         <div class="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
                             <span>{{ $ak->siswa->nis_lokal }}</span>
-                            <span class="text-slate-300">â€¢</span>
+                            <span class="text-slate-300">&bull;</span>
                             <span>{{ $ak->siswa->jenis_kelamin }}</span>
                         </div>
                      </div>

@@ -33,8 +33,8 @@
             <h3 class="font-bold text-purple-800 dark:text-purple-300 text-sm">Mode Analisa Tahunan Aktif</h3>
             <p class="text-xs text-purple-600 dark:text-purple-400 mt-1">
                 Data yang ditampilkan adalah <strong>akumulasi dari semua periode</strong> di tahun ajaran ini.
-                <br>â€¢ <strong>Total Rata-rata:</strong> Rata-rata dari nilai akhir setiap mapel (Lintas Periode).
-                <br>â€¢ <strong>Kehadiran:</strong> Total jumlah ketidakhadiran (Sakit/Izin/Alpa) selama satu tahun penuh.
+                <br>&bull; <strong>Total Rata-rata:</strong> Rata-rata dari nilai akhir setiap mapel (Lintas Periode).
+                <br>&bull; <strong>Kehadiran:</strong> Total jumlah ketidakhadiran (Sakit/Izin/Alpa) selama satu tahun penuh.
             </p>
         </div>
     </div>
@@ -78,7 +78,9 @@
             @if(isset($podium[0]))
             <div class="flex flex-col items-center group z-10">
                 <div class="relative mb-3 transform scale-110">
-                    <div class="absolute -top-10 left-1/2 -translate-x-1/2 text-4xl animate-bounce">ðŸ‘‘</div>
+                    <div class="absolute -top-10 left-1/2 -translate-x-1/2 text-4xl animate-bounce">
+                        <span class="material-symbols-outlined text-4xl text-amber-400">emoji_events</span>
+                    </div>
                     <div class="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-amber-400 overflow-hidden shadow-2xl bg-white ring-4 ring-amber-100/50">
                          <div class="w-full h-full bg-amber-50 flex items-center justify-center text-4xl font-bold text-amber-300">
                             {{ substr($podium[0]['student']->nama_lengkap, 0, 1) }}
@@ -95,7 +97,7 @@
                     </div>
                     @if(isset($podium[0]['tie_reason']))
                          <div class="text-[10px] text-amber-600 mt-1 font-medium animate-pulse">
-                            ðŸ† {{ $podium[0]['tie_reason'] }}
+                            <span class="material-symbols-outlined text-sm text-yellow-500">trophy</span> {{ $podium[0]['tie_reason'] }}
                         </div>
                     @endif
                 </div>
@@ -175,7 +177,7 @@
             </h3>
             <div class="space-y-2">
                 @foreach($anomalies as $badStudent)
-                <div onclick="showAnalyticsModal('anomaly', 'Deteksi Paradoks âš ï¸', '{{ $badStudent['student']->nama_lengkap }} ada di Top 5 tapi Alpha Tinggi.', 'Rank #{{ $badStudent['rank'] }} dengan {{ $badStudent['alpha'] }} Alpha. Cek alasan bolos!')"
+                <div onclick="showAnalyticsModal('anomaly', 'Deteksi Paradoks', '{{ $badStudent['student']->nama_lengkap }} ada di Top 5 tapi Alpha Tinggi.', 'Rank #{{ $badStudent['rank'] }} dengan {{ $badStudent['alpha'] }} Alpha. Cek alasan bolos!')"
                      class="bg-white/80 dark:bg-[#121c16]/50 p-2 rounded-lg border border-amber-200/50 flex justify-between items-center cursor-pointer hover:bg-amber-100 transition-colors">
                     <div>
                         <div class="font-bold text-slate-800 dark:text-white text-sm">
@@ -231,16 +233,16 @@
                              <!-- Mobile Trend Indicator -->
                             @if(isset($data['trend_status']))
                                 @if($data['trend_status'] == 'rising')
-                                    <button onclick="showAnalyticsModal('rising', 'Rocket Star ðŸš€', '{{ $data['student']->nama_lengkap }} melesat naik {{ $data['trend_diff'] }} peringkat!', 'Dari Ranking #{{ $data['prev_rank'] }} ke #{{ $data['rank'] }}')" 
+                                    <button onclick="showAnalyticsModal('rising', 'Rocket Star', '{{ $data['student']->nama_lengkap }} melesat naik {{ $data['trend_diff'] }} peringkat!', 'Dari Ranking #{{ $data['prev_rank'] }} ke #{{ $data['rank'] }}')" 
                                         class="material-symbols-outlined text-emerald-500 text-lg animate-bounce">rocket_launch</button>
                                 @elseif($data['trend_status'] == 'falling')
-                                    <button onclick="showAnalyticsModal('falling', 'Perlu Evaluasi ðŸ“‰', '{{ $data['student']->nama_lengkap }} turun {{ abs($data['trend_diff']) }} peringkat!', 'Dari Ranking #{{ $data['prev_rank'] }} anjlok ke #{{ $data['rank'] }}')" 
+                                    <button onclick="showAnalyticsModal('falling', 'Perlu Evaluasi', '{{ $data['student']->nama_lengkap }} turun {{ abs($data['trend_diff']) }} peringkat!', 'Dari Ranking #{{ $data['prev_rank'] }} anjlok ke #{{ $data['rank'] }}')" 
                                         class="material-symbols-outlined text-rose-500 text-lg">trending_down</button>
                                 @elseif($data['trend_status'] == 'comeback')
-                                    <button onclick="showAnalyticsModal('rising', 'Raja Comeback ðŸ‘‘', '{{ $data['student']->nama_lengkap }} berhasil bangkit!', 'Awal: Rank #{{ $data['start_rank'] }} âž” Akhir: Rank #{{ $data['end_rank'] }}')" 
+                                    <button onclick="showAnalyticsModal('rising', 'Raja Comeback', '{{ $data['student']->nama_lengkap }} berhasil bangkit!', 'Awal: Rank #{{ $data['start_rank'] }} ➔ Akhir: Rank #{{ $data['end_rank'] }}')" 
                                         class="material-symbols-outlined text-purple-500 text-lg animate-pulse">crown</button>
                                 @elseif($data['trend_status'] == 'dropped')
-                                    <button onclick="showAnalyticsModal('falling', 'Early Bird ðŸ“‰', '{{ $data['student']->nama_lengkap }} turun di akhir.', 'Awal: Rank #{{ $data['start_rank'] }} âž” Akhir: Rank #{{ $data['end_rank'] }}')" 
+                                    <button onclick="showAnalyticsModal('falling', 'Early Bird', '{{ $data['student']->nama_lengkap }} turun di akhir.', 'Awal: Rank #{{ $data['start_rank'] }} ➔ Akhir: Rank #{{ $data['end_rank'] }}')" 
                                         class="material-symbols-outlined text-orange-500 text-lg">history_toggle_off</button>
                                 @endif
                             @endif
@@ -263,7 +265,7 @@
                 <!-- Insight Badge (Full Width on Mobile) -->
                  @if(!empty($data['insight']))
                  <div class="mt-3 pt-3 border-t border-slate-50 dark:border-slate-800">
-                     <div onclick="showAnalyticsModal('insight', 'Detail Predikat Siswa', '{{ $data['insight'] }}', 'Total Nilai: {{ number_format($data['total'], 2) }} â€¢ Rata-rata: {{ number_format($data['avg'], 2) }} â€¢ Alpha: {{ $data['alpha'] }}')"
+                     <div onclick="showAnalyticsModal('insight', 'Detail Predikat Siswa', '{{ $data['insight'] }}', 'Total Nilai: {{ number_format($data['total'], 2) }} &bull; Rata-rata: {{ number_format($data['avg'], 2) }} &bull; Alpha: {{ $data['alpha'] }}')"
                         class="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold border cursor-pointer hover:brightness-95 transition-all
                         {{ str_contains($data['insight'], 'Kalah') || str_contains($data['insight'], 'Perhatian')
                             ? 'bg-red-50 text-red-700 border-red-200' 
@@ -319,30 +321,30 @@
                                 <!-- Trend Indicator -->
                                 @if(isset($data['trend_status']))
                                     @if($data['trend_status'] == 'rising')
-                                        <button onclick="showAnalyticsModal('rising', 'Rocket Star ðŸš€', '{{ $data['student']->nama_lengkap }} melesat naik {{ $data['trend_diff'] }} peringkat!', 'Dari Ranking #{{ $data['prev_rank'] }} ke #{{ $data['rank'] }}')" 
+                                        <button onclick="showAnalyticsModal('rising', 'Rocket Star', '{{ $data['student']->nama_lengkap }} melesat naik {{ $data['trend_diff'] }} peringkat!', 'Dari Ranking #{{ $data['prev_rank'] }} ke #{{ $data['rank'] }}')" 
                                             class="material-symbols-outlined text-emerald-500 text-lg animate-bounce cursor-pointer hover:scale-125 transition-transform" 
                                             title="Klik untuk detail">rocket_launch</button>
                                     @elseif($data['trend_status'] == 'falling')
-                                        <button onclick="showAnalyticsModal('falling', 'Perlu Evaluasi ðŸ“‰', '{{ $data['student']->nama_lengkap }} turun {{ abs($data['trend_diff']) }} peringkat.', 'Dari Ranking #{{ $data['prev_rank'] }} anjlok ke #{{ $data['rank'] }}')" 
+                                        <button onclick="showAnalyticsModal('falling', 'Perlu Evaluasi', '{{ $data['student']->nama_lengkap }} turun {{ abs($data['trend_diff']) }} peringkat.', 'Dari Ranking #{{ $data['prev_rank'] }} anjlok ke #{{ $data['rank'] }}')" 
                                             class="material-symbols-outlined text-rose-500 text-lg cursor-pointer hover:scale-125 transition-transform" 
                                             title="Klik untuk detail">trending_down</button>
                                     
                                     {{-- Annual Trends --}}
                                     @elseif($data['trend_status'] == 'comeback')
-                                         <button onclick="showAnalyticsModal('rising', 'Raja Comeback ðŸ‘‘', '{{ $data['student']->nama_lengkap }} berhasil bangkit dari peringkat bawah!', 'Awal: Rank #{{ $data['start_rank'] }} âž” Akhir: Rank #{{ $data['end_rank'] }}')" 
+                                         <button onclick="showAnalyticsModal('rising', 'Raja Comeback', '{{ $data['student']->nama_lengkap }} berhasil bangkit dari peringkat bawah!', 'Awal: Rank #{{ $data['start_rank'] }} ➔ Akhir: Rank #{{ $data['end_rank'] }}')" 
                                             class="material-symbols-outlined text-purple-500 text-lg animate-pulse cursor-pointer hover:scale-125 transition-transform" 
                                             title="Klik untuk detail">crown</button>
                                     @elseif($data['trend_status'] == 'dropped')
-                                         <button onclick="showAnalyticsModal('falling', 'Early Bird ðŸ“‰', '{{ $data['student']->nama_lengkap }} mengalami penurunan performa di akhir tahun.', 'Awal: Rank #{{ $data['start_rank'] }} âž” Akhir: Rank #{{ $data['end_rank'] }}')" 
+                                         <button onclick="showAnalyticsModal('falling', 'Early Bird', '{{ $data['student']->nama_lengkap }} mengalami penurunan performa di akhir tahun.', 'Awal: Rank #{{ $data['start_rank'] }} ➔ Akhir: Rank #{{ $data['end_rank'] }}')" 
                                             class="material-symbols-outlined text-orange-500 text-lg cursor-pointer hover:scale-125 transition-transform" 
                                             title="Klik untuk detail">history_toggle_off</button>
                                     @elseif($data['trend_status'] == 'stable_high')
-                                         <button onclick="showAnalyticsModal('stable', 'Dewa Stabil ðŸ›¡ï¸', '{{ $data['student']->nama_lengkap }} konsisten di papan atas sepanjang tahun.', 'Selalu berada di Top Tier peringkat kelas.')" 
+                                         <button onclick="showAnalyticsModal('stable', 'Dewa Stabil', '{{ $data['student']->nama_lengkap }} konsisten di papan atas sepanjang tahun.', 'Selalu berada di Top Tier peringkat kelas.')" 
                                             class="material-symbols-outlined text-blue-500 text-lg cursor-pointer hover:scale-125 transition-transform" 
                                             title="Klik untuk detail">shield</button>
                                     
                                     @elseif($data['trend_status'] == 'stable')
-                                         <button onclick="showAnalyticsModal('stable', 'Performa Stabil âš“', '{{ $data['student']->nama_lengkap }} mempertahankan posisinya.', 'Tidak ada perubahan peringkat yang signifikan.')" 
+                                         <button onclick="showAnalyticsModal('stable', 'Performa Stabil', '{{ $data['student']->nama_lengkap }} mempertahankan posisinya.', 'Tidak ada perubahan peringkat yang signifikan.')" 
                                             class="material-symbols-outlined text-slate-400 text-lg cursor-pointer hover:scale-125 transition-transform" 
                                             title="Klik untuk detail">remove</button>
                                             
@@ -399,7 +401,7 @@
                         </td>
                         <td class="px-6 py-4 text-center">
                             @if(!empty($data['insight']))
-                                <div onclick="showAnalyticsModal('insight', 'Detail Predikat Siswa', '{{ $data['insight'] }}', 'Total Nilai: {{ number_format($data['total'], 2) }} â€¢ Alpha: {{ $data['alpha'] }} â€¢ Sikap: {{ $data['personality'] ?? '-' }}')"
+                                <div onclick="showAnalyticsModal('insight', 'Detail Predikat Siswa', '{{ $data['insight'] }}', 'Total Nilai: {{ number_format($data['total'], 2) }} &bull; Alpha: {{ $data['alpha'] }} &bull; Sikap: {{ $data['personality'] ?? '-' }}')"
                                     class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border max-w-[200px] leading-tight cursor-pointer hover:scale-105 transition-transform shadow-sm select-none
                                     {{ str_contains($data['insight'], 'Kalah') || str_contains($data['insight'], 'Perhatian') || str_contains($data['insight'], 'Awas')
                                         ? 'bg-red-50 text-red-700 border-red-200' 

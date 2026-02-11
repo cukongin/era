@@ -289,7 +289,7 @@
                                 <h4 class="font-bold text-slate-900 dark:text-white line-clamp-1">{{ $ak->siswa->nama_lengkap }}</h4>
                                 <div class="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
                                     <span>{{ $ak->siswa->nis_lokal }}</span>
-                                    <span class="text-slate-300">â€¢</span>
+                                    <span class="text-slate-300">&bull;</span>
                                     <span>{{ $ak->siswa->jenis_kelamin }}</span>
                                 </div>
                              </div>

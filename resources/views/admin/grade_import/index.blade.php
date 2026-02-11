@@ -6,7 +6,10 @@
 <div class="space-y-6">
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Import Data Global</h1>
+            <h1 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 flex items-center gap-2">
+                <span class="material-symbols-outlined text-blue-600 dark:text-blue-400">cloud_upload</span>
+                Import Data Global
+            </h1>
             <p class="text-slate-500">Import Nilai Mapel, Absensi, dan Sikap sekaligus untuk semua kelas.</p>
         </div>
     </div>
