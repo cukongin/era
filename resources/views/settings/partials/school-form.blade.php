@@ -1,4 +1,4 @@
-<form action="{{ route('settings.school.update') }}" method="POST" enctype="multipart/form-data">
+﻿<form action="{{ route('settings.school.update') }}" method="POST" enctype="multipart/form-data">
     @csrf
     <input type="hidden" name="jenjang" value="{{ $jenjang }}">
     
@@ -6,7 +6,7 @@
         <!-- Left: Logo & Basic Info -->
         <div class="md:col-span-1 flex flex-col gap-6">
             <!-- Logo Card -->
-            <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 flex flex-col items-center">
+            <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 flex flex-col items-center">
                 <div class="w-32 h-32 rounded-lg bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center mb-4 overflow-hidden relative group">
                     @if($school->logo)
                         <img src="{{ asset($school->logo) }}" class="w-full h-full object-contain p-2">
@@ -23,7 +23,7 @@
             </div>
 
             <!-- Codes -->
-            <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 space-y-4">
+            <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase mb-1">NSM</label>
                     <input type="text" name="nsm" value="{{ $school->nsm }}" class="w-full rounded-lg border-slate-300 dark:border-slate-700 text-sm focus:ring-primary focus:border-primary">
@@ -36,7 +36,7 @@
         </div>
 
         <!-- Right: Details -->
-        <div class="md:col-span-2 bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div class="md:col-span-2 bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
             <div class="flex items-center gap-2 px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
                 <span class="material-symbols-outlined text-primary">domain</span>
                 <h3 class="font-bold text-slate-900 dark:text-white">Detail Instansi ({{ $jenjang }})</h3>
@@ -105,3 +105,4 @@
         </div>
     </div>
 </form>
+

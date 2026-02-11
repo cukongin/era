@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Manajemen Menu')
 
@@ -16,7 +16,7 @@
     </div>
 
     <!-- Menu List -->
-    <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden" x-data="{ expanded: [] }">
+    <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden" x-data="{ expanded: [] }">
         <ul class="divide-y divide-slate-100 dark:divide-slate-800">
             @foreach($menus as $menu)
             <li class="group">
@@ -31,9 +31,9 @@
                                 <h3 class="font-bold text-slate-700 dark:text-slate-200">{{ $menu->title }}</h3>
                                 <div class="flex items-center gap-2 text-xs text-slate-500">
                                     <span class="bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-[10px] font-mono">{{ $menu->route ?? $menu->url }}</span>
-                                    <span>•</span>
+                                    <span>â€¢</span>
                                     <span>Order: {{ $menu->order }}</span>
-                                    <span>•</span>
+                                    <span>â€¢</span>
                                     <div class="flex gap-1">
                                         @foreach($menu->roles as $role)
                                         <span class="px-1.5 py-0.5 rounded bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary">{{ $role->role }}</span>
@@ -119,7 +119,7 @@
     <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm" @click="open = false" x-transition.opacity></div>
 
     <div class="fixed inset-0 flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-[#1a2e22] w-full max-w-2xl rounded-2xl shadow-xl overflow-hidden" x-transition.scale>
+        <div class="bg-white dark:bg-surface-dark w-full max-w-2xl rounded-2xl shadow-xl overflow-hidden" x-transition.scale>
             <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
                 <h3 class="font-bold text-lg text-slate-800 dark:text-white" x-text="isEdit ? 'Edit Menu' : 'Tambah Menu'"></h3>
                 <button @click="open = false" class="text-slate-400 hover:text-slate-600"><span class="material-symbols-outlined">close</span></button>
@@ -236,3 +236,4 @@
     </div>
 </div>
 @endsection
+

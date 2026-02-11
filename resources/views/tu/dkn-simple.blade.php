@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Monitor DKN - ' . $kelas->nama_kelas)
 
@@ -10,7 +10,7 @@
 <div class="flex-1 flex flex-col h-full overflow-hidden relative bg-slate-50 dark:bg-slate-900">
 
     <!-- Top Bar -->
-    <div class="px-6 py-5 bg-white dark:bg-[#1a2e22] border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row justify-between md:items-center gap-4 z-20 shadow-sm">
+    <div class="px-6 py-5 bg-white dark:bg-surface-dark border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row justify-between md:items-center gap-4 z-20 shadow-sm">
         <div class="flex items-center gap-4">
             <a href="{{ route('tu.dkn.index') }}" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-primary transition-all">
                 <span class="material-symbols-outlined">arrow_back</span>
@@ -23,7 +23,7 @@
                     <span class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-primary/10 text-primary border border-primary/20 dark:bg-primary/20 dark:text-primary dark:border-primary/20">
                         {{ $kelas->nama_kelas }}
                     </span>
-                    <span class="text-xs text-slate-400">• Mode Monitoring</span>
+                    <span class="text-xs text-slate-400">â€¢ Mode Monitoring</span>
                 </div>
             </div>
         </div>
@@ -101,7 +101,7 @@
 
     <!-- Table Container -->
     <div class="flex-1 overflow-hidden px-4 pb-4 md:px-6 md:pb-6" x-data>
-        <div class="border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 bg-white dark:bg-[#1a2e22] relative h-full flex flex-col overflow-hidden">
+        <div class="border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 bg-white dark:bg-surface-dark relative h-full flex flex-col overflow-hidden">
             <div class="overflow-auto flex-1 custom-scrollbar">
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-slate-50 text-slate-700 sticky top-0 z-40 shadow-sm border-b border-slate-300">
@@ -115,7 +115,7 @@
                                     <div class="text-[11px] font-bold text-slate-700 truncate max-w-[120px]" title="{{ $mapel->nama_mapel }}">{{ $mapel->nama_mapel }}</div>
                                 </th>
                             @endforeach
-                            <th rowspan="2" class="p-3 text-center text-xs font-bold uppercase border-l border-slate-200 bg-slate-50 md:sticky md:right-[100px] z-40 min-w-[80px] shadow-[-4px_0_8px_rgba(0,0,0,0.05)]">Rata²</th>
+                            <th rowspan="2" class="p-3 text-center text-xs font-bold uppercase border-l border-slate-200 bg-slate-50 md:sticky md:right-[100px] z-40 min-w-[80px] shadow-[-4px_0_8px_rgba(0,0,0,0.05)]">RataÂ²</th>
                             <th rowspan="2" class="p-3 text-center text-xs font-bold uppercase border-l border-slate-200 bg-slate-50 md:sticky md:right-0 z-40 min-w-[100px]">Status</th>
                         </tr>
                         <tr>
@@ -129,10 +129,10 @@
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                         @forelse($dknData as $index => $row)
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors group">
-                                <td class="p-3 text-center text-xs font-bold text-slate-500 border-r border-slate-100 dark:border-slate-700 md:sticky md:left-0 bg-white dark:bg-[#1a2e22] z-30 group-hover:bg-slate-50 dark:group-hover:bg-slate-700/30">
+                                <td class="p-3 text-center text-xs font-bold text-slate-500 border-r border-slate-100 dark:border-slate-700 md:sticky md:left-0 bg-white dark:bg-surface-dark z-30 group-hover:bg-slate-50 dark:group-hover:bg-slate-700/30">
                                     {{ $index + 1 }}
                                 </td>
-                                <td class="p-3 border-r border-slate-100 dark:border-slate-700 md:sticky md:left-12 bg-white dark:bg-[#1a2e22] z-30 shadow-[4px_0_8px_rgba(0,0,0,0.03)] group-hover:bg-slate-50 dark:group-hover:bg-slate-700/30">
+                                <td class="p-3 border-r border-slate-100 dark:border-slate-700 md:sticky md:left-12 bg-white dark:bg-surface-dark z-30 shadow-[4px_0_8px_rgba(0,0,0,0.03)] group-hover:bg-slate-50 dark:group-hover:bg-slate-700/30">
                                     <div class="flex flex-col">
                                         <span class="font-bold text-sm text-slate-800 dark:text-white truncate max-w-[150px] md:max-w-[200px]" title="{{ $row['student']->nama_lengkap }}">
                                             {{ $row['student']->nama_lengkap }}
@@ -186,7 +186,7 @@
                                     {{ number_format($avg, 2) }}
                                 </td>
 
-                                <td class="p-3 text-center border-l border-slate-100 dark:border-slate-700 md:sticky md:right-0 z-30 bg-white dark:bg-[#1a2e22] group-hover:bg-slate-50 dark:group-hover:bg-slate-700/30">
+                                <td class="p-3 text-center border-l border-slate-100 dark:border-slate-700 md:sticky md:right-0 z-30 bg-white dark:bg-surface-dark group-hover:bg-slate-50 dark:group-hover:bg-slate-700/30">
                                      @if($avg > 0)
                                         @if($isPass)
                                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
@@ -216,3 +216,4 @@
     </div>
 </div>
 @endsection
+

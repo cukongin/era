@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Preview Import Nilai')
 
@@ -32,7 +32,7 @@
         @csrf
         <input type="hidden" name="import_key" value="{{ $importKey }}">
 
-        <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+        <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
             <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50/50">
                 <div>
                     <h3 class="font-bold text-slate-800 dark:text-white">Data Terbaca: {{ count($parsedData) }} Siswa</h3>
@@ -180,7 +180,7 @@
             <!-- Mobile Card View -->
             <div class="md:hidden flex flex-col gap-4 p-4">
                 @foreach($parsedData as $idx => $row)
-                <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm" x-data="{ expanded: false }">
+                <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm" x-data="{ expanded: false }">
                     <div class="p-4 flex items-center gap-3 cursor-pointer" @click="expanded = !expanded">
                          <div class="w-8 h-8 flex-shrink-0 bg-slate-100 text-slate-600 rounded-lg flex items-center justify-center font-bold text-xs">
                              {{ $idx + 1 }}
@@ -255,3 +255,4 @@
     </form>
 </div>
 @endsection
+

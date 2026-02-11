@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Pengaturan Penilaian')
 
@@ -24,7 +24,7 @@
     <div class="grid grid-cols-1 gap-8">
 
         <!-- 1. Pengaturan Periode (Akses Input) -->
-        <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+        <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">
                 <div>
                     <h3 class="font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
@@ -59,7 +59,7 @@
         </div>
 
         <!-- 2. Pengaturan Bobot Nilai -->
-        <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+        <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">
                 <div>
                      <h3 class="font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
@@ -261,7 +261,7 @@
         </div>
 
         <!-- 3. Batas KKM -->
-        <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+        <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">
                 <div>
                      <h3 class="font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
@@ -351,3 +351,4 @@
     }
 </script>
 @endsection
+

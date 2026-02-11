@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Leger Nilai - ' . $kelas->nama_kelas)
 
@@ -14,7 +14,7 @@
             </div>
             <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Leger Nilai Kelas {{ $kelas->nama_kelas }}</h1>
             <p class="text-sm text-slate-500">
-                Periode: <strong>{{ $periode->nama_periode }}</strong> • Total Siswa: <strong>{{ $students->count() }}</strong>
+                Periode: <strong>{{ $periode->nama_periode }}</strong> â€¢ Total Siswa: <strong>{{ $students->count() }}</strong>
             </p>
         </div>
         <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
@@ -28,7 +28,7 @@
     </div>
 
     <!-- Desktop Leger Container -->
-    <div class="hidden md:block bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col h-[75vh]">
+    <div class="hidden md:block bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col h-[75vh]">
         <div class="overflow-auto flex-1 relative">
             <table class="w-full text-left text-sm border-collapse">
                 <thead class="bg-slate-50 dark:bg-slate-800/50 uppercase text-xs font-bold text-slate-500 sticky top-0 z-20">
@@ -60,8 +60,8 @@
                         $countMapel = 0;
                     @endphp
                     <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30">
-                        <td class="px-4 py-3 border-r border-slate-100 dark:border-slate-800 sticky left-0 bg-white dark:bg-[#1a2e22] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] text-center">{{ $index + 1 }}</td>
-                        <td class="px-4 py-3 border-r border-slate-100 dark:border-slate-800 sticky left-[50px] bg-white dark:bg-[#1a2e22] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] font-medium text-slate-900 dark:text-white truncate max-w-[250px]">
+                        <td class="px-4 py-3 border-r border-slate-100 dark:border-slate-800 sticky left-0 bg-white dark:bg-surface-dark z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] text-center">{{ $index + 1 }}</td>
+                        <td class="px-4 py-3 border-r border-slate-100 dark:border-slate-800 sticky left-[50px] bg-white dark:bg-surface-dark z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] font-medium text-slate-900 dark:text-white truncate max-w-[250px]">
                             {{ $ak->siswa->nama_lengkap }}
                              <div class="text-[10px] text-slate-400 font-normal">{{ $ak->siswa->nis_lokal }}</div>
                         </td>
@@ -129,7 +129,7 @@
                         <h4 class="font-bold text-slate-900 dark:text-white line-clamp-1">{{ $ak->siswa->nama_lengkap }}</h4>
                         <div class="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
                             <span>{{ $ak->siswa->nis_lokal }}</span>
-                            <span class="text-slate-300">•</span>
+                            <span class="text-slate-300">â€¢</span>
                             <span>{{ $ak->siswa->jenis_kelamin }}</span>
                         </div>
                      </div>
@@ -152,7 +152,7 @@
             </div>
 
             <!-- Detail Accordion (Hidden by default) -->
-            <div x-show="expanded" x-collapse style="display: none;" class="border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-[#1a2e22] rounded-b-xl p-4">
+            <div x-show="expanded" x-collapse style="display: none;" class="border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-surface-dark rounded-b-xl p-4">
                 <div class="grid grid-cols-1 gap-2">
                     <div class="grid grid-cols-12 text-[10px] font-bold text-slate-400 uppercase mb-1 px-2">
                         <div class="col-span-8">Mata Pelajaran</div>
@@ -219,3 +219,4 @@
     }
 </style>
 @endsection
+

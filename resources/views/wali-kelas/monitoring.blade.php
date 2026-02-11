@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Monitoring Nilai')
 
@@ -150,7 +150,7 @@
                 // Mobile Card Style
                 $cardBorder = $isSafe ? 'border-slate-200 dark:border-slate-700' : 'border-amber-300 dark:border-amber-700/50 bg-amber-50/50 dark:bg-amber-900/10';
             @endphp
-            <div class="bg-white dark:bg-[#1a2e22] rounded-xl border {{ $cardBorder }} shadow-sm p-4 flex flex-col gap-4">
+            <div class="bg-white dark:bg-surface-dark rounded-xl border {{ $cardBorder }} shadow-sm p-4 flex flex-col gap-4">
                 <!-- Header: Mapel & Status -->
                 <div class="flex justify-between items-start">
                     <div class="flex flex-col">
@@ -204,7 +204,7 @@
     </div>
 
     <!-- DESKTOP TABLE VIEW -->
-    <div class="hidden md:block bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+    <div class="hidden md:block bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left text-sm whitespace-nowrap">
                 <thead class="uppercase tracking-wider border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-xs font-semibold text-slate-500">
@@ -283,3 +283,4 @@
     </div>
 </div>
 @endsection
+

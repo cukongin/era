@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Catatan Wali Kelas - ' . $kelas->nama_kelas)
 
@@ -74,7 +74,7 @@
                     $note = $catatanRows[$ak->id_siswa] ?? null; // Use correct variable from controller
                     $avg = $averages[$ak->id_siswa] ?? 0;
                 @endphp
-                <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-5 hover:border-primary transition-colors student-card" data-id="{{ $ak->id_siswa }}" data-avg="{{ $avg }}">
+                <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-5 hover:border-primary transition-colors student-card" data-id="{{ $ak->id_siswa }}" data-avg="{{ $avg }}">
                     <div class="flex justify-between items-start mb-3">
                         <div>
                              <h3 class="font-bold text-slate-900 dark:text-white">{{ $ak->siswa->nama_lengkap }}</h3>
@@ -108,7 +108,7 @@
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                    <h3 class="text-lg font-semibold leading-6 text-gray-900 mb-4" id="modal-title">Konfigurasi Pesan Otomatis (Magic Notes 🪄)</h3>
+                    <h3 class="text-lg font-semibold leading-6 text-gray-900 mb-4" id="modal-title">Konfigurasi Pesan Otomatis (Magic Notes ðŸª„)</h3>
                     <p class="text-sm text-gray-500 mb-6">Sesuaikan template pesan yang akan di-generate berdasarkan rata-rata nilai siswa.</p>
 
                     <div class="space-y-4">
@@ -183,3 +183,4 @@
     }
 </script>
 @endsection
+

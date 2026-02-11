@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Global Monitoring Nilai')
 
@@ -6,7 +6,7 @@
 <div class="space-y-6">
 
     <!-- Header & Filters -->
-    <div class="bg-white dark:bg-[#1a2e22] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+    <div class="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
                 <h1 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -84,7 +84,7 @@
         @if(count($monitoringData) > 0)
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @foreach($monitoringData as $data)
-            <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all p-5 flex flex-col gap-4 relative overflow-hidden group">
+            <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all p-5 flex flex-col gap-4 relative overflow-hidden group">
                 <!-- Progress Background -->
                 <div class="absolute bottom-0 left-0 h-1 bg-slate-100 dark:bg-slate-700 w-full">
                     <div class="h-full bg-{{ $data->color }}-500 transition-all duration-1000" style="width: {{ $data->progress }}%"></div>
@@ -136,3 +136,4 @@
     </div>
 </div>
 @endsection
+

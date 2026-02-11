@@ -1,11 +1,11 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Dashboard Guru')
 
 @section('content')
 <div class="flex-1 flex flex-col h-full overflow-hidden relative">
     <!-- Top Header Desktop (User profile, etc) -->
-    <header class="hidden lg:flex items-center justify-between px-8 py-5 bg-background-light dark:bg-[#1a2e22]">
+    <header class="hidden lg:flex items-center justify-between px-8 py-5 bg-background-light dark:bg-surface-dark">
         <div>
             <!-- Breadcrumb or simple title can go here if needed -->
             <nav class="text-sm font-medium text-slate-500 dark:text-slate-400" aria-label="Breadcrumb">
@@ -51,7 +51,7 @@
                         Pantau progres penilaian siswa untuk Tahun Ajaran {{ $activeYear->nama ?? '-' }}.
                     </p>
                 </div>
-                <div class="flex items-center gap-3 bg-white dark:bg-[#1a2e22] p-1.5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800">
+                <div class="flex items-center gap-3 bg-white dark:bg-surface-dark p-1.5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800">
                     <label class="sr-only">Pilih Periode</label>
                     <div class="pl-3 text-slate-500 dark:text-slate-400">
                         <span class="material-symbols-outlined text-[20px]">calendar_month</span>
@@ -71,7 +71,7 @@
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <!-- Total Classes -->
-                <div class="bg-white dark:bg-[#1a2e22] p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between group">
+                <div class="bg-white dark:bg-surface-dark p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between group">
                     <div class="flex flex-col gap-1">
                         <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Total Kelas Diampu</p>
                         <h3 class="text-3xl font-bold text-slate-900 dark:text-white">{{ $totalClasses }}</h3>
@@ -81,7 +81,7 @@
                     </div>
                 </div>
                 <!-- Completed -->
-                <div class="bg-white dark:bg-[#1a2e22] p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between group">
+                <div class="bg-white dark:bg-surface-dark p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between group">
                     <div class="flex flex-col gap-1">
                         <p class="text-primary dark:text-primary text-sm font-medium">Kelas Selesai</p>
                         <h3 class="text-3xl font-bold text-primary dark:text-primary">{{ $classesCompleted }}</h3>
@@ -91,7 +91,7 @@
                     </div>
                 </div>
                 <!-- Pending -->
-                <div class="bg-white dark:bg-[#1a2e22] p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between group">
+                <div class="bg-white dark:bg-surface-dark p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between group">
                     <div class="flex flex-col gap-1">
                         <p class="text-orange-500 text-sm font-medium">Belum Selesai</p>
                         <h3 class="text-3xl font-bold text-orange-500">{{ $pendingClasses }}</h3>
@@ -108,7 +108,7 @@
                     <h3 class="text-lg font-bold text-slate-900 dark:text-white">Daftar Kelas &amp; Mata Pelajaran</h3>
                     <div class="hidden sm:flex relative">
                         <!-- Search functionality could be implemented with Alpine.js or Livewire later -->
-                        <input class="pl-10 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#1a2e22] text-sm focus:ring-primary focus:border-primary w-64" placeholder="Cari kelas atau mapel..." type="text"/>
+                        <input class="pl-10 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-surface-dark text-sm focus:ring-primary focus:border-primary w-64" placeholder="Cari kelas atau mapel..." type="text"/>
                         <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[18px]">search</span>
                     </div>
                 </div>
@@ -139,7 +139,7 @@
                             }
                         @endphp
 
-                        <div class="bg-white dark:bg-[#1a2e22] rounded-2xl p-6 border {{ $cardBorder }} shadow-sm hover:shadow-md transition-shadow flex flex-col gap-5 relative overflow-hidden {{ $item->status == 'locked' ? 'opacity-75 grayscale-[0.5]' : '' }}">
+                        <div class="bg-white dark:bg-surface-dark rounded-2xl p-6 border {{ $cardBorder }} shadow-sm hover:shadow-md transition-shadow flex flex-col gap-5 relative overflow-hidden {{ $item->status == 'locked' ? 'opacity-75 grayscale-[0.5]' : '' }}">
                             @if($item->status == 'in_progress')
                                 <div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
                             @endif
@@ -197,9 +197,10 @@
 
             <!-- Footer Info -->
             <div class="mt-8 text-center text-xs text-slate-500 dark:text-slate-500 pb-4">
-                <p>© {{ date('Y') }} Rapor Madrasah. All rights reserved.</p>
+                <p>Â© {{ date('Y') }} Rapor Madrasah. All rights reserved.</p>
             </div>
         </div>
     </div>
 </div>
 @endsection
+

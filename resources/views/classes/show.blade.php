@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Detail Kelas ' . $class->nama_kelas)
 
@@ -12,7 +12,7 @@
     </div>
 
     <!-- Header Card -->
-    <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+    <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div class="flex flex-col gap-2">
                 <div class="flex items-center gap-3">
@@ -39,7 +39,7 @@
 
     <!-- Students Dual Pane Manager -->
     <div class="flex flex-col gap-4" x-data="studentManager({{ $class->id }})">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
 
             <!-- Left: Enrolled Students -->
             <div class="flex flex-col gap-4">
@@ -132,7 +132,7 @@
 
     <!-- Subject Assignments -->
     <div class="flex flex-col gap-4">
-        <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col min-h-[500px]">
+        <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col min-h-[500px]">
             <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
                 <h3 class="font-semibold text-lg">Mata Pelajaran & Guru</h3>
                 <div class="flex items-center gap-2">
@@ -190,7 +190,7 @@
                                     </div>
                                     <div>
                                         <p class="font-medium text-slate-900 dark:text-white">{{ $pm->mapel->nama_mapel }}</p>
-                                        <p class="text-xs text-slate-500">{{ $pm->mapel->kode }} • {{ $pm->mapel->kategori }}</p>
+                                        <p class="text-xs text-slate-500">{{ $pm->mapel->kode }} â€¢ {{ $pm->mapel->kategori }}</p>
                                     </div>
                                 </div>
                             </td>
@@ -258,10 +258,10 @@
     <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
     <div class="fixed inset-0 z-10 overflow-y-auto">
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-[#1a2e22] text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-200 dark:border-slate-800">
+            <div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-surface-dark text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-200 dark:border-slate-800">
                 <form action="{{ route('classes.assign-subject', $class->id) }}" method="POST">
                     @csrf
-                    <div class="bg-white dark:bg-[#1a2e22] px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                    <div class="bg-white dark:bg-surface-dark px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                         <h3 class="text-base font-semibold leading-6 text-slate-900 dark:text-white mb-4">Assign Mata Pelajaran</h3>
                         <div class="space-y-4">
                             <div>
@@ -297,8 +297,8 @@
     <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
     <div class="fixed inset-0 z-10 overflow-y-auto">
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-[#1a2e22] text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-200 dark:border-slate-800">
-                <div class="bg-white dark:bg-[#1a2e22] px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+            <div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-surface-dark text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-200 dark:border-slate-800">
+                <div class="bg-white dark:bg-surface-dark px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <h3 class="text-base font-semibold leading-6 text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                         <span class="material-symbols-outlined text-primary">cloud_download</span>
                         Ambil Data Santri (Otomatis)
@@ -564,3 +564,4 @@
     }
 </script>
 @endpush
+

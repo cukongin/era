@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html class="light" lang="id">
 <head>
     <meta charset="utf-8"/>
@@ -22,7 +22,7 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#138aec",
+                        "primary": "#003e29",
                         "background-light": "#f0f2f4",
                         "background-dark": "#101a22",
                     },
@@ -130,7 +130,7 @@
             </div>
             <div>
                 <h1 class="text-lg font-bold leading-tight">Cetak Massal Rapor</h1>
-                <p class="text-xs text-gray-500">Kelas {{ $class->nama_kelas }} • {{ count($reports) }} Siswa</p>
+                <p class="text-xs text-gray-500">Kelas {{ $class->nama_kelas }} â€¢ {{ count($reports) }} Siswa</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
@@ -162,3 +162,4 @@
 
 </body>
 </html>
+

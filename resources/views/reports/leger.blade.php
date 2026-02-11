@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Leger Nilai')
 
@@ -177,8 +177,8 @@
                                 $countMapel = 0;
                             @endphp
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30">
-                                <td class="px-4 py-3 border-r border-slate-100 dark:border-slate-800 sticky left-0 bg-white dark:bg-[#1a2e22] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] text-center">{{ $index + 1 }}</td>
-                                <td class="px-4 py-3 border-r border-slate-100 dark:border-slate-800 sticky left-[50px] bg-white dark:bg-[#1a2e22] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] font-medium text-slate-900 dark:text-white truncate max-w-[250px] group relative">
+                                <td class="px-4 py-3 border-r border-slate-100 dark:border-slate-800 sticky left-0 bg-white dark:bg-surface-dark z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] text-center">{{ $index + 1 }}</td>
+                                <td class="px-4 py-3 border-r border-slate-100 dark:border-slate-800 sticky left-[50px] bg-white dark:bg-surface-dark z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] font-medium text-slate-900 dark:text-white truncate max-w-[250px] group relative">
                                     <a href="{{ route('reports.student.analytics', $ak->siswa->id) }}" target="_blank" class="hover:text-primary hover:underline flex items-center gap-1">
                                         {{ $ak->siswa->nama_lengkap }}
                                         <span class="material-symbols-outlined text-[14px] opacity-0 group-hover:opacity-100 text-slate-400 transition-opacity">monitoring</span>
@@ -289,7 +289,7 @@
                                 <h4 class="font-bold text-slate-900 dark:text-white line-clamp-1">{{ $ak->siswa->nama_lengkap }}</h4>
                                 <div class="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
                                     <span>{{ $ak->siswa->nis_lokal }}</span>
-                                    <span class="text-slate-300">•</span>
+                                    <span class="text-slate-300">â€¢</span>
                                     <span>{{ $ak->siswa->jenis_kelamin }}</span>
                                 </div>
                              </div>
@@ -317,7 +317,7 @@
                     </div>
         
                     <!-- Detail Accordion (Hidden by default) -->
-                    <div x-show="expanded" x-collapse style="display: none;" class="border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-[#1a2e22] rounded-b-xl p-4">
+                    <div x-show="expanded" x-collapse style="display: none;" class="border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-surface-dark rounded-b-xl p-4">
                         <div class="grid grid-cols-1 gap-2">
                             <div class="grid grid-cols-12 text-[10px] font-bold text-slate-400 uppercase mb-1 px-2">
                                 <div class="col-span-8">Mapel</div>
@@ -373,3 +373,4 @@
     </div>
 </div>
 @endsection
+

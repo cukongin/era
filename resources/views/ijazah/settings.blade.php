@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Setting Ujian Ijazah')
 
@@ -140,3 +140,4 @@
     </form>
 </div>
 @endsection
+

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Input Nilai - ' . $assignment->mapel->nama_mapel . ($assignment->mapel->nama_kitab ? ' (' . $assignment->mapel->nama_kitab . ')' : ''))
 
@@ -19,7 +19,7 @@
                 @endif
             </h1>
             <p class="text-sm text-slate-500">
-                Periode: <strong class="text-slate-800 dark:text-slate-300">{{ $periode->nama_periode }}</strong> •
+                Periode: <strong class="text-slate-800 dark:text-slate-300">{{ $periode->nama_periode }}</strong> â€¢
                 KKM: <strong class="text-red-500">{{ $nilaiKkm }}</strong>
             </p>
         </div>
@@ -81,7 +81,7 @@
     </div>
 
     <!-- Grading Table -->
-    <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+    <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
         <form id="nilaiForm" action="{{ route('teacher.store-nilai') }}" method="POST">
             @csrf
 
@@ -265,10 +265,10 @@
     <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
     <div class="fixed inset-0 z-10 overflow-y-auto">
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-[#1a2e22] text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-200 dark:border-slate-800">
+            <div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-surface-dark text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-200 dark:border-slate-800">
                 <form action="{{ route('teacher.input-nilai.import', ['kelas' => $assignment->id_kelas, 'mapel' => $assignment->id_mapel]) }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <div class="bg-white dark:bg-[#1a2e22] px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                    <div class="bg-white dark:bg-surface-dark px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                         <div class="flex items-center gap-4 mb-4">
                             <div class="h-10 w-10 flex-shrink-0 rounded-full bg-green-100 flex items-center justify-center">
                                 <span class="material-symbols-outlined text-green-600">upload_file</span>
@@ -309,4 +309,5 @@
         </div>
     </div>
 </div>
+
 

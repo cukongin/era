@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Input Nilai Ekskul - ' . $kelas->nama_kelas)
 
@@ -23,7 +23,7 @@
     </div>
 
     <!-- Form Table -->
-    <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+    <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
         <form id="ekskulForm" action="{{ route('walikelas.ekskul.store') }}" method="POST">
             @csrf
             
@@ -101,3 +101,4 @@
 </datalist>
 
 @endsection
+

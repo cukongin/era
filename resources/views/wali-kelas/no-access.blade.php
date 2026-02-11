@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Akses Ditolak')
 
@@ -17,3 +17,4 @@
     </a>
 </div>
 @endsection
+

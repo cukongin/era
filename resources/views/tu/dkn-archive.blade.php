@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Detail DKN - ' . $kelas->nama_kelas)
 
@@ -60,7 +60,7 @@
     @endphp
 
     <!-- Screen Table (Modern, Sticky, Scrollable) -->
-    <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col">
+    <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col">
         <div class="overflow-auto relative max-h-[75vh]">
             <table class="w-full text-left text-sm border-collapse">
                 <thead class="bg-slate-100 dark:bg-slate-800/50 uppercase text-[10px] font-bold text-slate-600 sticky top-0 z-20">
@@ -282,7 +282,7 @@
                             $lvlSuffix = ($jenjang === 'MTS') ? (' ' . $jenjang) : '';
                         @endphp
 
-                        <td class="px-2 py-1 border border-black text-[#003e29] font-bold text-[9px] whitespace-nowrap">
+                        <td class="px-2 py-1 border border-black text-primary font-bold text-[9px] whitespace-nowrap">
                             {{ $displayLvl }}{{ $lvlSuffix }} | {{ $periodLabel }} {{ $period }}
                         </td>
 
@@ -365,7 +365,7 @@
         <div class="mb-4">
             <strong>Keterangan:</strong><br>
             1. Rata-Rapor (RR) diambil dari Rata-rata Nilai Rapor semester/kelas yang ditentukan.<br>
-            2. Rumus Nilai Akhir: <strong>NA = (Rapor × {{ $bRapor }}%) + (Ujian × {{ $bUjian }}%)</strong>.<br>
+            2. Rumus Nilai Akhir: <strong>NA = (Rapor Ã— {{ $bRapor }}%) + (Ujian Ã— {{ $bUjian }}%)</strong>.<br>
             3. Kriteria Kelulusan: Rata-rata Nilai Akhir minimal <strong>{{ number_format($minLulus, 2) }}</strong>.
         </div>
         <div class="flex justify-end pr-12">
@@ -459,3 +459,4 @@
     }
 </style>
 @endsection
+

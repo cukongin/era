@@ -1,4 +1,4 @@
-    @php
+﻿    @php
         $periodSlots = $periodSlots ?? [1, 2, 3]; 
         $periodLabel = $periodLabel ?? 'Cawu';
         // Ensure local variables are present (when passed from print_all, they are in array item)
@@ -551,3 +551,4 @@
         </div>
 
     </div>
+

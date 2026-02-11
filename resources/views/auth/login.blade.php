@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
@@ -50,7 +50,7 @@
 
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-bold text-slate-700 uppercase tracking-wide">Password</label>
-                    <input type="password" name="password" class="w-full rounded-lg border-slate-300 focus:border-login-primary focus:ring-login-primary text-sm placeholder-slate-400" placeholder="••••••••" required>
+                    <input type="password" name="password" class="w-full rounded-lg border-slate-300 focus:border-login-primary focus:ring-login-primary text-sm placeholder-slate-400" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" required>
                 </div>
 
                 <div class="flex items-center justify-between mt-1">
@@ -73,3 +73,4 @@
 
 </body>
 </html>
+

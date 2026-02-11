@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Data Nilai Ijazah (DKN) - ' . $kelas->nama_kelas)
 
@@ -189,7 +189,7 @@
         @endphp
         <p class="mb-2"><strong>Rumus Nilai Akhir (NA):</strong></p>
         <code class="bg-white dark:bg-slate-800 px-2 py-1 rounded border border-blue-200 dark:border-blue-700 font-mono text-blue-700 dark:text-blue-300">
-            NA = (Rata-Rata Rapor × {{ $bRapor }}%) + (Nilai Ujian × {{ $bUjian }}%)
+            NA = (Rata-Rata Rapor Ã— {{ $bRapor }}%) + (Nilai Ujian Ã— {{ $bUjian }}%)
         </code>
         <p class="mt-2 text-xs opacity-70">
             * Kriteria Kelulusan: Nilai Akhir minimal <strong>{{ number_format($minLulus, 2) }}</strong>.
@@ -418,3 +418,4 @@
     }
 </script>
 @endpush
+

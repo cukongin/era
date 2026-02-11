@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Manajemen Data Siswa')
 
@@ -22,7 +22,7 @@
                 <span class="material-symbols-outlined text-[20px]">upload_file</span>
                 <span class="truncate">Impor Excel</span>
             </button>
-            <button onclick="document.getElementById('addStudentModal').classList.remove('hidden')" class="flex items-center justify-center gap-2 h-10 px-4 rounded-lg bg-primary text-slate-900 text-sm font-bold shadow-md hover:bg-[#15bd4d] transition-colors">
+            <button onclick="document.getElementById('addStudentModal').classList.remove('hidden')" class="flex items-center justify-center gap-2 h-10 px-4 rounded-lg bg-primary text-white text-sm font-bold shadow-md hover:bg-[#15bd4d] transition-colors">
                 <span class="material-symbols-outlined text-[20px]">add</span>
                 <span class="truncate">Tambah Siswa</span>
             </button>
@@ -75,7 +75,7 @@
         </div>
 
     <!-- Table -->
-    <form id="bulkDeleteForm" action="{{ route('master.students.bulk_destroy') }}" method="POST" class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
+    <form id="bulkDeleteForm" action="{{ route('master.students.bulk_destroy') }}" method="POST" class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
         @csrf
         @method('DELETE')
         <div class="overflow-x-auto">
@@ -159,7 +159,7 @@
         </div>
 
         <!-- Pagination -->
-        <div class="flex flex-col sm:flex-row items-center justify-between p-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-[#1a2e22] gap-4">
+        <div class="flex flex-col sm:flex-row items-center justify-between p-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark gap-4">
             <div class="text-sm text-slate-500">
                 Menampilkan <span class="font-medium text-slate-900 dark:text-white">{{ $students->firstItem() ?? 0 }}</span> sampai <span class="font-medium text-slate-900 dark:text-white">{{ $students->lastItem() ?? 0 }}</span> dari <span class="font-medium text-slate-900 dark:text-white">{{ $students->total() }}</span> siswa
             </div>
@@ -223,12 +223,12 @@ function restoreStudent(id) {
     <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
     <div class="fixed inset-0 z-10 overflow-y-auto">
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-[#1a2e22] text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-slate-200 dark:border-slate-800">
+            <div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-surface-dark text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-slate-200 dark:border-slate-800">
                 <form id="statusForm" method="POST">
                     @csrf
                     <!-- Route defined in JS -->
 
-                    <div class="bg-white dark:bg-[#1a2e22] px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                    <div class="bg-white dark:bg-surface-dark px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                         <div class="flex items-center gap-3 mb-4">
                             <div class="h-10 w-10 flex-shrink-0 rounded-full bg-amber-100 flex items-center justify-center">
                                 <span class="material-symbols-outlined text-amber-600">input</span>
@@ -277,10 +277,10 @@ function restoreStudent(id) {
     <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
     <div class="fixed inset-0 z-10 overflow-y-auto">
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <div class="relative transform overflow-hidden rounded-xl bg-white dark:bg-[#1a2e22] text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl border border-slate-200 dark:border-slate-800">
+            <div class="relative transform overflow-hidden rounded-xl bg-white dark:bg-surface-dark text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl border border-slate-200 dark:border-slate-800">
                 <form action="{{ route('master.students.store') }}" method="POST">
                     @csrf
-                    <div class="bg-white dark:bg-[#1a2e22] px-6 py-4 border-b border-slate-200 dark:border-slate-800">
+                    <div class="bg-white dark:bg-surface-dark px-6 py-4 border-b border-slate-200 dark:border-slate-800">
                         <h3 class="text-lg font-bold leading-6 text-slate-900 dark:text-white">Tambah Siswa Baru (Buku Induk)</h3>
                     </div>
 
@@ -373,7 +373,7 @@ function restoreStudent(id) {
                     </div>
 
                     <div class="bg-slate-50 dark:bg-black/20 px-6 py-4 sm:flex sm:flex-row-reverse">
-                        <button type="submit" class="inline-flex w-full justify-center rounded-lg bg-primary px-4 py-2 text-sm font-bold text-slate-900 shadow-sm hover:bg-green-600 sm:ml-3 sm:w-auto">Simpan Data</button>
+                        <button type="submit" class="inline-flex w-full justify-center rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-green-600 sm:ml-3 sm:w-auto">Simpan Data</button>
                         <button type="button" onclick="document.getElementById('addStudentModal').classList.add('hidden')" class="mt-3 inline-flex w-full justify-center rounded-lg bg-white dark:bg-slate-800 px-4 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-700 hover:bg-slate-50 sm:mt-0 sm:w-auto">Batal</button>
                     </div>
                 </form>
@@ -387,8 +387,8 @@ function restoreStudent(id) {
     <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
     <div class="fixed inset-0 z-10 overflow-y-auto">
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <div class="relative transform overflow-hidden rounded-xl bg-white dark:bg-[#1a2e22] text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-200 dark:border-slate-800">
-                <div class="bg-white dark:bg-[#1a2e22] px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+            <div class="relative transform overflow-hidden rounded-xl bg-white dark:bg-surface-dark text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-200 dark:border-slate-800">
+                <div class="bg-white dark:bg-surface-dark px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <div class="sm:flex sm:items-start">
                         <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
                             <span class="material-symbols-outlined text-green-600">upload_file</span>
@@ -407,7 +407,7 @@ function restoreStudent(id) {
                                     @csrf
                                     <div class="mt-2">
                                         <label class="block text-sm font-medium leading-6 text-slate-900 dark:text-white mb-2">Pilih File CSV</label>
-                                        <input type="file" name="file" accept=".csv, .txt" required class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-slate-900 hover:file:bg-green-500"/>
+                                        <input type="file" name="file" accept=".csv, .txt" required class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-green-500"/>
                                     </div>
                                 </form>
                             </div>
@@ -415,7 +415,7 @@ function restoreStudent(id) {
                     </div>
                 </div>
                 <div class="bg-slate-50 dark:bg-black/20 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                    <button type="submit" form="importForm" class="inline-flex w-full justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto">Upload & Proses</button>
+                    <button type="submit" form="importForm" class="inline-flex w-full justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto">Upload & Proses</button>
                     <button type="button" onclick="document.getElementById('importModal').classList.add('hidden')" class="mt-3 inline-flex w-full justify-center rounded-md bg-white dark:bg-slate-800 px-3 py-2 text-sm font-semibold text-slate-900 dark:text-slate-300 shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-700 hover:bg-slate-50 sm:mt-0 sm:w-auto">Batal</button>
                 </div>
             </div>
@@ -430,3 +430,4 @@ function restoreStudent(id) {
 
 
 @endsection
+

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
@@ -35,7 +35,7 @@
         <div x-show="sidebarOpen" @click="sidebarOpen = false" x-transition.opacity class="fixed inset-0 bg-slate-900/50 z-20 lg:hidden"></div>
 
         <!-- Sidebar -->
-        <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'" class="fixed lg:relative inset-y-0 left-0 w-72 bg-white dark:bg-[#1a2e22] border-r border-slate-200 dark:border-slate-800 flex flex-col z-30 shadow-sm transition-transform duration-300 ease-in-out lg:transform-none">
+        <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'" class="fixed lg:relative inset-y-0 left-0 w-72 bg-white dark:bg-surface-dark border-r border-slate-200 dark:border-slate-800 flex flex-col z-30 shadow-sm transition-transform duration-300 ease-in-out lg:transform-none">
             <div class="flex items-center justify-between px-6 py-6 border-b border-slate-100 dark:border-slate-800/50">
                 <div class="flex items-center gap-3">
                     @if(\App\Models\GlobalSetting::val('app_logo'))
@@ -360,3 +360,4 @@
     </script>
 </body>
 </html>
+

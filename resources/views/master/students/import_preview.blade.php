@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Validasi Import Siswa')
 
@@ -12,7 +12,7 @@
 
     <!-- Stats -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-white dark:bg-[#1a2e22] p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+        <div class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
             <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
                 <span class="material-symbols-outlined">list</span>
             </div>
@@ -21,7 +21,7 @@
                 <p class="text-2xl font-black text-slate-900 dark:text-white">{{ $totalRows }}</p>
             </div>
         </div>
-        <div class="bg-white dark:bg-[#1a2e22] p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+        <div class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
             <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600">
                 <span class="material-symbols-outlined">check_circle</span>
             </div>
@@ -30,7 +30,7 @@
                 <p class="text-2xl font-black text-green-600">{{ $validRows }}</p>
             </div>
         </div>
-        <div class="bg-white dark:bg-[#1a2e22] p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+        <div class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
             <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
                 <span class="material-symbols-outlined">warning</span>
             </div>
@@ -58,7 +58,7 @@
     </div>
     @endif
 
-    <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
+    <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
         <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
             <h3 class="font-bold text-lg">Preview Data</h3>
 
@@ -173,3 +173,4 @@
     </div>
 </div>
 @endsection
+

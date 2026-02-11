@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('content')
 <div class="p-10 flex flex-col items-center justify-center text-center h-[60vh]">
@@ -10,3 +10,4 @@
     <a href="{{ route('dashboard') }}" class="text-indigo-600 hover:underline">Kembali ke Dashboard</a>
 </div>
 @endsection
+

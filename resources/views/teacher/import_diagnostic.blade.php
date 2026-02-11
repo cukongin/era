@@ -1,9 +1,9 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Diagnosa Import')
 
 @section('content')
-<div class="bg-white dark:bg-[#1a2e22] rounded-xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="bg-white dark:bg-surface-dark rounded-xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
     <div class="flex items-center gap-3 mb-6">
         <div class="p-3 bg-red-100 rounded-full text-red-600">
             <span class="material-symbols-outlined text-2xl">bug_report</span>
@@ -105,3 +105,4 @@
     </div>
 </div>
 @endsection
+

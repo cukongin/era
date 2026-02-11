@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Preview Import Nilai')
 
@@ -35,7 +35,7 @@
 
     <!-- Summary Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-white dark:bg-[#1a2e22] p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
             <span class="text-slate-500 text-xs font-bold uppercase tracking-wider">Total Data</span>
             <p class="text-2xl font-bold text-slate-900 dark:text-white mt-1">{{ count($validData) + count($importErrors) }} Baris</p>
         </div>
@@ -63,7 +63,7 @@
     </div>
     @endif
 
-    <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+    <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
         <div class="border-b border-slate-200 dark:border-slate-800 px-6 py-4">
             <h3 class="font-bold text-slate-900 dark:text-white">Preview Data Valid</h3>
         </div>
@@ -106,3 +106,4 @@
     </div>
 </div>
 @endsection
+

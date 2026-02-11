@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Detail Guru - ' . $teacher->name)
 
@@ -12,7 +12,7 @@
     </div>
 
     <!-- Header Card -->
-    <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 flex flex-col md:flex-row items-center gap-6">
+    <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 flex flex-col md:flex-row items-center gap-6">
         <div class="size-20 rounded-full bg-primary/10 flex items-center justify-center text-primary text-3xl font-bold overflow-hidden border-2 border-slate-100 dark:border-slate-700">
             @if($teacher->data_guru->foto)
                 <img src="{{ asset('public/' . $teacher->data_guru->foto) }}" class="w-full h-full object-cover">
@@ -58,7 +58,7 @@
     <!-- Tab Contents -->
     
     <!-- 1. Profil -->
-    <div x-data="{ isEditing: false }" x-show="activeTab === 'profil'" class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+    <div x-data="{ isEditing: false }" x-show="activeTab === 'profil'" class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
         <div class="flex justify-between items-center mb-6">
             <h3 class="font-bold text-slate-900 dark:text-white">Informasi Pribadi</h3>
             <button x-show="!isEditing" @click="isEditing = true" class="text-sm text-primary hover:underline font-medium">Edit Profil</button>
@@ -235,7 +235,7 @@
     </div>
 
     <!-- 2. Beban Mengajar -->
-    <div x-show="activeTab === 'beban'" class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col min-h-[500px]">
+    <div x-show="activeTab === 'beban'" class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col min-h-[500px]">
         <div class="p-6 border-b border-slate-200 dark:border-slate-800">
             <h3 class="font-bold text-lg text-slate-900 dark:text-white">Beban Mengajar Aktif</h3>
             <p class="text-sm text-slate-500">Tahun Ajaran: <span class="font-bold text-slate-700">{{ $activeYear->nama }}</span></p>
@@ -290,7 +290,7 @@
     </div>
 
     <!-- 3. Riwayat -->
-    <div x-show="activeTab === 'riwayat'" class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col min-h-[500px]">
+    <div x-show="activeTab === 'riwayat'" class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col min-h-[500px]">
         <div class="p-6 border-b border-slate-200 dark:border-slate-800">
             <h3 class="font-bold text-lg text-slate-900 dark:text-white">Riwayat Mengajar</h3>
             <p class="text-sm text-slate-500">Arsip pengajaran tahun-tahun sebelumnya.</p>
@@ -333,7 +333,7 @@
     </div>
 
     <!-- 4. Keamanan -->
-    <div x-show="activeTab === 'keamanan'" class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 max-w-2xl">
+    <div x-show="activeTab === 'keamanan'" class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 max-w-2xl">
         <h3 class="font-bold text-slate-900 dark:text-white mb-6">Ganti Password</h3>
         <form action="{{ route('master.teachers.password', $teacher->id) }}" method="POST" class="space-y-4">
             @csrf
@@ -361,3 +361,4 @@
 
 </div>
 @endsection
+

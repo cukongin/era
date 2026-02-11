@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Import Leger (Unified)')
 
@@ -10,7 +10,7 @@
         <span class="text-slate-900 dark:text-white font-medium">Import Leger</span>
     </div>
 
-    <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+    <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
         <div class="flex flex-col gap-4">
             <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Import Leger Lengkap (One Click)</h1>
 
@@ -80,3 +80,4 @@
     </div>
 </div>
 @endsection
+

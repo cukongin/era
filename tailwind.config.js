@@ -14,6 +14,7 @@ module.exports = {
                 "accent": "#fee46d", // Kournikova (Yellow/Gold)
                 "background-light": "#f6f8f6",
                 "background-dark": "#002a1c", // Darker Green for bg
+                "surface-dark": "#1a2e22", // Standard Dark Card Surface
 
                 // Login Page Specific (Unified with Main App - Resmi/Dinas)
                 "login-primary": "#003e29", // Matches Primary

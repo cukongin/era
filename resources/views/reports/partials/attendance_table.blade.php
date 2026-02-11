@@ -1,4 +1,4 @@
-<table class="w-full text-xs text-left border-collapse rapor-table whitespace-nowrap">
+﻿<table class="w-full text-xs text-left border-collapse rapor-table whitespace-nowrap">
      <thead>
         <tr class="bg-gray-100 text-center font-bold">
             <th>Keterangan</th>
@@ -46,3 +46,4 @@
         </tr>
     </tbody>
 </table>
+

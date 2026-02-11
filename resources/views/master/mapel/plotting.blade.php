@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Plotting Paket Mapel')
 
@@ -92,7 +92,7 @@
     </div>
 
     <!-- Main Card -->
-    <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 relative">
+    <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 relative">
 
         <!-- Loading Overlay -->
         <div x-show="loading" class="absolute inset-0 z-50 bg-white/50 dark:bg-black/50 flex items-center justify-center rounded-xl backdrop-blur-sm">
@@ -186,7 +186,7 @@
                             Pilih Semua
                         </button>
                     </div>
-                    <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 bg-white dark:bg-[#1a2e22]">
+                    <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 bg-white dark:bg-surface-dark">
                         @foreach($list as $mapel)
                         <label class="flex items-center gap-3 p-2 rounded-lg border border-slate-100 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800 cursor-pointer transition-colors">
                             <input type="checkbox" name="mapel_ids[]" value="{{ $mapel->id }}" x-model="selectedMapels" data-category="{{ $category }}" class="rounded border-slate-300 text-primary focus:ring-primary">
@@ -344,3 +344,4 @@
         document.getElementById('cloneModal').classList.add('hidden');
     }
 </script>
+

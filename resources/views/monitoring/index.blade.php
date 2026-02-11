@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Monitoring Progres Nilai')
 
@@ -67,7 +67,7 @@
                 </div>
 
                 <!-- Class Grid -->
-                <div class="bg-white dark:bg-[#1a2e22] p-6">
+                <div class="bg-white dark:bg-surface-dark p-6">
                     <h3 class="font-bold text-slate-700 dark:text-slate-300 mb-4 text-xs uppercase tracking-wider flex items-center gap-2">
                         <span class="material-symbols-outlined text-sm">grid_view</span> Detail Per Kelas
                     </h3>
@@ -145,7 +145,7 @@
                 </div>
 
                 <!-- Class Grid -->
-                <div class="bg-white dark:bg-[#1a2e22] p-6">
+                <div class="bg-white dark:bg-surface-dark p-6">
                     <h3 class="font-bold text-slate-700 dark:text-slate-300 mb-4 text-xs uppercase tracking-wider flex items-center gap-2">
                         <span class="material-symbols-outlined text-sm">grid_view</span> Detail Per Kelas
                     </h3>
@@ -195,7 +195,7 @@
         
         <div class="grid grid-cols-1 gap-6">
             @forelse($incompleteTeachers as $teacher)
-            <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col md:flex-row">
+            <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col md:flex-row">
                 
                 <!-- Teacher Profile (Left) -->
                 <div class="p-6 md:w-1/3 bg-slate-50 dark:bg-slate-800/50 border-r border-slate-100 dark:border-slate-800 flex flex-col items-center text-center justify-center gap-3">
@@ -264,3 +264,4 @@
     @endif
 </div>
 @endsection
+

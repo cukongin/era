@@ -1,4 +1,4 @@
-<table class="w-full text-xs text-left border-collapse rapor-table">
+﻿<table class="w-full text-xs text-left border-collapse rapor-table">
     <thead>
         <tr class="bg-gray-100 text-center font-bold">
             <th>Aspek</th>
@@ -25,3 +25,4 @@
         @endforeach
     </tbody>
 </table>
+

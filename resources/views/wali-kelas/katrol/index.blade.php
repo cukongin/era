@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Smart Katrol Nilai')
 
@@ -12,7 +12,7 @@
         </div>
 
         <!-- Filter Context -->
-        <form method="GET" class="flex flex-wrap gap-3 bg-white dark:bg-[#1a2e22] p-2 rounded-lg border border-slate-200 dark:border-slate-800">
+        <form method="GET" class="flex flex-wrap gap-3 bg-white dark:bg-surface-dark p-2 rounded-lg border border-slate-200 dark:border-slate-800">
             <select name="kelas_id" class="text-sm border-none bg-transparent focus:ring-0 font-semibold text-slate-700 dark:text-white" onchange="this.form.submit()">
                 @foreach($classes as $c)
                     <option value="{{ $c->id }}" {{ $kelasId == $c->id ? 'selected' : '' }}>{{ $c->nama_kelas }}</option>
@@ -48,7 +48,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- CONTROL PANEL (Left) -->
         <div class="lg:col-span-1 space-y-6">
-            <form action="{{ route('walikelas.katrol.store') }}" method="POST" class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 sticky top-6">
+            <form action="{{ route('walikelas.katrol.store') }}" method="POST" class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 sticky top-6">
                 @csrf
                 <input type="hidden" name="kelas_id" value="{{ $kelasId }}">
                 <input type="hidden" name="mapel_id" value="{{ $mapelId }}">
@@ -207,7 +207,7 @@
 
         <!-- SIMULATION TABLE (Right) -->
         <div class="lg:col-span-2">
-            <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+            <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead class="bg-slate-50 dark:bg-[#20342a] text-slate-500 uppercase text-xs font-bold">
@@ -435,3 +435,4 @@
     }
 </script>
 @endsection
+

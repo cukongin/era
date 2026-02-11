@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', $template->exists ? 'Edit Template' : 'Buat Template Baru')
 
@@ -378,3 +378,4 @@
     }
 </script>
 @endsection
+

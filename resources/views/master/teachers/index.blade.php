@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Manajemen Data Guru')
 
@@ -44,7 +44,7 @@
 
             <!-- IMPORT MODAL -->
             <div x-show="openImport" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" x-cloak>
-                 <div @click.outside="openImport = false" class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-2xl w-full max-w-md p-6 border border-slate-200 dark:border-slate-800">
+                 <div @click.outside="openImport = false" class="bg-white dark:bg-surface-dark rounded-xl shadow-2xl w-full max-w-md p-6 border border-slate-200 dark:border-slate-800">
                     <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Import Data Guru</h3>
                     <form action="{{ route('master.teachers.import') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                         @csrf
@@ -67,7 +67,7 @@
 
             <!-- CREATE MODAL -->
             <div x-show="openCreate" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" x-cloak>
-                 <div @click.outside="openCreate = false" class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-2xl w-full max-w-2xl border border-slate-200 dark:border-slate-800 flex flex-col max-h-[90vh]">
+                 <div @click.outside="openCreate = false" class="bg-white dark:bg-surface-dark rounded-xl shadow-2xl w-full max-w-2xl border border-slate-200 dark:border-slate-800 flex flex-col max-h-[90vh]">
 
                     <!-- Modal Header -->
                     <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
@@ -224,7 +224,7 @@
     </div>
 
     <!-- Table -->
-    <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
+    <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left text-slate-500 dark:text-slate-400">
                     <thead class="text-xs text-slate-700 uppercase bg-slate-50 dark:bg-slate-700 dark:text-slate-400">
@@ -330,7 +330,7 @@
 <!-- Credential Modal -->
 @if(session('generated_credential'))
 <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" x-data="{ open: true }" x-show="open">
-    <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-2xl w-full max-w-md p-6 border border-slate-200 dark:border-slate-800">
+    <div class="bg-white dark:bg-surface-dark rounded-xl shadow-2xl w-full max-w-md p-6 border border-slate-200 dark:border-slate-800">
         <div class="text-center mb-6">
             <div class="bg-green-100 text-green-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span class="material-symbols-outlined text-3xl">check_circle</span>
@@ -363,3 +363,4 @@
 </div>
 @endif
 @endsection
+

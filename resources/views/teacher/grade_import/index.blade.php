@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Import Nilai Kolektif')
 
@@ -46,7 +46,7 @@
     </div>
 
     <!-- Step 2: Upload -->
-    <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+    <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
         <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
             <span class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-600 text-sm font-bold">2</span>
             Upload File & Validasi
@@ -81,3 +81,4 @@
     </div>
 </div>
 @endsection
+

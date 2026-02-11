@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Manajemen Kelas')
 
@@ -35,7 +35,7 @@
     </div>
 
     <!-- Stats / Filter -->
-    <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+    <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
         <div class="border-b border-slate-200 dark:border-slate-800 px-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div class="flex gap-8 overflow-x-auto">
                 <a href="{{ route('classes.index', ['search' => request('search')]) }}" class="flex items-center gap-2 border-b-[3px] {{ !request('id_jenjang') ? 'border-primary' : 'border-transparent' }} py-4 px-1 min-w-max group">
@@ -80,7 +80,7 @@
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
                         <span class="material-symbols-outlined text-[22px]">search</span>
                     </div>
-                    <input name="search" value="{{ request('search') }}" class="w-full pl-10 pr-4 rounded-lg bg-slate-50 dark:bg-black/20 border-transparent focus:border-primary focus:bg-white dark:focus:bg-[#1a2e22] focus:ring-0 text-slate-900 dark:text-white placeholder-slate-400 text-sm transition-all" placeholder="Cari Nama Kelas atau Wali Kelas..." type="text" onchange="this.form.submit()"/>
+                    <input name="search" value="{{ request('search') }}" class="w-full pl-10 pr-4 rounded-lg bg-slate-50 dark:bg-black/20 border-transparent focus:border-primary focus:bg-white dark:focus:bg-surface-dark focus:ring-0 text-slate-900 dark:text-white placeholder-slate-400 text-sm transition-all" placeholder="Cari Nama Kelas atau Wali Kelas..." type="text" onchange="this.form.submit()"/>
                 </form>
             </div>
         </div>
@@ -89,7 +89,7 @@
     <!-- Grid List -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-10">
         @forelse($classes as $class)
-        <div class="group bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-md hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-300 flex flex-col justify-between h-[220px] relative">
+        <div class="group bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-md hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-300 flex flex-col justify-between h-[220px] relative">
             <div class="flex justify-between items-start">
                 <div class="flex flex-col gap-1 relative z-0">
                     <span class="inline-flex items-center px-2 py-1 rounded text-xs font-bold {{ $class->jenjang->kode == 'MI' ? 'bg-primary/10 text-primary' : 'bg-primary/10 text-primary' }} w-fit">
@@ -104,7 +104,7 @@
                         <span class="material-symbols-outlined">more_vert</span>
                     </button>
                     <!-- Dropdown -->
-                    <div x-show="open" class="absolute right-0 mt-2 w-48 bg-white dark:bg-[#1a2e22] rounded-md shadow-lg py-1 border border-slate-200 dark:border-slate-800 z-50">
+                    <div x-show="open" class="absolute right-0 mt-2 w-48 bg-white dark:bg-surface-dark rounded-md shadow-lg py-1 border border-slate-200 dark:border-slate-800 z-50">
                         <a href="#"
                            data-id="{{ $class->id }}"
                            data-nama="{{ $class->nama_kelas }}"
@@ -153,7 +153,7 @@
                 <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                     <span class="material-symbols-outlined text-[18px]">group</span>
                     <span class="text-sm font-medium">{{ $class->anggota_kelas_count }} Siswa</span>
-                    <span class="text-xs text-slate-300 mx-1">•</span>
+                    <span class="text-xs text-slate-300 mx-1">â€¢</span>
                     <span class="text-sm font-medium">{{ $class->pengajar_mapel_count }} Mapel</span>
                 </div>
                 <span class="flex h-2 w-2 rounded-full bg-slate-200 dark:bg-slate-700 relative"></span>
@@ -181,11 +181,11 @@
     <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
     <div class="fixed inset-0 z-10 overflow-y-auto">
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-[#1a2e22] text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-200 dark:border-slate-800">
+            <div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-surface-dark text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-200 dark:border-slate-800">
                 <form id="editForm" method="POST">
                     @csrf
                     @method('PUT')
-                    <div class="bg-white dark:bg-[#1a2e22] px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                    <div class="bg-white dark:bg-surface-dark px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                         <h3 class="text-base font-semibold leading-6 text-slate-900 dark:text-white mb-4">Edit Data Kelas</h3>
                         <div class="space-y-4">
                             <div>
@@ -235,13 +235,13 @@
     <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
     <div class="fixed inset-0 z-10 overflow-y-auto">
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-[#1a2e22] text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-200 dark:border-slate-800">
+            <div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-surface-dark text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-200 dark:border-slate-800">
                 <form action="{{ route('classes.store') }}" method="POST">
                     @csrf
                     <!-- Hidden Year ID for now, assume backend handles it or we select it -->
                     <input type="hidden" name="id_tahun_ajaran" value="{{ $academicYears->first()->id ?? 1 }}">
 
-                    <div class="bg-white dark:bg-[#1a2e22] px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                    <div class="bg-white dark:bg-surface-dark px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                         <h3 class="text-base font-semibold leading-6 text-slate-900 dark:text-white mb-4">Tambah Kelas Baru</h3>
                         <div class="space-y-4">
                             <div>
@@ -291,7 +291,7 @@
     <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
     <div class="fixed inset-0 z-10 overflow-y-auto">
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-[#1a2e22] text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-slate-200 dark:border-slate-800">
+            <div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-surface-dark text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-slate-200 dark:border-slate-800">
                     <form action="{{ route('classes.bulk-promote') }}" method="POST"
                           data-confirm-delete="true"
                           data-title="Proses Kenaikan?"
@@ -300,7 +300,7 @@
                           data-confirm-color="#f59e0b"
                           data-icon="question">
                     @csrf
-                    <div class="bg-white dark:bg-[#1a2e22] px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                    <div class="bg-white dark:bg-surface-dark px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                         <div class="flex items-center gap-4 mb-4">
                             <div class="h-10 w-10 flex-shrink-0 rounded-full bg-amber-100 flex items-center justify-center">
                                 <span class="material-symbols-outlined text-amber-600">upgrade</span>
@@ -418,3 +418,4 @@
     }
 </script>
 @endpush
+

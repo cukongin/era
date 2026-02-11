@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Academic Configuration')
 
@@ -48,7 +48,7 @@
 
     <!-- Active Academic Year Card -->
     @if($activeYear)
-    <div class="flex flex-col rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#1a2e22] shadow-sm overflow-hidden">
+    <div class="flex flex-col rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark shadow-sm overflow-hidden">
         <!-- Header -->
         <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 px-6 py-4 bg-slate-50/50 dark:bg-white/5">
             <div class="flex items-center gap-3">
@@ -78,7 +78,7 @@
         <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider">Arsip Tahun Ajaran</h3>
         
         @forelse($archivedYears as $year)
-        <div class="flex cursor-pointer items-center justify-between gap-6 px-6 py-4 bg-white dark:bg-[#1a2e22] border border-slate-200 dark:border-slate-800 rounded-xl hover:bg-slate-50 transition-colors opacity-70 hover:opacity-100">
+        <div class="flex cursor-pointer items-center justify-between gap-6 px-6 py-4 bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-xl hover:bg-slate-50 transition-colors opacity-70 hover:opacity-100">
             <div class="flex items-center gap-3">
                 <div class="bg-slate-100 dark:bg-slate-700 text-slate-500 p-2 rounded-lg">
                     <span class="material-symbols-outlined">history</span>
@@ -107,3 +107,4 @@
     // Placeholder script block if needed in future
 </script>
 @endpush
+

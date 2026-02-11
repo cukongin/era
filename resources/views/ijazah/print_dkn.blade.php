@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -154,7 +154,7 @@
     <div style="margin-top: 10px; font-size: 10px;">
         <strong>Keterangan:</strong><br>
         1. Nilai yang tercantum adalah <strong>Nilai Akhir (NA)</strong>.<br>
-        2. Rumus: <strong>NA = (Rata-rata Rapor × {{ $bRapor }}%) + (Ujian Madrasah (Bulat) × {{ $bUjian }}%)</strong>.<br>
+        2. Rumus: <strong>NA = (Rata-rata Rapor Ã— {{ $bRapor }}%) + (Ujian Madrasah (Bulat) Ã— {{ $bUjian }}%)</strong>.<br>
         3. Kriteria Kelulusan: Rata-rata Nilai Akhir minimal <strong>{{ number_format($minLulus, 2) }}</strong>.
     </div>
 
@@ -192,3 +192,4 @@
     </script>
 </body>
 </html>
+

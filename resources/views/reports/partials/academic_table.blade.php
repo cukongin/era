@@ -1,4 +1,4 @@
-<table class="w-full text-xs text-left border-collapse rapor-table">
+﻿<table class="w-full text-xs text-left border-collapse rapor-table">
     <thead>
         <tr class="bg-gray-100 text-center font-bold">
             <th class="w-8" rowspan="2">No</th>
@@ -120,3 +120,4 @@
         </tr>
     </tfoot>
 </table>
+

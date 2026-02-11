@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Analytics: ' . $student->nama_lengkap)
 
@@ -140,3 +140,4 @@
     });
 </script>
 @endsection
+

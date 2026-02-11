@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Konfigurasi Sistem')
 
@@ -110,7 +110,7 @@
         <!-- TAB 1: ATURAN PENILAIAN (GRADING) -->
         <div x-show="activeTab === 'grading'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
 
-            <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 relative">
+            <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 relative">
 
                 <!-- Toolbar (Jenjang Switcher) -->
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100 dark:border-slate-800">
@@ -145,7 +145,7 @@
                         <div class="lg:col-span-5 space-y-6">
 
                             <!-- Card: Periode Input Nilai -->
-                            <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-5 mb-6">
+                            <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-5 mb-6">
                                 <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm mb-4">
                                     <span class="material-symbols-outlined text-orange-500 text-sm">lock_clock</span> Periode Input & Kunci Nilai
                                 </h4>
@@ -213,7 +213,7 @@
 
 
                             <!-- Card: Parameter Umum -->
-                            <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
+                            <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
                                 <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm mb-4">
                                     <span class="material-symbols-outlined text-primary text-sm">settings</span> Parameter
                                 </h4>
@@ -334,7 +334,7 @@
                              </div>
 
                              <!-- Card: Pengaturan Titimangsa -->
-                             <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5 mt-6">
+                             <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5 mt-6">
                                 <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm mb-4">
                                     <span class="material-symbols-outlined text-green-600 text-sm">calendar_month</span> Pengaturan Titimangsa Rapor
                                 </h4>
@@ -483,7 +483,7 @@
         <!-- TAB 2: TARGET KKM (KKM) -->
         <div x-show="activeTab === 'kkm'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
 
-            <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+            <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
                 <div class="flex justify-between items-center mb-6">
                     <div>
                          <h3 class="font-bold text-lg text-slate-900 dark:text-white">Target KKM Mata Pelajaran</h3>
@@ -542,7 +542,7 @@
 
         <!-- TAB [NEW]: IDENTITAS APLIKASI -->
         <div x-show="activeTab === 'identity'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
-            <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+            <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
                 <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-6 flex items-center gap-2">
                     <span class="material-symbols-outlined text-primary">storefront</span> Identitas Sekolah & Aplikasi
                 </h3>
@@ -713,7 +713,7 @@
                  <div class="space-y-6">
 
                      <!-- Card: Safety Lock (NEW) -->
-                     <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 relative overflow-hidden">
+                     <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 relative overflow-hidden">
                         <div class="absolute top-0 right-0 p-4 opacity-10">
                             <span class="material-symbols-outlined text-6xl text-slate-800 dark:text-white">lock_person</span>
                         </div>
@@ -742,7 +742,7 @@
                      </div>
 
                      <!-- Card: Deadline Settings -->
-                    <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+                    <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
                         <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                              <span class="material-symbols-outlined text-red-500">timer</span> Pengaturan Tenggat
                         </h3>
@@ -793,7 +793,7 @@
                     </div>
 
                     <!-- Card: Whitelist -->
-                    <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+                    <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
                                 <span class="material-symbols-outlined text-green-500">verified_user</span> Whitelist
@@ -846,7 +846,7 @@
                  <!-- RIGHT COLUMN: RAPOR & SHORTCUTS -->
                  <div class="space-y-6">
                      <!-- Konfigurasi Rapor -->
-                     <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 space-y-6">
+                     <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 space-y-6">
                         <div>
                             <h3 class="font-bold text-lg text-slate-900 dark:text-white">Opsi Cetak Rapor</h3>
                             <p class="text-sm text-slate-500">Komponen opsional pada PDF Rapor.</p>
@@ -925,7 +925,7 @@
 
         <!-- TAB: BACKUP & RESTORE -->
         <div x-show="activeTab === 'backup'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
-            <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+            <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
 
                 <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-6 flex items-center gap-2">
                     <span class="material-symbols-outlined text-blue-600">cloud_sync</span> Backup & Restore Database
@@ -977,7 +977,7 @@
                                 <th class="px-6 py-3 text-right">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 dark:divide-slate-700 bg-white dark:bg-[#1a2e22]">
+                        <tbody class="divide-y divide-slate-100 dark:divide-slate-700 bg-white dark:bg-surface-dark">
                             @forelse($backups as $backup)
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                 <td class="px-6 py-3 font-medium text-slate-700 dark:text-slate-200">
@@ -1051,7 +1051,7 @@
                                 <span class="material-symbols-outlined">dataset_linked</span> Super Migration (Data Sync)
                         </h3>
                         <p class="text-emerald-100 max-w-xl text-sm">
-                            Pindahkan data antar server (Local ↔ Online) tanpa duplikat.
+                            Pindahkan data antar server (Local â†” Online) tanpa duplikat.
                             <br>Sistem akan cerdas menggabungkan data (Upsert) tanpa menimpa akun Admin.
                         </p>
                     </div>
@@ -1274,7 +1274,7 @@ function confirmReset(e) {
     const form = e.target;
 
     Swal.fire({
-        title: '⚠️ ZONA BAHAYA!',
+        title: 'âš ï¸ ZONA BAHAYA!',
         text: "Anda akan MENGHAPUS SEMUA DATA (Siswa, Guru, Nilai, Kelas). Admin & TU tidak dihapus. Tindakan ini TIDAK BISA DIBATALKAN.",
         icon: 'warning',
         showCancelButton: true,
@@ -1296,7 +1296,7 @@ function confirmReset(e) {
                     placeholder: 'Ketik RESET disini...'
                 },
                 showCancelButton: true,
-                confirmButtonText: 'LEDAKKAN 💣',
+                confirmButtonText: 'LEDAKKAN ðŸ’£',
                 confirmButtonColor: '#d33',
                 showLoaderOnConfirm: true,
                 preConfirm: (text) => {
@@ -1460,3 +1460,4 @@ function confirmReset(e) {
     })
 </script>
 @endsection
+

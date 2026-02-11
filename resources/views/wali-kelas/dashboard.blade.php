@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Monitoring Guru')
 
@@ -16,15 +16,15 @@
         </div>
         <div class="flex items-center gap-3">
             <!-- Filter Form -->
-            <form method="GET" class="flex flex-wrap gap-2 bg-white dark:bg-[#1a2e22] p-1.5 rounded-lg border border-slate-200 dark:border-slate-800">
+            <form method="GET" class="flex flex-wrap gap-2 bg-white dark:bg-surface-dark p-1.5 rounded-lg border border-slate-200 dark:border-slate-800">
                 <!-- Jenjang Toggle Buttons -->
                 <div class="flex bg-slate-100 dark:bg-slate-700 p-1 rounded-lg" x-data="{ jenjang: '{{ request('jenjang') }}' }">
                     <input type="hidden" name="jenjang" :value="jenjang">
 
-                    <button type="button" @click="jenjang = 'MI'; $nextTick(() => $el.closest('form').submit())" class="px-3 py-1 text-xs font-bold rounded-md transition-all" :class="jenjang === 'MI' ? 'bg-white dark:bg-[#1a2e22] text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'">
+                    <button type="button" @click="jenjang = 'MI'; $nextTick(() => $el.closest('form').submit())" class="px-3 py-1 text-xs font-bold rounded-md transition-all" :class="jenjang === 'MI' ? 'bg-white dark:bg-surface-dark text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'">
                         MI
                     </button>
-                    <button type="button" @click="jenjang = 'MTS'; $nextTick(() => $el.closest('form').submit())" class="px-3 py-1 text-xs font-bold rounded-md transition-all" :class="jenjang === 'MTS' ? 'bg-white dark:bg-[#1a2e22] text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'">
+                    <button type="button" @click="jenjang = 'MTS'; $nextTick(() => $el.closest('form').submit())" class="px-3 py-1 text-xs font-bold rounded-md transition-all" :class="jenjang === 'MTS' ? 'bg-white dark:bg-surface-dark text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'">
                         MTS
                     </button>
                 </div>
@@ -53,7 +53,7 @@
 
     @if(!$kelas)
     <!-- EMPTY STATE -->
-    <div class="flex flex-col items-center justify-center py-20 bg-white dark:bg-[#1a2e22] rounded-3xl border border-slate-200 dark:border-slate-800 border-dashed">
+    <div class="flex flex-col items-center justify-center py-20 bg-white dark:bg-surface-dark rounded-3xl border border-slate-200 dark:border-slate-800 border-dashed">
         <div class="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-full mb-4">
             <span class="material-symbols-outlined text-4xl text-slate-400">school</span>
         </div>
@@ -67,7 +67,7 @@
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <!-- Card 1: Total -->
-        <div class="bg-white dark:bg-[#1a2e22] p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between h-32 relative overflow-hidden group">
+        <div class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between h-32 relative overflow-hidden group">
             <div class="absolute right-[-10px] top-[-10px] opacity-5 rotate-12 group-hover:scale-110 transition-transform duration-500">
                 <span class="material-symbols-outlined text-[100px] text-slate-800 dark:text-white">library_books</span>
             </div>
@@ -79,7 +79,7 @@
         </div>
 
         <!-- Card 2: Selesai -->
-        <div class="bg-white dark:bg-[#1a2e22] p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between h-32 relative overflow-hidden group">
+        <div class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between h-32 relative overflow-hidden group">
             <div class="absolute right-[-10px] top-[-10px] opacity-5 text-primary rotate-12 group-hover:scale-110 transition-transform duration-500">
                 <span class="material-symbols-outlined text-[100px]">check_circle</span>
             </div>
@@ -91,7 +91,7 @@
         </div>
 
         <!-- Card 3: Belum (Pending) -->
-        <div class="bg-white dark:bg-[#1a2e22] p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between h-32 relative overflow-hidden group">
+        <div class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between h-32 relative overflow-hidden group">
             <div class="absolute right-[-10px] top-[-10px] opacity-5 text-orange-500 rotate-12 group-hover:scale-110 transition-transform duration-500">
                 <span class="material-symbols-outlined text-[100px]">pending</span>
             </div>
@@ -104,7 +104,7 @@
     </div>
 
     <!-- Filters & Search -->
-    <div class="flex flex-col sm:flex-row gap-4 bg-white dark:bg-[#1a2e22] p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm items-center">
+    <div class="flex flex-col sm:flex-row gap-4 bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm items-center">
         <div class="relative flex-1 w-full">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <span class="material-symbols-outlined text-slate-400">search</span>
@@ -112,7 +112,7 @@
             <input class="block w-full pl-10 pr-3 py-2.5 border border-slate-200 dark:border-slate-700 rounded-lg leading-5 bg-slate-50 dark:bg-[#10221a] text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm transition-colors" placeholder="Cari Guru atau Mata Pelajaran..." type="text"/>
         </div>
         <div class="flex gap-2 w-full sm:w-auto">
-            <button class="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2 border border-slate-200 dark:border-slate-700 text-sm font-medium rounded-lg text-slate-700 dark:text-white bg-white dark:bg-[#1a2e22] hover:bg-slate-50 dark:hover:bg-[#20342a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+            <button class="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2 border border-slate-200 dark:border-slate-700 text-sm font-medium rounded-lg text-slate-700 dark:text-white bg-white dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-[#20342a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
                 <span class="material-symbols-outlined text-[20px] mr-2 text-slate-500">filter_list</span>
                 Filter Status
             </button>
@@ -120,7 +120,7 @@
     </div>
 
     <!-- Main Table -->
-    <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+    <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-800" id="monitoringTable">
                 <thead class="bg-slate-50 dark:bg-[#20342a]">
@@ -133,7 +133,7 @@
                         <th class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider" scope="col">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-200 dark:divide-slate-800 bg-white dark:bg-[#1a2e22]">
+                <tbody class="divide-y divide-slate-200 dark:divide-slate-800 bg-white dark:bg-surface-dark">
                     @forelse($monitoringData as $index => $data)
                         @php
                             $isDone = $data->progress >= 100;
@@ -337,7 +337,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Previous
         const prevDisabled = state.page === 1;
-        html += `<button onclick="changePage(${state.page - 1})" ${prevDisabled ? 'disabled' : ''} class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#1a2e22] text-sm font-medium ${prevDisabled ? 'text-slate-300 cursor-not-allowed' : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-[#20342a]'}">
+        html += `<button onclick="changePage(${state.page - 1})" ${prevDisabled ? 'disabled' : ''} class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-surface-dark text-sm font-medium ${prevDisabled ? 'text-slate-300 cursor-not-allowed' : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-[#20342a]'}">
                     <span class="material-symbols-outlined text-sm">chevron_left</span>
                  </button>`;
 
@@ -347,13 +347,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (isActive) {
                 html += `<button aria-current="page" class="z-10 bg-primary/10 border-primary text-primary relative inline-flex items-center px-4 py-2 border text-sm font-bold">${i}</button>`;
             } else {
-                html += `<button onclick="changePage(${i})" class="bg-white dark:bg-[#1a2e22] border-slate-300 dark:border-slate-700 text-slate-500 hover:bg-slate-50 dark:hover:bg-[#20342a] relative inline-flex items-center px-4 py-2 border text-sm font-medium">${i}</button>`;
+                html += `<button onclick="changePage(${i})" class="bg-white dark:bg-surface-dark border-slate-300 dark:border-slate-700 text-slate-500 hover:bg-slate-50 dark:hover:bg-[#20342a] relative inline-flex items-center px-4 py-2 border text-sm font-medium">${i}</button>`;
             }
         }
 
         // Next
         const nextDisabled = state.page >= totalPages || totalPages === 0;
-        html += `<button onclick="changePage(${state.page + 1})" ${nextDisabled ? 'disabled' : ''} class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#1a2e22] text-sm font-medium ${nextDisabled ? 'text-slate-300 cursor-not-allowed' : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-[#20342a]'}">
+        html += `<button onclick="changePage(${state.page + 1})" ${nextDisabled ? 'disabled' : ''} class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-surface-dark text-sm font-medium ${nextDisabled ? 'text-slate-300 cursor-not-allowed' : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-[#20342a]'}">
                     <span class="material-symbols-outlined text-sm">chevron_right</span>
                  </button>`;
 
@@ -370,3 +370,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endsection
+

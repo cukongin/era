@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Manajemen Halaman')
 
@@ -15,7 +15,7 @@
         </a>
     </div>
 
-    <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+    <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
                 <thead>
@@ -72,3 +72,4 @@
     </div>
 </div>
 @endsection
+

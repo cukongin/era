@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Profil Saya')
 
@@ -6,7 +6,7 @@
 <div class="max-w-3xl mx-auto p-6">
     <h1 class="text-2xl font-bold text-slate-800 dark:text-white mb-6">Profil Saya</h1>
 
-    <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+    <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
         <form action="{{ route('profile.update') }}" method="POST" class="space-y-6">
             @csrf
             @method('PUT')
@@ -46,3 +46,4 @@
     </div>
 </div>
 @endsection
+

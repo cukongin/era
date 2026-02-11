@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Input Absensi - ' . $kelas->nama_kelas)
 
@@ -78,7 +78,7 @@
             </div>
             <h1 class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white leading-tight">Input Ketidakhadiran & Kepribadian</h1>
             <p class="text-sm text-slate-500 mt-1">
-                Kelas: <strong>{{ $kelas->nama_kelas }}</strong> • Periode: <strong>{{ $periode->nama_periode }}</strong>
+                Kelas: <strong>{{ $kelas->nama_kelas }}</strong> â€¢ Periode: <strong>{{ $periode->nama_periode }}</strong>
             </p>
         </div>
 
@@ -127,7 +127,7 @@
     </div>
 
     <!-- Form Table -->
-    <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+    <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
         <form id="absensiForm" action="{{ route('walikelas.absensi.store') }}" method="POST">
             @csrf
             <!-- Important: Pass Class ID for Admin context -->
@@ -212,7 +212,7 @@
                     $absensi = $absensiRows[$ak->id_siswa] ?? null;
                     $total = ($absensi->sakit ?? 0) + ($absensi->izin ?? 0) + ($absensi->tanpa_keterangan ?? 0);
                 @endphp
-                <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4 flex flex-col gap-4">
+                <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4 flex flex-col gap-4">
                     <!-- Student Info Header -->
                     <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
                         <div class="flex items-center gap-3">
@@ -346,3 +346,4 @@
     initCalculation();
 </script>
 @endsection
+

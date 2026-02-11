@@ -1,11 +1,11 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Pilih Kelas - DKN Ijazah')
 
 @section('content')
 <div class="flex-1 flex flex-col h-full overflow-hidden">
     <!-- Header -->
-    <div class="px-8 py-6 bg-white dark:bg-[#1a2e22] border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+    <div class="px-8 py-6 bg-white dark:bg-surface-dark border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
         <div>
             <h1 class="text-2xl font-bold text-slate-800 dark:text-white">Kelola Nilai Ijazah (DKN)</h1>
             <p class="text-slate-500 text-sm mt-1">Pilih kelas tingkat akhir untuk mengelola nilai ujian dan ijazah.</p>
@@ -27,7 +27,7 @@
             </div>
 
             @if($finalClasses->isEmpty())
-                <div class="flex flex-col items-center justify-center py-16 bg-white dark:bg-[#1a2e22] rounded-3xl border border-dashed border-slate-300 dark:border-slate-700">
+                <div class="flex flex-col items-center justify-center py-16 bg-white dark:bg-surface-dark rounded-3xl border border-dashed border-slate-300 dark:border-slate-700">
                     <div class="bg-orange-50 p-6 rounded-full mb-4">
                         <span class="material-symbols-outlined text-4xl text-orange-400">warning</span>
                     </div>
@@ -39,7 +39,7 @@
             @else
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach($finalClasses as $kelas)
-                        <div class="bg-white dark:bg-[#1a2e22] rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
+                        <div class="bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
                             <!-- Background Decoration -->
                             <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity transform group-hover:scale-110 duration-500">
                                 <span class="material-symbols-outlined text-9xl">school</span>
@@ -77,3 +77,4 @@
     </div>
 </div>
 @endsection
+

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Dashboard Tata Usaha')
 
@@ -6,7 +6,7 @@
 <div class="flex-1 flex flex-col h-full overflow-hidden relative">
 
     <!-- Header -->
-    <header class="hidden lg:flex items-center justify-between px-8 py-5 bg-background-light dark:bg-[#1a2e22]">
+    <header class="hidden lg:flex items-center justify-between px-8 py-5 bg-background-light dark:bg-surface-dark">
         <div>
             <nav class="text-sm font-medium text-slate-500 dark:text-slate-400" aria-label="Breadcrumb">
                 <ol class="list-none p-0 inline-flex">
@@ -40,7 +40,7 @@
             <!-- Welcome Section -->
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div class="flex flex-col gap-2">
-                    <h2 class="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Halo, {{ auth()->user()->name }} 👋</h2>
+                    <h2 class="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Halo, {{ auth()->user()->name }} ðŸ‘‹</h2>
                     <p class="text-slate-500 dark:text-slate-400">
                         Pantau tren performa akademik dan kelola arsip penilaian madrasah.
                     </p>
@@ -60,7 +60,7 @@
             <!-- Stats Overview -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Total Siswa -->
-                <div class="bg-white dark:bg-[#1a2e22] p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 relative overflow-hidden group">
+                <div class="bg-white dark:bg-surface-dark p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 relative overflow-hidden group">
                     <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                         <span class="material-symbols-outlined text-6xl text-primary">groups</span>
                     </div>
@@ -71,7 +71,7 @@
                 </div>
 
                 <!-- Total Kelas -->
-                <div class="bg-white dark:bg-[#1a2e22] p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 relative overflow-hidden group">
+                <div class="bg-white dark:bg-surface-dark p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 relative overflow-hidden group">
                     <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                         <span class="material-symbols-outlined text-6xl text-orange-600">meeting_room</span>
                     </div>
@@ -120,7 +120,7 @@
                         </form>
                     </div>
 
-                    <div class="bg-white dark:bg-[#1a2e22] p-6 pb-12 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm min-h-[500px] flex flex-col relative z-20">
+                    <div class="bg-white dark:bg-surface-dark p-6 pb-12 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm min-h-[500px] flex flex-col relative z-20">
                         <div class="mb-4 flex justify-between items-start">
                              <div>
                                 <h4 class="font-bold text-slate-800 dark:text-white">{{ $cohortDescription }}</h4>
@@ -201,7 +201,7 @@
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4">
 
                         <!-- Hardest Subjects -->
-                        <div class="bg-white dark:bg-[#1a2e22] rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-6">
+                        <div class="bg-white dark:bg-surface-dark rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-6">
                             <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 mb-4">
                                 <span class="material-symbols-outlined text-red-500">warning</span> Mapel Tersulit
                             </h3>
@@ -223,7 +223,7 @@
                         </div>
 
                         <!-- Easiest Subjects -->
-                        <div class="bg-white dark:bg-[#1a2e22] rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-6">
+                        <div class="bg-white dark:bg-surface-dark rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-6">
                             <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 mb-4">
                                 <span class="material-symbols-outlined text-emerald-500">stars</span> Mapel Termudah
                             </h3>
@@ -245,7 +245,7 @@
                         </div>
 
                         <!-- Grade Distribution Chart -->
-                        <div class="bg-white dark:bg-[#1a2e22] rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-6 flex flex-col items-center justify-center">
+                        <div class="bg-white dark:bg-surface-dark rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-6 flex flex-col items-center justify-center">
                             <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 mb-2 w-full">
                                 <span class="material-symbols-outlined text-primary">pie_chart</span> Sebaran Predikat
                             </h3>
@@ -314,7 +314,7 @@
                                 <div class="flex flex-col gap-3 h-full relative z-10 overflow-y-auto pr-2 custom-scrollbar">
                                     @forelse($activeStars as $index => $star)
                                         @php
-                                            $medals = ['🥇', '🥈', '🥉'];
+                                            $medals = ['ðŸ¥‡', 'ðŸ¥ˆ', 'ðŸ¥‰'];
                                             $medal = $medals[$index] ?? '#' . ($index+1);
                                             $bgClass = $index == 0 ? 'bg-white/20 border-white/40' : 'bg-white/10 border-white/10';
                                         @endphp
@@ -454,3 +454,4 @@
     });
 </script>
 @endsection
+

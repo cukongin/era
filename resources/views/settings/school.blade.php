@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Identitas Madrasah')
 
@@ -38,3 +38,4 @@
 <!-- AlpineJS for simple tabs -->
 <script src="//unpkg.com/alpinejs" defer></script>
 @endsection
+

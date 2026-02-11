@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Cetak Rapor')
 
@@ -139,3 +139,4 @@
     </div>
 </div>
 @endsection
+

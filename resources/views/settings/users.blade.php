@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Manajemen User & Akses')
 
@@ -85,7 +85,7 @@
         @endif
 
         <!-- Search -->
-        <div class="bg-white dark:bg-[#1a2e22] p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
             <form action="{{ route('settings.users.index') }}" method="GET" class="relative">
                 <input type="hidden" name="role" value="{{ request('role') }}">
                 <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400">search</span>
@@ -94,7 +94,7 @@
         </div>
 
         <!-- Table -->
-        <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
             <div class="overflow-x-auto">
                 <div class="px-4 py-3 bg-red-50 border-b border-red-200 flex items-center justify-between" x-show="selectedUsers.length > 0" x-cloak>
                    <div class="flex items-center gap-2 text-red-700">
@@ -205,7 +205,7 @@
             <p class="text-sm text-primary/70 mb-0">Daftar guru dibawah ini belum memiliki akun login. Klik "Buat Akun" untuk membuatkan akun guru secara otomatis sesuai NIP/Data Guru.</p>
         </div>
 
-        <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
              <table class="w-full text-left border-collapse">
                 <thead class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
                     <tr>
@@ -252,7 +252,7 @@
         <form action="{{ route('settings.users.permissions') }}" method="POST">
             @csrf
 
-            <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 space-y-8">
+            <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 space-y-8">
 
                 <!-- Guru Permissions -->
                 <div>
@@ -320,7 +320,7 @@
 <!-- Credential Modal -->
 @if(session('generated_credential'))
 <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" x-data="{ open: true }" x-show="open" x-cloak>
-    <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-2xl w-full max-w-md p-6 border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in duration-200">
+    <div class="bg-white dark:bg-surface-dark rounded-xl shadow-2xl w-full max-w-md p-6 border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in duration-200">
         <div class="text-center mb-6">
              <div class="bg-green-100 text-green-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
                 <span class="material-symbols-outlined text-3xl">check_circle</span>
@@ -355,3 +355,4 @@
 @endif
 
 @endsection
+

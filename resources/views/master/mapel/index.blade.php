@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Master Data Mapel')
 
@@ -105,7 +105,7 @@
     </div>
 
     <!-- Table -->
-    <div class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+    <div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
                 <thead class="bg-slate-50 dark:bg-slate-800/50 uppercase text-xs font-semibold text-slate-500 border-b border-slate-200 dark:border-slate-800">
@@ -168,12 +168,12 @@
     <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
     <div class="fixed inset-0 z-10 overflow-y-auto">
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-[#1a2e22] text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-200 dark:border-slate-800">
+            <div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-surface-dark text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-200 dark:border-slate-800">
                 <form id="mapelForm" method="POST">
                     @csrf
                     <input type="hidden" name="_method" id="formMethod" value="POST">
 
-                    <div class="bg-white dark:bg-[#1a2e22] px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                    <div class="bg-white dark:bg-surface-dark px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                         <h3 class="text-base font-semibold leading-6 text-slate-900 dark:text-white mb-4" id="modalTitle">Tambah Mapel</h3>
                         <div class="space-y-4">
                             <div>
@@ -182,7 +182,7 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-medium leading-6 text-slate-900 dark:text-white">Nama Mapel Arab / Kitab (Opsional)</label>
-                                <input type="text" name="nama_kitab" id="nama_kitab" placeholder="Contoh: اللغة العربية / سفينة النجاة" class="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-800 dark:text-white dark:ring-slate-700 font-arabic">
+                                <input type="text" name="nama_kitab" id="nama_kitab" placeholder="Contoh: Ø§Ù„Ù„ØºØ© Ø§Ù„Ø¹Ø±Ø¨ÙŠØ© / Ø³ÙÙŠÙ†Ø© Ø§Ù„Ù†Ø¬Ø§Ø©" class="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-800 dark:text-white dark:ring-slate-700 font-arabic">
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
@@ -279,3 +279,4 @@
     }
 </script>
 @endpush
+

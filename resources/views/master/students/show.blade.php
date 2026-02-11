@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Detail Data Siswa')
 
@@ -26,7 +26,7 @@
         @method('PUT')
 
         <!-- Header Card: Identity -->
-        <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm flex flex-col md:flex-row gap-8 relative overflow-hidden">
+        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm flex flex-col md:flex-row gap-8 relative overflow-hidden">
              <!-- Decorative Top Bar -->
              <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-emerald-400"></div>
 
@@ -124,7 +124,7 @@
         </div>
 
         <!-- Section: Biodata Pribadi -->
-        <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
+        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
              <div class="flex items-center gap-3 mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">
                  <span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">person_book</span>
                  <h2 class="text-lg font-bold text-slate-900 dark:text-white">Biodata Pribadi</h2>
@@ -177,7 +177,7 @@
         </div>
 
         <!-- Section: Data Orang Tua -->
-        <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
+        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
              <div class="flex items-center gap-3 mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">
                  <span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">family_restroom</span>
                  <h2 class="text-lg font-bold text-slate-900 dark:text-white">Data Orang Tua / Wali</h2>
@@ -236,7 +236,7 @@
     </form>
 
     <!-- Section: Rekap Nilai Tahunan -->
-    <div class="bg-white dark:bg-[#1a2e22] rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm break-inside-avoid">
+    <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm break-inside-avoid">
             <div class="flex items-center gap-3 mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">
                 <span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">table_chart</span>
                 <h2 class="text-lg font-bold text-slate-900 dark:text-white">Rekap Nilai Tahunan</h2>
@@ -261,7 +261,7 @@
                         <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                             @forelse($student->riwayat_kelas as $index => $riwayat)
                             <!-- Row Clickable to Report Card (New Tab) -->
-                            <tr class="bg-white dark:bg-[#1a2e22] hover:bg-primary/5 dark:hover:bg-primary/20 transition-colors cursor-pointer group border-b border-slate-100 dark:border-slate-800">
+                            <tr class="bg-white dark:bg-surface-dark hover:bg-primary/5 dark:hover:bg-primary/20 transition-colors cursor-pointer group border-b border-slate-100 dark:border-slate-800">
 
                                 <td onclick="window.open('{{ route('reports.print', ['student' => $student->id, 'year_id' => $riwayat->kelas->id_tahun_ajaran]) }}', '_blank')" class="px-6 py-4 font-medium text-slate-900 dark:text-white group-hover:text-primary transition-colors">{{ $loop->iteration }}</td>
                                 <td onclick="window.open('{{ route('reports.print', ['student' => $student->id, 'year_id' => $riwayat->kelas->id_tahun_ajaran]) }}', '_blank')" class="px-6 py-4">
@@ -394,3 +394,4 @@
     }
 </style>
 @endsection
+

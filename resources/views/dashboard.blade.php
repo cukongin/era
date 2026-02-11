@@ -1,11 +1,11 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Dashboard Administrator')
 
 @section('content')
 <div class="flex-1 flex flex-col h-full overflow-hidden relative">
     <!-- Top Header Desktop (User profile, etc) -->
-    <header class="hidden lg:flex items-center justify-between px-8 py-5 bg-background-light dark:bg-[#1a2e22]">
+    <header class="hidden lg:flex items-center justify-between px-8 py-5 bg-background-light dark:bg-surface-dark">
         <div>
             <nav class="text-sm font-medium text-slate-500 dark:text-slate-400" aria-label="Breadcrumb">
                 <ol class="list-none p-0 inline-flex">
@@ -44,7 +44,7 @@
             <!-- Welcome Section -->
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div class="flex flex-col gap-2">
-                    <h2 class="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Selamat Datang, {{ auth()->user()->name }} 👋</h2>
+                    <h2 class="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Selamat Datang, {{ auth()->user()->name }} ðŸ‘‹</h2>
                     <p class="text-slate-500 dark:text-slate-400">
                         Pantau aktivitas akademik Madrasah MI & MTs secara real-time.
                     </p>
@@ -60,7 +60,7 @@
             <!-- Stats Cards Overview -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Total Santri -->
-                <div class="bg-white dark:bg-[#1a2e22] p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 relative overflow-hidden group hover:border-primary/30 transition-colors">
+                <div class="bg-white dark:bg-surface-dark p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 relative overflow-hidden group hover:border-primary/30 transition-colors">
                     <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                         <span class="material-symbols-outlined text-6xl text-primary">groups</span>
                     </div>
@@ -75,7 +75,7 @@
                 </div>
 
                 <!-- Guru Aktif -->
-                <div class="bg-white dark:bg-[#1a2e22] p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 relative overflow-hidden group hover:border-primary/30 transition-colors">
+                <div class="bg-white dark:bg-surface-dark p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 relative overflow-hidden group hover:border-primary/30 transition-colors">
                     <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                         <span class="material-symbols-outlined text-6xl text-primary">school</span>
                     </div>
@@ -119,7 +119,7 @@
                         </div>
                         Akademik MI (Diniyah)
                      </h3>
-                     <div class="bg-white dark:bg-[#1a2e22] rounded-2xl p-8 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col gap-8">
+                     <div class="bg-white dark:bg-surface-dark rounded-2xl p-8 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col gap-8">
                         @php
                             $activeCawu = (int) ($miStats['active_cawu'] ?? 1);
                             $cawuLabels = ['Cawu 1', 'Cawu 2', 'Cawu 3'];
@@ -135,7 +135,7 @@
                             <div class="flex justify-between w-full">
                                 @foreach($cawuLabels as $index => $label)
                                     @php $step = $index + 1; @endphp
-                                    <div class="flex flex-col items-center gap-3 bg-white dark:bg-[#1a2e22] px-2 relative z-10">
+                                    <div class="flex flex-col items-center gap-3 bg-white dark:bg-surface-dark px-2 relative z-10">
                                         @if($step < $activeCawu)
                                             <div class="size-10 rounded-full bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/20 transition-transform hover:scale-110">
                                                 <span class="material-symbols-outlined text-base">check</span>
@@ -183,7 +183,7 @@
                         </div>
                         Akademik MTs
                      </h3>
-                     <div class="bg-white dark:bg-[#1a2e22] rounded-2xl p-8 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between h-full gap-6">
+                     <div class="bg-white dark:bg-surface-dark rounded-2xl p-8 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between h-full gap-6">
                         <div class="flex flex-col gap-4">
                              <!-- Semesters -->
                             <div class="relative overflow-hidden rounded-xl border {{ $mtsStats['active_semester'] == 1 ? 'border-primary shadow-lg shadow-primary/5 bg-primary/5' : 'border-slate-200 opacity-60' }} p-5 flex items-center justify-between transition-all">
@@ -267,7 +267,7 @@
                     </button>
                 </div>
 
-                 <div class="bg-white dark:bg-[#1a2e22] rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col max-h-[500px]">
+                 <div class="bg-white dark:bg-surface-dark rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col max-h-[500px]">
                     <div class="overflow-y-auto custom-scrollbar">
                         <table class="w-full text-left text-sm whitespace-nowrap">
                             <thead class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 uppercase text-xs font-bold text-slate-500">
@@ -354,7 +354,7 @@
                      x-transition:leave-start="opacity-100"
                      x-transition:leave-end="opacity-0">
 
-                    <div class="bg-white dark:bg-[#1a2e22] rounded-2xl shadow-xl w-full max-w-md p-6 m-4"
+                    <div class="bg-white dark:bg-surface-dark rounded-2xl shadow-xl w-full max-w-md p-6 m-4"
                          @click.away="showReminderModal = false"
                          x-transition:enter="transition ease-out duration-300"
                          x-transition:enter-start="opacity-0 scale-90"
@@ -416,7 +416,7 @@
                      x-transition:leave-start="opacity-100"
                      x-transition:leave-end="opacity-0">
 
-                    <div class="bg-white dark:bg-[#1a2e22] rounded-2xl shadow-xl w-full max-w-2xl p-6 m-4 max-h-[90vh] flex flex-col"
+                    <div class="bg-white dark:bg-surface-dark rounded-2xl shadow-xl w-full max-w-2xl p-6 m-4 max-h-[90vh] flex flex-col"
                          @click.away="showBulkModal = false">
 
                         <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Ingatkan Semua Wali Kelas</h3>
@@ -498,4 +498,5 @@
     </div>
 </div>
 @endsection
+
 

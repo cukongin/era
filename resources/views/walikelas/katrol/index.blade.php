@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Katrol Nilai (Grade Adjustment)')
 
@@ -143,3 +143,4 @@
     </div>
 </div>
 @endsection
+
