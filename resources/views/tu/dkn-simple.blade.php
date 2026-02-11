@@ -12,7 +12,7 @@
     <!-- Top Bar -->
     <div class="px-6 py-5 bg-white dark:bg-[#1a2e22] border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row justify-between md:items-center gap-4 z-20 shadow-sm">
         <div class="flex items-center gap-4">
-            <a href="{{ route('tu.dkn.index') }}" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-blue-600 transition-all">
+            <a href="{{ route('tu.dkn.index') }}" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-primary transition-all">
                 <span class="material-symbols-outlined">arrow_back</span>
             </a>
             <div>
