@@ -1228,6 +1228,7 @@ class ReportController extends Controller
             
             // Calculate Absence & Personality (Latest Period)
             $absenceCount = 0;
+            $alphaCount = 0;
             $personality = '-';
             
             // Get last attendance record for personality (most recent)
@@ -1241,6 +1242,7 @@ class ReportController extends Controller
 
             foreach ($sAttRecords as $att) {
                 $absenceCount += ($att->sakit ?? 0) + ($att->izin ?? 0) + ($att->tanpa_keterangan ?? 0);
+                $alphaCount += ($att->tanpa_keterangan ?? 0);
             }
             
             $rankingData[] = [
@@ -1248,6 +1250,7 @@ class ReportController extends Controller
                 'total' => $totalScore,
                 'avg' => $avgScore,
                 'absence' => $absenceCount,
+                'alpha' => $alphaCount,
                 'personality' => $personality,
                 'grades_count' => $gradeCount,
                 'tie_reason' => null,
@@ -1264,16 +1267,17 @@ class ReportController extends Controller
             ->keyBy('id_siswa');
             
         // 4. Sort with Tie-Breaker Logic (Same for both)
+        // 4. Sort with Tie-Breaker Logic (Blue Print)
         usort($rankingData, function($a, $b) {
-            // 1. Total Score (Desc)
+            // Priority 1: Total Score (Desc)
             if (abs($a['total'] - $b['total']) > 0.01) {
                 return $b['total'] <=> $a['total'];
             }
-            // 2. Absence Count (Asc) - LEAST ABSENCE WIN
-            if ($a['absence'] !== $b['absence']) {
-                return $a['absence'] <=> $b['absence'];
+            // Priority 2: Alpha Count (Asc) - LEAST ALPHA WINS
+            if ($a['alpha'] !== $b['alpha']) {
+                return $a['alpha'] <=> $b['alpha'];
             }
-            // 3. Name (Asc)
+            // Priority 3: Name (Asc)
             return strcasecmp($a['student']->nama_lengkap, $b['student']->nama_lengkap);
         });
 
@@ -1286,27 +1290,25 @@ class ReportController extends Controller
             $insight = [];
             $sid = $data['student']->id;
 
-            // 1. Tie Breaker Check
+            // 1. Tie Breaker Explanation
             if ($prevData) {
                 $scoreTie = abs($data['total'] - $prevData['total']) < 0.01;
                 
                 if ($scoreTie) {
-                    if ($prevData['absence'] < $data['absence']) {
-                        $prevData['tie_reason'] = "Menang di Kehadiran";
-                        $data['tie_reason'] = "Kalah di Kehadiran";
-                    } elseif ($prevData['absence'] == $data['absence']) {
-                         $data['tie_reason'] = "Seri Mutlak (Abjad)";
+                    if ($prevData['alpha'] < $data['alpha']) {
+                        // Previous won because less alpha
+                        $data['tie_reason'] = "Kalah di Alpha (".$data['alpha']." vs ".$prevData['alpha'].")";
+                    } elseif ($prevData['alpha'] == $data['alpha']) {
+                         $data['tie_reason'] = "Kalah Abjad Nama";
                     }
                 }
             }
             
             // 2. Behavioral Insights (The "Details" User wants)
-            $isSmart = $data['avg'] >= 85; 
-            $isDiligent = $data['absence'] <= 3;
-            $isLazy = $data['absence'] >= 10;
-            $isLowScore = $data['avg'] < 75;
             $isTopRank = $data['rank'] <= 3;
             $isLowRank = $data['rank'] > (count($rankingData) * 0.7); // Bottom 30%
+            $isDiligent = $data['alpha'] == 0; // Truly Diligent (0 Alpha)
+            $isLazy = $data['alpha'] >= 10; // High Alpha
 
             if ($data['rank'] == 1) {
                  $insight[] = "🏆 Juara Umum";
@@ -1314,21 +1316,17 @@ class ReportController extends Controller
                 if ($isTopRank && $isDiligent) {
                     $insight[] = "🌟 Siswa Teladan (Pintar & Rajin)";
                 } elseif ($isTopRank && $isLazy) {
-                    $insight[] = "💡 Cerdas tapi Sering Absen";
+                    $insight[] = "💡 Cerdas tapi Indisipliner"; // Paradox Candidate
                 } elseif ($isLowRank && $isDiligent) {
-                    $insight[] = "💪 Rajin tapi Nilai Kalah Bersaing";
+                    $insight[] = "💪 Rajin (Perlu Tingkatkan Nilai)";
                 } elseif ($isLowRank && $isLazy) {
                     $insight[] = "⚠️ Perlu Perhatian Khusus";
-                } elseif ($isLowScore) {
-                    $insight[] = "Perlu Remedial";
-                } elseif ($isDiligent) {
-                    $insight[] = "Kehadiran Sangat Baik";
                 }
             }
 
             // High Absence Warning
-            if ($data['absence'] >= 10 && !$isLazy) { 
-                 $insight[] = "⚠️ Awas: Absen Tinggi (" . $data['absence'] . ")";
+            if ($data['alpha'] >= 10 && !$isLazy) { // Avoid double tag if already tagged lazy above
+                 $insight[] = "⚠️ Alpha Tinggi (" . $data['alpha'] . ")";
             }
             
             // 3. Trend Analysis (Rising Star & Annual Journey)
@@ -1350,7 +1348,7 @@ class ReportController extends Controller
                     } elseif ($diff >= 1) {
                          $data['trend_status'] = 'improved';
                     } elseif ($diff <= -5) {
-                         $insight[] = "📉 Mengalami Penurunan Signifikan";
+                         $insight[] = "📉 Penurunan Signifikan";
                          $data['trend_status'] = 'dropped';
                     } elseif (abs($diff) <= 1 && $data['rank'] <= 3) {
                          $insight[] = "🛡️ Dewa Stabil (Konsisten Top)";
@@ -1384,19 +1382,14 @@ class ReportController extends Controller
                 $data['trend_status'] = null;
             }
 
-            // 4. SYNC WITH PROMOTION STATUS (USER REQUEST)
-            // Priority Override: If Retained/Failed, this is the most important status.
+            // 4. SYNC WITH PROMOTION STATUS
             if (isset($promoDecisions[$sid])) {
                 $promo = $promoDecisions[$sid];
-                // 'promoted', 'retained', 'conditional', 'graduated', 'not_graduated'
-                
                 if ($promo->final_decision == 'retained') {
-                    // Force Wipe other positive insights if retained
                     $insight = ["⛔ Tinggal Kelas"]; 
                 } elseif ($promo->final_decision == 'not_graduated') {
                     $insight = ["⛔ Tidak Lulus"];
                 } elseif ($promo->final_decision == 'conditional') {
-                    // Prepend Warning
                     array_unshift($insight, "⚠️ Naik Bersyarat");
                 }
             }
@@ -1415,18 +1408,14 @@ class ReportController extends Controller
         // --- ADVANCED ANALYTICS START ---
         
         // 1. Mapel Difficulty Analysis ("Mapel Neraka" vs "Surga")
-        // Aggregate all grades in this selection
         $allMapelGrades = collect();
         if ($isAnnual) {
-             // Re-fetch all grades flat for mapel analysis? Or reuse $grades structure?
-             // $grades is grouped by id_siswa. Need to pivot to Group By ID Mapel.
              foreach($grades as $sGrades) {
                  foreach($sGrades as $grade) {
                      $allMapelGrades->push($grade);
                  }
              }
         } else {
-            // Flatten the nested collection from groupBy('id_siswa')
              $allMapelGrades = $grades->flatten();
         }
 
@@ -1434,28 +1423,35 @@ class ReportController extends Controller
             return [
                 'avg' => $row->avg('nilai_akhir'),
                 'count' => $row->count(),
-                'mapel' => $row->first()->mapel ?? null // Eager loading might be needed on initial query
+                'mapel' => $row->first()->mapel ?? null 
             ];
         })->sortBy('avg'); // Low to High
 
         $mapelAnalysis = [
-            'hardest' => $mapelStats->first(), // Lowest Avg
-            'easiest' => $mapelStats->last(),  // Highest Avg
+            'neraka' => $mapelStats->first(), // Lowest Avg (Hardest)
+            'surga' => $mapelStats->last(),  // Highest Avg (Easiest)
             'all' => $mapelStats
         ];
         
-        // 2. Anomaly Detection (The "Syainur" Paradox)
-        // High Rank (Top 5) BUT High Absence (>= 10)
+        // 2. Anomaly Detection (The "Paradox") & Role Models (The "Anti-Paradox")
+        // Rigid Logic: Rank Top 5 AND Alpha >= 10
         $anomalies = collect($rankingData)->filter(function($student) {
-            return $student['rank'] <= 5 && $student['absence'] >= 10;
+            return $student['rank'] <= 5 && $student['alpha'] >= 10;
         });
+        $anomalyIds = $anomalies->pluck('student.id')->toArray();
+        
+        // Role Model Logic: Top 5 Rankers who are NOT Anomalies
+        // This provides the "Apple to Apple" comparison the user requested.
+        $roleModels = collect($rankingData)->filter(function($student) use ($anomalyIds) {
+            return !in_array($student['student']->id, $anomalyIds);
+        })->take(5); // Take top 5 "Normal/Good" students
 
         // 6. Podium (Top 3)
         $podium = array_slice($rankingData, 0, 3);
 
         return view('reports.class_analytics', compact(
             'class', 'periode', 'periodes', 'rankingData', 'podium', 'isAnnual', 
-            'mapelAnalysis', 'anomalies'
+            'mapelAnalysis', 'anomalies', 'roleModels'
         ));
     }
     public function printTranscript(Request $request, $studentId)
