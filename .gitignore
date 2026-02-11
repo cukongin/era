@@ -3,6 +3,7 @@
 /public/hot
 /public/storage
 /public/uploads/*
+composer.lock
 /storage/*.key
 /storage/framework/cache/*
 /storage/framework/sessions/*
