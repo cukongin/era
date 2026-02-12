@@ -896,9 +896,17 @@ class WaliKelasController extends Controller
             ->first();
 
         // Defaults if settings missing
-        $maxKkmFailure = $gradingSettings->promotion_max_kkm_failure ?? 3;
-        $minAttendance = $gradingSettings->promotion_min_attendance ?? 75; // Percent
-        $minAttitude   = $gradingSettings->promotion_min_attitude ?? 'B'; // Minimum 'B' means 'C' fails
+        // Defaults if settings missing (Table > Global > Default)
+        $maxKkmFailure = $gradingSettings->promotion_max_kkm_failure 
+            ?? \App\Models\GlobalSetting::val('promotion_max_kkm_failure', 3);
+        $maxKkmFailure = (int) $maxKkmFailure;
+
+        $minAttendance = $gradingSettings->promotion_min_attendance 
+            ?? \App\Models\GlobalSetting::val('promotion_min_attendance', 75); // Percent
+        $minAttendance = (float) $minAttendance;
+
+        $minAttitude = $gradingSettings->promotion_min_attitude 
+            ?? \App\Models\GlobalSetting::val('promotion_min_attitude', 'B'); // Minimum 'B' means 'C' fails
 
         // Helper for Attitude Comparison (A > B > C > D)
         $attRank = ['A' => 4, 'B' => 3, 'C' => 2, 'D' => 1];
@@ -911,8 +919,10 @@ class WaliKelasController extends Controller
             'ActivePeriodID' => $activeP ? $activeP->id : 'NULL',
             'IsFinalPeriod' => $isFinalPeriod ? 'YES' : 'NO',
             'IsAdmin' => $isAdmin ? 'YES' : 'NO',
+            'IsAdmin' => $isAdmin ? 'YES' : 'NO',
             'MinAttendanceSetting' => $minAttendance,
-            'EffectiveDaysSetting' => \App\Models\GlobalSetting::val('total_effective_days', 220)
+            'EffectiveDaysSetting' => $gradingSettings->effective_days_year 
+                ?? \App\Models\GlobalSetting::val('total_effective_days', 220)
         ];
 
         if (!$isFinalPeriod) {
@@ -1071,7 +1081,10 @@ class WaliKelasController extends Controller
             // Attendance % Logic
             $periodCount = $periods->count();
             // Default Yearly Effective Days
-            $effectiveDays = \App\Models\GlobalSetting::val('total_effective_days', 220);
+            $effectiveDays = $gradingSettings->effective_days_year 
+                ?? \App\Models\GlobalSetting::val('total_effective_days', 220);
+            $effectiveDays = (int) $effectiveDays;
+
             if ($effectiveDays <= 0) $effectiveDays = 220;
 
             if (!$isFinalPeriod && isset($activeP)) {
