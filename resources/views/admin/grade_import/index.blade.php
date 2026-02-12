@@ -44,8 +44,8 @@
                     <form action="{{ route('grade.import.global.preview', 'MI') }}" method="POST" enctype="multipart/form-data" class="space-y-2">
                         @csrf
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Upload File CSV/Excel (MI)</label>
-                        <input type="file" name="file" required class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-secondary/10 file:text-secondary hover:file:bg-secondary/20">
-                        <button type="submit" class="w-full bg-secondary text-white px-4 py-2 rounded-lg font-bold hover:bg-secondary-dark transition-colors mt-2">
+                        <input type="file" name="file" required class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+                        <button type="submit" class="w-full bg-emerald-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-emerald-700 transition-colors mt-2">
                             Preview & Import MI
                         </button>
                     </form>
@@ -76,8 +76,8 @@
                     <form action="{{ route('grade.import.global.preview', 'MTS') }}" method="POST" enctype="multipart/form-data" class="space-y-2">
                         @csrf
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Upload File CSV/Excel (MTS)</label>
-                        <input type="file" name="file" required class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
-                        <button type="submit" class="w-full bg-primary text-white px-4 py-2 rounded-lg font-bold hover:bg-primary-dark transition-colors mt-2">
+                        <input type="file" name="file" required class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 transition-colors mt-2">
                             Preview & Import MTS
                         </button>
                     </form>

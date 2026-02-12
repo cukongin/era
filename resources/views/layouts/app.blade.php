@@ -101,6 +101,12 @@
         .border-primary { border-color: rgb(var(--color-primary)) !important; }
         .ring-primary { --tw-ring-color: rgb(var(--color-primary)) !important; }
         
+        /* Secondary Failsafe */
+        .bg-secondary { background-color: rgb(var(--color-secondary)) !important; }
+        .bg-secondary:hover { background-color: rgb(var(--color-secondary)) !important; filter: brightness(0.9); }
+        .text-secondary { color: rgb(var(--color-secondary)) !important; }
+        .border-secondary { border-color: rgb(var(--color-secondary)) !important; }
+        
         /* Ensure inputs and rings use the primary color */
         .focus\:ring-primary:focus { --tw-ring-color: rgb(var(--color-primary)) !important; }
         .focus\:border-primary:focus { border-color: rgb(var(--color-primary)) !important; }
