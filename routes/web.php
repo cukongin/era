@@ -76,6 +76,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/settings', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
         Route::post('/settings/update-sheet-id', [App\Http\Controllers\SettingsController::class, 'updateSheetId'])->name('settings.update-sheet-id');
+        Route::post('/settings/theme', [App\Http\Controllers\SettingsController::class, 'updateTheme'])->name('settings.theme.update');
 
         
         // Monitoring (Moved to Shared Group)

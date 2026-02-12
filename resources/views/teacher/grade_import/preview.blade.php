@@ -39,7 +39,7 @@
 
                     <p class="text-xs text-slate-500 mt-1">Silakan periksa dan edit nilai jika diperlukan sebelum menyimpan.</p>
                 </div>
-                <button type="submit" class="bg-primary text-white px-6 py-2.5 rounded-xl font-bold hover:bg-green-600 transition-all shadow-lg shadow-primary/30 flex items-center gap-2">
+                <button type="submit" class="bg-primary text-white px-6 py-2.5 rounded-xl font-bold hover:bg-primary-dark transition-all shadow-lg shadow-primary/30 flex items-center gap-2">
                     <span class="material-symbols-outlined">save</span>
                     Simpan Semua Data
                 </button>
@@ -73,7 +73,7 @@
 
                             {{-- Non-Academic Headers --}}
                             @foreach($structNonAcademic as $pId => $fields)
-                                <th class="px-2 py-3 text-center border-l bg-blue-50/50 min-w-[200px]" colspan="{{ count($fields) }}">
+                                <th class="px-2 py-3 text-center border-l bg-primary/5 min-w-[200px]" colspan="{{ count($fields) }}">
                                      @php $pName = count($structNonAcademic) > 1 ? "(P$pId) " : ""; @endphp
                                      <div class="text-[10px] text-slate-400">{{ $pName }}</div>
                                      Kehadiran & Sikap

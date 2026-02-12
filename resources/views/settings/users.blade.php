@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Manajemen User & Akses')
 
@@ -213,7 +213,7 @@
                 Konfigurasi Login Real-time (Google Sheet)
             </h4>
             
-            <div class="bg-blue-50 text-blue-800 p-4 rounded-lg mb-4 text-sm border border-blue-100">
+            <div class="bg-primary/5 text-primary p-4 rounded-lg mb-4 text-sm border border-primary/10">
                 <strong>Cara Kerja:</strong> Saat guru login dengan kode, sistem akan langsung mengecek ke Google Sheet ini.
                 <br>Pastikan Sheet disetting <strong>"Anyone with the link can view"</strong>.
             </div>

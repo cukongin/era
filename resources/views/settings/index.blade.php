@@ -63,6 +63,13 @@
                 Aturan Penilaian
             </button>
 
+            <button @click="activeTab = 'theme'"
+                :class="activeTab === 'theme' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
+                class="group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm transition-all">
+                <span class="material-symbols-outlined mr-2" :class="activeTab === 'theme' ? 'text-primary' : 'text-slate-400 group-hover:text-slate-500'">palette</span>
+                Tampilan
+            </button>
+
             <button @click="activeTab = 'kkm'"
                 :class="activeTab === 'kkm' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
                 class="group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm transition-all">
@@ -87,9 +94,9 @@
             <!-- MAINTENANCE TAB -->
             @if(auth()->user()->role === 'admin')
             <button @click="activeTab = 'backup'"
-                :class="activeTab === 'backup' ? 'border-blue-500 text-blue-600' : 'border-transparent text-slate-500 hover:text-blue-600 hover:border-blue-300'"
+                :class="activeTab === 'backup' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-primary hover:border-primary/50'"
                 class="group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm transition-all">
-                <span class="material-symbols-outlined mr-2" :class="activeTab === 'backup' ? 'text-blue-600' : 'text-slate-400 group-hover:text-blue-500'">cloud_sync</span>
+                <span class="material-symbols-outlined mr-2" :class="activeTab === 'backup' ? 'text-primary' : 'text-slate-400 group-hover:text-primary'">cloud_sync</span>
                 Backup & Restore
             </button>
 
@@ -107,6 +114,225 @@
     <div class="min-h-[400px]">
 
         <!-- TAB 1: ATURAN PENILAIAN (GRADING) -->
+        <!-- THEME SETTINGS TAB -->
+    <div x-show="activeTab === 'theme'" class="space-y-6 animate-fade-in-up">
+        
+        <!-- Live Preview Context is handled by Parent or we inject script here -->
+        <div class="bg-white rounded-lg shadow-sm border border-slate-200" 
+             x-data="{ 
+                currentTheme: '{{ \App\Models\GlobalSetting::val('app_theme', 'emerald') }}',
+                previewTheme(themeKey) {
+                    this.currentTheme = themeKey;
+                    // Define colors for JS preview (mirroring PHP)
+                    const themes = {
+                        'emerald': { '--color-primary': '0 62 41', '--color-primary-dark': '0 35 24', '--color-secondary': '70 112 97', '--color-background-dark': '0 42 28', '--color-surface-dark': '26 46 34' },
+                        'blue': { '--color-primary': '30 58 138', '--color-primary-dark': '23 37 84', '--color-secondary': '96 165 250', '--color-background-dark': '15 23 42', '--color-surface-dark': '30 41 59' },
+                        'purple': { '--color-primary': '88 28 135', '--color-primary-dark': '59 7 100', '--color-secondary': '192 132 252', '--color-background-dark': '19 7 35', '--color-surface-dark': '45 20 70' },
+                        'crimson': { '--color-primary': '153 27 27', '--color-primary-dark': '69 10 10', '--color-secondary': '248 113 113', '--color-background-dark': '25 10 10', '--color-surface-dark': '60 20 20' },
+                        'teal': { '--color-primary': '17 94 89', '--color-primary-dark': '4 47 46', '--color-secondary': '45 212 191', '--color-background-dark': '2 25 25', '--color-surface-dark': '10 50 50' },
+                        'tosca': { '--color-primary': '3 127 122', '--color-primary-dark': '2 95 91', '--color-secondary': '243 104 53', '--color-background-dark': '1 40 38', '--color-surface-dark': '2 60 58' }
+                    };
+                    
+                    const colors = themes[themeKey];
+                    if(colors) {
+                        const root = document.documentElement;
+                        for (const [key, value] of Object.entries(colors)) {
+                            root.style.setProperty(key, value);
+                        }
+                    }
+                }
+             }">
+            
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">palette</span>
+                        Tema Warna Aplikasi
+                    </h3>
+                    <p class="text-slate-500 text-sm mt-1">Klik pilihan untuk melihat simulasi warna secara langsung.</p>
+                </div>
+            </div>
+
+            <div class="p-8">
+                <form action="{{ route('settings.theme.update') }}" method="POST">
+                    @csrf
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+                        
+                        <!-- Helper Component for Theme Card -->
+                        <!-- EMERALD -->
+                        <label class="cursor-pointer group relative">
+                            <input type="radio" name="theme" value="emerald" class="peer sr-only" 
+                                   :checked="currentTheme === 'emerald'" 
+                                   @change="previewTheme('emerald')">
+                            
+                            <div class="p-4 rounded-xl border-2 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+                                 :class="currentTheme === 'emerald' ? 'border-emerald-700 ring-2 ring-emerald-700 bg-emerald-50/50' : 'border-slate-200 hover:border-emerald-400'">
+                                
+                                <div class="flex items-center justify-center gap-[-10px] mb-4 h-20">
+                                    <!-- Palette Circles -->
+                                    <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm z-30" style="background-color: #003e29;" title="Primary"></div>
+                                    <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm z-20 -ml-4" style="background-color: #467061;" title="Secondary"></div>
+                                    <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm z-10 -ml-4" style="background-color: #1a2e22;" title="Surface"></div>
+                                </div>
+                                
+                                <div class="text-center">
+                                    <div class="font-bold text-slate-700 group-hover:text-emerald-800">Emerald Green</div>
+                                    <div class="text-xs text-slate-500">Default</div>
+                                </div>
+                            </div>
+                            <!-- Active Badge -->
+                            <div class="absolute top-2 right-2 transition-opacity duration-300" 
+                                 :class="currentTheme === 'emerald' ? 'opacity-100' : 'opacity-0'">
+                                <span class="material-symbols-outlined text-emerald-700 text-2xl">check_circle</span>
+                            </div>
+                        </label>
+
+                        <!-- ROYAL BLUE -->
+                        <label class="cursor-pointer group relative">
+                            <input type="radio" name="theme" value="blue" class="peer sr-only" 
+                                   :checked="currentTheme === 'blue'" 
+                                   @change="previewTheme('blue')">
+                            
+                            <div class="p-4 rounded-xl border-2 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+                                 :class="currentTheme === 'blue' ? 'border-blue-800 ring-2 ring-blue-800 bg-blue-50/50' : 'border-slate-200 hover:border-blue-400'">
+                                
+                                <div class="flex items-center justify-center mb-4 h-20">
+                                    <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm z-30" style="background-color: #1e3a8a;" title="Primary"></div>
+                                    <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm z-20 -ml-4" style="background-color: #60a5fa;" title="Secondary"></div>
+                                    <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm z-10 -ml-4" style="background-color: #1e293b;" title="Surface"></div>
+                                </div>
+                                
+                                <div class="text-center">
+                                    <div class="font-bold text-slate-700 group-hover:text-blue-800">Royal Blue</div>
+                                    <div class="text-xs text-slate-500">Professional</div>
+                                </div>
+                            </div>
+                            <div class="absolute top-2 right-2 transition-opacity duration-300"
+                                 :class="currentTheme === 'blue' ? 'opacity-100' : 'opacity-0'">
+                                <span class="material-symbols-outlined text-blue-800 text-2xl">check_circle</span>
+                            </div>
+                        </label>
+
+                        <!-- MIDNIGHT PURPLE -->
+                        <label class="cursor-pointer group relative">
+                            <input type="radio" name="theme" value="purple" class="peer sr-only" 
+                                   :checked="currentTheme === 'purple'" 
+                                   @change="previewTheme('purple')">
+                            
+                            <div class="p-4 rounded-xl border-2 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+                                 :class="currentTheme === 'purple' ? 'border-purple-800 ring-2 ring-purple-800 bg-purple-50/50' : 'border-slate-200 hover:border-purple-400'">
+                                
+                                <div class="flex items-center justify-center mb-4 h-20">
+                                    <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm z-30" style="background-color: #581c87;" title="Primary"></div>
+                                    <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm z-20 -ml-4" style="background-color: #c084fc;" title="Secondary"></div>
+                                    <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm z-10 -ml-4" style="background-color: #2e1065;" title="Surface"></div>
+                                </div>
+                                
+                                <div class="text-center">
+                                    <div class="font-bold text-slate-700 group-hover:text-purple-800">Midnight Purple</div>
+                                    <div class="text-xs text-slate-500">Creative</div>
+                                </div>
+                            </div>
+                            <div class="absolute top-2 right-2 transition-opacity duration-300"
+                                 :class="currentTheme === 'purple' ? 'opacity-100' : 'opacity-0'">
+                                <span class="material-symbols-outlined text-purple-800 text-2xl">check_circle</span>
+                            </div>
+                        </label>
+
+                         <!-- CRIMSON RED -->
+                        <label class="cursor-pointer group relative">
+                            <input type="radio" name="theme" value="crimson" class="peer sr-only" 
+                                   :checked="currentTheme === 'crimson'" 
+                                   @change="previewTheme('crimson')">
+                            
+                            <div class="p-4 rounded-xl border-2 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+                                 :class="currentTheme === 'crimson' ? 'border-red-800 ring-2 ring-red-800 bg-red-50/50' : 'border-slate-200 hover:border-red-400'">
+                                
+                                <div class="flex items-center justify-center mb-4 h-20">
+                                    <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm z-30" style="background-color: #991b1b;" title="Primary"></div>
+                                    <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm z-20 -ml-4" style="background-color: #f87171;" title="Secondary"></div>
+                                    <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm z-10 -ml-4" style="background-color: #450a0a;" title="Surface"></div>
+                                </div>
+                                
+                                <div class="text-center">
+                                    <div class="font-bold text-slate-700 group-hover:text-red-800">Crimson Red</div>
+                                    <div class="text-xs text-slate-500">Bold</div>
+                                </div>
+                            </div>
+                            <div class="absolute top-2 right-2 transition-opacity duration-300"
+                                 :class="currentTheme === 'crimson' ? 'opacity-100' : 'opacity-0'">
+                                <span class="material-symbols-outlined text-red-800 text-2xl">check_circle</span>
+                            </div>
+                        </label>
+
+                        <!-- OCEAN TEAL -->
+                        <label class="cursor-pointer group relative">
+                            <input type="radio" name="theme" value="teal" class="peer sr-only" 
+                                   :checked="currentTheme === 'teal'" 
+                                   @change="previewTheme('teal')">
+                            
+                            <div class="p-4 rounded-xl border-2 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+                                 :class="currentTheme === 'teal' ? 'border-teal-800 ring-2 ring-teal-800 bg-teal-50/50' : 'border-slate-200 hover:border-teal-400'">
+                                
+                                <div class="flex items-center justify-center mb-4 h-20">
+                                    <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm z-30" style="background-color: #115e59;" title="Primary"></div>
+                                    <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm z-20 -ml-4" style="background-color: #2dd4bf;" title="Secondary"></div>
+                                    <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm z-10 -ml-4" style="background-color: #134e4a;" title="Surface"></div>
+                                </div>
+                                
+                                <div class="text-center">
+                                    <div class="font-bold text-slate-700 group-hover:text-teal-800">Ocean Teal</div>
+                                    <div class="text-xs text-slate-500">Calm</div>
+                                </div>
+                            </div>
+                            <div class="absolute top-2 right-2 transition-opacity duration-300"
+                                 :class="currentTheme === 'teal' ? 'opacity-100' : 'opacity-0'">
+                                <span class="material-symbols-outlined text-teal-800 text-2xl">check_circle</span>
+                            </div>
+                        </label>
+
+                        <!-- TOSCA ORANGE -->
+                        <label class="cursor-pointer group relative">
+                            <input type="radio" name="theme" value="tosca" class="peer sr-only" 
+                                   :checked="currentTheme === 'tosca'" 
+                                   @change="previewTheme('tosca')">
+                            
+                            <div class="p-4 rounded-xl border-2 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+                                 :class="currentTheme === 'tosca' ? 'border-[#037F7A] ring-2 ring-[#037F7A] bg-[#037F7A]/10' : 'border-slate-200 hover:border-[#037F7A]'">
+                                
+                                <div class="flex items-center justify-center mb-4 h-20">
+                                    <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm z-30" style="background-color: #037F7A;" title="Primary"></div>
+                                    <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm z-20 -ml-4" style="background-color: #F36835;" title="Secondary"></div>
+                                    <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm z-10 -ml-4" style="background-color: #F5F5F5;" title="Surface"></div>
+                                </div>
+                                
+                                <div class="text-center">
+                                    <div class="font-bold text-slate-700 group-hover:text-[#037F7A]">Tosca Orange</div>
+                                    <div class="text-xs text-slate-500">Modern</div>
+                                </div>
+                            </div>
+                            <div class="absolute top-2 right-2 transition-opacity duration-300"
+                                 :class="currentTheme === 'tosca' ? 'opacity-100' : 'opacity-0'">
+                                <span class="material-symbols-outlined text-[#037F7A] text-2xl">check_circle</span>
+                            </div>
+                        </label>
+
+                    </div>
+
+                    <div class="mt-8 flex justify-end gap-3 border-t border-slate-100 pt-6">
+                        <div x-show="currentTheme !== '{{ \App\Models\GlobalSetting::val('app_theme', 'emerald') }}'" class="flex items-center text-sm text-slate-500 animate-pulse">
+                            <span class="material-symbols-outlined mr-1 text-base">preview</span>
+                            Melihat Pratinjau
+                        </div>
+                         <button type="submit" class="bg-primary hover:scale-105 active:scale-95 text-white px-8 py-3 rounded-lg font-bold shadow-lg shadow-primary/30 transition-all flex items-center gap-2">
+                            <span class="material-symbols-outlined">save</span>
+                            Simpan Tampilan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
         <!-- TAB 1: ATURAN PENILAIAN (GRADING) -->
         <div x-show="activeTab === 'grading'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
 
@@ -506,7 +732,7 @@
                             <thead class="bg-white dark:bg-slate-800 uppercase text-xs font-bold text-slate-500 border-b border-slate-200 dark:border-slate-700">
                                 <tr>
                                     <th class="px-6 py-4">Mata Pelajaran</th>
-                                    <th class="px-6 py-4 w-40 text-center bg-emerald-50/50 text-emerald-700">KKM MI</th>
+                                    <th class="px-6 py-4 w-40 text-center bg-secondary/10 text-secondary">KKM MI</th>
                                     <th class="px-6 py-4 w-40 text-center bg-primary/10 text-primary">KKM MTs</th>
                                 </tr>
                             </thead>
@@ -517,14 +743,14 @@
                                         {{ $mapel->nama_mapel }}
                                         <span class="text-xs font-normal text-slate-400 block">{{ $mapel->kode_mapel }}</span>
                                     </td>
-                                    <td class="px-6 py-3 text-center bg-teal-50/20">
+                                    <td class="px-6 py-3 text-center bg-secondary/5">
                                         @if($mapel->target_jenjang == 'MI' || $mapel->target_jenjang == 'SEMUA')
-                                            <input type="number" name="kkm[{{ $mapel->id }}][MI]" value="{{ $kkms[$mapel->id.'-MI']->nilai_kkm ?? 70 }}" :disabled="isLocked" class="w-20 text-center font-bold text-emerald-700 rounded border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                                            <input type="number" name="kkm[{{ $mapel->id }}][MI]" value="{{ $kkms[$mapel->id.'-MI']->nilai_kkm ?? 70 }}" :disabled="isLocked" class="w-20 text-center font-bold text-secondary rounded border-slate-200 focus:border-secondary focus:ring-secondary text-sm disabled:opacity-50 disabled:cursor-not-allowed">
                                         @else
                                             <span class="text-slate-300">-</span>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-3 text-center bg-indigo-50/20">
+                                    <td class="px-6 py-3 text-center bg-primary/5">
                                          @if($mapel->target_jenjang == 'MTS' || $mapel->target_jenjang == 'SEMUA')
                                             <input type="number" name="kkm[{{ $mapel->id }}][MTS]" value="{{ $kkms[$mapel->id.'-MTS']->nilai_kkm ?? 75 }}" :disabled="isLocked" class="w-20 text-center font-bold text-primary rounded border-slate-200 focus:border-primary focus:ring-primary text-sm disabled:opacity-50 disabled:cursor-not-allowed">
                                         @else

@@ -43,7 +43,7 @@
                     <input type="text" name="access_code" class="w-full text-center text-2xl tracking-[0.5em] font-mono font-bold rounded-lg border-slate-300 focus:border-surface-dark focus:ring-surface-dark placeholder-slate-300 uppercase" placeholder="*******" required autofocus maxlength="6">
                 </div>
 
-                <button type="submit" class="mt-2 bg-surface-dark hover:bg-black text-white font-bold py-3 rounded-lg shadow-lg shadow-surface-dark/30 transition-all flex items-center justify-center gap-2">
+                <button type="submit" class="mt-2 bg-slate-900 hover:bg-black text-white font-bold py-3 rounded-lg shadow-lg shadow-slate-900/20 transition-all flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined text-sm">login</span>
                     Masuk Sekarang
                 </button>

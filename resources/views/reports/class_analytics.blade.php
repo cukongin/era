@@ -45,7 +45,7 @@
     @if(count($podium) >= 1)
     <div class="relative pt-10 pb-4">
         <!-- Background Decoration -->
-        <div class="absolute inset-0 bg-gradient-to-b from-indigo-50/50 to-transparent dark:from-indigo-900/10 dark:to-transparent rounded-3xl -z-10"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent dark:from-primary/10 dark:to-transparent rounded-3xl -z-10"></div>
         
         <div class="flex justify-center items-end gap-4 md:gap-8 px-4">
             
@@ -145,21 +145,21 @@
         @if(isset($roleModels) && count($roleModels) > 0)
         <div class="bg-white dark:bg-[#1a2332] rounded-xl border border-slate-200 dark:border-[#2a3441] p-4 shadow-sm">
             <h3 class="font-bold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
-                <span class="material-symbols-outlined text-indigo-500">verified_user</span> Siswa Berprestasi (Normal)
+                <span class="material-symbols-outlined text-primary">verified_user</span> Siswa Berprestasi (Normal)
             </h3>
             <div class="space-y-2">
                 @foreach($roleModels as $goodStudent)
                 <div onclick="showAnalyticsModal('insight', 'Siswa Berprestasi Normal âœ…', '{{ $goodStudent['student']->nama_lengkap }} adalah pembanding positif.', 'Rank #{{ $goodStudent['rank'] }} dengan {{ $goodStudent['alpha'] }} Alpha (Wajar).')"
-                     class="bg-indigo-50 dark:bg-indigo-900/10 p-2 rounded-lg border border-indigo-100 dark:border-indigo-800/30 flex justify-between items-center cursor-pointer hover:bg-indigo-100 transition-colors">
+                     class="bg-primary/5 dark:bg-primary/10 p-2 rounded-lg border border-primary/20 dark:border-primary/30 flex justify-between items-center cursor-pointer hover:bg-primary/10 transition-colors">
                     <div>
                         <div class="font-bold text-slate-800 dark:text-white text-sm">
                              Rank #{{ $goodStudent['rank'] }} - {{ $goodStudent['student']->nama_lengkap }}
                         </div>
-                        <div class="text-xs text-indigo-600 dark:text-indigo-400">
+                        <div class="text-xs text-primary dark:text-primary-light">
                              <strong>{{ $goodStudent['alpha'] }} Alpha</strong> (Non-Paradox)
                         </div>
                     </div>
-                     <span class="material-symbols-outlined text-indigo-400 text-sm">check_circle</span>
+                     <span class="material-symbols-outlined text-primary/70 text-sm">check_circle</span>
                 </div>
                 @endforeach
             </div>
@@ -314,7 +314,7 @@
                     <tr class="hover:bg-slate-50 dark:hover:bg-[#1f2937]/50 border-b border-slate-100 dark:border-slate-800 transition-colors group">
                         <td class="px-6 py-4 whitespace-nowrap text-center">
                             <div class="flex items-center justify-center gap-2 relative">
-                                <span class="bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 font-bold py-1 px-3 rounded-full text-sm">
+                                <span class="bg-primary/10 text-primary dark:text-primary-light font-bold py-1 px-3 rounded-full text-sm">
                                     #{{ $data['rank'] }}
                                 </span>
                                 
@@ -362,7 +362,7 @@
                                     <div class="text-[8px] text-slate-400 mb-0.5 border-b border-slate-100 pb-0.5">Riwayat Ranking</div>
                                     <div class="flex items-center gap-1">
                                     @foreach($data['rank_journey'] as $j)
-                                        <span class="{{ $loop->last ? 'text-indigo-600 font-black' : '' }}">#{{ $j['rank'] }}</span>
+                                        <span class="{{ $loop->last ? 'text-primary font-black' : '' }}">#{{ $j['rank'] }}</span>
                                         @if(!$loop->last) <span class="text-slate-300">âžœ</span> @endif
                                     @endforeach
                                     </div>
@@ -377,7 +377,7 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 text-center">
-                            <span class="font-black text-indigo-600 dark:text-indigo-400 text-lg">{{ number_format($data['total'], 2) }}</span>
+                            <span class="font-black text-primary dark:text-primary-light text-lg">{{ number_format($data['total'], 2) }}</span>
                             @if(!($isAnnual ?? false))
                             <div class="text-[10px] text-slate-400 mt-0.5">dari {{ $data['grades_count'] }} Mapel</div>
                             @endif

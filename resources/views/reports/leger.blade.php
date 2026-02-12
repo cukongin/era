@@ -138,7 +138,7 @@
                 </div>
                 
                 <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
-                    <a href="{{ route('reports.leger.rekap.export', ['year_id' => $selectedYear->id, 'class_id' => $selectedClass->id]) }}" target="_blank" class="flex items-center justify-center gap-2 px-3 py-2 text-sm font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition shadow-sm border border-indigo-700 w-full md:w-auto">
+                    <a href="{{ route('reports.leger.rekap.export', ['year_id' => $selectedYear->id, 'class_id' => $selectedClass->id]) }}" target="_blank" class="flex items-center justify-center gap-2 px-3 py-2 text-sm font-bold text-white bg-primary hover:bg-primary-dark rounded-lg hover:shadow-primary/30 transition shadow-sm border border-transparent w-full md:w-auto">
                         <span class="material-symbols-outlined text-[18px]">table_view</span>
                         Export Rekap Tahunan
                     </a>
@@ -281,7 +281,7 @@
                     <div class="p-4 flex flex-col gap-3" @click="expanded = !expanded">
                         <div class="flex items-center gap-3">
                              <!-- Rank Badge (Placeholder) -->
-                             <div class="w-10 h-10 flex-shrink-0 bg-indigo-100 text-indigo-700 rounded-lg flex items-center justify-center font-bold border border-indigo-200 shadow-sm">
+                             <div class="w-10 h-10 flex-shrink-0 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-bold border border-primary/20 shadow-sm">
                                 <span class="text-xs uppercase absolute -mt-6 bg-white px-1 rounded text-[8px] text-slate-400 tracking-wider">No</span>
                                 {{ $index + 1 }}
                              </div>
@@ -297,7 +297,7 @@
                                 <a href="{{ route('reports.student.analytics', $ak->siswa->id) }}" class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-200 hover:bg-blue-100" title="Analisis Siswa">
                                     <span class="material-symbols-outlined text-[16px]">monitoring</span>
                                 </a>
-                                <button class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-400 transition-transform duration-200" :class="expanded ? 'rotate-180 bg-indigo-50 border-indigo-200 text-indigo-600' : ''">
+                                <button class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-400 transition-transform duration-200" :class="expanded ? 'rotate-180 bg-primary/5 border-primary/20 text-primary' : ''">
                                     <span class="material-symbols-outlined">expand_more</span>
                                 </button>
                              </div>

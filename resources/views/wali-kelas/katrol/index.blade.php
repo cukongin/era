@@ -39,7 +39,7 @@
     </div>
 
     @if(session('success'))
-    <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded relative" role="alert">
+    <div class="bg-secondary/10 border border-secondary/20 text-secondary px-4 py-3 rounded relative" role="alert">
         <strong class="font-bold">Berhasil!</strong>
         <span class="block sm:inline">{{ session('success') }}</span>
     </div>

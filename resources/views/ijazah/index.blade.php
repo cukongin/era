@@ -18,15 +18,15 @@
     <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
         <div>
             <div class="flex items-center gap-2 text-sm text-slate-500 mb-1">
-                 <a href="{{ route('dashboard') }}" class="hover:text-blue-600 transition-colors">Dashboard</a>
+                 <a href="{{ route('dashboard') }}" class="hover:text-primary transition-colors">Dashboard</a>
                  <span class="material-symbols-outlined text-[10px]">chevron_right</span>
                  <span>Ijazah</span>
             </div>
             <h1 class="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-3 tracking-tight">
-                <span class="bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text">Data Nilai Ijazah</span>
+                <span class="bg-gradient-to-r from-primary to-primary-dark text-transparent bg-clip-text">Data Nilai Ijazah</span>
             </h1>
             <div class="flex items-center gap-3 mt-2">
-                <span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                <span class="px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-light border border-primary/20 dark:border-primary/30">
                     Kelas {{ $kelas->nama_kelas }}
                 </span>
                 <span class="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
@@ -42,7 +42,7 @@
                     <span class="material-symbols-outlined text-[18px]">download</span> <span class="hidden sm:inline">Template</span>
                 </a>
                 <div class="w-px h-4 bg-slate-200 dark:bg-slate-700 mx-1"></div>
-                <button onclick="document.getElementById('importModal').classList.remove('hidden')" class="px-3 py-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition-all flex items-center gap-2">
+                <button onclick="document.getElementById('importModal').classList.remove('hidden')" class="px-3 py-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary-light hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition-all flex items-center gap-2">
                     <span class="material-symbols-outlined text-[18px]">upload</span> <span class="hidden sm:inline">Import</span>
                 </button>
             </div>
@@ -58,7 +58,7 @@
                   data-icon="info">
                 @csrf
                 <input type="hidden" name="kelas_id" value="{{ $kelas->id }}">
-                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 transform hover:-translate-y-0.5" title="Auto-Rapor">
+                <button type="submit" class="bg-primary hover:bg-primary-dark active:bg-primary-dark text-white px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary/20 hover:shadow-primary/40 transform hover:-translate-y-0.5" title="Auto-Rapor">
                     <span class="material-symbols-outlined text-[20px]">autorenew</span> <span class="hidden md:inline">Auto-Rapor</span>
                 </button>
             </form>
@@ -118,7 +118,7 @@
         <!-- Average Card -->
         <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] relative overflow-hidden group">
             <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                 <span class="material-symbols-outlined text-6xl text-blue-600">analytics</span>
+                 <span class="material-symbols-outlined text-6xl text-primary">analytics</span>
             </div>
             <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Rata-Rata Kelas</p>
             <div class="flex items-baseline gap-2">
@@ -126,7 +126,7 @@
                 <span class="text-xs font-bold text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-full">NA</span>
             </div>
             <div class="mt-3 w-full bg-slate-100 rounded-full h-1.5 dark:bg-slate-700">
-                <div class="bg-blue-500 h-1.5 rounded-full" style="width: {{ min(($stats['average'] / 100) * 100, 100) }}%"></div>
+                <div class="bg-primary h-1.5 rounded-full" style="width: {{ min(($stats['average'] / 100) * 100, 100) }}%"></div>
             </div>
         </div>
 
@@ -244,7 +244,7 @@
                                 }
                             @endphp
 
-                            <tr class="group hover:bg-blue-50/50 transition-colors {{ $index % 2 == 0 ? 'bg-white' : 'bg-slate-50/50' }}">
+                            <tr class="group hover:bg-primary/5 transition-colors {{ $index % 2 == 0 ? 'bg-white' : 'bg-slate-50/50' }}">
                                 @if($mIndex == 0)
                                     <!-- Sticky Identity Cols for First Row of Student -->
                                     <!-- Use align-top to keep name at top -->
@@ -299,17 +299,17 @@
                         @endphp
                         
                         <!-- Rata-Rata Row -->
-                        <tr class="bg-indigo-50/50 border-t border-slate-200">
-                            <td class="px-3 py-2 border-r border-slate-200 text-xs font-bold text-indigo-700 text-right">
+                        <tr class="bg-primary/5 border-t border-slate-200">
+                            <td class="px-3 py-2 border-r border-slate-200 text-xs font-bold text-primary text-right">
                                 RATA-RATA TOTAL
                             </td>
                             <td colspan="3" class="px-3 py-2 text-center border-r border-slate-200">
-                                <span class="text-sm font-black text-indigo-700">{{ number_format($avg, 2) }}</span>
+                                <span class="text-sm font-black text-primary">{{ number_format($avg, 2) }}</span>
                             </td>
                         </tr>
 
                         <!-- Status Row -->
-                        <tr class="bg-indigo-50/50 border-b-4 border-slate-300">
+                        <tr class="bg-primary/5 border-b-4 border-slate-300">
                             <td class="px-3 py-2 border-r border-slate-200 text-xs font-bold text-slate-700 text-right">
                                 STATUS KELULUSAN
                             </td>
@@ -348,8 +348,8 @@
                 <input type="hidden" name="kelas_id" value="{{ $kelas->id }}">
                 <div class="bg-white dark:bg-slate-800 px-6 pt-6 pb-6">
                     <div class="flex items-start gap-4">
-                        <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:h-12 sm:w-12">
-                            <span class="material-symbols-outlined text-blue-600 text-2xl">upload_file</span>
+                        <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-primary/10 sm:h-12 sm:w-12">
+                            <span class="material-symbols-outlined text-primary text-2xl">upload_file</span>
                         </div>
                         <div class="mt-1 w-full">
                             <h3 class="text-xl font-bold text-slate-900 dark:text-white" id="modal-title">
@@ -365,8 +365,8 @@
                                     file:mr-4 file:py-2.5 file:px-4
                                     file:rounded-lg file:border-0
                                     file:text-sm file:font-semibold
-                                    file:bg-blue-50 file:text-blue-700
-                                    hover:file:bg-blue-100 dark:file:bg-blue-900/30 dark:file:text-blue-400
+                                    file:bg-primary/5 file:text-primary
+                                    hover:file:bg-primary/10 dark:file:bg-primary/10 dark:file:text-primary
                                     border border-slate-200 rounded-lg cursor-pointer
                                 " required>
                             </div>
@@ -374,7 +374,7 @@
                     </div>
                 </div>
                 <div class="bg-slate-50 dark:bg-slate-700/50 px-6 py-4 flex flex-row-reverse gap-2">
-                    <button type="submit" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-bold text-white hover:bg-blue-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm transition-colors">
+                    <button type="submit" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-bold text-white hover:bg-primary-dark focus:outline-none sm:ml-3 sm:w-auto sm:text-sm transition-colors">
                         Import Data
                     </button>
                     <button type="button" class="mt-3 w-full inline-flex justify-center rounded-xl border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-bold text-slate-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors" onclick="document.getElementById('importModal').classList.add('hidden')">

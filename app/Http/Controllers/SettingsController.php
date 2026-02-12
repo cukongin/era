@@ -15,6 +15,86 @@ use Illuminate\Database\Schema\Blueprint;
 
 class SettingsController extends Controller
 {
+    // Predefined Themes (RGB Values)
+    private $themes = [
+        'emerald' => [
+            'name' => 'Emerald (Default)',
+            'colors' => [
+                '--color-primary' => '0 62 41',      // #003e29
+                '--color-primary-dark' => '0 35 24', // #002318
+                '--color-secondary' => '70 112 97',  // #467061
+                '--color-background-dark' => '0 42 28', // #002a1c
+                '--color-surface-dark' => '26 46 34',   // #1a2e22
+            ]
+        ],
+        'blue' => [
+            'name' => 'Royal Blue',
+            'colors' => [
+                '--color-primary' => '30 58 138',    // blue-900
+                '--color-primary-dark' => '23 37 84', // blue-950
+                '--color-secondary' => '96 165 250',  // blue-400
+                '--color-background-dark' => '15 23 42', // slate-900
+                '--color-surface-dark' => '30 41 59',    // slate-800
+            ]
+        ],
+        'purple' => [
+            'name' => 'Midnight Purple',
+            'colors' => [
+                '--color-primary' => '88 28 135',    // purple-900
+                '--color-primary-dark' => '59 7 100', // purple-950
+                '--color-secondary' => '192 132 252', // purple-400
+                '--color-background-dark' => '19 7 35', // dark purple bg
+                '--color-surface-dark' => '45 20 70',   
+            ]
+        ],
+        'crimson' => [
+            'name' => 'Crimson Red',
+            'colors' => [
+                '--color-primary' => '153 27 27',    // red-800
+                '--color-primary-dark' => '69 10 10', // red-950
+                '--color-secondary' => '248 113 113', // red-400
+                '--color-background-dark' => '25 10 10', 
+                '--color-surface-dark' => '60 20 20',   
+            ]
+        ],
+        'teal' => [
+            'name' => 'Ocean Teal',
+            'colors' => [
+                '--color-primary' => '17 94 89',     // teal-800
+                '--color-primary-dark' => '4 47 46',  // teal-950
+                '--color-secondary' => '45 212 191',  // teal-400
+                '--color-background-dark' => '2 25 25', 
+                '--color-surface-dark' => '10 50 50',   
+            ]
+        ],
+        'tosca' => [
+            'name' => 'Tosca Orange',
+            'colors' => [
+                '--color-primary' => '3 127 122',     // #037F7A
+                '--color-primary-dark' => '2 95 91',  // Darker Tosca
+                '--color-secondary' => '243 104 53',  // #F36835 (Orange)
+                '--color-background-dark' => '1 40 38', // Dark Tosca BG
+                '--color-surface-dark' => '2 60 58',    
+            ]
+        ],
+    ];
+
+    public function updateTheme(Request $request)
+    {
+        $request->validate(['theme' => 'required|string']);
+        
+        $theme = $request->theme;
+        if (!array_key_exists($theme, $this->themes)) {
+            $theme = 'emerald';
+        }
+
+        \App\Models\GlobalSetting::updateOrCreate(
+            ['key' => 'app_theme'],
+            ['value' => $theme]
+        );
+
+        return back()->with('success', 'Tema aplikasi berhasil diubah!');
+    }
     // Round 2: Safety Lock Helper (Safe Version)
     private function checkActiveYear() 
     {

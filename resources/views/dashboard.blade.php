@@ -92,16 +92,16 @@
                 </div>
 
                 <!-- Tahun Ajaran -->
-                <div class="bg-gradient-to-br from-primary to-green-700 text-white p-6 rounded-2xl shadow-lg shadow-green-900/20 relative overflow-hidden col-span-1 md:col-span-2">
+                <div class="bg-gradient-to-br from-primary to-primary-dark text-white p-6 rounded-2xl shadow-lg shadow-primary/20 relative overflow-hidden col-span-1 md:col-span-2">
                     <div class="absolute -right-6 -bottom-6 opacity-20 transform rotate-12">
                         <span class="material-symbols-outlined text-9xl">calendar_month</span>
                     </div>
                     <div class="flex justify-between items-start relative z-10">
                         <div class="flex flex-col gap-1">
-                            <p class="text-green-100 text-xs font-bold uppercase tracking-wider">Tahun Ajaran Aktif</p>
+                            <p class="text-white/80 text-xs font-bold uppercase tracking-wider">Tahun Ajaran Aktif</p>
                             <h3 class="text-3xl font-bold">{{ $activeYear ? $activeYear->nama : 'Belum Ada' }}</h3>
-                            <p class="mt-1 text-green-50 text-sm flex items-center gap-1">
-                                <span class="size-2 bg-green-400 rounded-full animate-pulse"></span> Semester Berjalan
+                            <p class="mt-1 text-white/70 text-sm flex items-center gap-1">
+                                <span class="size-2 bg-emerald-400 rounded-full animate-pulse"></span> Semester Berjalan
                             </p>
                         </div>
                         <div class="bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/20">
@@ -386,9 +386,9 @@
                                 </label>
                                 <label class="flex-1 cursor-pointer">
                                     <input type="radio" name="type_option" value="info" x-model="messageType" class="peer sr-only">
-                                    <div class="p-3 rounded-xl border-2 border-slate-100 peer-checked:border-teal-500 peer-checked:bg-teal-50 text-center transition-all">
-                                        <span class="material-symbols-outlined text-teal-500 block mb-1">info</span>
-                                        <span class="text-xs font-bold text-slate-600 peer-checked:text-teal-700">Info / Lainnya</span>
+                                    <div class="p-3 rounded-xl border-2 border-slate-100 peer-checked:border-primary peer-checked:bg-primary/10 text-center transition-all">
+                                        <span class="material-symbols-outlined text-primary block mb-1">info</span>
+                                        <span class="text-xs font-bold text-slate-600 peer-checked:text-primary">Info / Lainnya</span>
                                     </div>
                                 </label>
                             </div>
@@ -401,7 +401,7 @@
                             <div class="flex justify-end gap-2">
                                 <button type="button" @click="showReminderModal = false" class="px-4 py-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-sm transition-colors">Batal</button>
                                 <button type="submit"
-                                    :class="messageType == 'warning' ? 'bg-orange-500 hover:bg-orange-600 shadow-orange-500/20' : 'bg-teal-600 hover:bg-teal-700 shadow-teal-500/20'"
+                                    :class="messageType == 'warning' ? 'bg-orange-500 hover:bg-orange-600 shadow-orange-500/20' : 'bg-primary hover:bg-primary-dark shadow-primary/20'"
                                     class="px-4 py-2 rounded-xl text-white font-bold text-sm shadow-lg transition-all flex items-center gap-2">
                                     <span class="material-symbols-outlined text-[18px]">send</span> Kirim
                                 </button>
@@ -440,9 +440,9 @@
                                 </label>
                                 <label class="flex-1 cursor-pointer">
                                     <input type="radio" name="type_option_bulk" value="info" x-model="messageType" class="peer sr-only">
-                                    <div class="p-3 rounded-xl border-2 border-slate-100 peer-checked:border-teal-500 peer-checked:bg-teal-50 text-center transition-all h-full flex flex-col justify-center items-center">
-                                        <span class="material-symbols-outlined text-teal-500 block mb-1">info</span>
-                                        <span class="text-xs font-bold text-slate-600 peer-checked:text-teal-700">Info / Lainnya</span>
+                                    <div class="p-3 rounded-xl border-2 border-slate-100 peer-checked:border-primary peer-checked:bg-primary/10 text-center transition-all h-full flex flex-col justify-center items-center">
+                                        <span class="material-symbols-outlined text-primary block mb-1">info</span>
+                                        <span class="text-xs font-bold text-slate-600 peer-checked:text-primary">Info / Lainnya</span>
                                     </div>
                                 </label>
                             </div>
@@ -485,7 +485,7 @@
                                 <div class="flex gap-2">
                                     <button type="button" @click="showBulkModal = false" class="px-4 py-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-sm transition-colors">Batal</button>
                                     <button type="submit"
-                                        :class="messageType == 'warning' ? 'bg-orange-500 hover:bg-orange-600 shadow-orange-500/20' : 'bg-teal-600 hover:bg-teal-700 shadow-teal-500/20'"
+                                        :class="messageType == 'warning' ? 'bg-orange-500 hover:bg-orange-600 shadow-orange-500/20' : 'bg-primary hover:bg-primary-dark shadow-primary/20'"
                                         class="px-6 py-2 rounded-xl text-white font-bold text-sm shadow-lg transition-all flex items-center gap-2"
                                         :disabled="bulkSelected.length === 0">
                                         <span class="material-symbols-outlined text-[18px]">send</span> Kirim Broadcast

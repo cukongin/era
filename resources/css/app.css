@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    /* DEFAULT THEME: EMERALD (Kaitoke Green) */
+    --color-primary: 0 62 41;
+    /* #003e29 */
+    --color-primary-dark: 0 35 24;
+    /* #002318 (Approx Darker) */
+    --color-secondary: 70 112 97;
+    /* #467061 */
+    --color-background-dark: 0 42 28;
+    /* #002a1c */
+    --color-surface-dark: 26 46 34;
+    /* #1a2e22 */
+}
+
 /* Custom Scrollbar Styles (Moved from app.blade.php) */
 @layer utilities {
     .fouc-cloak {

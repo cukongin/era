@@ -35,6 +35,80 @@
 
     <!-- Compiled CSS -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    
+    {{-- Dynamic Theme Injection --}}
+    @php
+        $themeKey = \App\Models\GlobalSetting::val('app_theme', 'emerald');
+        $themes = [
+            'emerald' => [
+                '--color-primary' => '0 62 41',
+                '--color-primary-dark' => '0 35 24',
+                '--color-secondary' => '70 112 97',
+                '--color-background-dark' => '0 42 28',
+                '--color-surface-dark' => '26 46 34',
+            ],
+            'blue' => [
+                '--color-primary' => '30 58 138',
+                '--color-primary-dark' => '23 37 84',
+                '--color-secondary' => '96 165 250',
+                '--color-background-dark' => '15 23 42',
+                '--color-surface-dark' => '30 41 59',
+            ],
+            'purple' => [
+                '--color-primary' => '88 28 135',
+                '--color-primary-dark' => '59 7 100',
+                '--color-secondary' => '192 132 252',
+                '--color-background-dark' => '19 7 35',
+                '--color-surface-dark' => '45 20 70',
+            ],
+            'crimson' => [
+                '--color-primary' => '153 27 27',
+                '--color-primary-dark' => '69 10 10',
+                '--color-secondary' => '248 113 113',
+                '--color-background-dark' => '25 10 10',
+                '--color-surface-dark' => '60 20 20',
+            ],
+            'teal' => [
+                '--color-primary' => '17 94 89',
+                '--color-primary-dark' => '4 47 46',
+                '--color-secondary' => '45 212 191',
+                '--color-background-dark' => '2 25 25',
+                '--color-surface-dark' => '10 50 50',
+            ],
+            'tosca' => [
+                '--color-primary' => '3 127 122',     // #037F7A
+                '--color-primary-dark' => '2 95 91',
+                '--color-secondary' => '243 104 53',  // #F36835
+                '--color-background-dark' => '1 40 38',
+                '--color-surface-dark' => '2 60 58',
+            ],
+        ];
+        $activeTheme = $themes[$themeKey] ?? $themes['emerald'];
+    @endphp
+    <style>
+        :root {
+            @foreach($activeTheme as $key => $val)
+                {{ $key }}: {{ $val }};
+            @endforeach
+        }
+        
+        /* FAILSAFE: Override Tailwind Classes if Build Fails */
+        .bg-primary { background-color: rgb(var(--color-primary)) !important; }
+        .bg-primary:hover { background-color: rgb(var(--color-primary-dark)) !important; }
+        .text-primary { color: rgb(var(--color-primary)) !important; }
+        .text-primary-dark { color: rgb(var(--color-primary-dark)) !important; }
+        .bg-primary-dark { background-color: rgb(var(--color-primary-dark)) !important; }
+        .border-primary { border-color: rgb(var(--color-primary)) !important; }
+        .ring-primary { --tw-ring-color: rgb(var(--color-primary)) !important; }
+        
+        /* Ensure inputs and rings use the primary color */
+        .focus\:ring-primary:focus { --tw-ring-color: rgb(var(--color-primary)) !important; }
+        .focus\:border-primary:focus { border-color: rgb(var(--color-primary)) !important; }
+        
+        /* Surface and Background overrides */
+        .bg-surface-dark { background-color: rgb(var(--color-surface-dark)) !important; }
+        .bg-background-dark { background-color: rgb(var(--color-background-dark)) !important; }
+    </style>
 
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -251,23 +325,23 @@
                     @if($unreadNotifs->count() > 0)
                         <div class="mb-6 space-y-2">
                             @foreach($unreadNotifs as $notif)
-                            <div class="rounded-lg p-4 flex justify-between items-start shadow-sm border-l-4 {{ $notif->type == 'warning' ? 'bg-orange-50 border-orange-400 dark:bg-orange-900/20 dark:border-orange-600' : ($notif->type == 'info' ? 'bg-teal-50 border-teal-400 dark:bg-teal-900/20 dark:border-teal-600' : 'bg-blue-50 border-blue-400') }}">
+                            <div class="rounded-lg p-4 flex justify-between items-start shadow-sm border-l-4 {{ $notif->type == 'warning' ? 'bg-orange-50 border-orange-400 dark:bg-orange-900/20 dark:border-orange-600' : ($notif->type == 'info' ? 'bg-primary/5 border-primary dark:bg-primary/20 dark:border-primary' : 'bg-primary/5 border-primary') }}">
                                 <div class="flex gap-3">
-                                    <span class="material-symbols-outlined {{ $notif->type == 'warning' ? 'text-orange-600 dark:text-orange-500' : ($notif->type == 'info' ? 'text-teal-600 dark:text-teal-500' : 'text-blue-600') }}">
+                                    <span class="material-symbols-outlined {{ $notif->type == 'warning' ? 'text-orange-600 dark:text-orange-500' : 'text-primary' }}">
                                         {{ $notif->type == 'warning' ? 'warning' : 'info' }}
                                     </span>
                                     <div>
-                                        <p class="text-sm font-bold uppercase {{ $notif->type == 'warning' ? 'text-orange-800 dark:text-orange-200' : ($notif->type == 'info' ? 'text-teal-800 dark:text-teal-200' : 'text-blue-800') }}">
+                                        <p class="text-sm font-bold uppercase {{ $notif->type == 'warning' ? 'text-orange-800 dark:text-orange-200' : 'text-primary' }}">
                                             {{ $notif->type == 'warning' ? 'PERINGATAN' : ($notif->type == 'info' ? 'INFORMASI' : 'PENGINGAT') }}
                                         </p>
-                                        <p class="text-sm {{ $notif->type == 'warning' ? 'text-orange-700 dark:text-orange-300' : ($notif->type == 'info' ? 'text-teal-700 dark:text-teal-300' : 'text-blue-700') }}">
+                                        <p class="text-sm {{ $notif->type == 'warning' ? 'text-orange-700 dark:text-orange-300' : 'text-slate-600 dark:text-slate-300' }}">
                                             {{ $notif->message }}
                                         </p>
                                     </div>
                                 </div>
                                 <form action="{{ route('dashboard.notification.read', $notif->id) }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="{{ $notif->type == 'warning' ? 'text-orange-600 hover:text-orange-800' : ($notif->type == 'info' ? 'text-teal-600 hover:text-teal-800' : 'text-blue-600 hover:text-blue-800') }} text-xs font-bold underline">OKE</button>
+                                    <button type="submit" class="{{ $notif->type == 'warning' ? 'text-orange-600 hover:text-orange-800' : 'text-primary hover:text-primary-dark' }} text-xs font-bold underline">OKE</button>
                                 </form>
                             </div>
                             @endforeach

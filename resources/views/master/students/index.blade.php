@@ -109,7 +109,7 @@
                             </div>
                         </td>
                         <td class="py-4 px-4">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ optional($student->jenjang)->kode == 'MI' ? 'bg-emerald-100 text-emerald-800' : 'bg-primary/10 text-primary' }}">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ optional($student->jenjang)->kode == 'MI' ? 'bg-secondary/10 text-secondary' : 'bg-primary/10 text-primary' }}">
                                 {{ optional($student->jenjang)->kode }}
                             </span>
                         </td>
@@ -415,7 +415,7 @@ function restoreStudent(id) {
                     </div>
                 </div>
                 <div class="bg-slate-50 dark:bg-black/20 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                    <button type="submit" form="importForm" class="inline-flex w-full justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto">Upload & Proses</button>
+                    <button type="submit" form="importForm" class="inline-flex w-full justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-dark sm:ml-3 sm:w-auto">Upload & Proses</button>
                     <button type="button" onclick="document.getElementById('importModal').classList.add('hidden')" class="mt-3 inline-flex w-full justify-center rounded-md bg-white dark:bg-slate-800 px-3 py-2 text-sm font-semibold text-slate-900 dark:text-slate-300 shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-700 hover:bg-slate-50 sm:mt-0 sm:w-auto">Batal</button>
                 </div>
             </div>

@@ -38,7 +38,7 @@
         <!-- RANGE CONFIG -->
         <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 mb-6">
             <h2 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2 mb-4">
-                <span class="material-symbols-outlined text-purple-600">history_edu</span>
+                <span class="material-symbols-outlined text-primary">history_edu</span>
                 Sumber Nilai Rata-rata Rapor
             </h2>
             <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
@@ -56,7 +56,7 @@
                         @endphp
                         @foreach([1,2,3,4,5,6] as $lvl)
                             <label class="inline-flex items-center bg-slate-50 dark:bg-slate-700 rounded px-3 py-2 border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-100 transition-colors">
-                                <input type="checkbox" name="range_mi[]" value="{{ $lvl }}" class="rounded text-purple-600 focus:ring-purple-500" {{ in_array($lvl, $rangeMi) ? 'checked' : '' }}>
+                                <input type="checkbox" name="range_mi[]" value="{{ $lvl }}" class="rounded text-primary focus:ring-primary" {{ in_array($lvl, $rangeMi) ? 'checked' : '' }}>
                                 <span class="ml-2 text-sm font-medium text-slate-700 dark:text-slate-200">Kelas {{ $lvl }}</span>
                             </label>
                         @endforeach
@@ -72,7 +72,7 @@
                         @endphp
                         @foreach([7,8,9] as $lvl)
                             <label class="inline-flex items-center bg-slate-50 dark:bg-slate-700 rounded px-3 py-2 border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-100 transition-colors">
-                                <input type="checkbox" name="range_mts[]" value="{{ $lvl }}" class="rounded text-purple-600 focus:ring-purple-500" {{ in_array($lvl, $rangeMts) ? 'checked' : '' }}>
+                                <input type="checkbox" name="range_mts[]" value="{{ $lvl }}" class="rounded text-primary focus:ring-primary" {{ in_array($lvl, $rangeMts) ? 'checked' : '' }}>
                                 <span class="ml-2 text-sm font-medium text-slate-700 dark:text-slate-200">Kelas {{ $lvl }}</span>
                             </label>
                         @endforeach
@@ -86,16 +86,16 @@
             <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
                     <h2 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2">
-                        <span class="material-symbols-outlined text-emerald-600">school</span>
+                        <span class="material-symbols-outlined text-secondary">school</span>
                         Jenjang MI
                     </h2>
-                    <span class="text-xs font-bold px-2 py-1 bg-emerald-100 text-emerald-700 rounded">Kelas 6</span>
+                    <span class="text-xs font-bold px-2 py-1 bg-secondary/10 text-secondary rounded">Kelas 6</span>
                 </div>
                 <div class="p-6 max-h-[60vh] overflow-y-auto">
                     @foreach($mapels as $mapel)
                         <label class="flex items-center gap-3 p-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-lg cursor-pointer transition-colors">
                             <input type="checkbox" name="mapel_mi[]" value="{{ $mapel->id }}" 
-                                class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 w-5 h-5"
+                                class="rounded border-slate-300 text-secondary focus:ring-secondary w-5 h-5"
                                 {{ in_array($mapel->id, $selectedMI) ? 'checked' : '' }}>
                             <div class="flex-1">
                                 <div class="font-medium text-slate-700 dark:text-slate-200">{{ $mapel->nama_mapel }}</div>
@@ -110,16 +110,16 @@
             <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
                     <h2 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2">
-                        <span class="material-symbols-outlined text-blue-600">domain</span>
+                        <span class="material-symbols-outlined text-primary">domain</span>
                         Jenjang MTs
                     </h2>
-                    <span class="text-xs font-bold px-2 py-1 bg-blue-100 text-blue-700 rounded">Kelas 9</span>
+                    <span class="text-xs font-bold px-2 py-1 bg-primary/10 text-primary rounded">Kelas 9</span>
                 </div>
                 <div class="p-6 max-h-[60vh] overflow-y-auto">
                     @foreach($mapels as $mapel)
                         <label class="flex items-center gap-3 p-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-lg cursor-pointer transition-colors">
                             <input type="checkbox" name="mapel_mts[]" value="{{ $mapel->id }}" 
-                                class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-5 h-5"
+                                class="rounded border-slate-300 text-primary focus:ring-primary w-5 h-5"
                                 {{ in_array($mapel->id, $selectedMTS) ? 'checked' : '' }}>
                             <div class="flex-1">
                                 <div class="font-medium text-slate-700 dark:text-slate-200">{{ $mapel->nama_mapel }}</div>
@@ -132,7 +132,7 @@
         </div>
 
         <div class="mt-6 flex justify-end">
-            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-indigo-500/20 transform active:scale-95 transition-all">
+            <button type="submit" class="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-primary/20 transform active:scale-95 transition-all">
                 <span class="material-symbols-outlined">save</span>
                 Simpan Konfigurasi
             </button>

@@ -119,7 +119,7 @@
                  <button type="button" onclick="setNihil()" class="flex-1 md:flex-none bg-white text-slate-700 border border-slate-300 px-4 py-2.5 rounded-xl font-bold hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined">restart_alt</span> <span class="md:hidden">Nihil</span> <span class="hidden md:inline">Set Nihil (0)</span>
                 </button>
-                <button type="submit" form="absensiForm" class="flex-1 md:flex-none bg-primary text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-primary/30 hover:bg-green-600 transition-all flex items-center justify-center gap-2">
+                <button type="submit" form="absensiForm" class="flex-1 md:flex-none bg-primary text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-primary/30 hover:bg-primary-dark transition-all flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined">save</span> Simpan <span class="hidden md:inline">Perubahan</span>
                 </button>
             </div>
@@ -162,7 +162,7 @@
                             </td>
 
                             <!-- Inputs -->
-                            <td class="px-4 py-2 bg-blue-50/30">
+                            <td class="px-4 py-2 bg-primary/5">
                                 <input type="number" name="absensi[{{ $ak->id_siswa }}][sakit]" value="{{ $absensi->sakit ?? 0 }}" min="0" class="w-full text-center font-bold text-primary rounded-lg border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary abs-input" data-target="total-{{ $ak->id }}">
                             </td>
                             <td class="px-4 py-2 bg-amber-50/30">

@@ -39,11 +39,11 @@
             </form>
 
             @if($kelas)
-            <a href="{{ route('grade.import.index', $kelas->id) }}" class="bg-primary hover:bg-primary/90 text-white font-bold py-2.5 px-5 rounded-lg shadow-sm transition-all flex items-center gap-2">
+            <a href="{{ route('grade.import.index', $kelas->id) }}" class="bg-primary hover:bg-primary-dark text-white font-bold py-2.5 px-5 rounded-lg shadow-sm transition-all flex items-center gap-2">
                 <span class="material-symbols-outlined text-[20px]">upload_file</span>
                 <span class="hidden sm:inline">Import Kolektif</span>
             </a>
-            <button class="bg-primary hover:bg-green-600 text-white font-bold py-2.5 px-5 rounded-lg shadow-sm transition-all flex items-center gap-2">
+            <button class="bg-primary hover:bg-primary-dark text-white font-bold py-2.5 px-5 rounded-lg shadow-sm transition-all flex items-center gap-2">
                 <span class="material-symbols-outlined text-[20px]">notifications_active</span>
                 <span class="hidden sm:inline">Ingatkan Semua</span>
             </button>

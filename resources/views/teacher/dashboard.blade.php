@@ -175,7 +175,7 @@
 
                             <div class="pt-2 border-t border-slate-50 dark:border-white/5 flex gap-3 mt-auto">
                                 @if($item->status != 'locked')
-                                    <a href="{{ route('teacher.input-nilai', ['kelas' => $item->id_kelas, 'mapel' => $item->id_mapel]) }}" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-primary text-white text-sm font-bold hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all">
+                                    <a href="{{ route('teacher.input-nilai', ['kelas' => $item->id_kelas, 'mapel' => $item->id_mapel]) }}" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-primary text-white text-sm font-bold hover:bg-primary-dark shadow-lg shadow-primary/20 transition-all">
                                         @if($item->status == 'completed')
                                             Edit Nilai
                                         @elseif($item->status == 'in_progress')

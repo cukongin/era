@@ -85,15 +85,15 @@
                 </div>
 
                 <!-- Tahun Ajaran -->
-                <div class="bg-gradient-to-br from-[#003e29] to-[#005a3c] text-white p-6 rounded-2xl shadow-lg shadow-primary/20 relative overflow-hidden">
+                <div class="bg-gradient-to-br from-primary to-primary-dark text-white p-6 rounded-2xl shadow-lg shadow-primary/20 relative overflow-hidden">
                     <div class="absolute -right-6 -bottom-6 opacity-20 transform rotate-12">
                         <span class="material-symbols-outlined text-9xl">calendar_month</span>
                     </div>
                     <div class="flex justify-between items-start relative z-10">
                         <div class="flex flex-col gap-1">
-                            <p class="text-purple-100 text-xs font-bold uppercase tracking-wider">Tahun Ajaran Aktif</p>
+                            <p class="text-white/80 text-xs font-bold uppercase tracking-wider">Tahun Ajaran Aktif</p>
                             <h3 class="text-2xl font-bold">{{ $activeYear->nama }}</h3>
-                            <p class="mt-1 text-purple-200 text-sm flex items-center gap-1">
+                            <p class="mt-1 text-white/90 text-sm flex items-center gap-1">
                                 <span class="size-2 bg-green-400 rounded-full animate-pulse"></span> {{ ucfirst($activeYear->status ?? 'Aktif') }}
                             </p>
                         </div>
@@ -150,16 +150,16 @@
                     <!-- Achievement Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10 pt-4">
                         <!-- (Best Student & Best Class Cards - Unchanged) -->
-                        <div class="bg-gradient-to-br from-primary to-emerald-600 rounded-xl p-4 text-white shadow-lg shadow-primary/20 relative overflow-hidden group">
+                        <div class="bg-gradient-to-br from-primary to-primary-dark rounded-xl p-4 text-white shadow-lg shadow-primary/20 relative overflow-hidden group">
                             <div class="absolute top-0 right-0 p-3 opacity-20">
                                 <span class="material-symbols-outlined text-6xl">emoji_events</span>
                             </div>
                             <div class="relative z-10 flex flex-col h-full justify-between">
                                 <div>
-                                    <p class="text-emerald-100 text-xs font-bold uppercase tracking-wider mb-1">Siswa Terbaik Angkatan</p>
+                                    <p class="text-white/80 text-xs font-bold uppercase tracking-wider mb-1">Siswa Terbaik Angkatan</p>
                                     @if($topStudent)
                                         <h4 class="text-xl font-bold truncate max-w-[90%]">{{ $topStudent['name'] }}</h4>
-                                        <p class="text-xs text-emerald-100">Kelas: {{ $topStudent['class'] }}</p>
+                                        <p class="text-xs text-white/80">Kelas: {{ $topStudent['class'] }}</p>
                                     @else
                                         <h4 class="text-lg font-bold italic opacity-50">Belum ada data</h4>
                                     @endif
@@ -168,20 +168,20 @@
                                     @if($topStudent)
                                         <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-lg">
                                             <span class="text-2xl font-bold">{{ $topStudent['score'] }}</span>
-                                            <span class="text-[10px] uppercase font-bold text-emerald-100">Rata-Rata Kumulatif</span>
+                                            <span class="text-[10px] uppercase font-bold text-white/90">Rata-Rata Kumulatif</span>
                                         </div>
                                     @endif
                                 </div>
                             </div>
                         </div>
 
-                        <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl p-4 text-white shadow-lg shadow-emerald-500/20 relative overflow-hidden group">
+                        <div class="bg-gradient-to-br from-secondary to-primary rounded-xl p-4 text-white shadow-lg shadow-primary/20 relative overflow-hidden group">
                             <div class="absolute top-0 right-0 p-3 opacity-20">
                                 <span class="material-symbols-outlined text-6xl">school</span>
                             </div>
                             <div class="relative z-10 flex flex-col h-full justify-between">
                                 <div>
-                                    <p class="text-emerald-100 text-xs font-bold uppercase tracking-wider mb-1">Kelas Terbaik (Tahun Terakhir)</p>
+                                    <p class="text-white/80 text-xs font-bold uppercase tracking-wider mb-1">Kelas Terbaik (Tahun Terakhir)</p>
                                     @if($bestClass)
                                         <h4 class="text-xl font-bold">{{ $bestClass['name'] }}</h4>
                                     @else
@@ -192,7 +192,7 @@
                                     @if($bestClass)
                                         <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-lg">
                                             <span class="text-2xl font-bold">{{ $bestClass['score'] }}</span>
-                                            <span class="text-[10px] uppercase font-bold text-emerald-100">Rata-Rata Kelas</span>
+                                            <span class="text-[10px] uppercase font-bold text-white/90">Rata-Rata Kelas</span>
                                         </div>
                                     @endif
                                 </div>
@@ -377,7 +377,7 @@
                     speed: 800
                 }
             },
-            colors: ['#8b5cf6'],
+            colors: [getComputedStyle(document.documentElement).getPropertyValue('--color-primary')],
             fill: {
                 type: 'gradient',
                 gradient: {

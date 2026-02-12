@@ -9,7 +9,7 @@
         <div>
             <h1 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
                 @if($pageContext['type'] == 'graduation')
-                    <span class="material-symbols-outlined text-indigo-600">school</span>
+                    <span class="material-symbols-outlined text-primary">school</span>
                 @endif
                 {{ $pageContext['title'] }}
             </h1>
@@ -72,7 +72,7 @@
                 </select>
             </form>
 
-            <button type="button" onclick="confirmProcessAll()" class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-blue-700 shadow-sm flex items-center gap-2">
+            <button type="button" onclick="confirmProcessAll()" class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark shadow-sm flex items-center gap-2">
                 <span class="material-symbols-outlined text-[18px]">published_with_changes</span>
                 Hitung Ulang
             </button>
@@ -94,7 +94,7 @@
                 <p class="text-3xl font-bold text-slate-900 dark:text-white mt-1">{{ $metrics['total'] }}</p>
                 <p class="text-xs text-slate-400 mt-1">{{ $selectedClass->nama_kelas ?? '-' }}</p>
             </div>
-            <div class="size-12 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+            <div class="size-12 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
                 <span class="material-symbols-outlined text-primary text-2xl">groups</span>
             </div>
         </div>
@@ -121,7 +121,7 @@
     </div>
 
     <!-- DEBUG ALERT FOR USER FEEDBACK -->
-    <div class="bg-indigo-100 border-l-4 border-indigo-500 text-indigo-700 p-4 mb-4 rounded shadow-sm">
+    <div class="bg-primary/5 border-l-4 border-primary text-primary p-4 mb-4 rounded shadow-sm">
         <p class="font-bold text-sm flex items-center gap-2">
             <span class="material-symbols-outlined text-sm">bug_report</span> DEBUGGING INFO (KELULUSAN) - VISIBLE TO EVERYONE:
         </p>
@@ -261,7 +261,7 @@
                                     </span>
                                     
                                     @if(!isset($isLocked) || !$isLocked)
-                                    <button @click="editing = true" class="text-slate-400 hover:text-blue-600 transition-colors p-1 rounded hover:bg-slate-100">
+                                    <button @click="editing = true" class="text-slate-400 hover:text-primary transition-colors p-1 rounded hover:bg-slate-100">
                                         <span class="material-symbols-outlined">edit</span>
                                     </button>
                                     @endif

@@ -28,7 +28,7 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">
                 <div>
                     <h3 class="font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
-                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 text-sm">1</span>
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary text-sm">1</span>
                         Periode Input Nilai
                     </h3>
                     <p class="text-sm text-slate-500 mt-1">Buka kunci periode agar Guru bisa memulai input nilai rapor.</p>
@@ -44,7 +44,7 @@
                  @foreach($periods as $periode)
                  <div class="flex items-center justify-between p-4 rounded-xl border transition-all {{ $periode->status == 'aktif' ? 'border-primary bg-primary/5 shadow-sm' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/30' }}">
                      <div>
-                         <span class="text-xs font-bold uppercase tracking-wider {{ $periode->lingkup_jenjang == 'MI' ? 'text-teal-600' : 'text-indigo-600' }} mb-1 block">{{ $periode->lingkup_jenjang }}</span>
+                         <span class="text-xs font-bold uppercase tracking-wider {{ $periode->lingkup_jenjang == 'MI' ? 'text-secondary' : 'text-primary' }} mb-1 block">{{ $periode->lingkup_jenjang }}</span>
                          <p class="font-bold text-slate-900 dark:text-white text-base">{{ $periode->nama_periode }}</p>
                      </div>
                      <form action="{{ route('settings.grading.period', $periode->id) }}" method="POST">
@@ -68,7 +68,7 @@
                     </h3>
                     <p class="text-sm text-slate-500 mt-1">Konfigurasi persentase nilai Harian vs Ujian untuk kalkulasi otomatis Nilai Akhir.</p>
                 </div>
-
+                
                 <!-- Tabs -->
                 <nav class="flex space-x-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
                     <button onclick="switchTab('mi')" id="tab-mi" class="bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm px-4 py-2 rounded-md text-sm font-bold transition-all">
@@ -265,7 +265,7 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">
                 <div>
                      <h3 class="font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
-                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-red-100 text-red-600 text-sm">3</span>
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary text-sm">3</span>
                         Target KKM Mata Pelajaran
                     </h3>
                     <p class="text-sm text-slate-500 mt-1">Siswa dikatakan <strong>TUNTAS</strong> jika Nilai Akhir >= KKM.</p>
@@ -282,7 +282,7 @@
                         <thead class="bg-white dark:bg-slate-800 uppercase text-xs font-bold text-slate-500 border-b border-slate-200 dark:border-slate-700">
                             <tr>
                                 <th class="px-6 py-4">Mata Pelajaran</th>
-                                <th class="px-6 py-4 w-40 text-center bg-emerald-50/50 dark:bg-emerald-900/10 text-emerald-700 dark:text-emerald-400">KKM MI</th>
+                                <th class="px-6 py-4 w-40 text-center bg-secondary/10 dark:bg-secondary/20 text-secondary dark:text-secondary">KKM MI</th>
                                 <th class="px-6 py-4 w-40 text-center bg-primary/10 dark:bg-primary/5 text-primary dark:text-primary">KKM MTs</th>
                             </tr>
                         </thead>
@@ -294,10 +294,10 @@
                                     <span class="text-xs font-normal text-slate-500 block">{{ $mapel->kode_mapel }}</span>
                                 </td>
                                 <!-- KKM MI Input -->
-                                <td class="px-6 py-3 text-center bg-emerald-50/30 dark:bg-emerald-900/5">
+                                <td class="px-6 py-3 text-center bg-secondary/10 dark:bg-secondary/20">
                                     @if($mapel->target_jenjang == 'MI' || $mapel->target_jenjang == 'SEMUA')
                                         <div class="relative">
-                                            <input type="number" name="kkm[{{ $mapel->id }}][MI]" value="{{ $kkms[$mapel->id.'-MI']->nilai_kkm ?? 70 }}" class="w-24 text-center font-bold text-emerald-700 rounded-lg border-slate-300 focus:border-emerald-500 focus:ring-emerald-500 dark:bg-slate-800 dark:border-slate-600 dark:text-white">
+                                            <input type="number" name="kkm[{{ $mapel->id }}][MI]" value="{{ $kkms[$mapel->id.'-MI']->nilai_kkm ?? 70 }}" class="w-24 text-center font-bold text-secondary rounded-lg border-slate-300 focus:border-secondary focus:ring-secondary dark:bg-slate-800 dark:border-slate-600 dark:text-white">
                                         </div>
                                     @else
                                         <span class="text-slate-300">-</span>

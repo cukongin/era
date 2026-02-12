@@ -89,7 +89,7 @@
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <button class="flex h-10 cursor-pointer items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-bold text-white transition hover:bg-blue-700" onclick="window.print()">
+            <button class="flex h-10 cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-6 text-sm font-bold text-white transition hover:bg-primary-dark" onclick="window.print()">
                 <span class="material-symbols-outlined text-[20px]">print</span>
                 <span>Cetak PDF</span>
             </button>

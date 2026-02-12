@@ -185,17 +185,17 @@
                             @endforeach
                             <td class="bg-slate-100"></td>
                         </tr>
-                         <tr class="bg-blue-50/50">
-                            <td class="px-3 py-2 text-right font-bold text-xs sticky left-[240px] bg-blue-50 z-10 border-r border-blue-100">Ujian Mdr (UM)</td>
+                        <tr class="bg-primary/5">
+                            <td class="px-3 py-2 text-right font-bold text-xs sticky left-[240px] bg-primary/5 z-10 border-r border-primary/10">Ujian Mdr (UM)</td>
                             @foreach($mapels as $mapel)
                                 <td class="px-2 py-2 text-center font-bold text-xs">{{ isset($row['summary']['um'][$mapel->id]) && $row['summary']['um'][$mapel->id] != 0 ? number_format($row['summary']['um'][$mapel->id]) : '-' }}</td>
                             @endforeach
                             <td class="bg-slate-100"></td>
                         </tr>
-                        <tr class="bg-green-100/30 border-b-[3px] border-slate-300">
-                            <td class="px-3 py-2 text-right font-bold text-xs sticky left-[240px] bg-green-100 z-10 border-r border-green-200">Nilai Akhir (NA)</td>
+                        <tr class="bg-secondary/10 border-b-[3px] border-slate-300">
+                            <td class="px-3 py-2 text-right font-bold text-xs sticky left-[240px] bg-secondary/10 z-10 border-r border-secondary/20">Nilai Akhir (NA)</td>
                             @foreach($mapels as $mapel)
-                                <td class="px-2 py-2 text-center font-bold text-xs text-green-700">{{ isset($row['summary']['na'][$mapel->id]) && $row['summary']['na'][$mapel->id] != 0 ? number_format($row['summary']['na'][$mapel->id], 2) : '-' }}</td>
+                                <td class="px-2 py-2 text-center font-bold text-xs text-secondary-dark">{{ isset($row['summary']['na'][$mapel->id]) && $row['summary']['na'][$mapel->id] != 0 ? number_format($row['summary']['na'][$mapel->id], 2) : '-' }}</td>
                             @endforeach
                             <td class="bg-slate-100"></td>
                         </tr>
@@ -338,7 +338,7 @@
                     @endforeach
                     <td class="border border-black bg-gray-200"></td>
                 </tr>
-                <tr class="bg-blue-50">
+                <tr class="bg-primary/5">
                     <td class="px-2 py-1 border border-black text-left font-bold text-[9px]">Nilai UM</td>
                     @foreach($mapels as $mapel)
                         <td class="px-1 py-1 border border-black text-center font-bold">
@@ -347,10 +347,10 @@
                     @endforeach
                     <td class="border border-black bg-gray-200"></td>
                 </tr>
-                <tr class="bg-green-100">
+                <tr class="bg-secondary/10">
                     <td class="px-2 py-1 border border-black text-left font-bold text-[9px]">Nilai NA</td>
                     @foreach($mapels as $mapel)
-                        <td class="px-1 py-1 border border-black text-center font-bold text-green-900">
+                        <td class="px-1 py-1 border border-black text-center font-bold text-secondary-dark">
                             {{ isset($row['summary']['na'][$mapel->id]) && $row['summary']['na'][$mapel->id] != 0 ? number_format($row['summary']['na'][$mapel->id], 2) : '-' }}
                         </td>
                     @endforeach
@@ -453,8 +453,8 @@
 
         /* Force background colors */
         .bg-yellow-50 { background-color: #fefce8 !important; -webkit-print-color-adjust: exact; }
-        .bg-blue-50 { background-color: #eff6ff !important; -webkit-print-color-adjust: exact; }
-        .bg-green-100 { background-color: #dcfce7 !important; -webkit-print-color-adjust: exact; }
+        .bg-primary\/5 { background-color: #eff6ff !important; -webkit-print-color-adjust: exact; } /* Fallback Light Blue/Gray */
+        .bg-secondary\/10 { background-color: #dcfce7 !important; -webkit-print-color-adjust: exact; } /* Fallback Light Green */
         .bg-gray-100 { background-color: #f3f4f6 !important; -webkit-print-color-adjust: exact; }
     }
 </style>

@@ -9,16 +9,17 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                "primary": "#003e29", // Kaitoke Green (Deep Green) - Main App
-                "secondary": "#467061", // Como (Greenish Gray)
-                "accent": "#fee46d", // Kournikova (Yellow/Gold)
+                "primary": "rgb(var(--color-primary) / <alpha-value>)",
+                "primary-dark": "rgb(var(--color-primary-dark) / <alpha-value>)", // Use for hover states
+                "secondary": "rgb(var(--color-secondary) / <alpha-value>)",
+                "accent": "#fee46d", // Kournikova (Yellow/Gold) - Keep static for now
                 "background-light": "#f6f8f6",
-                "background-dark": "#002a1c", // Darker Green for bg
-                "surface-dark": "#1a2e22", // Standard Dark Card Surface
+                "background-dark": "rgb(var(--color-background-dark) / <alpha-value>)",
+                "surface-dark": "rgb(var(--color-surface-dark) / <alpha-value>)",
 
                 // Login Page Specific (Unified with Main App - Resmi/Dinas)
-                "login-primary": "#003e29", // Matches Primary
-                "login-primary-dark": "#002318", // Darker shade for hover
+                "login-primary": "rgb(var(--color-primary) / <alpha-value>)",
+                "login-primary-dark": "rgb(var(--color-primary-dark) / <alpha-value>)",
             },
             fontFamily: {
                 "display": ["Inter", "Amiri", "sans-serif"],

@@ -47,7 +47,7 @@
     <div class="max-w-[1200px] mx-auto flex items-center justify-between">
         <h1 class="font-bold">Cetak Biodata</h1>
         <div class="flex gap-2">
-            <button onclick="window.print()" class="bg-blue-600 text-white px-4 py-2 rounded font-bold hover:bg-blue-700">Print Biodata</button>
+            <button onclick="window.print()" class="bg-primary text-white px-4 py-2 rounded font-bold hover:bg-primary-dark transition-colors">Print Biodata</button>
             <button onclick="window.close()" class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300">Tutup</button>
         </div>
     </div>

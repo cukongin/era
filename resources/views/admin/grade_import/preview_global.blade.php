@@ -113,7 +113,7 @@
                                     @endphp
                                     <td class="px-2 py-2 text-center border-r last:border-0 {{ $val === '-' ? 'bg-slate-50 text-slate-300' : '' }}">
                                         @if($val !== '-')
-                                            <span class="font-mono bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded text-xs font-bold">
+                                            <span class="font-mono bg-primary/10 text-primary px-1.5 py-0.5 rounded text-xs font-bold">
                                                 {{ $val }}
                                             </span>
                                         @else
@@ -137,7 +137,7 @@
                     <div class="text-sm text-slate-500">
                         Total Siswa: <b>{{ count($parsedData) }}</b>
                     </div>
-                    <button type="submit" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/30 flex items-center">
+                    <button type="submit" class="bg-primary text-white px-6 py-2.5 rounded-lg font-bold hover:bg-primary-dark transition-colors shadow-lg shadow-primary/30 flex items-center">
                         <span class="material-symbols-outlined mr-2">save</span>
                         Simpan Semua Nilai
                     </button>

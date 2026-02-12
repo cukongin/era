@@ -38,7 +38,7 @@
                             <th rowspan="2" class="px-4 py-3 border-b border-r min-w-[200px] sticky left-0 bg-slate-50 dark:bg-slate-700 z-10 shadow-[1px_0_0_0_rgba(0,0,0,0.1)]">Nama Siswa</th>
                             
                             @foreach($periods as $p)
-                                <th colspan="6" class="px-2 py-2 border-b border-r text-center bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300">
+                                <th colspan="6" class="px-2 py-2 border-b border-r text-center bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary">
                                     {{ $p->nama_periode }}
                                 </th>
                             @endforeach
@@ -104,7 +104,7 @@
                     </div>
                     <div class="flex gap-4">
                         <a href="{{ route('grade.import.global.index') }}" class="px-6 py-2.5 rounded-lg font-bold text-slate-600 hover:bg-slate-200 transition-colors">Batal</a>
-                        <button type="submit" class="bg-indigo-600 text-white px-6 py-2.5 rounded-lg font-bold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-500/30 flex items-center">
+                        <button type="submit" class="bg-primary text-white px-6 py-2.5 rounded-lg font-bold hover:bg-primary-dark transition-colors shadow-lg shadow-primary/30 flex items-center">
                             <span class="material-symbols-outlined mr-2">save</span>
                             Simpan Data
                         </button>

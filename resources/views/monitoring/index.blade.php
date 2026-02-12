@@ -30,7 +30,7 @@
         <!-- MI Dashboard -->
         <div class="flex flex-col gap-8">
             @forelse($dataMI as $data)
-            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-500 to-teal-700 text-white shadow-xl shadow-teal-900/10">
+            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-primary-dark text-white shadow-xl shadow-primary/10">
                 <!-- Decorative Circle -->
                 <div class="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
                 
@@ -45,22 +45,22 @@
                         </div>
                         <div class="text-right">
                             <div class="text-4xl font-black tracking-tight">{{ $data['percent'] }}<span class="text-2xl">%</span></div>
-                            <div class="text-xs text-teal-100 font-medium">Global Completion</div>
+                            <div class="text-xs text-white/70 font-medium">Global Completion</div>
                         </div>
                     </div>
 
                     <!-- Mini Stats -->
                     <div class="mt-6 grid grid-cols-3 gap-2 border-t border-white/10 pt-4">
                         <div class="text-center">
-                            <div class="text-xs text-teal-200">Total Kelas</div>
+                            <div class="text-xs text-white/70">Total Kelas</div>
                             <div class="font-bold text-lg">{{ count($data['classes']) }}</div>
                         </div>
                         <div class="text-center border-l border-white/10">
-                            <div class="text-xs text-teal-200">Mapel Tuntas</div>
+                            <div class="text-xs text-white/70">Mapel Tuntas</div>
                             <div class="font-bold text-lg">{{ collect($data['classes'])->sum('finalized_count') }}</div>
                         </div>
                          <div class="text-center border-l border-white/10">
-                            <div class="text-xs text-teal-200">Total Mapel</div>
+                            <div class="text-xs text-white/70">Total Mapel</div>
                             <div class="font-bold text-lg">{{ collect($data['classes'])->sum('mapel_diajar_count') }}</div>
                         </div>
                     </div>
@@ -74,7 +74,7 @@
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         @forelse($data['classes'] as $kelas)
-                        <div class="group relative rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/20 p-3 hover:border-teal-200 hover:bg-teal-50 dark:hover:border-teal-800 dark:hover:bg-teal-900/20 transition-all">
+                        <div class="group relative rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/20 p-3 hover:border-primary/40 hover:bg-primary/5 dark:hover:border-primary/40 dark:hover:bg-primary/10 transition-all">
                             <div class="flex justify-between items-center mb-2">
                                 <span class="font-bold text-sm text-slate-700 dark:text-slate-200">{{ $kelas->nama_kelas }}</span>
                                 <span class="text-[10px] font-bold px-1.5 py-0.5 rounded {{ $kelas->progress_percent == 100 ? 'bg-green-100 text-green-700' : 'bg-slate-200 text-slate-600' }}">
@@ -83,7 +83,7 @@
                             </div>
                             
                             <div class="w-full bg-slate-200 rounded-full h-1.5 dark:bg-slate-700 overflow-hidden mb-1">
-                                <div class="{{ $kelas->progress_percent == 100 ? 'bg-green-500' : ($kelas->progress_percent > 50 ? 'bg-teal-500' : 'bg-orange-500') }} h-1.5 rounded-full transition-all duration-500" style="width: {{ $kelas->progress_percent }}%"></div>
+                                <div class="{{ $kelas->progress_percent == 100 ? 'bg-green-500' : ($kelas->progress_percent > 50 ? 'bg-primary' : 'bg-orange-500') }} h-1.5 rounded-full transition-all duration-500" style="width: {{ $kelas->progress_percent }}%"></div>
                             </div>
                             
                             <div class="flex justify-between text-[10px] text-slate-500 dark:text-slate-400">
@@ -108,7 +108,7 @@
         <!-- MTs Dashboard (Sama tapi Tema Indigo) -->
         <div class="flex flex-col gap-8">
             @forelse($dataMTS as $data)
-            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 text-white shadow-xl shadow-indigo-900/10">
+            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-secondary to-primary-dark text-white shadow-xl shadow-primary/10">
                  <!-- Decorative Circle -->
                 <div class="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
 
@@ -123,7 +123,7 @@
                         </div>
                         <div class="text-right">
                             <div class="text-4xl font-black tracking-tight">{{ $data['percent'] }}<span class="text-2xl">%</span></div>
-                            <div class="text-xs text-indigo-100 font-medium">Global Completion</div>
+                            <div class="text-xs text-white/70 font-medium">Global Completion</div>
                         </div>
                     </div>
 
@@ -134,11 +134,11 @@
                             <div class="font-bold text-lg">{{ count($data['classes']) }}</div>
                         </div>
                         <div class="text-center border-l border-white/10">
-                            <div class="text-xs text-indigo-200">Mapel Tuntas</div>
+                            <div class="text-xs text-white/70">Mapel Tuntas</div>
                             <div class="font-bold text-lg">{{ collect($data['classes'])->sum('finalized_count') }}</div>
                         </div>
                          <div class="text-center border-l border-white/10">
-                            <div class="text-xs text-indigo-200">Total Mapel</div>
+                            <div class="text-xs text-white/70">Total Mapel</div>
                             <div class="font-bold text-lg">{{ collect($data['classes'])->sum('mapel_diajar_count') }}</div>
                         </div>
                     </div>
@@ -152,7 +152,7 @@
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         @forelse($data['classes'] as $kelas)
-                        <div class="group relative rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/20 p-3 hover:border-indigo-200 hover:bg-indigo-50 dark:hover:border-indigo-800 dark:hover:bg-indigo-900/20 transition-all">
+                        <div class="group relative rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/20 p-3 hover:border-secondary/40 hover:bg-secondary/5 dark:hover:border-secondary/40 dark:hover:bg-secondary/10 transition-all">
                             <div class="flex justify-between items-center mb-2">
                                 <span class="font-bold text-sm text-slate-700 dark:text-slate-200">{{ $kelas->nama_kelas }}</span>
                                 <span class="text-[10px] font-bold px-1.5 py-0.5 rounded {{ $kelas->progress_percent == 100 ? 'bg-green-100 text-green-700' : 'bg-slate-200 text-slate-600' }}">
@@ -161,7 +161,7 @@
                             </div>
                             
                             <div class="w-full bg-slate-200 rounded-full h-1.5 dark:bg-slate-700 overflow-hidden mb-1">
-                                <div class="{{ $kelas->progress_percent == 100 ? 'bg-green-500' : ($kelas->progress_percent > 50 ? 'bg-indigo-500' : 'bg-orange-500') }} h-1.5 rounded-full transition-all duration-500" style="width: {{ $kelas->progress_percent }}%"></div>
+                                <div class="{{ $kelas->progress_percent == 100 ? 'bg-green-500' : ($kelas->progress_percent > 50 ? 'bg-white' : 'bg-orange-500') }} h-1.5 rounded-full transition-all duration-500" style="width: {{ $kelas->progress_percent }}%"></div>
                             </div>
                             
                             <div class="flex justify-between text-[10px] text-slate-500 dark:text-slate-400">
@@ -199,7 +199,7 @@
                 
                 <!-- Teacher Profile (Left) -->
                 <div class="p-6 md:w-1/3 bg-slate-50 dark:bg-slate-800/50 border-r border-slate-100 dark:border-slate-800 flex flex-col items-center text-center justify-center gap-3">
-                    <div class="w-20 h-20 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl font-bold border-4 border-white shadow-sm">
+                    <div class="w-20 h-20 rounded-full bg-primary/10 text-primary flex items-center justify-center text-2xl font-bold border-4 border-white shadow-sm">
                         {{ substr($teacher->name, 0, 1) }}
                     </div>
                     <div>
@@ -237,7 +237,7 @@
                             </div>
                             <!-- Progress Bar -->
                             <div class="w-full bg-slate-100 rounded-full h-2 dark:bg-slate-700 overflow-hidden relative group" title="{{ $item->graded }} dari {{ $item->total }} siswa">
-                                <div class="bg-indigo-500 h-2 rounded-full transition-all duration-500 relative" style="width: {{ $item->percent }}%"></div>
+                                <div class="bg-primary h-2 rounded-full transition-all duration-500 relative" style="width: {{ $item->percent }}%"></div>
                             </div>
                             <div class="text-[10px] text-slate-400 text-right">
                                 Progres: {{ $item->graded }}/{{ $item->total }} Siswa
